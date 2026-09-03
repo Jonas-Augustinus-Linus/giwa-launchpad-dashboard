@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex,nofollow,noarchive" />
+    <meta name="theme-color" content="#090c0e" />
+    <title>constants.py · GIWA Control Room</title>
+    <link rel="stylesheet" href="../../../assets/document.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#document">본문으로 바로가기</a>
+    <header class="document-header">
+      <a class="brand" href="../../../index.html#research" aria-label="GIWA 대시보드로 돌아가기">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span><strong>GIWA</strong><small>CONTROL ROOM</small></span>
+      </a>
+      <nav aria-label="문서 동작">
+        <a href="../../../index.html#research">← 대시보드</a>
+        <a href="https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/src/giwa_lab/constants.py" target="_blank" rel="noopener noreferrer">Private GitHub ↗</a>
+      </nav>
+    </header>
+    <main id="document" class="document-shell">
+      <div class="document-meta">
+        <span>SOURCE CODE</span>
+        <span>SHA256 0850328a608e</span>
+      </div>
+      <h1>constants.py</h1>
+      <p class="source-path">src/giwa_lab/constants.py</p>
+      <article class="code-body"><pre class="source-code"><span class="code-line"><i>1</i><code>&quot;&quot;&quot;Public GIWA Sepolia constants with an explicit testnet boundary.&quot;&quot;&quot;</code></span>
+<span class="code-line"><i>2</i><code></code></span>
+<span class="code-line"><i>3</i><code>GIWA_SEPOLIA_CHAIN_ID = 91_342</code></span>
+<span class="code-line"><i>4</i><code>GIWA_SEPOLIA_CHAIN_ID_HEX = &quot;0x164ce&quot;</code></span>
+<span class="code-line"><i>5</i><code>DEFAULT_RPC_URL = &quot;https://sepolia-rpc.giwa.io&quot;</code></span>
+<span class="code-line"><i>6</i><code>FLASHBLOCKS_RPC_URL = &quot;https://sepolia-rpc-flashblocks.giwa.io&quot;</code></span>
+<span class="code-line"><i>7</i><code></code></span>
+<span class="code-line"><i>8</i><code>READ_ONLY_RPC_METHODS = frozenset(</code></span>
+<span class="code-line"><i>9</i><code>    {</code></span>
+<span class="code-line"><i>10</i><code>        &quot;web3_clientVersion&quot;,</code></span>
+<span class="code-line"><i>11</i><code>        &quot;eth_chainId&quot;,</code></span>
+<span class="code-line"><i>12</i><code>        &quot;eth_blockNumber&quot;,</code></span>
+<span class="code-line"><i>13</i><code>        &quot;eth_syncing&quot;,</code></span>
+<span class="code-line"><i>14</i><code>        &quot;eth_getBlockByNumber&quot;,</code></span>
+<span class="code-line"><i>15</i><code>        &quot;eth_getCode&quot;,</code></span>
+<span class="code-line"><i>16</i><code>    }</code></span>
+<span class="code-line"><i>17</i><code>)</code></span></pre></article>
+    </main>
+    <footer>
+      <span>research_only=true</span>
+      <span>strategy_consumption_allowed=false</span>
+      <span>order_input=false</span>
+    </footer>
+  </body>
+</html>

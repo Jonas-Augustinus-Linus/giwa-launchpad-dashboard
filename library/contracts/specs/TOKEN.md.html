@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex,nofollow,noarchive" />
+    <meta name="theme-color" content="#090c0e" />
+    <title>Token specification candidate · GIWA Control Room</title>
+    <link rel="stylesheet" href="../../../assets/document.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#document">본문으로 바로가기</a>
+    <header class="document-header">
+      <a class="brand" href="../../../index.html#research" aria-label="GIWA 대시보드로 돌아가기">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span><strong>GIWA</strong><small>CONTROL ROOM</small></span>
+      </a>
+      <nav aria-label="문서 동작">
+        <a href="../../../index.html#research">← 대시보드</a>
+        <a href="https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/contracts/specs/TOKEN.md" target="_blank" rel="noopener noreferrer">Private GitHub ↗</a>
+      </nav>
+    </header>
+    <main id="document" class="document-shell">
+      <div class="document-meta">
+        <span>REPORT</span>
+        <span>SHA256 dddaeb58ff50</span>
+      </div>
+      <h1>Token specification candidate</h1>
+      <p class="source-path">contracts/specs/TOKEN.md</p>
+      <article class="markdown-body"><h1 id="token-specification-candidate">Token specification candidate</h1>
+<p>Purpose: a transparent, valueless GIWA Sepolia demonstration asset for testing protocol plumbing.
+It is not a sale, investment, meme-coin promotion, governance promise, or exchange-listing signal.</p>
+<h2 id="proposed-minimal-behavior">Proposed minimal behavior</h2>
+<ul>
+<li>Standard ERC-20 interface and events, fixed decimals, and an immutable maximum supply.</li>
+<li>One constructor mint to a disclosed testnet address or a capped role that is permanently
+  renounced after deterministic test distribution; choose one only after threat-model review.</li>
+<li>No transfer tax, reflection, rebasing, anti-sell rule, hidden mint, blacklist, proxy upgrade,
+  arbitrary seizure, misleading ticker, or impersonation of GIWA/Upbit/Dunamu.</li>
+<li>Explicit chain guard for 91342 in deployment verification; source and constructor arguments
+  must be reproducible and explorer-verified.</li>
+</ul>
+<h2 id="required-tests-before-any-deployment-proposal">Required tests before any deployment proposal</h2>
+<ul>
+<li>Supply conservation and cap invariants; transfer/allowance edge cases; zero-address behavior.</li>
+<li>Role lifecycle and impossibility of post-finalization minting or privileged transfer changes.</li>
+<li>Fuzz/property tests, static analysis, compiler pin, dependency license/SBOM, reproducible
+  bytecode, and independent review.</li>
+<li>UI and documentation tests that continually label the asset testnet-only and valueless.</li>
+</ul></article>
+    </main>
+    <footer>
+      <span>research_only=true</span>
+      <span>strategy_consumption_allowed=false</span>
+      <span>order_input=false</span>
+    </footer>
+  </body>
+</html>

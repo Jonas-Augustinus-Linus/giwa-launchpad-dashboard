@@ -1,0 +1,447 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex,nofollow,noarchive" />
+    <meta name="theme-color" content="#090c0e" />
+    <title>GIWA Launchpad: 노드·스왑 풀·수익모델·체인 출시 벤치마크 · GIWA Control Room</title>
+    <link rel="stylesheet" href="../../../../../assets/document.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#document">본문으로 바로가기</a>
+    <header class="document-header">
+      <a class="brand" href="../../../../../index.html#research" aria-label="GIWA 대시보드로 돌아가기">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span><strong>GIWA</strong><small>CONTROL ROOM</small></span>
+      </a>
+      <nav aria-label="문서 동작">
+        <a href="../../../../../index.html#research">← 대시보드</a>
+        <a href="https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/RESEARCH/GIWA_revenue_models_chain_launch_benchmarks_2026_20260903_175751/outputs/01_full_report/01_report.ko.md" target="_blank" rel="noopener noreferrer">Private GitHub ↗</a>
+      </nav>
+    </header>
+    <main id="document" class="document-shell">
+      <div class="document-meta">
+        <span>REPORT</span>
+        <span>SHA256 afd83df17306</span>
+      </div>
+      <h1>GIWA Launchpad: 노드·스왑 풀·수익모델·체인 출시 벤치마크</h1>
+      <p class="source-path">RESEARCH/GIWA_revenue_models_chain_launch_benchmarks_2026_20260903_175751/outputs/01_full_report/01_report.ko.md</p>
+      <article class="markdown-body"><h1 id="giwa-launchpad">GIWA Launchpad: 노드·스왑 풀·수익모델·체인 출시 벤치마크</h1>
+<p>기준일: 2026-09-03 KST
+독자: GIWA Launchpad founder / technical team
+판정 범위: research-only; 배포·서명·거래·토큰 발행·유동성 공급 권한 없음</p>
+<h2 id="1">1. 의사결정 요약</h2>
+<p>지금 만들 것은 “GIWA판 Pump.fun”이 아니라 <strong>GIWA Evidence OS</strong>다. 공개된 GIWA 상태는 Sepolia의 read-only 검증에는 충분하지만 실매출·유동성·token launch를 증명할 public mainnet은 아니다. 따라서 제품 순서는 데이터 신뢰 계층을 먼저 만들고, public mainnet과 canonical assets가 확인된 뒤 fixed-fee launch, interface fee, protocol fee, permissionless memecoin으로 문을 하나씩 여는 방식이 맞다. (clm_333, clm_334, clm_335; src_301, src_307, src_309, src_320, src_354, src_363)</p>
+<p>이 결론은 “수수료가 나오는 기능”과 “그 수수료가 우리에게 귀속되는 사업”을 분리해서 얻었다. DEX 거래량, LP fee, tokenholder revenue, sequencer margin, NFT creator payout은 전부 다른 원장이다. GIWA Launchpad가 실제 수취 주소·계약·고객을 갖지 않는 한 그 숫자는 시장 크기이지 매출이 아니다. (clm_310, clm_318, clm_321; src_315, src_324, src_327, src_338, src_339)</p>
+<h2 id="2-giwa">2. GIWA 현재 상태와 노드 사양</h2>
+<h3 id="21">2.1 확인된 상태</h3>
+<p>2026-09-03 현재 공개된 GIWA 네트워크는 <strong>GIWA Sepolia, chain ID 91342</strong>다. public mainnet 설정은 현재 공개 문서와 node repository에서 확인되지 않았다. 공식 test token은 경제적 가치가 없고 네트워크 reset 가능성도 있으므로, Sepolia의 거래량이나 fee를 현금흐름 전망에 넣을 수 없다. (clm_301, clm_333; src_301, src_303, src_307)</p>
+<p>현재 공식 node release v0.6.0은 op-reth 2.3.3과 op-node 1.19.1을 사용하며 op-geth 경로를 제거했다. 이 버전 확인은 “노드를 돌릴 수 있는가”에 답하지만, public mainnet launch date나 production sizing에는 답하지 않는다. (clm_302; src_302, src_303)</p>
+<h3 id="22-sepolia">2.2 공식 Sepolia 사양표</h3>
+<table>
+<thead>
+<tr>
+<th>항목</th>
+<th style="text-align: right;">최소</th>
+<th style="text-align: right;">권장</th>
+<th>주의</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CPU</td>
+<td style="text-align: right;">4 cores</td>
+<td style="text-align: right;">8+ cores</td>
+<td>mainnet sizing 아님</td>
+</tr>
+<tr>
+<td>RAM</td>
+<td style="text-align: right;">8 GB</td>
+<td style="text-align: right;">16+ GB</td>
+<td>archive·indexer는 추가 여유 필요</td>
+</tr>
+<tr>
+<td>Storage</td>
+<td style="text-align: right;">500 GB NVMe</td>
+<td style="text-align: right;">1+ TB NVMe</td>
+<td>성장률·retention·IOPS 미공개</td>
+</tr>
+<tr>
+<td>L1 dependency</td>
+<td style="text-align: right;">Ethereum Sepolia execution RPC</td>
+<td style="text-align: right;">이중 provider 권장</td>
+<td>beacon RPC도 필요</td>
+</tr>
+<tr>
+<td>Client</td>
+<td style="text-align: right;">op-reth 2.3.3</td>
+<td style="text-align: right;">동일</td>
+<td>op-node 1.19.1 조합</td>
+</tr>
+<tr>
+<td>Sync</td>
+<td style="text-align: right;">full/archive/execution/consensus 경로</td>
+<td style="text-align: right;">목적별 선택</td>
+<td>snapshot은 보조 수단</td>
+</tr>
+</tbody>
+</table>
+<p>근거: clm_301, clm_302; src_301, src_302, src_303.</p>
+<h3 id="23-production-hardening">2.3 production hardening</h3>
+<p>현재 shipped entrypoint는 HTTP·WS를 넓게 bind하고 debug·txpool·miner 같은 namespace를 포함한다. 그대로 public Internet에 노출하면 안 된다. 권장 경계는 private subnet, firewall allowlist, TLS/auth reverse proxy, method allowlist, rate limit, separate metrics network와 JWT-protected Engine API다. (clm_305; src_304, src_301)</p>
+<p>공개 standard RPC와 Flashblocks endpoint는 테스트·개발용 rate limit가 있다. Robinhood Chain도 production 및 historical indexing에는 provider/archive 경로를 따로 문서화한다. 이 패턴상 “무료 public endpoint 한 개”는 내부 대시보드의 bootstrap에는 쓸 수 있어도 production truth source에는 부족하다. (clm_303; src_301, src_332)</p>
+<h2 id="3">3. 빠른 온체인 정보 아키텍처</h2>
+<p>노드는 원시 상태 접근점이지 검색 제품 전체가 아니다. 빠른 조회를 위해서는 다음 데이터 흐름이 필요하다. (clm_306)</p>
+<pre><code class="language-text">managed provider ─┐
+                  ├─&gt; bounded getLogs backfill ─&gt; raw evidence store
+private full node ┘              │
+                                 ├─&gt; blockHash/parentHash reorg reconciler
+Flashblocks pending lane ────────┘             │
+                                               ├─&gt; tentative / safe / finalized
+                                               ├─&gt; normalized pool/token/index tables
+                                               └─&gt; read API + cache + alert engine
+</code></pre>
+<p>Flashblocks는 약 200ms pending preconfirmation을 제공하지만 canonical finality와 같은 뜻이 아니다. UI에는 “tentative”로 표시하고 뒤에 canonical block으로 reconcile해야 한다. GIWA explorer 자체도 관측 시점에 indexing 완료 플래그가 false였기 때문에 explorer 한 곳만 source of truth로 삼지 않는다. (clm_304, clm_307; src_305, src_308)</p>
+<h3 id="31">3.1 저장해야 할 최소 키</h3>
+<ul>
+<li>Block: <code>number</code>, <code>hash</code>, <code>parentHash</code>, <code>timestamp</code>, <code>status(tentative|safe|finalized)</code>.</li>
+<li>Log: <code>chainId</code>, <code>blockHash</code>, <code>txHash</code>, <code>logIndex</code>, <code>address</code>, <code>topic0..n</code>, raw data.</li>
+<li>Contract evidence: bytecode hash, verified source state, compiler, proxy implementation, admin/owner, upgrade event.</li>
+<li>Pool: factory, token0/1, fee tier, tick spacing, creation tx, initialization, current liquidity, fee recipient.</li>
+<li>Token risk: decimals, total supply, mint/freeze/pause/tax hooks, owner privileges, canonical registry state.</li>
+<li>Provenance: source URL, observed time, method, response hash, conflicting observation and resolution status.</li>
+</ul>
+<p>현재 repository probe가 지원하는 liveness method는 좁은 allowlist에 한정돼 있다. 첫 확장은 read-only <code>eth_getLogs</code>, capability-probed <code>eth_call</code>, transaction receipt backfill이어야 한다. websocket tail은 gap detector와 bounded HTTP backfill 없이는 신뢰하지 않는다.</p>
+<h2 id="4-v3">4. V3 스왑 풀 제품 구조</h2>
+<p>GIWA 공식 계약 레지스트리는 WETH9·Permit2·Multicall3를 열거하지만 canonical V3 Factory·Router·Position Manager·Quoter를 지정하지 않는다. 따라서 explorer에서 보이는 제3자 V3형 bytecode는 code-visible일 수 있어도 official·audited·canonical이라는 뜻이 아니다. (clm_308; src_309, src_303)</p>
+<p>Uniswap 계열 구조를 기준으로 필요한 묶음은 다음과 같다. (clm_309; src_310, src_312)</p>
+<table>
+<thead>
+<tr>
+<th>계층</th>
+<th>필수 구성</th>
+<th>출시 gate</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Core</td>
+<td>Factory, Pool, tick/fee tier, oracle observation</td>
+<td>invariant/fork test, audit, source verification</td>
+</tr>
+<tr>
+<td>Periphery</td>
+<td>Router, Quoter, Nonfungible Position Manager, Permit2, Multicall</td>
+<td>allowance·slippage·deadline UX, revert simulation</td>
+</tr>
+<tr>
+<td>Assets</td>
+<td>canonical WETH, stable pair, token registry</td>
+<td>canonical issuer, decimals, mint/freeze/tax review</td>
+</tr>
+<tr>
+<td>Data</td>
+<td>PoolCreated/Initialize/Mint/Burn/Swap/Collect index</td>
+<td>reorg reconciliation, receipt completeness, SLA</td>
+</tr>
+<tr>
+<td>Trust</td>
+<td>Pool Passport, code hash, proxy/admin, LP/fee rights</td>
+<td>evidence timestamp, conflict quarantine, change alert</td>
+</tr>
+<tr>
+<td>Operations</td>
+<td>governance/timelock, monitoring, incident response</td>
+<td>role separation, pause/runbook, public disclosures</td>
+</tr>
+</tbody>
+</table>
+<h3 id="41-pool-passport">4.1 Pool Passport</h3>
+<p>각 풀을 <code>DISCOVERED → CODE_MATCHED → SOURCE_VERIFIED → OPERATOR_MAPPED → AUDIT_LINKED → CANONICAL</code>의 분리된 상태로 보여준다. 어느 한 상태가 다음 상태를 자동으로 뜻하지 않는다. 주소가 문서·explorer·과거 관측과 충돌하면 <code>QUARANTINED</code>로 두고 swap/LP CTA를 열지 않는다.</p>
+<h3 id="42-pool-launch">4.2 pool launch를 열기 전 필요한 테스트</h3>
+<ul>
+<li>동일 pair·fee tier 중복 pool 및 spoof factory 탐지.</li>
+<li>exact-input/output quote와 adversarial token hook simulation.</li>
+<li>reentrancy, callback validation, price-limit, zero-liquidity, fee-on-transfer rejection.</li>
+<li>concentrated range 이탈·oracle manipulation·MEV/LVR scenario.</li>
+<li>upgrade/admin/fee-recipient 변경 alert와 timelock 검증.</li>
+<li>router/NPM/Permit2 chain-id replay와 allowance 회수 경로.</li>
+</ul>
+<p>Uniswap의 v1·v2·v3 출시는 core contract만이 아니라 interface·audit·docs·migration 및 v2 subgraph를 함께 제공했다. GIWA도 pool deployment를 단일 contract task가 아니라 제품 release train으로 다뤄야 한다. (clm_313; src_314, src_364, src_365)</p>
+<h2 id="5">5. 수익원: 하나의 숫자가 아니라 네 개의 원장</h2>
+<h3 id="51">5.1 귀속 원칙</h3>
+<table>
+<thead>
+<tr>
+<th>Ledger</th>
+<th>계산식</th>
+<th>포함</th>
+<th>제외</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LP</td>
+<td><code>realized pool fees × owned active liquidity share</code></td>
+<td>자기자본 LP가 실제 collect한 fee</td>
+<td>외부 LP fee, 미실현 fee, IL/LVR 전 수치</td>
+</tr>
+<tr>
+<td>Protocol/holder</td>
+<td><code>organic volume × pool fee × activated protocol share</code></td>
+<td>treasury/TokenJar/burn 수취분</td>
+<td>LP, creator, referral, inactive switch</td>
+</tr>
+<tr>
+<td>Interface/launch</td>
+<td><code>routed GMV × disclosed UI fee + fixed setup</code></td>
+<td>우리 UI·API·drop 계약 수취분</td>
+<td>다른 router/pool의 거래량</td>
+</tr>
+<tr>
+<td>Chain operator</td>
+<td><code>gas paid − L1 settlement/data cost − revenue share</code></td>
+<td>운영 권한이 확인된 sequencer 몫</td>
+<td>앱 fee, DEX LP fee, 회계상 미공개 추정치</td>
+</tr>
+</tbody>
+</table>
+<p>DefiLlama 방법론도 user fees, supply-side, protocol, holders revenue와 incentives를 분리한다. 이 분리를 대시보드 schema와 회계 export까지 유지해야 한다. (clm_310; src_315, src_311, src_327)</p>
+<p>자기자본 LP는 별도 투자 mandate다. active range를 벗어나거나 가격이 이동하면 impermanent loss·LVR·hedge·gas·운영비가 fee보다 클 수 있다. 일반 LP 수익을 launchpad 매출로 잡지 않는다. (clm_332; src_311, src_312, src_317, src_318)</p>
+<h3 id="52">5.2 후보 모델 비교</h3>
+<table>
+<thead>
+<tr>
+<th>모델</th>
+<th>지금 상태</th>
+<th>운영사 수익식</th>
+<th>결정 gate</th>
+<th>대표 위험</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Indexed data / alerts</td>
+<td>BUILD NOW</td>
+<td>MRR + usage + setup − RPC/index/storage/on-call</td>
+<td>3 design partners, reorg SLA</td>
+<td>public RPC 재판매만으로 차별화 부족</td>
+</tr>
+<tr>
+<td>Pool Passport</td>
+<td>BUILD NOW</td>
+<td>verification setup + monitored-address MRR</td>
+<td>이해상충 공시, 증거·코드 상태 분리</td>
+<td>pay-to-play가 안전 인증처럼 보임</td>
+</tr>
+<tr>
+<td>Vetted NFT/project launch</td>
+<td>GATED</td>
+<td>fixed setup + disclosed primary platform fee</td>
+<td>mainnet, IP·환불·consumer review</td>
+<td>일회성 spike, 미판매</td>
+</tr>
+<tr>
+<td>Swap interface fee</td>
+<td>GATED</td>
+<td>routed organic volume × interface bps</td>
+<td>canonical asset, wallet execution, disclosure</td>
+<td>무료 UI 이탈, 중복 과금</td>
+</tr>
+<tr>
+<td>DEX protocol fee</td>
+<td>LATE</td>
+<td>pool fee × activated protocol share</td>
+<td>30/90-day depth, governance</td>
+<td>LP 이탈, fee double count</td>
+</tr>
+<tr>
+<td>Treasury LP</td>
+<td>SEPARATE</td>
+<td>collect fee − IL/LVR/hedge/gas</td>
+<td>custody, risk budget, exit policy</td>
+<td>fee보다 자본손실 큼</td>
+</tr>
+<tr>
+<td>Creator coin</td>
+<td>LAST</td>
+<td>coin volume × protocol share</td>
+<td>creator identity, moderation, legal</td>
+<td>투기·referral abuse</td>
+</tr>
+<tr>
+<td>Memecoin curve</td>
+<td>LAST</td>
+<td>curve fee + graduation fee + canonical pool share</td>
+<td>surveillance, bot/Sybil, legal</td>
+<td>플랫폼 수익과 발행 성공 분리</td>
+</tr>
+</tbody>
+</table>
+<p>Data subscription은 <strong>가설</strong>이지 이미 검증된 매출이 아니다. public sources는 provider 존재와 metric taxonomy는 보여주지만 GIWA 고객의 지불의사·가격 탄력성은 보여주지 않는다. 그래서 P1의 KPI는 매출 예측이 아니라 3개 design partner의 반복 사용과 유료 전환이다. (clm_306; src_306, src_315)</p>
+<h2 id="6-dex">6. DEX 벤치마크</h2>
+<h3 id="61-uniswap-fee-switch">6.1 Uniswap — 사용·이전 경로를 먼저, fee switch는 뒤에</h3>
+<p>Uniswap v1은 2018년 contracts, UI, audit, whitepaper, docs와 약 3만 달러의 초기 liquidity를 함께 공개했다. v2·v3는 audit·formal verification·interface·migration을 묶었다. holder-directed protocol fee는 초기 growth engine이 아니라 2025-12-28 실행된 governance 이후의 후행 수익화였다. (clm_312, clm_313; src_314, src_328, src_364, src_365)</p>
+<p>현행 v2 예시는 0.30%에서 LP 0.25%, protocol 0.05%를 분리하며 v3는 풀별 protocol setting이 동일하지 않다. 총 swap fee와 Labs 매출, UNI holder value capture도 같은 숫자가 아니다. (clm_311; src_311, src_316)</p>
+<p><strong>GIWA 전이:</strong> migration, source verification, quote/indexing, LP experience가 먼저다. 초기부터 fee switch를 최대화하면 venue가 만들기도 전에 LP를 과세하는 셈이다.</p>
+<h3 id="62-aerodrome-incentive-market">6.2 Aerodrome — incentive market 자체가 제품</h3>
+<p>Aerodrome은 단순 AMM이 아니라 emissions·gauge voting·voting incentives를 조합해 liquidity 공급과 tokenholder 참여를 연결했다. staked pool fee는 veAERO voters, unstaked liquidity 몫은 LP로 가며 team 5%는 emissions 항목이다. (clm_314; src_313, src_325)</p>
+<p>초기 보도와 현재 문서는 incentive를 명시한다. 따라서 높은 Base DEX share를 “보조금 없이 발생한 유기 수요”로 표현할 수 없다. incentives가 revenue보다 큰 기간도 별도 표시해야 한다. (clm_315; src_313, src_325, src_366)</p>
+<p><strong>GIWA 전이:</strong> incentive 예산은 매출과 상계하고 종료일을 먼저 정한다. <code>subsidized volume</code>과 <code>organic fee-paying cohort</code>를 분리한다.</p>
+<h2 id="7">7. 체인 출시·후속 출시 벤치마크</h2>
+<h3 id="71-base-builder-window-distribution-bundle">7.1 Base — builder window와 distribution bundle</h3>
+<p>Base는 builder-only mainnet을 먼저 열어 contract verification·infra readiness를 만들고, GA 때 앱·service providers·Coinbase surfaces와 Onchain Summer를 묶었다. independent indexed series는 2026년에도 activity가 남아 있음을 보여주므로 단순 launch-day spike 사례는 아니다. (clm_316; src_320, src_321, src_367)</p>
+<p>다만 2023년 70만+ mints·26.8만+ wallets, 2024년 $5M+ builder/creator/project mint revenue·2M+ wallets·24M+ assets는 Base 공식 self-report다. wallets는 unique humans가 아니며 $5M은 Base/Coinbase 매출이 아니라 참여자 귀속이다. Coinbase가 filing에서 분류한 Base sequencer revenue와도 별개다. (clm_317, clm_318; src_322, src_323, src_324, src_367)</p>
+<p><strong>GIWA 전이:</strong> <code>builder-ready → bridge/assets/RPC → day-one apps → distribution campaign → 7/30/90-day retention</code> 순으로 측정한다. NFT 수량보다 cross-app 이동률과 fee-paying repeat user를 본다.</p>
+<h3 id="72-robinhood-chain-traction">7.2 Robinhood Chain — 출시 traction은 확인, 지속 성공은 보류</h3>
+<p>Robinhood는 2026-02-10 public testnet 후 2026-07-01 public mainnet을 열었다. day-one에 Uniswap primary public AMM, Pleiades proprietary AMM, wallet·stock-token distribution을 발표했다. 과거 “pre-launch” 메모는 현재 사실을 반영하지 못하므로 mainnet 공식 발표로 갱신했다. (clm_319; src_329, src_330, src_331)</p>
+<p>2026-09-03 rolling snapshot은 30일 DEX volume 약 $20.36B, Uniswap share 약 83.2%를 보였다. 이는 큰 launch traction이지만 두 달 남짓의 관측이며 dynamic adapter 수치는 수정될 수 있다. (clm_320; src_331, src_334, src_335)</p>
+<p>더 중요한 점은 귀속이다. DEX LP/UNI fee, chain gas residual, app fee와 Robinhood 회계 revenue는 자동 연결되지 않는다. Arbitrum ecosystem revenue share도 별도다. (clm_321; src_315, src_337, src_338, src_339)</p>
+<p><strong>GIWA 전이:</strong> launch success 판정은 30/60/90일 cohort, stock/RWA·meme·stablecoin 구성, wash-filtered volume과 app retention까지 기다린다. Robinhood가 부담하는 기간형 gas subsidy는 공식 확인되지 않았고, 문서에서 확인되는 것은 개발자가 선택할 수 있는 ERC-4337/Alchemy sponsorship infrastructure다. (src_332)</p>
+<h2 id="8-nftcreator-coin">8. NFT·creator coin 모델</h2>
+<h3 id="81-opensea-product-fee-contract-capability">8.1 OpenSea — product fee와 contract capability 분리</h3>
+<p>2026-05-12 schedule은 NFT sale 1%, hosted primary drop 10%, swap 0%다. hosted payout wallet은 90%를 받고, SeaDrop contract 자체의 fee recipient는 configurable하다. 즉 “10%”는 hosted product policy이지 모든 fork에 박힌 protocol constant가 아니다. (clm_322; src_340, src_341, src_344)</p>
+<p>secondary creator earnings는 optional 또는 contract-enforced가 될 수 있고 marketplace 정책 변화의 영향을 받는다. 따라서 royalty를 고정 반복매출로 예측하지 않는다. (clm_323; src_345, src_369)</p>
+<p><strong>GIWA 전이:</strong> 처음에는 variable GMV take보다 scope가 명확한 deployment·verification·monitoring fixed fee가 감사 가능하다. primary mint는 IP·utility·refund·consumer disclosure gate를 통과한 프로젝트만 받는다.</p>
+<h3 id="82-zora-nft-creator-coin-pivot">8.2 Zora — NFT에서 creator coin으로의 pivot</h3>
+<p>Zora custom pair의 공식 Base·Robinhood 예시는 1% 중 creator 0.70%, protocol 0.25%, Doppler 0.05%다. source·SDK가 공개돼도 Doppler의 BSL production restriction처럼 dependency license는 별도 검토해야 한다. (clm_324, clm_331; src_342, src_347, src_348, src_349)</p>
+<p>현재 product는 legacy NFT mint를 deprecated하고 custom-pair coin과 multichain distribution으로 이동했다. 이는 NFT fee의 영속 성공보다 시장에 맞춰 revenue primitive를 바꾼 follow-on launch 사례다. (clm_325; src_343, src_349)</p>
+<h2 id="9-memecoin-launchpad">9. Memecoin launchpad 벤치마크</h2>
+<h3 id="91-pumpfun">9.1 Pump.fun — 플랫폼 수익과 발행 성공을 분리</h3>
+<p>공식 current curve schedule은 creation 0, curve swap 1.25% 중 creator 0.30%·protocol 0.95%, graduation 0.015 SOL이다. threshold 뒤 canonical PumpSwap으로 자동·불가역 migration한다. (clm_326; src_350, src_351, src_353)</p>
+<p>그러나 832,941 launches를 다룬 2026 preprint의 fast-window graduation 하한은 0.198%였고, 별도 연구는 조정된 early-buyer cohorts를 확인했다. 수치의 window 제한은 지켜야 하지만 방향은 명확하다. 큰 protocol gross fees는 대부분의 creator·holder 성공을 증명하지 않는다. (clm_327; src_350, src_353, src_354, src_355)</p>
+<h3 id="92-clanker-fee">9.2 Clanker — 버전별 fee를 섞지 않는다</h3>
+<p>historical v3.1은 1% Uniswap V3 pool fee 중 20% team, 나머지를 creator/interface에 배분했다. current V4는 선택 creator fee의 20%를 protocol fee로 계산하고 reward를 canonical initial pool에 한정한다. historical traction을 current revenue formula로 그대로 사용하지 않는다. (clm_328; src_356, src_357, src_362)</p>
+<h3 id="93-flaunch-fee-rights-nft">9.3 Flaunch — fee rights를 NFT로 관리</h3>
+<p>공식 <strong>기본</strong> waterfall은 1% swap fee를 referrer, protocol, creator, bid wall로 보낸다. 현재 official protocol share는 0으로 문서화돼 있지만 pool별 distribution override가 가능하다. creator/community allocation과 fee-management rights가 launch object에 결합되고, 기존 ERC-20 import도 지원하므로 신규 발행뿐 아니라 follow-on liquidity 경로로 볼 수 있다. (clm_329, clm_330; src_358, src_359, src_360, src_370)</p>
+<p>독립 dashboard와 official protocol-share 정의가 맞지 않는 항목은 event recipient 기준으로 재조정하기 전까지 대시보드 매출에 넣지 않는다.</p>
+<h3 id="94-giwa">9.4 GIWA 원칙</h3>
+<p>Meme launch를 마지막에 두는 이유는 도덕론이 아니라 측정 가능성이다. volume은 즉시 생겨도 graduation quality, market integrity, user outcome은 약할 수 있다. 미국 SEC staff statement도 사실관계별·비구속적이며 fraud나 disguised security 문제를 제거하지 않는다. (clm_335; src_350, src_354, src_355, src_363)</p>
+<h2 id="10-gate">10. 구현 순서와 gate</h2>
+<h3 id="p0-evidence-os-build-now">P0 — Evidence OS / BUILD NOW</h3>
+<ul>
+<li>provider RPC 두 곳 또는 provider + private full node.</li>
+<li>append-only raw log와 response hash.</li>
+<li>tentative/safe/finalized 분리 및 reorg replay test.</li>
+<li>contract/pool code-state와 주소 충돌 quarantine.</li>
+<li>Pool Passport read API와 내부 dashboard.</li>
+</ul>
+<p>Exit criteria: 7일 gap-free tail, forced-reorg fixture 통과, 모든 카드에 source·observed_at·status, signer와 order method 없음.</p>
+<h3 id="p1-data-pilot-commercial-gate">P1 — Data pilot / COMMERCIAL GATE</h3>
+<ul>
+<li>design partner 3곳의 반복 query와 alert use case.</li>
+<li>setup, monitoring, API usage를 분리 견적.</li>
+<li>false-positive·data latency·incident response 비용 측정.</li>
+</ul>
+<p>Exit criteria: 2개 이상의 paid-intent 또는 계약 가능한 반복 수요, provider/storage/on-call 포함 contribution margin 가설. 가격 자체는 공개 자료에서 확정하지 않는다.</p>
+<h3 id="p2-vetted-launch-mainnet-gate">P2 — Vetted launch / MAINNET GATE</h3>
+<ul>
+<li>목적·IP·token rights가 분명한 NFT 또는 project launch.</li>
+<li>fixed setup fee 우선, variable fee는 수취 주소와 refund policy 공개.</li>
+<li>canonical WETH/stable/bridge/oracle/explorer와 audit 확인.</li>
+</ul>
+<p>Exit criteria: 법률·소비자 review, source verification, runbook, 30일 creator support budget.</p>
+<h3 id="p3-interface-fee-liquidity-gate">P3 — Interface fee / LIQUIDITY GATE</h3>
+<ul>
+<li>우리 router/UI가 실제 route한 거래만 계측.</li>
+<li>quote에는 pool fee와 interface fee를 분리 표시.</li>
+<li>0 bps control cohort와 repeat use·price impact 측정.</li>
+</ul>
+<p>Exit criteria: 30/90일 organic volume, depth, repeat user, 무료 대체 UI 대비 retention.</p>
+<h3 id="p4-protocol-fee-treasury-lp-separate-authority">P4 — Protocol fee 및 treasury LP / SEPARATE AUTHORITY</h3>
+<ul>
+<li>protocol fee: governance, timelock, recipient, emergency process.</li>
+<li>treasury LP: 별도 custody·risk budget·hedge·exit policy.</li>
+<li>어느 쪽도 다른 쪽의 수익으로 상계하지 않는다.</li>
+</ul>
+<h3 id="last-permissionless-memecoin">LAST — Permissionless memecoin</h3>
+<ul>
+<li>creator identity/attestation, content moderation, bot/Sybil surveillance.</li>
+<li>canonical graduation pool과 LP/fee-right ownership 공개.</li>
+<li>suspicious cohort, wash volume, graduation funnel, post-graduation survival 측정.</li>
+</ul>
+<p>Exit criteria: 별도 법률 승인, incident reserve, abuse kill-switch, organic post-graduation cohort.</p>
+<h2 id="11-kpi">11. 대시보드 KPI</h2>
+<h3 id="_1">인프라</h3>
+<ul>
+<li>head lag, safe/finalized lag, log gap, reorg depth, provider disagreement.</li>
+<li>RPC p50/p95, error/rate-limit, archive completeness, indexer replay time.</li>
+<li>code hash change, admin/implementation change, fee-recipient change.</li>
+</ul>
+<h3 id="_2">시장</h3>
+<ul>
+<li>raw volume와 filtered volume.</li>
+<li>fee payer 수, repeat payer 7/30/90d, cohort retention.</li>
+<li>depth at 50/100/500 bps, price impact, LP concentration.</li>
+<li>incentive spend per retained user, post-incentive organic share.</li>
+</ul>
+<h3 id="_3">수익</h3>
+<ul>
+<li>user fees, LP revenue, protocol/holder revenue, interface revenue.</li>
+<li>creator payout, referral payout, incentive spend.</li>
+<li>RPC/index/storage/on-call, refunds, legal/support cost.</li>
+<li>contribution margin과 cash receipt; token emission은 revenue가 아님.</li>
+</ul>
+<h3 id="launch-quality">launch quality</h3>
+<ul>
+<li>created → funded → initialized → graduated → 7/30/90d alive funnel.</li>
+<li>unique funded creators, sybil cluster share, top-10 trader concentration.</li>
+<li>verified source, immutable/upgradeable, admin, mint/freeze/tax status.</li>
+</ul>
+<h2 id="12">12. 코드 재사용 판정</h2>
+<p>공개 저장소가 있다고 곧바로 GIWA에 배포할 수 있는 것은 아니다. dashboard의 code-state는 다음을 분리한다. (clm_331)</p>
+<ol>
+<li><code>BYTECODE_ONLY</code></li>
+<li><code>SOURCE_VISIBLE</code></li>
+<li><code>SOURCE_VERIFIED</code></li>
+<li><code>LICENSE_CLEAR_FOR_PRODUCTION</code></li>
+<li><code>OPERATOR_MAPPED</code></li>
+<li><code>AUDIT_LINKED</code></li>
+<li><code>GIWA_CANONICAL</code></li>
+</ol>
+<p>SeaDrop·Zora·Flaunch의 공개 코드와 Pump의 SDK/IDL surface, Doppler의 BSL restriction은 같은 “코드 있음”으로 표시하면 안 된다. (src_344, src_347, src_348, src_352, src_360)</p>
+<h2 id="13-confidence">13. Confidence</h2>
+<p><strong>종합: Moderate.</strong></p>
+<ul>
+<li>높음: GIWA Sepolia chain/config, current node release와 testnet 사양, 공식 contract registry, 각 protocol의 current public fee schedule·코드 표면.</li>
+<li>중간: dynamic analytics snapshot, 체인 launch 이후 activity와 incentive 귀속. adapter backfill·wash filter·self-report 한계가 있다.</li>
+<li>낮음: GIWA public mainnet 일정·production node sizing, canonical DEX operator, 실제 commercial willingness-to-pay, 장기 liquidity와 법률 분류.</li>
+</ul>
+<h2 id="14-refuted">14. Refuted</h2>
+<p>다음 해석은 의사결정 입력에서 폐기한다.</p>
+<ul>
+<li>총 DEX volume을 launchpad operator cash revenue로 치환.</li>
+<li>외부 LP와 voter가 받은 fee를 운영사 매출에 합산.</li>
+<li>launchpad의 높은 gross fee를 개별 token 성공률로 대체.</li>
+<li>Robinhood Chain의 초기 유동성이 곧 RWA product-market fit이라는 주장.</li>
+</ul>
+<h2 id="15-unresolved">15. Unresolved</h2>
+<p>다음 항목은 대시보드에서 <code>UNKNOWN</code> 또는 <code>CONFLICT</code>로 유지한다.</p>
+<ul>
+<li>GIWA public mainnet date, genesis/config, production hardware·storage growth.</li>
+<li>GIWA data/monitoring customer의 가격대와 실제 유료 전환.</li>
+<li>Robinhood Chain의 30/60/90일 retention, durable asset mix와 gas sponsorship의 실제 부담 주체·기간.</li>
+<li>Zora의 chain·pair type 전체를 덮는 단일 current fee formula.</li>
+<li>Flaunch official waterfall와 third-party protocol-revenue classification의 event-level reconciliation.</li>
+</ul>
+<h2 id="16-source-map">16. Source map</h2>
+<p>세부 메타데이터·URL·관측 시각은 <code>sources/sources.jsonl</code>이 정본이다.</p>
+<ul>
+<li>GIWA node/network/explorer: src_301, src_302, src_303, src_304, src_305, src_306, src_307, src_308, src_309.</li>
+<li>Uniswap/DEX economics/LP risk: src_310, src_311, src_312, src_313, src_314, src_315, src_316, src_317, src_318, src_319.</li>
+<li>Base launch and economics: src_320, src_321, src_322, src_323, src_324, src_325, src_326, src_327, src_328.</li>
+<li>Robinhood Chain: src_329, src_330, src_331, src_332, src_333, src_334, src_335, src_336, src_337, src_338, src_339.</li>
+<li>NFT / creator protocols: src_340, src_341, src_342, src_343, src_344, src_345, src_346, src_347, src_348, src_349.</li>
+<li>Pump / memecoin: src_350, src_351, src_352, src_353, src_354, src_355.</li>
+<li>Clanker / Flaunch / risk: src_356, src_357, src_358, src_359, src_360, src_361, src_362, src_363.</li>
+<li>Historical/follow-on counterchecks: src_364, src_365, src_366, src_367, src_368, src_369, src_370, src_371.</li>
+</ul></article>
+    </main>
+    <footer>
+      <span>research_only=true</span>
+      <span>strategy_consumption_allowed=false</span>
+      <span>order_input=false</span>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,654 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex,nofollow,noarchive" />
+    <meta name="theme-color" content="#090c0e" />
+    <title>claim_ledger.jsonl · GIWA Control Room</title>
+    <link rel="stylesheet" href="../../../../assets/document.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#document">본문으로 바로가기</a>
+    <header class="document-header">
+      <a class="brand" href="../../../../index.html#research" aria-label="GIWA 대시보드로 돌아가기">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span><strong>GIWA</strong><small>CONTROL ROOM</small></span>
+      </a>
+      <nav aria-label="문서 동작">
+        <a href="../../../../index.html#research">← 대시보드</a>
+        <a href="https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/RESEARCH/GIWA_simple_open_dex_volume_2026_20260903_132946/artifacts/claim_ledger.jsonl" target="_blank" rel="noopener noreferrer">Private GitHub ↗</a>
+      </nav>
+    </header>
+    <main id="document" class="document-shell">
+      <div class="document-meta">
+        <span>EVIDENCE LEDGER</span>
+        <span>SHA256 951fae36406a</span>
+      </div>
+      <h1>claim_ledger.jsonl</h1>
+      <p class="source-path">RESEARCH/GIWA_simple_open_dex_volume_2026_20260903_132946/artifacts/claim_ledger.jsonl</p>
+      <article class="structured-body"><div class="record-list"><details class="record" open><summary><span>001</span>Record 1</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_301&quot;,
+  &quot;text&quot;: &quot;2026-09-03 현재 GIWA의 공개 생산 환경은 아직 준비 단계이며, 공식적으로 연결 가능한 공개망은 chain ID 91342의 GIWA Sepolia이고 GIWA Wallet도 개발 중이다.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;descriptive&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_201&quot;,
+    &quot;src_202&quot;
+  ],
+  &quot;counter_search&quot;: &quot;공개 mainnet RPC, explorer, chain configuration, wallet release와 official launch announcement를 공식 문서와 저장소에서 역검색했으나 개발 중 표기와 Sepolia 범위만 확인했다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>002</span>Record 2</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_302&quot;,
+  &quot;text&quot;: &quot;공개 mainnet과 issuer-backed stable quote asset이 없으므로 현재 GIWA에서 검증 가능한 real-value order flow는 없다는 것이 합리적 추론이며, 이는 MetaMask를 통한 Sepolia 테스트 접근이 불가능하다는 뜻은 아니다.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;causal&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_201&quot;,
+    &quot;src_209&quot;,
+    &quot;src_215&quot;,
+    &quot;src_216&quot;
+  ],
+  &quot;counter_search&quot;: &quot;실가치 mainnet, canonical USDC 또는 다른 issuer-backed stablecoin, production aggregator route를 공식 GIWA·Circle·LI.FI 표면에서 찾았으나 확인되지 않았다. 테스트넷 접근성과 실거래 분배를 분리했다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>003</span>Record 3</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_303&quot;,
+  &quot;text&quot;: &quot;GIWA DEX의 실제 배포 가능성보다 더 큰 선행조건은 bridge·wallet·anchor asset·external router의 유통 경로이며, GASOK의 GIWA Wallet 인앱 기회는 보장이 아니라 조건부 프로그램 혜택이다.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;causal&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_203&quot;,
+    &quot;src_208&quot;,
+    &quot;src_216&quot;,
+    &quot;src_217&quot;
+  ],
+  &quot;counter_search&quot;: &quot;wallet listing 또는 aggregator integration이 자동으로 제공된다는 공식 계약·지원표를 검색했으나 GASOK는 opportunity로 표현하고 외부 routing 표면에는 GIWA가 없었다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>004</span>Record 4</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_304&quot;,
+  &quot;text&quot;: &quot;GIWA Sepolia의 swap 시장은 비어 있지 않으며 GIWATER, Joseon.fun, Ammora와 별도 V3형 transaction이 관찰되지만, 모두 testnet 활동이므로 공식 mainnet DEX·감사·실수요로 확대하면 안 된다.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;descriptive&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_209&quot;,
+    &quot;src_211&quot;,
+    &quot;src_212&quot;,
+    &quot;src_213&quot;,
+    &quot;src_214&quot;
+  ],
+  &quot;counter_search&quot;: &quot;단순 홍보 페이지뿐인지 앱, API와 explorer를 대조했고 성공 test transaction과 write-enabled surfaces를 확인했다. 실가치·공식성·감사는 별도 증거가 없어 제한했다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>005</span>Record 5</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_305&quot;,
+  &quot;text&quot;: &quot;최근 GASOK 관련 이름 목록은 공식 최종 roster가 아니라 project self-claim과 community aggregation이며, 파트너 탐색용 lead로는 쓸 수 있지만 GIWA 승인이나 Upbit listing signal로 취급할 수 없다.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;descriptive&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_208&quot;,
+    &quot;src_210&quot;
+  ],
+  &quot;counter_search&quot;: &quot;이름별 공식 GIWA roster와 Upbit 연계 문구를 찾았으나 공식 페이지는 selection과 listing을 분리하고 community directory는 비공식성을 스스로 경고한다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>006</span>Record 6</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_306&quot;,
+  &quot;text&quot;: &quot;2026-09-03 현재 canonical Uniswap registry와 Trading API chain table에는 GIWA 또는 91342가 없으므로 Uniswap이 GIWA 배포를 준비 중이라고 확인할 수 없다.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;descriptive&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_201&quot;,
+    &quot;src_218&quot;,
+    &quot;src_220&quot;,
+    &quot;src_245&quot;
+  ],
+  &quot;counter_search&quot;: &quot;official deployment registry, API support table, governance path와 strategy post에서 GIWA·91342를 역검색했다. 일반 확장 전략은 있으나 GIWA별 proposal, schedule 또는 engineering commitment가 없었다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>007</span>Record 7</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_307&quot;,
+  &quot;text&quot;: &quot;canonical Uniswap v2/v3 recognition은 governance process를 거치며 app.uniswap.org와 Trading API 지원은 별도 결정이므로 canonical status만으로 user interface와 order flow가 자동 제공되지 않는다.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;causal&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_219&quot;,
+    &quot;src_220&quot;,
+    &quot;src_227&quot;
+  ],
+  &quot;counter_search&quot;: &quot;governance approval이 Labs frontend·API·route inclusion을 강제하는지 공식 guideline과 routing 문서를 확인했으나 각각 별도 지원 판단과 live liquidity dependence를 설명한다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>008</span>Record 8</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_308&quot;,
+  &quot;text&quot;: &quot;독립 DEX가 Uniswap v2 또는 v3 코드를 수정·배포할 때는 해당 GPL 조건을 지키고 독립 brand를 사용해야 하며, source license가 official Uniswap 명칭·감사·유동성을 승계시키지는 않는다.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;legal&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_222&quot;,
+    &quot;src_225&quot;,
+    &quot;src_246&quot;
+  ],
+  &quot;counter_search&quot;: &quot;v2와 v3 code license가 독립 배포와 Uniswap trademark 사용까지 한 번에 허가하는지 확인했다. GPL code permissions와 trademark·canonical recognition은 분리돼 있었다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>009</span>Record 9</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_309&quot;,
+  &quot;text&quot;: &quot;GIWA처럼 초기 capital이 희소하고 best-price routing 경쟁이 중요한 시장에서는 full-range v2보다 v3-compatible concentrated liquidity가 같은 nominal capital을 intended price range에 집중시킬 수 있어 volume-first 기본안에 더 적합하다.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;causal&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_221&quot;,
+    &quot;src_223&quot;,
+    &quot;src_224&quot;,
+    &quot;src_230&quot;
+  ],
+  &quot;counter_search&quot;: &quot;v2 단순성이 초기 거래량에 더 유리한지 대조했다. full-range passive 운영은 간단하지만 v3는 range 내 effective depth를 높이고, 대신 active management와 risk가 커지는 tradeoff가 확인됐다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>010</span>Record 10</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_310&quot;,
+  &quot;text&quot;: &quot;concentrated-liquidity fee income은 수익 보장이 아니며 range 이탈, predictable loss, rebalancing·gas와 volatility risk를 차감한 순손익으로 평가해야 한다.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;causal&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_223&quot;,
+    &quot;src_224&quot;,
+    &quot;src_230&quot;,
+    &quot;src_231&quot;
+  ],
+  &quot;counter_search&quot;: &quot;v3의 높은 capital efficiency가 LP 순이익을 자동 보장하는지 공식 mechanics와 독립 연구를 대조했다. position complexity, concentration risk와 평균 손실 사례가 반증으로 남는다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>011</span>Record 11</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_311&quot;,
+  &quot;text&quot;: &quot;권고 제품은 trader-facing UI를 단순화한 independent v3-compatible venue이되, immutable non-upgradeable core, 제한된 fee tiers, self-managed LP positions와 공개 contract·fee recipient만 포함하고 vault·keeper·managed yield를 제외하는 것이다.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;causal&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_211&quot;,
+    &quot;src_224&quot;,
+    &quot;src_231&quot;,
+    &quot;src_234&quot;,
+    &quot;src_243&quot;
+  ],
+  &quot;counter_search&quot;: &quot;generic v2, managed LP vault, hook-heavy design, gauge system을 비교했다. v3형 기술은 testnet에서 가능하지만 관리형 자금과 admin control은 기술·법률 위험을 확대하므로 최소 core와 self-managed positions로 제한했다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>012</span>Record 12</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_312&quot;,
+  &quot;text&quot;: &quot;v2-style AMM은 GPL-3.0 기반의 단순한 contingency와 test reference로는 유용하지만, scarce liquidity를 전 가격구간에 분산하므로 volume-first production 기본안으로는 후순위다.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;causal&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_221&quot;,
+    &quot;src_222&quot;,
+    &quot;src_223&quot;,
+    &quot;src_230&quot;
+  ],
+  &quot;counter_search&quot;: &quot;v2가 코드와 LP UX 단순성만으로 v3보다 좋은 실행가격을 만드는지 검토했다. passive simplicity는 확인되지만 capital concentration 기능은 없었다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>013</span>Record 13</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_313&quot;,
+  &quot;text&quot;: &quot;Aerodrome식 emission·gauge·vote incentive는 유동성 부트스트랩 메커니즘을 보여 주지만 token·governance·incentive budget을 추가하고, 높은 reported volume이나 TVL만으로 지속 가능한 organic unit economics를 입증하지 않는다.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;causal&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_228&quot;,
+    &quot;src_229&quot;,
+    &quot;src_233&quot;
+  ],
+  &quot;counter_search&quot;: &quot;emissions가 자동으로 retained volume과 profit을 만드는지 공식 mechanism, dynamic third-party telemetry와 incentive persistence analysis를 비교했다. liquidity 감소와 causal uncertainty가 확인됐다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>014</span>Record 14</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_314&quot;,
+  &quot;text&quot;: &quot;aggregator와 wallet은 best net price, route availability와 execution success를 기준으로 order flow를 보내므로 open source나 first-mover label보다 anchor pool depth, standard interfaces와 integration package가 중요하다.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;causal&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_216&quot;,
+    &quot;src_217&quot;,
+    &quot;src_220&quot;,
+    &quot;src_227&quot;
+  ],
+  &quot;counter_search&quot;: &quot;canonical label 또는 공개 source만으로 router inclusion이 생기는지 확인했으나 official aggregator documentation은 supported chain, liquidity sources, quotes와 execution conditions를 요구한다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>015</span>Record 15</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_315&quot;,
+  &quot;text&quot;: &quot;GIWA에서 반복 가능한 volume source의 우선순위는 canonical stablecoin-WETH corridor, project treasury·utility conversion, wallet or partner embedded swaps, external arbitrage와 aggregator routes이며 meme-to-meme pool 수를 늘리는 것은 liquidity fragmentation을 키운다.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;causal&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_201&quot;,
+    &quot;src_208&quot;,
+    &quot;src_215&quot;,
+    &quot;src_217&quot;,
+    &quot;src_221&quot;,
+    &quot;src_227&quot;
+  ],
+  &quot;counter_search&quot;: &quot;많은 permissionless pools 자체가 volume을 만든다는 가정을 AMM pricing과 routing 문서에 대조했다. routes는 execution price와 liquidity에 의존하고 GIWA에는 아직 canonical quote asset이 없었다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>016</span>Record 16</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_316&quot;,
+  &quot;text&quot;: &quot;organic volume은 related-wallet round trips, faucet or mock assets, incentive farming과 self-routing을 제외하고 funded independent traders, repeat rate, partner·external-router share, price impact, volume-to-real-TVL, fee-to-incentive ratio와 retained depth로 측정해야 한다.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;causal&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_229&quot;,
+    &quot;src_232&quot;,
+    &quot;src_233&quot;,
+    &quot;src_239&quot;,
+    &quot;src_240&quot;
+  ],
+  &quot;counter_search&quot;: &quot;raw volume, transaction count와 TVL이 유기적 수요의 충분조건인지 dynamic dataset, wash-trading research, liquidity-mining analysis와 enforcement case를 대조했고 조작·보상·관련지갑 교란을 확인했다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>017</span>Record 17</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_317&quot;,
+  &quot;text&quot;: &quot;DEX revenue는 gross volume이 아니라 각 수취인의 effective take rate로 계산해야 하며, v2 예시에서 30bp LP fee와 enabled 5bp protocol share는 다른 수취 흐름이고 LP fee도 active-liquidity share와 LP 손익을 반영해야 한다.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;numeric&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_221&quot;,
+    &quot;src_226&quot;,
+    &quot;src_231&quot;
+  ],
+  &quot;counter_search&quot;: &quot;모든 pool fee가 team revenue인지, network gas가 추가 매출인지와 LP gross fee가 순이익인지 검토했다. 공식 fee 구조와 독립 LP 연구가 이를 각각 반박했다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>018</span>Record 18</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_318&quot;,
+  &quot;text&quot;: &quot;GIWA user가 지불하는 execution·security gas는 chain fee-vault 경로이며 dapp이 transaction을 만들었다는 이유만으로 team revenue가 되지 않으므로 LP, protocol, interface와 fixed service fee를 분리 고지해야 한다.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;causal&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_207&quot;,
+    &quot;src_226&quot;,
+    &quot;src_247&quot;
+  ],
+  &quot;counter_search&quot;: &quot;application 또는 router가 OP Stack gas를 자동 공유받는 메커니즘을 GIWA와 OP Stack fee 문서에서 찾았으나 chain-configured vault와 recipient만 확인했다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>019</span>Record 19</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_319&quot;,
+  &quot;text&quot;: &quot;대한민국 VASP 정의는 가상자산 매매·교환뿐 아니라 그 중개·알선·대행 영업을 포함하고, 해당 사업자 또는 운영 예정자는 FIU 신고 의무를 검토해야 한다.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;legal&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_234&quot;,
+    &quot;src_235&quot;,
+    &quot;src_236&quot;,
+    &quot;src_237&quot;,
+    &quot;src_244&quot;
+  ],
+  &quot;counter_search&quot;: &quot;비수탁 smart contract 또는 frontend가 명칭만으로 현행 신고 의무에서 일괄 제외되는지 조문, 판례와 FIU 자료를 검색했으나 직접 safe harbor를 찾지 못했다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>020</span>Record 20</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_320&quot;,
+  &quot;text&quot;: &quot;team의 own-capital LP는 대법원의 자기 계산·자기 이익 원칙상 고객을 위해 거래하고 보수를 받는 구조보다 상대적으로 방어적이지만, AMM LP 직접 판례가 아니며 team이 UI·admin·fee를 함께 통제하면 이 설명은 약해진다.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;legal&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_231&quot;,
+    &quot;src_235&quot;,
+    &quot;src_243&quot;
+  ],
+  &quot;counter_search&quot;: &quot;자체자금 AMM LP의 확정 한국 판례와 자동 면제를 찾았으나 없었다. 중앙화 거래소 일반 이용자에 관한 own-account 원칙만 확인돼 Amber로 제한했다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>021</span>Record 21</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_321&quot;,
+  &quot;text&quot;: &quot;open-source, immutable 또는 non-custodial이라는 기술 속성만으로 한국 VASP 면제가 확정되지 않으며 실제 UI, routing, admin key, fee recipient, customer convenience와 계속·반복 영업 사실을 함께 봐야 한다.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;legal&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_234&quot;,
+    &quot;src_235&quot;,
+    &quot;src_238&quot;,
+    &quot;src_243&quot;
+  ],
+  &quot;counter_search&quot;: &quot;모든 software provider가 VASP라는 반대 단정도 검색했다. 단순 P2P·wallet platform과 underlying software의 비사업자 가능성이 있어 기능·통제 중심의 조건부 판단으로 제한했다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>022</span>Record 22</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_322&quot;,
+  &quot;text&quot;: &quot;team treasury로 흐르는 protocol fee switch, Korean-facing interface fee, paid router or referral, admin-controlled pooled LP vault는 중개·영업성과 통제를 결합하므로 신고 수리 또는 역할이 분리된 구조와 서면 법률의견 전에는 비활성화해야 한다.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;legal&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_226&quot;,
+    &quot;src_234&quot;,
+    &quot;src_235&quot;,
+    &quot;src_237&quot;,
+    &quot;src_243&quot;,
+    &quot;src_244&quot;
+  ],
+  &quot;counter_search&quot;: &quot;각 fee 명칭, non-custody 또는 partner contract만으로 생기는 한국 면제를 법령·판례·FIU guidance에서 찾지 못했다. 구체 사실판단이 남아 출시 전 비활성화를 권고했다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>023</span>Record 23</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_323&quot;,
+  &quot;text&quot;: &quot;초기 DEX token, fee-share token과 team 귀속 transfer tax는 필요하지 않으며, 수익배분·buyback을 tokenholder return으로 약속하면 market-abuse와 investment-contract-security 위험을 추가한다.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;legal&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_205&quot;,
+    &quot;src_239&quot;,
+    &quot;src_240&quot;,
+    &quot;src_241&quot;,
+    &quot;src_242&quot;
+  ],
+  &quot;counter_search&quot;: &quot;meme·utility·governance 표기나 burn이 증권성·시장질서 규율을 자동 배제하는지 법령과 금융위 기준에서 찾았으나 실질 권리와 홍보가 핵심이었다. GIWA 자체 native token도 계획되지 않았다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>024</span>Record 24</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_324&quot;,
+  &quot;text&quot;: &quot;거래량 보상, team wallet 간 순환, 목표가격 유지, 숨은 buy or sell tax와 무기한 emissions는 organic demand를 만들지 않으며 시장질서 위험과 subsidy dependence를 키우므로 제외해야 한다.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;causal&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_228&quot;,
+    &quot;src_232&quot;,
+    &quot;src_233&quot;,
+    &quot;src_239&quot;,
+    &quot;src_240&quot;
+  ],
+  &quot;counter_search&quot;: &quot;volume mining과 emissions가 지속 수요를 입증하는지 연구·program analysis·공식 집행을 비교했다. wash classification, post-incentive decline와 API manipulation 사례가 반증했다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>025</span>Record 25</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_325&quot;,
+  &quot;text&quot;: &quot;상대적으로 방어적인 초기 수익 순서는 거래와 무관한 fixed B2B development·security·data service fee, written legal opinion 뒤 team own-capital LP fee, 필요한 신고·파트너 구조 뒤 protocol 또는 interface fee이며 fee switch를 먼저 켜는 순서가 아니다.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;legal&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_221&quot;,
+    &quot;src_226&quot;,
+    &quot;src_231&quot;,
+    &quot;src_235&quot;,
+    &quot;src_237&quot;,
+    &quot;src_243&quot;,
+    &quot;src_244&quot;
+  ],
+  &quot;counter_search&quot;: &quot;direct transaction fee가 가장 빠르고 법적으로 동일한지 검토했다. fee recipient, customer convenience, repeated compensation과 operational control이 위험을 높이므로 거래 외 고정서비스를 앞세웠다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>026</span>Record 26</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_326&quot;,
+  &quot;text&quot;: &quot;현재 파트너 탐색 우선순위는 launch inventory가 관찰된 Joseon.fun, Korean discovery surface의 Naru, meme inventory의 Kachi, offchain audience의 Islet, chat-wallet surface의 Flizy이고 SuperWalk는 장기 watchlist지만 어느 것도 mainnet order-flow commitment로 산입할 수 없다.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;causal&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_208&quot;,
+    &quot;src_210&quot;,
+    &quot;src_213&quot;,
+    &quot;src_248&quot;,
+    &quot;src_249&quot;,
+    &quot;src_250&quot;,
+    &quot;src_251&quot;,
+    &quot;src_252&quot;
+  ],
+  &quot;counter_search&quot;: &quot;각 project의 real-money contract, funded users, written router integration과 official final selection을 찾았으나 test/demo/self-report 또는 offchain audience뿐이었다. 이름은 outreach lead로만 분류했다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>027</span>Record 27</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_327&quot;,
+  &quot;text&quot;: &quot;launch pair는 WETH와 issuer or canonical bridge가 검증된 stablecoin 한 corridor를 먼저 만들고 project token은 그 quote asset에 연결해야 하며, mock USDC나 oracle feed를 settlement asset으로 취급하면 안 된다.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;causal&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_204&quot;,
+    &quot;src_215&quot;,
+    &quot;src_221&quot;,
+    &quot;src_227&quot;
+  ],
+  &quot;counter_search&quot;: &quot;현재 mock token 또는 price feed가 redeemable canonical stablecoin인지 공식 contract registry와 issuer registry에서 확인했으나 GIWA entry가 없었다. first-liquidity pricing과 fragmentation risk를 반영했다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>028</span>Record 28</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_328&quot;,
+  &quot;text&quot;: &quot;real-money launch hard gates는 public mainnet, canonical quote asset and bridge, two production RPC paths, independent audit, at least two written distribution integrations, target-order execution quality, source verification와 Korean role-and-fee legal opinion이다.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;causal&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_201&quot;,
+    &quot;src_203&quot;,
+    &quot;src_204&quot;,
+    &quot;src_215&quot;,
+    &quot;src_217&quot;,
+    &quot;src_219&quot;,
+    &quot;src_231&quot;,
+    &quot;src_234&quot;,
+    &quot;src_244&quot;
+  ],
+  &quot;counter_search&quot;: &quot;이 중 하나 없이도 organic volume과 compliant operations를 확정할 수 있는지 공식 chain, market infrastructure, LP risk와 legal sources를 대조했다. 현시점에는 핵심 전제 다수가 미충족이다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>029</span>Record 29</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_329&quot;,
+  &quot;text&quot;: &quot;90-day scale decision은 organic volume, repeat traders, external-route share, price impact, retained depth와 net contribution margin을 함께 보며, subsidy 제거 뒤 liquidity or volume collapse, related-wallet concentration, no external routes, audit or legal failure 중 하나면 중단해야 한다.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;causal&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_229&quot;,
+    &quot;src_230&quot;,
+    &quot;src_231&quot;,
+    &quot;src_232&quot;,
+    &quot;src_233&quot;,
+    &quot;src_239&quot;
+  ],
+  &quot;counter_search&quot;: &quot;gross volume 또는 TVL 하나만으로 scale 여부를 판정하는 접근을 반증 검색했다. LP loss, wash classification, incentive persistence와 법정 금지선 때문에 다중 지표와 kill criteria가 필요했다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>030</span>Record 30</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_330&quot;,
+  &quot;text&quot;: &quot;canonical Uniswap이 GIWA에서 wallet·API·liquidity와 함께 확정되면 같은 pair의 독립 core로 유동성을 쪼개지 말고 integration·partner routing과 team own-liquidity route로 pivot하며, 그런 distribution package가 없으면 independent minimal v3 venue를 조건부로 추진한다.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;causal&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_201&quot;,
+    &quot;src_218&quot;,
+    &quot;src_219&quot;,
+    &quot;src_220&quot;,
+    &quot;src_227&quot;,
+    &quot;src_231&quot;
+  ],
+  &quot;counter_search&quot;: &quot;canonical deployment와 independent fork를 동시에 밀어 liquidity를 분할하는 편이 유리한지 검토했다. routing은 best execution과 supported liquidity에 의존하므로 동일 pair fragmentation을 피하는 조건부 decision tree가 우세했다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>031</span>Record 31</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_331&quot;,
+  &quot;text&quot;: &quot;minimum user surface는 add network or connect wallet, verified token address, quote, route, LP·protocol·interface·gas fee split, price impact, slippage, minimum received, approve and swap, add or remove liquidity, pool reserves와 explorer links이며 chart·farm·referral·bridge·limit order는 초기 범위가 아니다.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;causal&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_203&quot;,
+    &quot;src_217&quot;,
+    &quot;src_220&quot;,
+    &quot;src_221&quot;,
+    &quot;src_226&quot;,
+    &quot;src_227&quot;
+  ],
+  &quot;counter_search&quot;: &quot;화려한 charts, farms와 cross-chain UX가 initial volume의 필수조건인지 검토했다. core safety, quote execution, fee visibility와 supported route가 먼저이며 부가기능은 attack surface와 scope를 늘린다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>032</span>Record 32</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_332&quot;,
+  &quot;text&quot;: &quot;DEX contract가 permissionless and non-custodial이어도 GIWA는 현재 sequencer와 permissioned dispute-game contract를 포함한 별도 trust layer가 있고 hosted UI도 운영 주체가 있으므로 제품을 완전 탈중앙화라고 무조건 표현하면 안 된다.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;descriptive&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_204&quot;,
+    &quot;src_206&quot;,
+    &quot;src_243&quot;
+  ],
+  &quot;counter_search&quot;: &quot;GIWA와 frontend에 운영·통제 지점이 전혀 없는지 공식 contract·architecture 문서와 functional-control guidance를 확인했다. sequencer, permissioned dispute game과 operator surface가 남는다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>033</span>Record 33</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_333&quot;,
+  &quot;text&quot;: &quot;Uniswap의 general expansion and liquidity-bootstrapping strategy는 GIWA proposal을 보낼 논리는 제공하지만 GIWA-specific deployment, grant, integration or launch date의 증거는 아니다.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;causal&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_201&quot;,
+    &quot;src_218&quot;,
+    &quot;src_219&quot;,
+    &quot;src_220&quot;,
+    &quot;src_245&quot;
+  ],
+  &quot;counter_search&quot;: &quot;일반 strategy post가 GIWA 일정이나 partnership을 명시하는지 registry, API and governance surfaces와 대조했고 GIWA-specific evidence를 찾지 못했다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>034</span>Record 34</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_u01&quot;,
+  &quot;text&quot;: &quot;공개일&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;descriptive&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_201&quot;,
+    &quot;src_202&quot;
+  ],
+  &quot;counter_search&quot;: &quot;미확정 가설은 GIWA public mainnet의 exact launch date다. 공식 문서와 repository에는 under development만 있고 확정일이 없다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: true,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>035</span>Record 35</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_u02&quot;,
+  &quot;text&quot;: &quot;기준자산&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;descriptive&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_201&quot;,
+    &quot;src_204&quot;,
+    &quot;src_215&quot;
+  ],
+  &quot;counter_search&quot;: &quot;미확정 가설은 GIWA mainnet의 canonical stablecoin issuer, address and bridge route다. testnet WETH는 있으나 Circle-issued USDC 또는 production quote asset은 미공개다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: true,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>036</span>Record 36</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_u03&quot;,
+  &quot;text&quot;: &quot;월렛계약&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;descriptive&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_201&quot;,
+    &quot;src_208&quot;,
+    &quot;src_216&quot;,
+    &quot;src_217&quot;
+  ],
+  &quot;counter_search&quot;: &quot;미확정 가설은 GIWA Wallet의 default DEX, integration contract와 external aggregator launch support다. 공식 문구는 development와 conditional opportunity뿐이다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: true,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>037</span>Record 37</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_u04&quot;,
+  &quot;text&quot;: &quot;면제선&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;legal&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_234&quot;,
+    &quot;src_235&quot;,
+    &quot;src_237&quot;,
+    &quot;src_238&quot;,
+    &quot;src_243&quot;
+  ],
+  &quot;counter_search&quot;: &quot;미확정 가설은 immutable AMM, own LP 또는 no-fee frontend의 정확한 Korean VASP boundary다. DEX-specific safe harbor나 direct AMM LP judgment를 찾지 못해 구조별 서면 의견이 필요하다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: true,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>038</span>Record 38</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_r01&quot;,
+  &quot;text&quot;: &quot;첫스왑&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;descriptive&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_211&quot;,
+    &quot;src_212&quot;,
+    &quot;src_213&quot;,
+    &quot;src_214&quot;
+  ],
+  &quot;counter_search&quot;: &quot;GIWA Sepolia에 swap activity가 전혀 없다는 가정은 성공 V3-like transaction과 여러 test applications에 의해 반박됐다.&quot;,
+  &quot;counter_refuted&quot;: true,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>039</span>Record 39</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_r02&quot;,
+  &quot;text&quot;: &quot;소스면제&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;legal&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_234&quot;,
+    &quot;src_235&quot;,
+    &quot;src_238&quot;,
+    &quot;src_243&quot;
+  ],
+  &quot;counter_search&quot;: &quot;open-source and non-custodial label이 VASP를 자동 면제한다는 가정은 function, business, compensation and control 중심의 법령·판례·guidance와 맞지 않는다.&quot;,
+  &quot;counter_refuted&quot;: true,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>040</span>Record 40</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_r03&quot;,
+  &quot;text&quot;: &quot;보상지속&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;causal&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_228&quot;,
+    &quot;src_229&quot;,
+    &quot;src_232&quot;,
+    &quot;src_233&quot;
+  ],
+  &quot;counter_search&quot;: &quot;token emissions와 raw TVL이 retained organic volume을 자동 보장한다는 가정은 post-incentive decline, wash classification과 metric limits로 반박됐다.&quot;,
+  &quot;counter_refuted&quot;: true,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details></div></article>
+    </main>
+    <footer>
+      <span>research_only=true</span>
+      <span>strategy_consumption_allowed=false</span>
+      <span>order_input=false</span>
+    </footer>
+  </body>
+</html>

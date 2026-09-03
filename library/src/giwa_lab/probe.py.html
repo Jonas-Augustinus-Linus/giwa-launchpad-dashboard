@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex,nofollow,noarchive" />
+    <meta name="theme-color" content="#090c0e" />
+    <title>probe.py · GIWA Control Room</title>
+    <link rel="stylesheet" href="../../../assets/document.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#document">본문으로 바로가기</a>
+    <header class="document-header">
+      <a class="brand" href="../../../index.html#research" aria-label="GIWA 대시보드로 돌아가기">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span><strong>GIWA</strong><small>CONTROL ROOM</small></span>
+      </a>
+      <nav aria-label="문서 동작">
+        <a href="../../../index.html#research">← 대시보드</a>
+        <a href="https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/src/giwa_lab/probe.py" target="_blank" rel="noopener noreferrer">Private GitHub ↗</a>
+      </nav>
+    </header>
+    <main id="document" class="document-shell">
+      <div class="document-meta">
+        <span>SOURCE CODE</span>
+        <span>SHA256 a5c93137cd37</span>
+      </div>
+      <h1>probe.py</h1>
+      <p class="source-path">src/giwa_lab/probe.py</p>
+      <article class="code-body"><pre class="source-code"><span class="code-line"><i>1</i><code>&quot;&quot;&quot;Read-only GIWA Sepolia liveness and bytecode probe.&quot;&quot;&quot;</code></span>
+<span class="code-line"><i>2</i><code></code></span>
+<span class="code-line"><i>3</i><code>from __future__ import annotations</code></span>
+<span class="code-line"><i>4</i><code></code></span>
+<span class="code-line"><i>5</i><code>import argparse</code></span>
+<span class="code-line"><i>6</i><code>import json</code></span>
+<span class="code-line"><i>7</i><code>import re</code></span>
+<span class="code-line"><i>8</i><code>from datetime import datetime, timezone</code></span>
+<span class="code-line"><i>9</i><code>from typing import Any, Protocol</code></span>
+<span class="code-line"><i>10</i><code></code></span>
+<span class="code-line"><i>11</i><code>from .constants import DEFAULT_RPC_URL, GIWA_SEPOLIA_CHAIN_ID</code></span>
+<span class="code-line"><i>12</i><code>from .rpc import JsonRpcClient, RpcResponseError, RpcSafetyError</code></span>
+<span class="code-line"><i>13</i><code></code></span>
+<span class="code-line"><i>14</i><code>ADDRESS_RE = re.compile(r&quot;^0x[0-9a-fA-F]{40}$&quot;)</code></span>
+<span class="code-line"><i>15</i><code></code></span>
+<span class="code-line"><i>16</i><code></code></span>
+<span class="code-line"><i>17</i><code>class RpcLike(Protocol):</code></span>
+<span class="code-line"><i>18</i><code>    def request(self, method: str, params: list[Any] | None = None) -&gt; Any: ...</code></span>
+<span class="code-line"><i>19</i><code></code></span>
+<span class="code-line"><i>20</i><code></code></span>
+<span class="code-line"><i>21</i><code>def _hex_int(value: Any, field: str) -&gt; int:</code></span>
+<span class="code-line"><i>22</i><code>    if not isinstance(value, str) or not value.startswith(&quot;0x&quot;):</code></span>
+<span class="code-line"><i>23</i><code>        raise RpcResponseError(f&quot;{field} is not a hexadecimal quantity&quot;)</code></span>
+<span class="code-line"><i>24</i><code>    try:</code></span>
+<span class="code-line"><i>25</i><code>        return int(value, 16)</code></span>
+<span class="code-line"><i>26</i><code>    except ValueError as exc:</code></span>
+<span class="code-line"><i>27</i><code>        raise RpcResponseError(f&quot;{field} is not a valid hexadecimal quantity&quot;) from exc</code></span>
+<span class="code-line"><i>28</i><code></code></span>
+<span class="code-line"><i>29</i><code></code></span>
+<span class="code-line"><i>30</i><code>def collect_probe(client: RpcLike, addresses: list[str] | None = None) -&gt; dict[str, Any]:</code></span>
+<span class="code-line"><i>31</i><code>    chain_id = _hex_int(client.request(&quot;eth_chainId&quot;), &quot;chain_id&quot;)</code></span>
+<span class="code-line"><i>32</i><code>    if chain_id != GIWA_SEPOLIA_CHAIN_ID:</code></span>
+<span class="code-line"><i>33</i><code>        raise RpcSafetyError(</code></span>
+<span class="code-line"><i>34</i><code>            f&quot;refusing non-GIWA-Sepolia chain: expected {GIWA_SEPOLIA_CHAIN_ID}, got {chain_id}&quot;</code></span>
+<span class="code-line"><i>35</i><code>        )</code></span>
+<span class="code-line"><i>36</i><code></code></span>
+<span class="code-line"><i>37</i><code>    block_number = _hex_int(client.request(&quot;eth_blockNumber&quot;), &quot;block_number&quot;)</code></span>
+<span class="code-line"><i>38</i><code>    block = client.request(&quot;eth_getBlockByNumber&quot;, [hex(block_number), False])</code></span>
+<span class="code-line"><i>39</i><code>    if not isinstance(block, dict):</code></span>
+<span class="code-line"><i>40</i><code>        raise RpcResponseError(&quot;latest block result is not an object&quot;)</code></span>
+<span class="code-line"><i>41</i><code></code></span>
+<span class="code-line"><i>42</i><code>    checked_addresses: dict[str, dict[str, Any]] = {}</code></span>
+<span class="code-line"><i>43</i><code>    for address in addresses or []:</code></span>
+<span class="code-line"><i>44</i><code>        if not ADDRESS_RE.fullmatch(address):</code></span>
+<span class="code-line"><i>45</i><code>            raise RpcSafetyError(f&quot;invalid EVM address: {address}&quot;)</code></span>
+<span class="code-line"><i>46</i><code>        code = client.request(&quot;eth_getCode&quot;, [address, &quot;latest&quot;])</code></span>
+<span class="code-line"><i>47</i><code>        if not isinstance(code, str) or not code.startswith(&quot;0x&quot;):</code></span>
+<span class="code-line"><i>48</i><code>            raise RpcResponseError(f&quot;invalid bytecode response for {address}&quot;)</code></span>
+<span class="code-line"><i>49</i><code>        checked_addresses[address] = {</code></span>
+<span class="code-line"><i>50</i><code>            &quot;has_code&quot;: code not in {&quot;0x&quot;, &quot;0x0&quot;},</code></span>
+<span class="code-line"><i>51</i><code>            &quot;bytecode_bytes&quot;: max(0, (len(code) - 2) // 2),</code></span>
+<span class="code-line"><i>52</i><code>        }</code></span>
+<span class="code-line"><i>53</i><code></code></span>
+<span class="code-line"><i>54</i><code>    timestamp = _hex_int(block.get(&quot;timestamp&quot;), &quot;block.timestamp&quot;)</code></span>
+<span class="code-line"><i>55</i><code>    return {</code></span>
+<span class="code-line"><i>56</i><code>        &quot;observed_at&quot;: datetime.now(timezone.utc).isoformat(),</code></span>
+<span class="code-line"><i>57</i><code>        &quot;network&quot;: &quot;GIWA Sepolia&quot;,</code></span>
+<span class="code-line"><i>58</i><code>        &quot;chain_id&quot;: chain_id,</code></span>
+<span class="code-line"><i>59</i><code>        &quot;client_version&quot;: client.request(&quot;web3_clientVersion&quot;),</code></span>
+<span class="code-line"><i>60</i><code>        &quot;syncing&quot;: client.request(&quot;eth_syncing&quot;),</code></span>
+<span class="code-line"><i>61</i><code>        &quot;block_number&quot;: block_number,</code></span>
+<span class="code-line"><i>62</i><code>        &quot;block_timestamp&quot;: datetime.fromtimestamp(timestamp, timezone.utc).isoformat(),</code></span>
+<span class="code-line"><i>63</i><code>        &quot;transaction_count&quot;: len(block.get(&quot;transactions&quot;, [])),</code></span>
+<span class="code-line"><i>64</i><code>        &quot;addresses&quot;: checked_addresses,</code></span>
+<span class="code-line"><i>65</i><code>        &quot;research_only&quot;: True,</code></span>
+<span class="code-line"><i>66</i><code>        &quot;strategy_consumption_allowed&quot;: False,</code></span>
+<span class="code-line"><i>67</i><code>        &quot;order_input&quot;: False,</code></span>
+<span class="code-line"><i>68</i><code>        &quot;interpretation_warning&quot;: &quot;Testnet activity is not evidence of users, adoption, or value.&quot;,</code></span>
+<span class="code-line"><i>69</i><code>    }</code></span>
+<span class="code-line"><i>70</i><code></code></span>
+<span class="code-line"><i>71</i><code></code></span>
+<span class="code-line"><i>72</i><code>def build_parser() -&gt; argparse.ArgumentParser:</code></span>
+<span class="code-line"><i>73</i><code>    parser = argparse.ArgumentParser(description=__doc__)</code></span>
+<span class="code-line"><i>74</i><code>    parser.add_argument(&quot;--rpc&quot;, default=DEFAULT_RPC_URL, help=&quot;HTTPS GIWA Sepolia RPC URL&quot;)</code></span>
+<span class="code-line"><i>75</i><code>    parser.add_argument(&quot;--address&quot;, action=&quot;append&quot;, default=[], help=&quot;contract address to inspect&quot;)</code></span>
+<span class="code-line"><i>76</i><code>    return parser</code></span>
+<span class="code-line"><i>77</i><code></code></span>
+<span class="code-line"><i>78</i><code></code></span>
+<span class="code-line"><i>79</i><code>def main() -&gt; int:</code></span>
+<span class="code-line"><i>80</i><code>    args = build_parser().parse_args()</code></span>
+<span class="code-line"><i>81</i><code>    try:</code></span>
+<span class="code-line"><i>82</i><code>        result = collect_probe(JsonRpcClient(args.rpc), args.address)</code></span>
+<span class="code-line"><i>83</i><code>    except (RpcSafetyError, RpcResponseError) as exc:</code></span>
+<span class="code-line"><i>84</i><code>        print(json.dumps({&quot;ok&quot;: False, &quot;error&quot;: str(exc)}, ensure_ascii=False))</code></span>
+<span class="code-line"><i>85</i><code>        return 2</code></span>
+<span class="code-line"><i>86</i><code>    print(json.dumps({&quot;ok&quot;: True, **result}, ensure_ascii=False, indent=2, sort_keys=True))</code></span>
+<span class="code-line"><i>87</i><code>    return 0</code></span>
+<span class="code-line"><i>88</i><code></code></span>
+<span class="code-line"><i>89</i><code></code></span>
+<span class="code-line"><i>90</i><code>if __name__ == &quot;__main__&quot;:</code></span>
+<span class="code-line"><i>91</i><code>    raise SystemExit(main())</code></span></pre></article>
+    </main>
+    <footer>
+      <span>research_only=true</span>
+      <span>strategy_consumption_allowed=false</span>
+      <span>order_input=false</span>
+    </footer>
+  </body>
+</html>

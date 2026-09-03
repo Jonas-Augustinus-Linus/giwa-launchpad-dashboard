@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex,nofollow,noarchive" />
+    <meta name="theme-color" content="#090c0e" />
+    <title>inventory.py · GIWA Control Room</title>
+    <link rel="stylesheet" href="../../../assets/document.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#document">본문으로 바로가기</a>
+    <header class="document-header">
+      <a class="brand" href="../../../index.html#research" aria-label="GIWA 대시보드로 돌아가기">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span><strong>GIWA</strong><small>CONTROL ROOM</small></span>
+      </a>
+      <nav aria-label="문서 동작">
+        <a href="../../../index.html#research">← 대시보드</a>
+        <a href="https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/src/giwa_lab/inventory.py" target="_blank" rel="noopener noreferrer">Private GitHub ↗</a>
+      </nav>
+    </header>
+    <main id="document" class="document-shell">
+      <div class="document-meta">
+        <span>SOURCE CODE</span>
+        <span>SHA256 fbdce4c0ff0c</span>
+      </div>
+      <h1>inventory.py</h1>
+      <p class="source-path">src/giwa_lab/inventory.py</p>
+      <article class="code-body"><pre class="source-code"><span class="code-line"><i>1</i><code>&quot;&quot;&quot;Validation helpers for the evidence-backed ecosystem inventory.&quot;&quot;&quot;</code></span>
+<span class="code-line"><i>2</i><code></code></span>
+<span class="code-line"><i>3</i><code>from __future__ import annotations</code></span>
+<span class="code-line"><i>4</i><code></code></span>
+<span class="code-line"><i>5</i><code>import json</code></span>
+<span class="code-line"><i>6</i><code>from pathlib import Path</code></span>
+<span class="code-line"><i>7</i><code>from typing import Any</code></span>
+<span class="code-line"><i>8</i><code></code></span>
+<span class="code-line"><i>9</i><code>REQUIRED_SAFETY_FLAGS = {</code></span>
+<span class="code-line"><i>10</i><code>    &quot;research_only&quot;: True,</code></span>
+<span class="code-line"><i>11</i><code>    &quot;strategy_consumption_allowed&quot;: False,</code></span>
+<span class="code-line"><i>12</i><code>    &quot;order_input&quot;: False,</code></span>
+<span class="code-line"><i>13</i><code>}</code></span>
+<span class="code-line"><i>14</i><code>OFFICIALITY = {&quot;official&quot;, &quot;provider_reported&quot;, &quot;third_party&quot;}</code></span>
+<span class="code-line"><i>15</i><code></code></span>
+<span class="code-line"><i>16</i><code></code></span>
+<span class="code-line"><i>17</i><code>def validate_inventory(document: Any) -&gt; list[str]:</code></span>
+<span class="code-line"><i>18</i><code>    errors: list[str] = []</code></span>
+<span class="code-line"><i>19</i><code>    if not isinstance(document, dict):</code></span>
+<span class="code-line"><i>20</i><code>        return [&quot;inventory root must be an object&quot;]</code></span>
+<span class="code-line"><i>21</i><code>    if document.get(&quot;schema_version&quot;) != 1:</code></span>
+<span class="code-line"><i>22</i><code>        errors.append(&quot;schema_version must be 1&quot;)</code></span>
+<span class="code-line"><i>23</i><code>    entries = document.get(&quot;entries&quot;)</code></span>
+<span class="code-line"><i>24</i><code>    if not isinstance(entries, list):</code></span>
+<span class="code-line"><i>25</i><code>        return errors + [&quot;entries must be an array&quot;]</code></span>
+<span class="code-line"><i>26</i><code></code></span>
+<span class="code-line"><i>27</i><code>    seen: set[str] = set()</code></span>
+<span class="code-line"><i>28</i><code>    for index, entry in enumerate(entries):</code></span>
+<span class="code-line"><i>29</i><code>        label = f&quot;entries[{index}]&quot;</code></span>
+<span class="code-line"><i>30</i><code>        if not isinstance(entry, dict):</code></span>
+<span class="code-line"><i>31</i><code>            errors.append(f&quot;{label} must be an object&quot;)</code></span>
+<span class="code-line"><i>32</i><code>            continue</code></span>
+<span class="code-line"><i>33</i><code>        entry_id = entry.get(&quot;id&quot;)</code></span>
+<span class="code-line"><i>34</i><code>        if not isinstance(entry_id, str) or not entry_id:</code></span>
+<span class="code-line"><i>35</i><code>            errors.append(f&quot;{label}.id must be a non-empty string&quot;)</code></span>
+<span class="code-line"><i>36</i><code>        elif entry_id in seen:</code></span>
+<span class="code-line"><i>37</i><code>            errors.append(f&quot;{label}.id is duplicated: {entry_id}&quot;)</code></span>
+<span class="code-line"><i>38</i><code>        else:</code></span>
+<span class="code-line"><i>39</i><code>            seen.add(entry_id)</code></span>
+<span class="code-line"><i>40</i><code>        if entry.get(&quot;officiality&quot;) not in OFFICIALITY:</code></span>
+<span class="code-line"><i>41</i><code>            errors.append(f&quot;{label}.officiality is invalid&quot;)</code></span>
+<span class="code-line"><i>42</i><code>        source_ids = entry.get(&quot;source_ids&quot;)</code></span>
+<span class="code-line"><i>43</i><code>        if not isinstance(source_ids, list) or not source_ids or not all(</code></span>
+<span class="code-line"><i>44</i><code>            isinstance(item, str) and item.startswith(&quot;src_&quot;) for item in source_ids</code></span>
+<span class="code-line"><i>45</i><code>        ):</code></span>
+<span class="code-line"><i>46</i><code>            errors.append(f&quot;{label}.source_ids must contain registered source IDs&quot;)</code></span>
+<span class="code-line"><i>47</i><code>        for field, expected in REQUIRED_SAFETY_FLAGS.items():</code></span>
+<span class="code-line"><i>48</i><code>            if entry.get(field) is not expected:</code></span>
+<span class="code-line"><i>49</i><code>                errors.append(f&quot;{label}.{field} must be {expected!r}&quot;)</code></span>
+<span class="code-line"><i>50</i><code>    return errors</code></span>
+<span class="code-line"><i>51</i><code></code></span>
+<span class="code-line"><i>52</i><code></code></span>
+<span class="code-line"><i>53</i><code>def load_inventory(path: str | Path) -&gt; dict[str, Any]:</code></span>
+<span class="code-line"><i>54</i><code>    with Path(path).open(encoding=&quot;utf-8&quot;) as handle:</code></span>
+<span class="code-line"><i>55</i><code>        document = json.load(handle)</code></span>
+<span class="code-line"><i>56</i><code>    errors = validate_inventory(document)</code></span>
+<span class="code-line"><i>57</i><code>    if errors:</code></span>
+<span class="code-line"><i>58</i><code>        raise ValueError(&quot;invalid ecosystem inventory: &quot; + &quot;; &quot;.join(errors))</code></span>
+<span class="code-line"><i>59</i><code>    return document</code></span></pre></article>
+    </main>
+    <footer>
+      <span>research_only=true</span>
+      <span>strategy_consumption_allowed=false</span>
+      <span>order_input=false</span>
+    </footer>
+  </body>
+</html>

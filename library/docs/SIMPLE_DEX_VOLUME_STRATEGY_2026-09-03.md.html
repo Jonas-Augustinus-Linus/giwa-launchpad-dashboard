@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex,nofollow,noarchive" />
+    <meta name="theme-color" content="#090c0e" />
+    <title>GIWA Simple DEX / Volume Decision Memo · GIWA Control Room</title>
+    <link rel="stylesheet" href="../../assets/document.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#document">본문으로 바로가기</a>
+    <header class="document-header">
+      <a class="brand" href="../../index.html#research" aria-label="GIWA 대시보드로 돌아가기">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span><strong>GIWA</strong><small>CONTROL ROOM</small></span>
+      </a>
+      <nav aria-label="문서 동작">
+        <a href="../../index.html#research">← 대시보드</a>
+        <a href="https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/docs/SIMPLE_DEX_VOLUME_STRATEGY_2026-09-03.md" target="_blank" rel="noopener noreferrer">Private GitHub ↗</a>
+      </nav>
+    </header>
+    <main id="document" class="document-shell">
+      <div class="document-meta">
+        <span>REPORT</span>
+        <span>SHA256 2f9b1ee115bf</span>
+      </div>
+      <h1>GIWA Simple DEX / Volume Decision Memo</h1>
+      <p class="source-path">docs/SIMPLE_DEX_VOLUME_STRATEGY_2026-09-03.md</p>
+      <article class="markdown-body"><h1 id="giwa-simple-dex-volume-decision-memo">GIWA Simple DEX / Volume Decision Memo</h1>
+<p>기준일: <strong>2026-09-03 KST</strong><br>
+상태: <strong>research only / no build / no deployment</strong></p>
+<h2 id="decision">Decision</h2>
+<p>목표 제품은 화려한 frontend가 아니라 <strong>검증된 소수 anchor pool에 유동성을 집중하고 fee,
+slippage, price impact, route와 contract 권한을 정확히 보여주는 독립 브랜드의 최소형
+v3-compatible DEX</strong>입니다.</p>
+<p>다만 아래 조건 전에는 real-money launch를 하지 않습니다.</p>
+<ul>
+<li>GIWA public mainnet과 production RPC/indexer</li>
+<li>issuer-backed canonical stablecoin과 bridge path</li>
+<li>launch inventory 1곳 + wallet/consumer surface 1곳의 written integration</li>
+<li>intended order size에서 P90 all-in price impact 1% 이하</li>
+<li>independent audit, source verification와 incident plan</li>
+<li>한국 전문 변호사의 actor/admin/router/LP/fee별 서면 의견</li>
+<li>실제 운영·고객 국가의 법인 실체, AML/CASP/VASP, 금융상품과 세무 서면 의견</li>
+</ul>
+<h2 id="fee-policy">Fee policy</h2>
+<p>초기 team revenue 순서는 다음입니다.</p>
+<ol>
+<li>거래량과 무관한 fixed B2B development/security/data fee</li>
+<li>서면 의견 뒤 공개된 team own-capital LP fee</li>
+<li>필요한 신고 수리 또는 적법한 역할 구조 뒤 protocol/interface fee 재검토</li>
+</ol>
+<p>초기에는 protocol fee switch, Korean-facing interface fee, paid router/referral, customer LP
+vault, team transfer tax와 fee-share token을 모두 끕니다. network gas는 GIWA chain fee이며
+우리 매출이 아닙니다.</p>
+<h2 id="volume-policy">Volume policy</h2>
+<pre><code class="language-text">canonical asset → depth → best execution → wallet/aggregator routing
+→ independent repeat flow → fee → retained liquidity
+</code></pre>
+<p>공식 pair는 <code>WETH / canonical stablecoin</code> 하나와 검증된 partner token 최대 2~3개로
+시작합니다. 관련지갑·mock asset·reward round trip을 제외하고 repeat rate, partner/router
+share, P90 price impact, organic volume/real TVL, fee/incentive와 post-subsidy retained depth를
+측정합니다. 거래량 보상, wash trading, 목표가격 유지, 숨은 buy/sell tax와 무기한 emission은
+사용하지 않습니다.</p>
+<h2 id="uniswap-decision-tree">Uniswap decision tree</h2>
+<ul>
+<li>현재 공식 Uniswap GIWA deployment/API 지원 신호는 없습니다.</li>
+<li>canonical deployment, Labs UI/API와 liquidity는 별도입니다.</li>
+<li>canonical Uniswap이 wallet·API·liquidity package와 함께 확정되면 같은 pair를 독립 core로
+  쪼개지 않고 integration·partner routing·legally-reviewed own LP로 전환합니다.</li>
+<li>그런 package가 없고 GIWA distribution·anchor capital이 확보되면 독립 최소 v3 venue를
+  fee switch off로 검토합니다.</li>
+</ul>
+<h2 id="full-evidence">Full evidence</h2>
+<ul>
+<li><a href="../RESEARCH/GIWA_simple_open_dex_volume_2026_20260903_132946/outputs/01_full_report/01_report.ko.md.html">전체 strict report</a></li>
+<li><a href="../RESEARCH/GIWA_simple_open_dex_volume_2026_20260903_132946/outputs/00_executive_summary.md.html">의사결정 요약</a></li>
+<li><a href="../RESEARCH/GIWA_simple_open_dex_volume_2026_20260903_132946/sources/sources.jsonl.html">source registry</a></li>
+<li><a href="../RESEARCH/GIWA_simple_open_dex_volume_2026_20260903_132946/artifacts/claim_ledger.jsonl.html">claim ledger</a></li>
+<li><a href="../RESEARCH/GIWA_simple_open_dex_volume_2026_20260903_132946/outputs/04_appendices/bibliography.md.html">bibliography</a></li>
+<li><a href="DEX_FEE_JURISDICTION_MATRIX_2026-09-03.md.html">호주·오스트리아·독일·미국 fee 관할 비교</a></li>
+</ul>
+<p>이 문서는 법률·세무·투자 자문이 아니며, 상대적으로 방어적인 구조도 적법 확정이나 VASP
+신고 면제를 뜻하지 않습니다.</p></article>
+    </main>
+    <footer>
+      <span>research_only=true</span>
+      <span>strategy_consumption_allowed=false</span>
+      <span>order_input=false</span>
+    </footer>
+  </body>
+</html>

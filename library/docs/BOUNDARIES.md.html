@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex,nofollow,noarchive" />
+    <meta name="theme-color" content="#090c0e" />
+    <title>Safety and evidence boundaries · GIWA Control Room</title>
+    <link rel="stylesheet" href="../../assets/document.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#document">본문으로 바로가기</a>
+    <header class="document-header">
+      <a class="brand" href="../../index.html#research" aria-label="GIWA 대시보드로 돌아가기">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span><strong>GIWA</strong><small>CONTROL ROOM</small></span>
+      </a>
+      <nav aria-label="문서 동작">
+        <a href="../../index.html#research">← 대시보드</a>
+        <a href="https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/docs/BOUNDARIES.md" target="_blank" rel="noopener noreferrer">Private GitHub ↗</a>
+      </nav>
+    </header>
+    <main id="document" class="document-shell">
+      <div class="document-meta">
+        <span>REPORT</span>
+        <span>SHA256 6d00379a9e58</span>
+      </div>
+      <h1>Safety and evidence boundaries</h1>
+      <p class="source-path">docs/BOUNDARIES.md</p>
+      <article class="markdown-body"><h1 id="safety-and-evidence-boundaries">Safety and evidence boundaries</h1>
+<h2 id="what-this-repository-may-do">What this repository may do</h2>
+<ul>
+<li>Read public GIWA Sepolia chain metadata, block headers, sync state, and bytecode presence.</li>
+<li>Catalogue official documentation, provider statements, and third-party testnet experiments with
+  explicit provenance and observed dates.</li>
+<li>Specify local contract behavior, tests, threat models, and launch gates without compiling,
+  deploying, funding, signing, trading, or advertising.</li>
+</ul>
+<h2 id="what-it-must-not-do-without-a-new-explicit-decision">What it must not do without a new explicit decision</h2>
+<ul>
+<li>Add or accept a private key, mnemonic, wallet connector, signer, relayer, bundler write path,
+  faucet automation, or transaction broadcast method.</li>
+<li>Deploy a token or DEX, create a pool, seed liquidity, open trading, set a market price, or invite
+  users to buy an asset—even on testnet.</li>
+<li>Treat explorer transactions or addresses as unique people, active users, adoption, TVL, or
+  economic demand.</li>
+<li>Call a project official because it runs on GIWA, entered GASOK, mentions Upbit, or uses Dojang.</li>
+<li>imply that GASOK, GIWA, Dunamu, or Upbit creates a listing path.</li>
+</ul>
+<h2 id="classification">Classification</h2>
+<table>
+<thead>
+<tr>
+<th>Label</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>official</code></td>
+<td>GIWA-controlled documentation, software, or deployed protocol evidence</td>
+</tr>
+<tr>
+<td><code>provider_reported</code></td>
+<td>A named external provider claims or documents support</td>
+</tr>
+<tr>
+<td><code>third_party</code></td>
+<td>Independently built application or experiment; no implied endorsement</td>
+</tr>
+<tr>
+<td><code>planned</code></td>
+<td>Future intent only; cannot be used as an available dependency</td>
+</tr>
+<tr>
+<td><code>unknown</code></td>
+<td>Evidence is missing, conflicting, or too weak</td>
+</tr>
+</tbody>
+</table>
+<p>RPC liveness proves only that an endpoint answered at an observed time. Contract bytecode proves
+only that code existed at an address—not ownership, safety, correctness, liquidity, or continued
+operation.</p></article>
+    </main>
+    <footer>
+      <span>research_only=true</span>
+      <span>strategy_consumption_allowed=false</span>
+      <span>order_input=false</span>
+    </footer>
+  </body>
+</html>

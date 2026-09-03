@@ -1,0 +1,432 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0b0f12" />
+    <meta name="robots" content="noindex,nofollow,noarchive" />
+    <meta
+      name="description"
+      content="GIWA 생태계 근거, 코드 상태와 개발 게이트를 한 화면에서 보는 내부 리서치 대시보드"
+    />
+    <meta property="og:title" content="GIWA Launchpad Control Room" />
+    <meta
+      property="og:description"
+      content="근거에서 코드까지, GIWA 리서치와 개발 준비도를 한 화면에서 확인합니다."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="./og.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="GIWA Launchpad Control Room" />
+    <meta
+      name="twitter:description"
+      content="근거에서 코드까지, GIWA 리서치와 개발 준비도를 한 화면에서 확인합니다."
+    />
+    <meta name="twitter:image" content="./og.png" />
+    <title>GIWA Launchpad Control Room</title>
+    <link rel="stylesheet" href="./assets/app.css" />
+    <script src="./assets/app.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">본문으로 바로가기</a>
+
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="대시보드 탐색">
+        <a class="brand" href="#overview" aria-label="GIWA Control Room 홈">
+          <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span>
+            <strong>GIWA</strong>
+            <small>CONTROL ROOM</small>
+          </span>
+        </a>
+
+        <nav class="sidebar-nav" aria-label="주요 섹션">
+          <a class="nav-link is-active" href="#overview"><span>01</span> 상황판</a>
+          <a class="nav-link" href="#ecosystem"><span>02</span> 생태계</a>
+          <a class="nav-link" href="#infrastructure"><span>03</span> 노드·풀</a>
+          <a class="nav-link" href="#revenue"><span>04</span> 수익 설계</a>
+          <a class="nav-link" href="#workbench"><span>05</span> 개발 보드</a>
+          <a class="nav-link" href="#research"><span>06</span> 리서치</a>
+          <a class="nav-link" href="#gates"><span>07</span> 출시 게이트</a>
+        </nav>
+
+        <div class="sidebar-foot">
+          <div class="scope-lock">
+            <span class="pulse-dot" aria-hidden="true"></span>
+            <div>
+              <small>NETWORK SCOPE</small>
+              <strong>GIWA Sepolia only</strong>
+            </div>
+          </div>
+          <p>Research-only · No execution</p>
+        </div>
+      </aside>
+
+      <main id="main" class="main-content">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">INTERNAL RESEARCH OPERATIONS</p>
+            <h1>Launchpad control room</h1>
+          </div>
+          <div class="topbar-actions">
+            <button class="icon-button" id="copy-probe" type="button" aria-label="읽기 전용 프로브 명령 복사" title="프로브 명령 복사">
+              <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M8 8h11v11H8z"/><path d="M5 16H4V5h11v1"/></svg>
+            </button>
+            <a class="button button-secondary" id="repo-link" href="https://github.com/Jonas-Augustinus-Linus/giwa-launchpad" target="_blank" rel="noopener noreferrer">
+              Private GitHub
+              <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 17 17 7M8 7h9v9"/></svg>
+            </a>
+          </div>
+        </header>
+
+        <section id="overview" class="section overview-section" aria-labelledby="overview-title">
+          <div class="decision-console">
+            <div class="decision-copy">
+              <div class="section-kicker"><span>NOW</span> CURRENT DECISION</div>
+              <h2 id="overview-title">근거는 쌓고, 실행 권한은 잠근다.</h2>
+              <p id="project-decision">
+                Public mainnet과 canonical quote asset이 확인될 때까지 research/testnet 상태를 유지한다.
+              </p>
+              <div class="decision-tags" aria-label="현재 제품 방향">
+                <span id="product-hypothesis">v3-compatible venue</span>
+                <span id="fee-policy">fee switch off</span>
+                <span>no signer</span>
+              </div>
+              <div class="decision-actions">
+                <a class="button button-primary" href="#workbench">개발 준비도 보기</a>
+                <a class="text-link" href="#research">최신 근거 열기 <span aria-hidden="true">↘</span></a>
+              </div>
+            </div>
+
+            <div class="network-console" aria-label="GIWA Sepolia 최근 관찰 상태">
+              <div class="console-head">
+                <span>NETWORK PULSE</span>
+                <span class="status-pill status-live"><i></i> READ-ONLY SNAPSHOT</span>
+              </div>
+              <dl>
+                <div>
+                  <dt>Chain ID</dt>
+                  <dd id="network-chain-id">91,342</dd>
+                </div>
+                <div>
+                  <dt>Observed block</dt>
+                  <dd id="network-block">—</dd>
+                </div>
+                <div>
+                  <dt>Client</dt>
+                  <dd id="network-client">—</dd>
+                </div>
+                <div>
+                  <dt>Observed</dt>
+                  <dd id="network-observed">—</dd>
+                </div>
+              </dl>
+              <p class="console-warning">관찰값은 테스트넷 응답일 뿐 채택·가치·유동성 지표가 아닙니다.</p>
+            </div>
+          </div>
+
+          <div class="metric-grid" aria-label="저장소 요약 지표">
+            <article class="metric-card metric-accent">
+              <span>REGISTERED SOURCES</span>
+              <strong id="metric-sources">—</strong>
+              <small id="metric-research"><i class="signal-up"></i> strict research sessions</small>
+            </article>
+            <article class="metric-card">
+              <span>VERIFIED CLAIMS</span>
+              <strong id="metric-verified">—</strong>
+              <small id="metric-open-claims">미해결 주장 집계 중</small>
+            </article>
+            <article class="metric-card">
+              <span>ECOSYSTEM MAP</span>
+              <strong id="metric-ecosystem">—</strong>
+              <small id="metric-official">공식성 분류 집계 중</small>
+            </article>
+            <article class="metric-card">
+              <span>BUILD TRACKS</span>
+              <strong id="metric-build">—</strong>
+              <small>implemented / total</small>
+            </article>
+          </div>
+
+          <div class="attention-strip" role="note">
+            <strong>판단 기준</strong>
+            <p id="safety-notice">테스트넷 활동과 코드 존재는 사용자, 채택, 유동성, 가치 또는 출시 준비의 증거가 아닙니다.</p>
+            <a href="#gates">차단 조건 확인</a>
+          </div>
+        </section>
+
+        <section id="ecosystem" class="section" aria-labelledby="ecosystem-title">
+          <div class="section-heading">
+            <div>
+              <div class="section-kicker"><span>MAP</span> ECOSYSTEM INTELLIGENCE</div>
+              <h2 id="ecosystem-title">무엇이 실제로 있고, 코드까지 있는가</h2>
+              <p>공식·제공사 발표·제3자 실험을 섞지 않고, 근거와 코드 상태를 나란히 봅니다.</p>
+            </div>
+            <a class="text-link" href="#official-resources">공식 원본만 보기 <span aria-hidden="true">↘</span></a>
+          </div>
+
+          <div class="toolbar" aria-label="생태계 필터">
+            <label class="search-field">
+              <svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="m16 16 4 4"/></svg>
+              <span class="sr-only">생태계 검색</span>
+              <input id="ecosystem-search" type="search" placeholder="프로젝트, 상태, 카테고리 검색" autocomplete="off" />
+              <kbd>⌘ K</kbd>
+            </label>
+            <div class="filter-group" role="group" aria-label="공식성 필터">
+              <button class="filter-chip is-active" type="button" data-filter="all">전체</button>
+              <button class="filter-chip" type="button" data-filter="official">Official</button>
+              <button class="filter-chip" type="button" data-filter="provider_reported">Provider</button>
+              <button class="filter-chip" type="button" data-filter="third_party">Third-party</button>
+            </div>
+          </div>
+
+          <div class="table-frame">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th scope="col">프로젝트 / 구성요소</th>
+                  <th scope="col">분류</th>
+                  <th scope="col">관찰 상태</th>
+                  <th scope="col">코드 상태</th>
+                  <th scope="col">근거</th>
+                  <th scope="col"><span class="sr-only">상세 보기</span></th>
+                </tr>
+              </thead>
+              <tbody id="ecosystem-rows">
+                <tr class="loading-row"><td colspan="6">생태계 인벤토리를 불러오는 중…</td></tr>
+              </tbody>
+            </table>
+            <div class="empty-state" id="ecosystem-empty" hidden>
+              <strong>일치하는 항목이 없습니다.</strong>
+              <p>검색어를 줄이거나 다른 분류를 선택해 보세요.</p>
+            </div>
+          </div>
+          <p class="result-count" id="ecosystem-count" aria-live="polite"></p>
+
+          <div id="official-resources" class="subsection">
+            <div class="subsection-heading">
+              <div>
+                <p class="mini-label">OFFICIAL SOURCE DECK</p>
+                <h3>바로 여는 공식 문서와 코드</h3>
+              </div>
+              <span id="official-check-date">Checked —</span>
+            </div>
+            <div class="resource-grid" id="official-resource-grid">
+              <div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div>
+            </div>
+          </div>
+        </section>
+
+        <section id="infrastructure" class="section" aria-labelledby="infrastructure-title">
+          <div class="section-heading">
+            <div>
+              <div class="section-kicker"><span>RUN</span> NODE &amp; POOL BLUEPRINT</div>
+              <h2 id="infrastructure-title">노드는 원장, 인덱서는 제품 속도</h2>
+              <p>공식 노드 사양과 빠른 온체인 데이터 경로, V3형 풀을 만들 때 필요한 계층을 한 번에 봅니다.</p>
+            </div>
+            <span class="quality-badge quality-caution"><i></i> Sepolia evidence only</span>
+          </div>
+
+          <div class="infra-verdict">
+            <div>
+              <p class="mini-label">ANSWER</p>
+              <h3 id="infra-headline">노드 정보를 불러오는 중…</h3>
+            </div>
+            <span class="status-pill status-limited">NO MAINNET CONFIG</span>
+          </div>
+
+          <div class="infra-grid">
+            <article class="infra-card">
+              <div class="card-title-row"><div><p class="mini-label">NODE PROFILE</p><h3>운영 사양표</h3></div><span>official + unknowns</span></div>
+              <dl class="spec-list" id="node-profile"><div><dt>Loading</dt><dd>—</dd></div></dl>
+              <div class="source-row" id="infra-links"></div>
+            </article>
+
+            <article class="infra-card topology-card">
+              <div class="card-title-row"><div><p class="mini-label">DATA PATH</p><h3>빠른 조회 토폴로지</h3></div><span>recommended inference</span></div>
+              <ol class="topology-flow" id="node-topology"><li>데이터 경로를 불러오는 중…</li></ol>
+              <p class="card-note">Flashblocks와 unsafe head는 미리보기입니다. 금액·수수료·정산 화면은 safe/finalized 상태로 반드시 재조정해야 합니다.</p>
+            </article>
+          </div>
+
+          <div class="pool-section">
+            <div class="subsection-heading">
+              <div>
+                <p class="mini-label">SWAP POOL</p>
+                <h3 id="pool-headline">스왑풀 구조를 불러오는 중…</h3>
+              </div>
+            </div>
+            <div class="attention-strip pool-notice" role="note">
+              <strong>관찰 경계</strong>
+              <p id="pool-notice">제3자 테스트넷 코드는 공식·감사·출시 준비를 의미하지 않습니다.</p>
+              <span>read-only</span>
+            </div>
+            <div class="table-frame">
+              <table class="data-table blueprint-table">
+                <thead><tr><th scope="col">구성요소</th><th scope="col">층</th><th scope="col">역할</th><th scope="col">외부 근거</th><th scope="col">로컬 코드</th><th scope="col">다음 게이트</th></tr></thead>
+                <tbody id="pool-components"><tr class="loading-row"><td colspan="6">풀 구조를 불러오는 중…</td></tr></tbody>
+              </table>
+            </div>
+            <div class="flow-grid" id="pool-flows"></div>
+          </div>
+        </section>
+
+        <section id="revenue" class="section" aria-labelledby="revenue-title">
+          <div class="section-heading">
+            <div>
+              <div class="section-kicker"><span>EARN</span> REVENUE DESIGN LAB</div>
+              <h2 id="revenue-title">수익은 거래량이 아니라 귀속 구조로 본다</h2>
+              <p>LP 수수료·프로토콜 수수료·NFT 발행·밈코인·데이터 구독을 서로 다른 원장으로 분리합니다.</p>
+            </div>
+            <span class="quality-badge"><i></i> Insane Research QA</span>
+          </div>
+
+          <div class="revenue-thesis" id="revenue-thesis">
+            <div><p class="mini-label">RECOMMENDATION</p><h3>리서치 결과를 불러오는 중…</h3></div>
+          </div>
+
+          <div class="revenue-model-grid" id="revenue-models">
+            <div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div>
+          </div>
+
+          <div class="economics-lab">
+            <div class="calculator-panel">
+              <div class="card-title-row"><div><p class="mini-label">UNIT ECONOMICS</p><h3>수수료 귀속 계산기</h3></div><span>illustrative only</span></div>
+              <p class="calculator-help">월 거래·민팅 GMV에 총 수수료와 선택한 수취인 몫을 적용합니다. 수취인이 운영사·LP·creator·holder 중 누구인지는 프리셋마다 다르며, 아래 값은 예측도 권고도 아닙니다.</p>
+              <div class="preset-row" id="calculator-presets"></div>
+              <div class="calculator-inputs">
+                <label><span>월 과금 기준액 (USD)</span><input id="calc-volume" type="number" min="0" step="1000" value="1000000" inputmode="decimal" /></label>
+                <label><span>총 수수료 (bps)</span><input id="calc-fee" type="number" min="0" max="10000" step="0.1" value="30" inputmode="decimal" /></label>
+                <label><span>선택 수취인 귀속 (%)</span><input id="calc-share" type="number" min="0" max="100" step="0.1" value="16.7" inputmode="decimal" /></label>
+                <label><span>월 직접비 (USD)</span><input id="calc-cost" type="number" min="0" step="100" value="5000" inputmode="decimal" /></label>
+              </div>
+              <div class="calculator-results">
+                <div><span>사용자 총수수료</span><strong id="calc-gross">—</strong></div>
+                <div><span id="calc-recipient-label">선택 수취인 총액</span><strong id="calc-recipient">—</strong></div>
+                <div><span>가정 직접비 차감</span><strong id="calc-net">—</strong></div>
+                <div><span>손익분기 기준액</span><strong id="calc-break-even">—</strong></div>
+              </div>
+            </div>
+
+            <div class="sequence-panel">
+              <div class="card-title-row"><div><p class="mini-label">ORDER OF OPERATIONS</p><h3>권장 순서</h3></div><span>gated</span></div>
+              <ol class="sequence-list" id="revenue-sequence"><li>순서를 불러오는 중…</li></ol>
+            </div>
+          </div>
+
+          <div class="case-study-block">
+            <div class="subsection-heading">
+              <div><p class="mini-label">TRANSFERABLE EVIDENCE</p><h3>Ethereum · Base · Solana · Robinhood 사례</h3></div>
+              <span id="revenue-as-of">As of —</span>
+            </div>
+            <div class="table-frame">
+              <table class="data-table case-table">
+                <thead><tr><th scope="col">사례</th><th scope="col">초기 론칭 장치</th><th scope="col">후속 성장 장치</th><th scope="col">수익 귀속</th><th scope="col">성공 근거 / 경계</th><th scope="col">원문</th></tr></thead>
+                <tbody id="case-studies"><tr class="loading-row"><td colspan="6">사례를 불러오는 중…</td></tr></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section id="workbench" class="section" aria-labelledby="workbench-title">
+          <div class="section-heading">
+            <div>
+              <div class="section-kicker"><span>BUILD</span> DEVELOPMENT WORKBENCH</div>
+              <h2 id="workbench-title">다음 커밋을 어디서 시작할지</h2>
+              <p>구현된 코드, 사양만 있는 영역, 명시적으로 잠긴 실행 경로를 한 보드에서 구분합니다.</p>
+            </div>
+            <button class="button button-secondary" id="copy-checks" type="button">검증 명령 복사</button>
+          </div>
+
+          <div class="build-board" id="build-board" aria-live="polite">
+            <div class="skeleton-wide"></div>
+          </div>
+
+          <div class="developer-jump">
+            <div>
+              <p class="mini-label">QUICK START</p>
+              <h3>읽고 → 검증하고 → 작은 로컬 프로토타입으로</h3>
+              <p>현재 저장소에는 signer·broadcast·deployment 경로가 없습니다. 개발은 Phase 1 local-only 경계에서 시작합니다.</p>
+            </div>
+            <ol>
+              <li><span>01</span><div><strong>Decision memo</strong><small>제품 가설과 중단선을 먼저 확인</small></div></li>
+              <li><span>02</span><div><strong>Contract specs</strong><small>구현 전에 invariant와 권한 모델 확정</small></div></li>
+              <li><span>03</span><div><strong>Local tests</strong><small>체인 연결 없는 결정론적 테스트부터</small></div></li>
+            </ol>
+          </div>
+        </section>
+
+        <section id="research" class="section" aria-labelledby="research-title">
+          <div class="section-heading">
+            <div>
+              <div class="section-kicker"><span>READ</span> RESEARCH LIBRARY</div>
+              <h2 id="research-title">결론부터 원문 근거까지</h2>
+              <p>요약, 전체 보고서, 출처 레지스트리, 주장 원장을 한 묶음으로 엽니다.</p>
+            </div>
+            <span class="quality-badge"><i></i> Citation QA tracked</span>
+          </div>
+          <div class="research-grid" id="research-grid">
+            <div class="skeleton-card"></div><div class="skeleton-card"></div>
+          </div>
+
+          <div class="document-shelf">
+            <div class="subsection-heading">
+              <div>
+                <p class="mini-label">REPOSITORY INDEX</p>
+                <h3>용도별 문서 바로가기</h3>
+              </div>
+            </div>
+            <div class="document-groups" id="document-groups"></div>
+          </div>
+        </section>
+
+        <section id="gates" class="section gate-section" aria-labelledby="gates-title">
+          <div class="section-heading">
+            <div>
+              <div class="section-kicker"><span>STOP</span> PUBLIC MAINNET GATES</div>
+              <h2 id="gates-title">모든 게이트는 기본값이 UNKNOWN / blocked</h2>
+              <p>private mainnet 접근이나 accelerator milestone은 public launch 근거를 대체하지 않습니다.</p>
+            </div>
+            <div class="gate-score"><strong id="gate-score">0 / 0</strong><span>cleared</span></div>
+          </div>
+          <ol class="gate-list" id="gate-list">
+            <li class="loading-row">게이트를 불러오는 중…</li>
+          </ol>
+          <div class="final-lock">
+            <span class="lock-icon" aria-hidden="true"></span>
+            <div>
+              <strong>Human authority required</strong>
+              <p>정확한 revision, chain, address, parameter, role, funding과 launch window를 지정한 별도 승인이 마지막 조건입니다.</p>
+            </div>
+          </div>
+        </section>
+
+        <footer class="footer">
+          <div>
+            <strong>GIWA Launchpad Control Room</strong>
+            <span id="catalog-revision">Catalog —</span>
+          </div>
+          <p>Research only · GIWA Sepolia only · No execution authority</p>
+        </footer>
+      </main>
+    </div>
+
+    <aside class="detail-drawer" id="detail-drawer" aria-labelledby="drawer-title" aria-hidden="true">
+      <button class="drawer-backdrop" type="button" data-close-drawer aria-label="상세 패널 닫기"></button>
+      <div class="drawer-panel" role="dialog" aria-modal="true">
+        <div class="drawer-head">
+          <span class="mini-label">ECOSYSTEM RECORD</span>
+          <button class="icon-button" type="button" data-close-drawer aria-label="상세 패널 닫기">
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></svg>
+          </button>
+        </div>
+        <div id="drawer-content"></div>
+      </div>
+    </aside>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <noscript>
+      <div class="noscript">이 대시보드는 로컬 JSON 인벤토리를 표시하기 위해 JavaScript가 필요합니다.</div>
+    </noscript>
+  </body>
+</html>

@@ -1,0 +1,516 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex,nofollow,noarchive" />
+    <meta name="theme-color" content="#090c0e" />
+    <title>GIWA DEX 수익화 관할 비교: 호주·오스트리아·독일·미국 · GIWA Control Room</title>
+    <link rel="stylesheet" href="../../../../../assets/document.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#document">본문으로 바로가기</a>
+    <header class="document-header">
+      <a class="brand" href="../../../../../index.html#research" aria-label="GIWA 대시보드로 돌아가기">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span><strong>GIWA</strong><small>CONTROL ROOM</small></span>
+      </a>
+      <nav aria-label="문서 동작">
+        <a href="../../../../../index.html#research">← 대시보드</a>
+        <a href="https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/RESEARCH/GIWA_dex_fee_jurisdictions_2026_20260903_144748/outputs/01_full_report/01_report.ko.md" target="_blank" rel="noopener noreferrer">Private GitHub ↗</a>
+      </nav>
+    </header>
+    <main id="document" class="document-shell">
+      <div class="document-meta">
+        <span>REPORT</span>
+        <span>SHA256 f8dd3da45d96</span>
+      </div>
+      <h1>GIWA DEX 수익화 관할 비교: 호주·오스트리아·독일·미국</h1>
+      <p class="source-path">RESEARCH/GIWA_dex_fee_jurisdictions_2026_20260903_144748/outputs/01_full_report/01_report.ko.md</p>
+      <article class="markdown-body"><h1 id="giwa-dex">GIWA DEX 수익화 관할 비교: 호주·오스트리아·독일·미국</h1>
+<p>기준일: <strong>2026-09-03 KST</strong><br>
+범위: <strong>research only / no deployment / no wallet action / no revenue activation</strong></p>
+<p>이 보고서는 법률·세무·투자 또는 이민 자문이 아니다. 목적은 “어느 나라가 무조건
+안전한가”를 고르는 것이 아니라, 동일한 GIWA DEX 기능을 네 나라에서 같은 기준으로
+분해하고 출시 전 현지 변호사·세무사에게 넘길 사실표와 중단선을 만드는 것이다.</p>
+<h2 id="1">1. 결론</h2>
+<p>현재 가장 현실적인 순서는 다음과 같다.</p>
+<ol>
+<li><strong>거주 예정 국가에서 거래와 분리된 고정 B2B 개발·보안·데이터 매출부터 만든다.</strong></li>
+<li>EU 사업자가 실제로 필요하면 <strong>오스트리아를 첫 실사 후보</strong>로 둔다. 표준 법인세 23%와
+   MiCA 인가 후 EU passport가 장점이다. 단, 빈 껍데기 법인이 아니라 현지
+   경영·인력·통제를 갖추고 CASP 해당성을 정면으로 해결할 때의 장점이다.</li>
+<li>창업자가 실제로 호주에서 생활하고 핵심 결정을 한다면 <strong>호주를 실질 운영국으로
+   예산화</strong>한다. 2026년 crypto-to-crypto 교환·주선까지 확대된 VASP 체계 때문에 호주는
+   “쉬운 비수탁 DEX 우회지”가 아니다.</li>
+<li><strong>독일은 EU 시장·채용·파트너 이유가 세부담을 상쇄할 때</strong> 선택한다. MiCA passport라는
+   장점은 오스트리아와 공유하지만 평균 결합 법인부담은 약 30%이고 지방 영업세가 붙는다.</li>
+<li><strong>미국은 초기 본사보다 제한된 후속 시장</strong>으로 둔다. 2026년 SEC 직원의 self-custodial
+   UI 입장은 흥미롭지만 Section 15 한정의 비구속적 견해이고 FinCEN, CFTC, OFAC와 주별
+   licensing을 제거하지 않는다.</li>
+</ol>
+<p>따라서 지금의 1순위는 <code>오스트리아 법인 + 전세계 공개 DEX</code>가 아니라 <strong>실제 거주지에서
+fixed B2B 매출 → actor/flow 의견 → 필요한 인가 → fee 기능 순차 활성화</strong>다. EU 거점이
+사업상 필요해지는 시점의 첫 후보가 오스트리아라는 뜻이다. (clm_404, clm_431, clm_433;
+src_408, src_413, src_425, src_437, src_444)</p>
+<h2 id="2">2. 같은 제품을 비교하는 기준</h2>
+<p>법인 등기증보다 먼저 다음 일곱 주체를 한 장에 표시해야 한다.</p>
+<table>
+<thead>
+<tr>
+<th>연결점</th>
+<th>반드시 기록할 사실</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>개인</td>
+<td>실제 체류일, 주거, 근로·사업 장소, 세무거주지</td>
+</tr>
+<tr>
+<td>법인</td>
+<td>등기지, 이사회·경영진, 은행·회계, 실제 계약 주체</td>
+</tr>
+<tr>
+<td>제품</td>
+<td>공식 domain, UI 운영자, 고객지원·마케팅 주체</td>
+</tr>
+<tr>
+<td>거래</td>
+<td>누가 quote와 route를 정하고 calldata를 만들며 broadcast하는지</td>
+</tr>
+<tr>
+<td>통제</td>
+<td>upgrade·pause·token-list·fee-switch·treasury key의 실제 보유자</td>
+</tr>
+<tr>
+<td>자금</td>
+<td>protocol/interface/B2B/LP fee의 payer, recipient wallet과 환전 주체</td>
+</tr>
+<tr>
+<td>고객</td>
+<td>어느 나라 이용자를 적극 대상으로 하고 차단·제재 통제를 누가 하는지</td>
+</tr>
+</tbody>
+</table>
+<p>DEX 수익의 규제와 과세는 이 사실들의 결합으로 정해진다. 해외 서버, 외국법인, GitHub
+저장소 또는 온체인 treasury 하나만으로 실질 경영지·고정사업장·현지 영업·이용자 대상국이
+사라지지 않는다. (clm_401, clm_436; src_414, src_422, src_436, src_450, src_460)</p>
+<h3 id="_1">법적 효력 표시</h3>
+<ul>
+<li><strong>법령·판결</strong>: 현재 구속력 있는 기본선</li>
+<li><strong>감독기관 해석</strong>: 강한 설계 참고지만 법원 판단과 동일하지 않음</li>
+<li><strong>직원 견해</strong>: 기관 전체 규칙이 아니며 명시된 범위만 참고</li>
+<li><strong>시행 예정법</strong>: 제정됐으나 아직 현재 운영의 허가 근거가 아님</li>
+<li><strong>추론·미해결</strong>: GIWA의 실제 actor와 flow를 넣은 현지 의견이 필요</li>
+</ul>
+<h2 id="3">3. 국가 의사결정표</h2>
+<table>
+<thead>
+<tr>
+<th>국가</th>
+<th>현재 진입선</th>
+<th>법인·세무 headline</th>
+<th>가장 맞는 사용법</th>
+<th>지금 피할 구조</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>오스트리아</td>
+<td>전문적으로 MiCA service를 제공하면 FMA CASP 분석; 국내 transition 종료</td>
+<td>법인세 23%; seat 또는 place of management</td>
+<td>실체 있는 EU B2B 회사, 필요하면 CASP 인가 후 passport</td>
+<td>shell company, 무인가 EU-facing router, venue rebate, operator와 자체 LP 결합</td>
+</tr>
+<tr>
+<td>호주</td>
+<td>2026 AML/CTF상 crypto↔crypto exchange·arranging도 VASP 가능; ASIC 금융상품법 병행</td>
+<td>base-rate entity 25%, 그 밖 30%; central management and control 중요</td>
+<td>실제 거주·운영국에 맞춘 B2B 또는 등록·인가 예산을 둔 현지 사업</td>
+<td>공식 AU-facing fee UI를 “non-custodial”만 믿고 시작, managed vault</td>
+</tr>
+<tr>
+<td>독일</td>
+<td>BaFin MiCA CASP; 국내 transition 종료</td>
+<td>법인세·연대부가세·지방 영업세 평균 약 30%</td>
+<td>독일 파트너·인력·시장 접근의 실익이 큰 EU 회사</td>
+<td>개인 1년 보유 규칙을 법인 DEX 수익에 적용, 동일 operator의 자체 LP</td>
+</tr>
+<tr>
+<td>미국</td>
+<td>SEC·FinCEN·CFTC·OFAC·주법을 별도 분석</td>
+<td>C-corp 연방 21% + 주세·분배; 외국법인 USTB/ECI 가능</td>
+<td>객관적 transaction-preparation UI 또는 fixed B2B를 주별 범위와 함께 시험</td>
+<td>SEC 직원 견해를 safe harbour로 취급, order routing, PFOF, leverage, 전국 무차단 공개</td>
+</tr>
+</tbody>
+</table>
+<p>이 표의 순위는 headline 세율이 아니라 동일 기능의 인가·실체·시장 접근을 합친 조건부
+shortlist다. “세율이 가장 낮은 나라가 항상 최선”이라는 가설은 네 나라 비교에서 성립하지
+않았다. (clm_413, clm_415, clm_421, clm_429, clm_433; src_413, src_421, src_425,
+src_437, src_444, src_449)</p>
+<h2 id="4">4. 기능별 공통 위험표</h2>
+<p><code>낮음</code>은 허가 불필요 확정이 아니라, 이번 비교에서 고객 거래·자산과 가장 멀다는 뜻이다.</p>
+<table>
+<thead>
+<tr>
+<th>기능</th>
+<th>오스트리아·독일</th>
+<th>호주</th>
+<th>미국</th>
+<th>지금 결정</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>무료 open-source 코드 공개</td>
+<td>낮음; 실제 고객 service와 분리</td>
+<td>낮음; 홍보·유지·통합을 통한 arranging은 재분석</td>
+<td>낮음; FinCEN·NYDFS도 순수 개발을 구분</td>
+<td>가능, 운영·fee와 저장소·계약 분리</td>
+</tr>
+<tr>
+<td>무관리자·무수수료 immutable AMM</td>
+<td>중간; “완전 분산·무중개” 사건별</td>
+<td>중간; 명시적 DeFi 일반면제 없음</td>
+<td>중간; 불변성은 유리한 사실 하나</td>
+<td>testnet/research만, 현지 의견 전 real-money 금지</td>
+</tr>
+<tr>
+<td>읽기 전용 neutral UI</td>
+<td>중간; 실제 calldata·order flow 확인</td>
+<td>중간~높음; 50B arranging 검토</td>
+<td>중간; SEC 직원 조건과 가까울 수 있음</td>
+<td>quote와 교육까지만 설계 검토</td>
+</tr>
+<tr>
+<td>공식 swap UI·router</td>
+<td>높음; RTO/execution/platform 가능</td>
+<td>높음; VASP와 금융상품 licence 가능</td>
+<td>높음; 직원 견해가 order routing을 제외</td>
+<td>인가·의견 전 비활성</td>
+</tr>
+<tr>
+<td>user-paid interface fee</td>
+<td>높음; service 분류 뒤 공개·공정 수수료</td>
+<td>높음; arranging과 GST 증거 강화</td>
+<td>중간~높음; neutral fixed charge 조건부 직원 견해</td>
+<td>국가별 별도 fee switch</td>
+</tr>
+<tr>
+<td>protocol fee → team treasury</td>
+<td>높음; 식별 가능한 operator·통제 강화</td>
+<td>중간~높음; 사업 operator와 공급 관계 강화</td>
+<td>높음; staff UI fee와 다른 분석</td>
+<td>초기 off</td>
+</tr>
+<tr>
+<td>team own-capital LP</td>
+<td>조건부; platform operator 자기계정 금지 주의</td>
+<td>중간; principal exchange·market making 가능</td>
+<td>중간~높음; spot·FinCEN·세무 공백</td>
+<td>operator와 자금·법인·기록 분리 후 의견</td>
+</tr>
+<tr>
+<td>user 직접 LP</td>
+<td>중간; 팀 재량이 없을수록 낮아짐</td>
+<td>중간; LP right/MIS와 UI arranging 검토</td>
+<td>중간; 외부자금 운용으로 번지지 않게 제한</td>
+<td>self-managed만 검토</td>
+</tr>
+<tr>
+<td>team-managed pooled vault</td>
+<td>매우 높음; custody/portfolio/AIF 가능</td>
+<td>매우 높음; safekeeping/MIS 가능</td>
+<td>매우 높음; custody/Howey/CPO 가능</td>
+<td>MVP 제외</td>
+</tr>
+<tr>
+<td>fixed B2B dev·security·data</td>
+<td>상대적으로 낮음</td>
+<td>상대적으로 낮음</td>
+<td>상대적으로 낮음</td>
+<td>1차 매출 경로</td>
+</tr>
+<tr>
+<td>fee-share·transfer-tax token</td>
+<td>매우 높음; MiFID/공시/시장남용 가능</td>
+<td>매우 높음; financial product/MIS 가능</td>
+<td>매우 높음; Howey·세무·시장 위험</td>
+<td>발행하지 않음</td>
+</tr>
+</tbody>
+</table>
+<p>코드 공개와 운영행위를 분리해야 한다. FMA, FinCEN과 NYDFS는 순수 기술·개발의 낮은
+경계를 보여주지만, 같은 주체가 UI·route·fee·키를 운영하면 그 경계를 확장할 수 없다.
+(clm_402, clm_403; src_408, src_440, src_444)</p>
+<p>공식 router는 특히 민감하다. EU는 실제 order flow로 RTO·execution·platform을 나누고,
+호주는 교환 자체뿐 아니라 <code>making arrangements</code>를 현행 VASP 범위에 넣는다. (clm_405,
+clm_417; src_401, src_425, src_455, src_468)</p>
+<p>제3자 자산을 모아 팀이 range를 조정하는 vault와 수익분배 토큰은 단순 AMM보다 custody,
+portfolio management, collective investment 또는 financial-product 분석을 추가한다. 초기
+거래량 확보에 필수도 아니므로 MVP에서 제외한다. (clm_410, clm_411, clm_434; src_404,
+src_428, src_439, src_456)</p>
+<h2 id="5-mica">5. 오스트리아와 독일: 같은 MiCA, 다른 사업비용</h2>
+<p>오스트리아를 먼저 보는 이유는 FMA 규제가 BaFin보다 쉽다고 확인됐기 때문이 아니다. MiCA
+핵심선은 같고 실제 사전미팅, 인가기간·비용, 은행 접근과 인력 확보의 비교자료는 아직 없다.
+현재 확인된 차이는 주로 세율·사업세 구조이므로, 최종 결정 전 두 나라에 동일한 자료로
+견적을 받아야 한다.</p>
+<h3 id="51-eu">5.1 EU 공통선</h3>
+<p>MiCA Recital 22는 “fully decentralised manner without any intermediary”인 서비스를 범위 밖으로
+설명하지만, 일부 분산 또는 직접·간접 통제되는 서비스는 포함될 수 있다. 2026 Commission
+Q&amp;A도 완전 분산 여부를 관할당국이 사건별로 판단한다고 설명하며 그 Q&amp;A 자체도 비구속적이다.
+그러므로 <code>immutable</code>, <code>AMM</code>, <code>non-custodial</code>은 결론이 아니라 입력 사실이다. (clm_406;
+src_401, src_454)</p>
+<p>EU 최장 grandfathering은 2026-07-01 끝났고 오스트리아·독일의 적격 국내 전환은
+2025-12-31까지로 이미 끝났다. 신규 GIWA 프로젝트는 과거 등록 사업자 전환을 사용할 수
+없다. 인가된 CASP는 통지 뒤 EU passport를 쓸 수 있지만, passport는 무인가 사업을
+허가하는 장치가 아니다. (clm_407, clm_408; src_403, src_407, src_416, src_458, src_462)</p>
+<p>CASP가 관여하면 self-hosted wallet도 TFR·AML 범위에 들어갈 수 있다. 반대로 CASP가 없는
+순수 person-to-person transfer까지 모두 KYC 대상이라고 일반화해서도 안 된다. (clm_412;
+src_402, src_459, src_463)</p>
+<h3 id="52-eu-dex">5.2 EU DEX에 직접 걸리는 중단선</h3>
+<ul>
+<li>trading-platform operator와 자체 LP를 같은 법인에서 실행하지 않는다. MiCA Art. 76(5)의
+  자기계정 거래 금지 분석이 먼저다.</li>
+<li>reception and transmission 서비스를 제공하면서 특정 venue로 보내는 대가로 rebate,
+  revenue share 또는 비금전 이익을 받지 않는다. Art. 80(2) 검토가 먼저다.</li>
+<li>법인과 지갑만 나누고 동일인이 양쪽 키·route·수익을 통제하는 구조를 기능 분리로 주장하지
+  않는다.</li>
+</ul>
+<p>(clm_409, clm_432; src_401, src_455)</p>
+<h3 id="53">5.3 오스트리아</h3>
+<p>오스트리아의 표준 법인세는 23%다. 법인의 seat 또는 핵심 기업의사가 형성되는 place of
+management가 오스트리아이면 전세계 법인소득 과세 연결이 생길 수 있고, 고정 사무소·경영
+장소는 PE 분석을 추가한다. 개인의 27.5% 적격 사적 crypto 규칙은 상업적 DEX 법인 수익의
+세율표가 아니다. (clm_413, clm_414; src_411, src_412, src_413, src_414, src_415,
+src_460)</p>
+<p>국내 과세 service의 표준 VAT는 20%이고 cross-border B2B는 고객 소재지·reverse charge를
+검토한다. Hedqvist의 fiat↔Bitcoin 교환 VAT 면제를 interface, protocol, LP와 SaaS fee 전체로
+확장하면 안 된다. (src_457, src_461)</p>
+<p><strong>맞는 경우:</strong> 실제 EU 고객·파트너가 있고 FMA와 대화할 인력·이사회·회계·컴플라이언스
+substance를 둘 때. <strong>맞지 않는 경우:</strong> 창업자는 호주에서 모든 키와 의사결정을 통제하면서
+23% 숫자만 얻기 위해 등기하는 경우.</p>
+<h3 id="54">5.4 독일</h3>
+<p>독일 법인은 seat 또는 place of management가 독일이면 전세계소득 연결이 생길 수 있다.
+현재 15% 법인세에 그 세액의 5.5% 연대부가세, 지방별 trade tax가 더해져 평균 결합부담은
+약 30%다. 정확한 결과는 municipality multiplier와 비용·손실에 따라 달라진다. (clm_415;
+src_421, src_422, src_423, src_464, src_465)</p>
+<p>독일 개인의 사적 crypto 장기보유 규칙은 DEX 법인·조직적 플랫폼 영업에 옮겨 쓸 수 없다.
+더구나 2025 BMF 문서는 liquidity mining을 완결적으로 다루지 않았으므로 LP·protocol fee의
+분류에는 binding ruling 또는 전문의견이 특히 유용하다. (clm_416; src_419, src_420)</p>
+<p>국내 과세 service 표준 VAT는 19%이며 cross-border B2B place-of-supply와 reverse charge를
+별도 판정한다. (src_466)</p>
+<h2 id="6">6. 호주: 실제 운영에는 자연스럽지만 규제는 가볍지 않다</h2>
+<h3 id="61-2026">6.1 2026 현행선</h3>
+<p>현행 AML/CTF Act의 designated service에는 business로 수행하는 virtual asset↔virtual asset
+교환과 그 교환을 주선하는 행위가 포함된다. AUSTRAC는 P2P exchange platform, principal 또는
+intermediary 역할, 무료지만 사업을 촉진하는 서비스도 사실에 따라 포착될 수 있다고 설명한다.
+따라서 공식 호주 UI·router·fee를 켜기 전 item 46A/50A/50B/50C와 geographical link를
+기능별로 적어 등록·AML 의무를 판정해야 한다. (clm_417, clm_418; src_425, src_426,
+src_427, src_468)</p>
+<p>ASIC은 decentralised 또는 offshore라는 표현이 Corporations Act 분석을 끝내지 않는다고
+본다. 지원 pool 중 자산·arrangement 하나가 financial product이면 dealing, market operation,
+CS facility 또는 AFS licence 분석이 생길 수 있다. 2026-09-30까지의 class no-action position은
+기존 사업자를 위한 조건부 정책이며 신규 GIWA DEX의 일반면제가 아니다. (clm_420;
+src_428, src_429, src_431)</p>
+<h3 id="62-2027">6.2 2027 시행 예정법</h3>
+<p>Digital Assets Framework Act 2026은 제정됐지만 아직 현행 운영허가가 아니다. DAP·TCP 체계는
+2027년 4월 시행 예정이다. Federal Register의 commencement 표기와 ASIC roadmap에는
+2027-04-08/09의 하루 차이가 있어, 프로젝트 일정은 <strong>2027-04-08을 보수적 내부 마감</strong>으로
+잡고 시행 직전 다시 확인한다. (clm_419; src_429, src_430)</p>
+<p>미래 DAF의 noncustodial·public-infrastructure 정의가 유리해 보이더라도, 2026년에 이를 현재
+safe harbour로 사용할 수 없다. 최종 ASIC standards·guidance와 실제 possession, discretionary
+processing, critical participant, admin-key 사실을 다시 확인해야 한다.</p>
+<h3 id="63">6.3 호주 세금과 실제 생활</h3>
+<p>회사세는 base-rate entity 요건을 충족하면 25%, 그 밖은 30%다. 외국 설립 회사라도 호주에서
+사업을 하며 central management and control이 호주에 있으면 거주회사 분석이 필요하다.
+창업자가 호주에서 token list, fee switch, upgrade, treasury와 주요 계약을 실제 결정하면서
+오스트리아 법인만 세우는 구조는 호주 연결을 지우지 않는다. (clm_421, clm_436; src_432,
+src_433, src_436)</p>
+<p>호주 세무거주 개인은 일반적으로 해외소득도 신고한다. 호주 이용자가 지급하는 exchange
+facilitation 또는 interface fee는 digital currency 자체와 별도 GST 공급이 될 수 있다. payer,
+customer location, supply, invoice, fee wallet을 분리 기록한다. (clm_422; src_434, src_435,
+src_470)</p>
+<p>team LP도 공짜 세금구역이 아니다. ATO는 pool 입금·출금 각각의 CGT event 가능성과 주기적
+reward의 수취시 소득을 설명하며, 사업 법인은 trading-stock·ordinary-income 분류를 먼저 볼
+수 있다. (clm_438; src_432, src_433, src_469)</p>
+<p>이 보고서는 호주 체류자격·근로권을 확인하지 않는다. 사업 실행 전에 이민상 근로 가능성과
+세무거주 판정을 금융규제 분석과 별도 트랙으로 확인해야 한다.</p>
+<h2 id="7-ui-safe-harbour">7. 미국: 유용한 UI 설계 힌트, 그러나 단일 safe harbour는 없다</h2>
+<h3 id="71-sec-2026">7.1 SEC의 2026년 두 문서를 섞지 않는다</h3>
+<p>2026-03-23 발효한 Commission 해석은 crypto asset과 transaction의 증권성에 Howey와 실제
+권리·약정을 적용한다. 2026-04-13 문서는 그와 다른 Division of Trading and Markets <strong>직원
+견해</strong>다. 이 직원 문서는 Exchange Act Section 15의 broker-dealer 문제에 한정되고 법적
+효력이 없으며 Commission이 승인한 규칙·면제도 아니다. (clm_423; src_437, src_438,
+src_439)</p>
+<p>그래도 제품 설계 체크리스트로는 유용하다. 사용자가 거래 파라미터를 정하고 직접 서명·전송,
+route는 사전 공개된 객관 기준으로 표시, 특정 product·route·venue·counterparty에 중립적인
+user-paid fixed charge, 이해상충·보안·fee 공개를 요구한다. 여기서 fixed charge는 flat fee뿐
+아니라 객관적·일관적인 고정 산식의 거래당 percentage도 포함할 수 있다. custody, advice, execution,
+settlement, order taking/routing과 제3자 payment for order flow는 그 직원 견해의 범위 밖이다.
+(clm_424; src_437, src_438)</p>
+<h3 id="72">7.2 다른 미국 규제층</h3>
+<p>FinCEN은 DApp의 단순 개발과 개발자가 이를 사용·배포해 다른 사람을 위한 value를 accept하고
+transmit하는 경우를 구분한다. money transmitter가 되면 registration과 AML 의무가 생길 수
+있고 일반적인 거래금액 최소선에 기대면 안 된다. (clm_425; src_440, src_441, src_471)</p>
+<p>뉴욕은 pure software development and dissemination 자체는 BitLicense를 요구하지 않는다고
+설명하지만 제품 사용이 New York 또는 New Yorkers를 상대로 exchange, custody 또는
+transmission이면 별도 허가가 필요할 수 있다. FinCEN 등록도 BitLicense를 대체하지 않는다.
+(clm_426; src_440, src_444)</p>
+<p>Ooki DAO 사건은 leveraged·margined retail commodity transactions와 등록·통제 사실을
+다룬 default judgment다. 모든 plain spot AMM의 포괄 판결로 확대하면 안 되지만 spot에서도
+fraud·manipulation 권한은 남고 leverage·derivatives가 추가되면 위험이 급증한다. (clm_427;
+src_442, src_443, src_467)</p>
+<p>OFAC 의무와 주별 licensing은 SEC 직원 견해와 별도다. Van Loon의 uncontrollable immutable
+contract 판결과 Tornado Cash delisting도 식별 가능한 UI·relayer·service operator의 모든
+의무를 제거하지 않는다. 미국용 공식 UI에는 risk-based wallet·IP·sanctions controls와 주별
+launch map이 필요하다. (clm_428; src_437, src_444, src_445, src_476, src_477, src_478)</p>
+<h3 id="73">7.3 미국 세금과 보고</h3>
+<p>C-corp 연방세는 21%지만 주세·분배단계가 끝나지 않는다. digital asset로 받은 service fee는
+수취시 USD 시가의 ordinary income이 될 수 있고, 외국 법인도 미국 내 지속적 사업활동이면
+USTB·ECI를 검토한다. (clm_429; src_446, src_449, src_450)</p>
+<p>현행 Form 1099-DA 범위가 특정 noncustodial software actor를 포괄하지 않는 것과 DEX 수익의
+실체 세금은 다른 문제다. 2024년 말 DeFi front-end broker rule은 Public Law 119-5와 후속 IRS
+조치로 폐기됐으므로 살아 있는 2027 규칙처럼 인용하지 않는다. (clm_437; src_447, src_472,
+src_473, src_474)</p>
+<p>한국 법인에서 미국 고정 B2B service를 검토할 때는 실제 service 수행지, 미국 내 직원·사무소,
+계약권한, IP royalty 여부와 한미 조세조약상 PE를 함께 본다. 단순히 미국 사용자가 있다는
+사실만으로 ECI를 확정하거나, 반대로 온라인 사업이라 PE가 절대 없다고 단정하지 않는다.
+(src_450, src_475)</p>
+<p>CLARITY Act와 2026 SEC proposal은 현재법이 아니다. 2026-09-03 공식 기록상 추가 입법·규칙
+절차가 남아 있으므로 미래 규칙을 launch 면책으로 소비하지 않는다. (clm_430; src_451,
+src_452, src_453)</p>
+<h2 id="8">8. 수익 구조와 실행 순서</h2>
+<h3 id="gate-0">Gate 0 — 지금 유지</h3>
+<ul>
+<li>GIWA Sepolia research only</li>
+<li>protocol/interface fee switch off</li>
+<li>no user funds, no managed LP, no token issuance</li>
+<li>actor map과 fee ledger schema만 준비</li>
+</ul>
+<h3 id="gate-1">Gate 1 — 첫 실제 매출</h3>
+<p><code>월 고정 B2B 개발·보안·데이터·감사 계약</code>만 사용한다.</p>
+<ul>
+<li>고객 주문·route·asset selection과 무관</li>
+<li>거래액·거래성공·특정 venue volume과 무관</li>
+<li>서비스 범위, IP, 수행지, invoice currency, payer와 recipient를 계약에 명시</li>
+<li>crypto 수취 시 현지통화 FMV와 tx hash를 수취 시점에 기록</li>
+</ul>
+<p>(clm_404, clm_431, clm_435; src_408, src_411, src_419, src_446, src_448)</p>
+<h3 id="gate-2-team-own-capital-lp">Gate 2 — team own-capital LP</h3>
+<p>네 나라 현지 의견과 회계정책 뒤에만 검토한다.</p>
+<ul>
+<li>고객자금·위임·vault 없음</li>
+<li>운영 법인, LP 법인·지갑, key holder와 의사결정 기록 분리</li>
+<li>EU에서는 trading-platform operator와 동일 주체 금지선 우선 검토</li>
+<li>호주는 principal VASP·market making·CGT/trading-stock 검토</li>
+<li>미국은 spot only, no leverage, FinCEN와 세무 safe-harbour 적용 여부 확인</li>
+</ul>
+<h3 id="gate-3-interfaceprotocol-fee">Gate 3 — interface/protocol fee</h3>
+<p>다음이 모두 있어야 국가별로 별도 활성화한다.</p>
+<ul>
+<li>지원 token별 법적 분류</li>
+<li>UI의 quote→calldata→signature→broadcast sequence diagram</li>
+<li>router, admin, treasury와 default token-list owner</li>
+<li>고객 대상국과 geoblock·sanctions controls</li>
+<li>registration/licence 또는 면제 근거를 담은 서면 의견</li>
+<li>VAT/GST, revenue recognition, wallet accounting policy</li>
+</ul>
+<h3 id="_2">제외 유지</h3>
+<ul>
+<li>team-managed third-party LP vault</li>
+<li>leverage, margin, futures, option, swap</li>
+<li>venue-paid routing rebate/PFOF</li>
+<li>transfer-tax, protocol-revenue-share 또는 buyback-promise token</li>
+<li>wash trading, related-wallet volume와 거래량 보상</li>
+</ul>
+<h2 id="9">9. 국가 선택 시나리오</h2>
+<h3 id="a">A. 창업자가 호주에서 실제 운영</h3>
+<p>호주를 개인·법인 tax nexus와 VASP 분석의 첫 국가로 둔다. 오스트리아 회사는 EU 고객·인력·
+인가를 위한 진짜 기능이 생길 때 검토한다. 호주에서 모든 결정 후 Vienna 주소만 빌리는 구조는
+오히려 이중 연결과 substance 문제를 만든다.</p>
+<h3 id="b-eu">B. 오스트리아로 실제 이동해 EU 사업 구축</h3>
+<p>오스트리아 회사에 이사회, 회계, key policy, 계약과 규제 책임을 실제 배치한다. 초기에는
+fixed B2B, 이후 FMA pre-application과 CASP perimeter가 정리된 서비스만 passport한다.</p>
+<h3 id="c">C. 독일 파트너가 핵심</h3>
+<p>독일 채용·banking·distribution의 실익을 수치화한 뒤 약 30% 평균 결합부담과 BaFin 운영비를
+비교한다. “개인 crypto 1년”은 회사 business case에 넣지 않는다.</p>
+<h3 id="d">D. 미국 사용자를 열고 싶음</h3>
+<p>처음에는 미국·특히 뉴욕을 차단한 B2B 또는 research surface를 유지한다. 이후 transaction-
+preparation UI를 SEC 직원 조건에 맞춰 설계하되 FinCEN·OFAC·지원 주 map을 별도 승인받는다.
+전국 open access를 한 번에 켜지 않는다.</p>
+<h2 id="10">10. 전문가에게 보낼 질문</h2>
+<h3 id="_3">공통 사실자료</h3>
+<ol>
+<li>계약·UI·router·contract·LP·treasury의 법적 주체는 각각 누구인가?</li>
+<li>quote, default route, token list와 broadcast 중 누가 어떤 결정을 하는가?</li>
+<li>fee는 누가 누구에게 무슨 대가로 지급하며 어느 wallet이 받는가?</li>
+<li>업그레이드·pause·fee·listing 키를 누가 실제로 행사하는가?</li>
+<li>창업자와 직원이 어디에서 고위 결정을 하고 업무를 수행하는가?</li>
+<li>어느 국가 이용자를 적극 solicit하며 어떤 geoblock·sanctions 통제가 있는가?</li>
+</ol>
+<h3 id="_4">현지 서면의견</h3>
+<ul>
+<li><strong>Austria/Germany:</strong> CASP service category, Recital 22 경계, RTO rebate, operator own LP,
+  TFR, MiFID/AIFMD, VAT와 PE</li>
+<li><strong>Australia:</strong> AML/CTF s6 geographical link와 46A/50A/50B/50C, INFO 225, 2027 DAF,
+  AFSL/market/MIS, company residence와 GST</li>
+<li><strong>United States:</strong> Exchange Act §15와 직원견해 적합성, FinCEN MSB, CFTC spot/leveraged
+  boundary, OFAC, state map, USTB/ECI와 treaty/royalty</li>
+</ul>
+<h2 id="11-decision-gates">11. 최종 decision gates</h2>
+<table>
+<thead>
+<tr>
+<th>Gate</th>
+<th>통과 증거</th>
+<th>미통과 시</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>개인·법인 실체</td>
+<td>세무거주 memo, management calendar, board/key policy</td>
+<td>국가선택 중지</td>
+</tr>
+<tr>
+<td>기능 분류</td>
+<td>actor·sequence·fee diagram과 현지 서면의견</td>
+<td>공식 UI·fee off</td>
+</tr>
+<tr>
+<td>자산 분류</td>
+<td>pool별 token/LP right memo</td>
+<td>해당 pool 미노출</td>
+</tr>
+<tr>
+<td>AML·sanctions</td>
+<td>필요한 등록, program, screening·escalation 설계</td>
+<td>대상국 차단</td>
+</tr>
+<tr>
+<td>세무·회계</td>
+<td>invoice·FMV·wallet·GST/VAT ledger</td>
+<td>수익 수취 금지</td>
+</tr>
+<tr>
+<td>GIWA production</td>
+<td>public mainnet, canonical asset, audit, written distribution</td>
+<td>testnet 유지</td>
+</tr>
+</tbody>
+</table>
+<p>결론적으로, <strong>오스트리아는 가장 좋은 EU 법인 실사 후보</strong>, <strong>호주는 실제 운영국이면 정면으로
+컴플라이언스를 설계할 국가</strong>, <strong>독일은 시장 실익이 비용을 이길 때</strong>, <strong>미국은 좁고 중립적인
+UI와 주별 검토 뒤</strong>라는 순서다. 어느 나라도 <code>open source + non-custodial + offshore</code> 세 단어로
+허가·세금·제재를 지우지는 못한다.</p></article>
+    </main>
+    <footer>
+      <span>research_only=true</span>
+      <span>strategy_consumption_allowed=false</span>
+      <span>order_input=false</span>
+    </footer>
+  </body>
+</html>

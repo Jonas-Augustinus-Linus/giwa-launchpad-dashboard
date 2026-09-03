@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex,nofollow,noarchive" />
+    <meta name="theme-color" content="#090c0e" />
+    <title>GIWA 생태계·fee 프로젝트 결론 · GIWA Control Room</title>
+    <link rel="stylesheet" href="../../../../assets/document.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#document">본문으로 바로가기</a>
+    <header class="document-header">
+      <a class="brand" href="../../../../index.html#research" aria-label="GIWA 대시보드로 돌아가기">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span><strong>GIWA</strong><small>CONTROL ROOM</small></span>
+      </a>
+      <nav aria-label="문서 동작">
+        <a href="../../../../index.html#research">← 대시보드</a>
+        <a href="https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/RESEARCH/GIWA_ecosystem_fee_projects_2026_20260903_124749/outputs/00_executive_summary.md" target="_blank" rel="noopener noreferrer">Private GitHub ↗</a>
+      </nav>
+    </header>
+    <main id="document" class="document-shell">
+      <div class="document-meta">
+        <span>REPORT</span>
+        <span>SHA256 fc59eac715c4</span>
+      </div>
+      <h1>GIWA 생태계·fee 프로젝트 결론</h1>
+      <p class="source-path">RESEARCH/GIWA_ecosystem_fee_projects_2026_20260903_124749/outputs/00_executive_summary.md</p>
+      <article class="markdown-body"><h1 id="giwa-fee">GIWA 생태계·fee 프로젝트 결론</h1>
+<p>기준일: 2026-09-03 KST
+상태: <code>research_only=true</code>, <code>strategy_consumption_allowed=false</code>, <code>order_input=false</code></p>
+<h2 id="_1">결론</h2>
+<p><strong>지금 또 하나의 일반 스왑이나 Pump.fun형 런치패드를 만드는 것은 1순위가 아니다.</strong>
+GIWA Sepolia에는 이미 GIWATER, Joseon.fun, Ammora와 여러 제3자 AMM 실험이 있고,
+2026-09-02에는 V3형 Factory·Router·Position Manager와 성공한 테스트 스왑까지 관찰됐다.
+하지만 공개 메인넷, canonical Uniswap, issuer-backed quote asset, 감사된 실유동성은 아직
+확인되지 않는다. (src_101, src_112, src_117, src_118, src_119, src_121; clm_201,
+clm_208, clm_209, clm_210)</p>
+<p>최근 “프로젝트 발표”는 8월 24일~9월 2일의 <strong>프로젝트별 Phase 3 자기발표 물결</strong>에
+가깝다. 비공식 GIWA.eco는 43개 중 29개를 selected로 표시하지만 공식 GASOK 페이지에는
+팀명 roster가 없고, 공식 규칙은 5개 트랙별 최대 3팀이다. 따라서 29개를 공식 최종
+선정팀으로 부르면 안 된다. Phase 3는 8~9월 제품화·private-mainnet 단계이고 공개
+Demo Day는 10월의 미래 일정이다. (src_104, src_114, src_115; clm_204, clm_205,
+clm_206, clm_227)</p>
+<h2 id="_2">권고 프로젝트</h2>
+<p>1순위는 GIWA를 첫 adapter로 삼는 <strong>chain-agnostic Pool Passport / Liquidity Launch OS</strong>다.</p>
+<ul>
+<li>token·pool의 배포 bytecode와 source verification</li>
+<li>mint·freeze·blacklist·tax·proxy·upgrade·admin 권한</li>
+<li>fee recipient, treasury, vesting, LP lock·withdraw 권한</li>
+<li>멀티시그·timelock 상태와 변경 알림</li>
+<li>Dojang attestation의 발행자·schema·시점 표시</li>
+<li>“검증됨”과 “안전함/공식임”을 분리한 위험 API</li>
+<li>chain·asset·bridge·LP commitment와 fee recipient의 evidence gate</li>
+</ul>
+<p>초기 매출은 <strong>원화 B2B 월 구독 + 고정 API tier + 고정 검증·모니터링 리포트 fee</strong>로
+설계한다. 주문 생성, route 선택, 지갑 서명, 자산 보관, 거래 추천, 거래량 비례 수수료는
+제외한다. 이는 이미 crowded한 DEX/launchpad 시장과 차별화하면서 한국 VASP 경계에서
+상대적으로 방어 가능한 출발점이다. 적법성을 보증하는 판단은 아니며 유료 출시 전 서면
+법률검토가 필요하다. (src_108, src_114, src_130, src_132, src_133, src_143;
+clm_217, clm_218, clm_222, clm_224)</p>
+<h2 id="uniswap">Uniswap·빗썸 체인 신호</h2>
+<ul>
+<li><strong>Uniswap:</strong> GIWA를 준비 중이라는 공식 근거는 없다. 공식 배포·API 목록과 최신
+  governance 표면에 GIWA·91342 또는 배포 제안이 없다. 다만 Uniswap의 일반 전략은 새
+  자산이 있는 체인과 liquidity bootstrapping 도구로 확장한다고 하므로, GIWA public
+  mainnet·canonical asset·감사된 liquidity가 나온 뒤 canonical v3 제안을 준비할 여지는
+  있다. (src_121, src_122, src_125, src_126, src_145, src_146; clm_229, clm_230)</li>
+<li><strong>빗썸:</strong> 2026년 신규 L1/L2 주장은 현재 공식 공개 근거로 확인되지 않는다. 공식 GitHub,
+  채용·사업 페이지에는 거래소·지갑·블록체인 운영 신호만 있고 chain ID, RPC, node repo,
+  일정이 없다. 검색되는 Bithumb Chain은 2019년 Bithumb Global의 별도 과거 계획이다.
+  (src_147~src_150; clm_231)</li>
+</ul>
+<h2 id="uniswap_1">Uniswap 판정</h2>
+<ul>
+<li>v3: EVM 기술상 가능하고 core change date가 지나 GPL 조건으로 독립 검토할 수 있다.
+  canonical 지위와 Uniswap 앱 탑재는 DAO/UAC와 Labs의 별도 절차다.</li>
+<li>v4: 주요 core 파일은 2027-06-15 전 production use를 제한하는 BUSL이므로 Additional
+  Use Grant나 별도 허가 없이 상용 포크를 권고하지 않는다.</li>
+<li>어느 버전이든 네트워크 gas는 우리 dapp 매출이 아니다. 우리가 받을 수 있는 것은
+  명시적 interface/service fee, 독립 프로토콜 fee, 또는 우리 자금의 LP fee뿐이다.
+  한국 이용자의 거래를 반복 연결하며 건별 fee를 받는 구조는 VASP 고위험이다.
+  (src_122, src_123, src_124, src_128, src_132, src_141, src_142; clm_211~clm_215,
+  clm_218)</li>
+</ul>
+<h2 id="_3">지금의 결정</h2>
+<table>
+<thead>
+<tr>
+<th>항목</th>
+<th>판정</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Pool Passport 데이터·모니터링 MVP</td>
+<td>GO, 로컬·읽기 전용 Sepolia</td>
+</tr>
+<tr>
+<td>chain-agnostic Launch OS schema·simulator</td>
+<td>GO, execution adapter 기본 OFF</td>
+</tr>
+<tr>
+<td>토큰 없는 B2B 고정요금</td>
+<td>GO, 계약·세무·약관 검토 후</td>
+</tr>
+<tr>
+<td>양도 불가 문화 배지</td>
+<td>AMBER, 기능·환불·전자지급 검토 후</td>
+</tr>
+<tr>
+<td>자체자금 LP</td>
+<td>AMBER, 서면 의견·시장질서 통제 후</td>
+</tr>
+<tr>
+<td>한국 대상 fee-bearing swap/router</td>
+<td>RED, 신고 VASP 역할분리 전 금지</td>
+</tr>
+<tr>
+<td>IDO·launch success fee·custody</td>
+<td>RED</td>
+</tr>
+<tr>
+<td>revenue-share/buyback token</td>
+<td>RED</td>
+</tr>
+<tr>
+<td>v4 production fork</td>
+<td>HOLD, 라이선스 게이트</td>
+</tr>
+<tr>
+<td>public-mainnet 실자산 출시</td>
+<td>HOLD, 메인넷·asset·liquidity·audit·legal 게이트</td>
+</tr>
+</tbody>
+</table>
+<p>초기 유동성은 issuer-backed quote asset 확인 후 팀·공개 파트너의 실제 자기자본, 공개
+LP commitment, timelock·lock, time-weighted depth·7/30일 retention을 기준으로 만든다.
+raw volume mining, 자기거래 rebate, 가격·상장 보장과 숨은 buy/sell tax는 쓰지 않는다.
+수익화 순서는 고정 service fee → 서면의견 후 own-account LP fee → 필요한 신고·파트너
+구조 후 interface/protocol fee이며, token transfer tax는 0이다. (src_130~src_135,
+src_140, src_142, src_144, src_146; clm_232~clm_234)</p>
+<p>본 조사에서는 배포, 서명, 거래, 유동성 공급, 토큰 발행을 수행하지 않았다.</p></article>
+    </main>
+    <footer>
+      <span>research_only=true</span>
+      <span>strategy_consumption_allowed=false</span>
+      <span>order_input=false</span>
+    </footer>
+  </body>
+</html>

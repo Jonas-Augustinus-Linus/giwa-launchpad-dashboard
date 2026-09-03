@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex,nofollow,noarchive" />
+    <meta name="theme-color" content="#090c0e" />
+    <title>ecosystem.schema.json · GIWA Control Room</title>
+    <link rel="stylesheet" href="../../assets/document.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#document">본문으로 바로가기</a>
+    <header class="document-header">
+      <a class="brand" href="../../index.html#research" aria-label="GIWA 대시보드로 돌아가기">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span><strong>GIWA</strong><small>CONTROL ROOM</small></span>
+      </a>
+      <nav aria-label="문서 동작">
+        <a href="../../index.html#research">← 대시보드</a>
+        <a href="https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/schemas/ecosystem.schema.json" target="_blank" rel="noopener noreferrer">Private GitHub ↗</a>
+      </nav>
+    </header>
+    <main id="document" class="document-shell">
+      <div class="document-meta">
+        <span>PROJECT FILE</span>
+        <span>SHA256 bd0fc958a753</span>
+      </div>
+      <h1>ecosystem.schema.json</h1>
+      <p class="source-path">schemas/ecosystem.schema.json</p>
+      <article class="code-body"><pre class="source-code"><span class="code-line"><i>1</i><code>{</code></span>
+<span class="code-line"><i>2</i><code>  &quot;$schema&quot;: &quot;https://json-schema.org/draft/2020-12/schema&quot;,</code></span>
+<span class="code-line"><i>3</i><code>  &quot;$id&quot;: &quot;https://example.invalid/giwa-lab/ecosystem.schema.json&quot;,</code></span>
+<span class="code-line"><i>4</i><code>  &quot;title&quot;: &quot;GIWA ecosystem research inventory&quot;,</code></span>
+<span class="code-line"><i>5</i><code>  &quot;type&quot;: &quot;object&quot;,</code></span>
+<span class="code-line"><i>6</i><code>  &quot;required&quot;: [</code></span>
+<span class="code-line"><i>7</i><code>    &quot;schema_version&quot;,</code></span>
+<span class="code-line"><i>8</i><code>    &quot;as_of&quot;,</code></span>
+<span class="code-line"><i>9</i><code>    &quot;network_scope&quot;,</code></span>
+<span class="code-line"><i>10</i><code>    &quot;entries&quot;</code></span>
+<span class="code-line"><i>11</i><code>  ],</code></span>
+<span class="code-line"><i>12</i><code>  &quot;properties&quot;: {</code></span>
+<span class="code-line"><i>13</i><code>    &quot;schema_version&quot;: {</code></span>
+<span class="code-line"><i>14</i><code>      &quot;const&quot;: 1</code></span>
+<span class="code-line"><i>15</i><code>    },</code></span>
+<span class="code-line"><i>16</i><code>    &quot;as_of&quot;: {</code></span>
+<span class="code-line"><i>17</i><code>      &quot;type&quot;: &quot;string&quot;,</code></span>
+<span class="code-line"><i>18</i><code>      &quot;format&quot;: &quot;date&quot;</code></span>
+<span class="code-line"><i>19</i><code>    },</code></span>
+<span class="code-line"><i>20</i><code>    &quot;network_scope&quot;: {</code></span>
+<span class="code-line"><i>21</i><code>      &quot;const&quot;: &quot;GIWA Sepolia&quot;</code></span>
+<span class="code-line"><i>22</i><code>    },</code></span>
+<span class="code-line"><i>23</i><code>    &quot;entries&quot;: {</code></span>
+<span class="code-line"><i>24</i><code>      &quot;type&quot;: &quot;array&quot;,</code></span>
+<span class="code-line"><i>25</i><code>      &quot;items&quot;: {</code></span>
+<span class="code-line"><i>26</i><code>        &quot;type&quot;: &quot;object&quot;,</code></span>
+<span class="code-line"><i>27</i><code>        &quot;required&quot;: [</code></span>
+<span class="code-line"><i>28</i><code>          &quot;id&quot;,</code></span>
+<span class="code-line"><i>29</i><code>          &quot;name&quot;,</code></span>
+<span class="code-line"><i>30</i><code>          &quot;category&quot;,</code></span>
+<span class="code-line"><i>31</i><code>          &quot;officiality&quot;,</code></span>
+<span class="code-line"><i>32</i><code>          &quot;status&quot;,</code></span>
+<span class="code-line"><i>33</i><code>          &quot;network&quot;,</code></span>
+<span class="code-line"><i>34</i><code>          &quot;summary&quot;,</code></span>
+<span class="code-line"><i>35</i><code>          &quot;limitations&quot;,</code></span>
+<span class="code-line"><i>36</i><code>          &quot;source_ids&quot;,</code></span>
+<span class="code-line"><i>37</i><code>          &quot;research_only&quot;,</code></span>
+<span class="code-line"><i>38</i><code>          &quot;strategy_consumption_allowed&quot;,</code></span>
+<span class="code-line"><i>39</i><code>          &quot;order_input&quot;</code></span>
+<span class="code-line"><i>40</i><code>        ],</code></span>
+<span class="code-line"><i>41</i><code>        &quot;properties&quot;: {</code></span>
+<span class="code-line"><i>42</i><code>          &quot;id&quot;: {</code></span>
+<span class="code-line"><i>43</i><code>            &quot;type&quot;: &quot;string&quot;,</code></span>
+<span class="code-line"><i>44</i><code>            &quot;minLength&quot;: 1</code></span>
+<span class="code-line"><i>45</i><code>          },</code></span>
+<span class="code-line"><i>46</i><code>          &quot;name&quot;: {</code></span>
+<span class="code-line"><i>47</i><code>            &quot;type&quot;: &quot;string&quot;,</code></span>
+<span class="code-line"><i>48</i><code>            &quot;minLength&quot;: 1</code></span>
+<span class="code-line"><i>49</i><code>          },</code></span>
+<span class="code-line"><i>50</i><code>          &quot;category&quot;: {</code></span>
+<span class="code-line"><i>51</i><code>            &quot;type&quot;: &quot;string&quot;,</code></span>
+<span class="code-line"><i>52</i><code>            &quot;minLength&quot;: 1</code></span>
+<span class="code-line"><i>53</i><code>          },</code></span>
+<span class="code-line"><i>54</i><code>          &quot;officiality&quot;: {</code></span>
+<span class="code-line"><i>55</i><code>            &quot;enum&quot;: [</code></span>
+<span class="code-line"><i>56</i><code>              &quot;official&quot;,</code></span>
+<span class="code-line"><i>57</i><code>              &quot;provider_reported&quot;,</code></span>
+<span class="code-line"><i>58</i><code>              &quot;third_party&quot;</code></span>
+<span class="code-line"><i>59</i><code>            ]</code></span>
+<span class="code-line"><i>60</i><code>          },</code></span>
+<span class="code-line"><i>61</i><code>          &quot;status&quot;: {</code></span>
+<span class="code-line"><i>62</i><code>            &quot;type&quot;: &quot;string&quot;,</code></span>
+<span class="code-line"><i>63</i><code>            &quot;minLength&quot;: 1</code></span>
+<span class="code-line"><i>64</i><code>          },</code></span>
+<span class="code-line"><i>65</i><code>          &quot;network&quot;: {</code></span>
+<span class="code-line"><i>66</i><code>            &quot;type&quot;: &quot;string&quot;,</code></span>
+<span class="code-line"><i>67</i><code>            &quot;minLength&quot;: 1</code></span>
+<span class="code-line"><i>68</i><code>          },</code></span>
+<span class="code-line"><i>69</i><code>          &quot;summary&quot;: {</code></span>
+<span class="code-line"><i>70</i><code>            &quot;type&quot;: &quot;string&quot;,</code></span>
+<span class="code-line"><i>71</i><code>            &quot;minLength&quot;: 1</code></span>
+<span class="code-line"><i>72</i><code>          },</code></span>
+<span class="code-line"><i>73</i><code>          &quot;limitations&quot;: {</code></span>
+<span class="code-line"><i>74</i><code>            &quot;type&quot;: &quot;array&quot;,</code></span>
+<span class="code-line"><i>75</i><code>            &quot;items&quot;: {</code></span>
+<span class="code-line"><i>76</i><code>              &quot;type&quot;: &quot;string&quot;</code></span>
+<span class="code-line"><i>77</i><code>            }</code></span>
+<span class="code-line"><i>78</i><code>          },</code></span>
+<span class="code-line"><i>79</i><code>          &quot;source_ids&quot;: {</code></span>
+<span class="code-line"><i>80</i><code>            &quot;type&quot;: &quot;array&quot;,</code></span>
+<span class="code-line"><i>81</i><code>            &quot;minItems&quot;: 1,</code></span>
+<span class="code-line"><i>82</i><code>            &quot;items&quot;: {</code></span>
+<span class="code-line"><i>83</i><code>              &quot;type&quot;: &quot;string&quot;,</code></span>
+<span class="code-line"><i>84</i><code>              &quot;pattern&quot;: &quot;^src_[0-9]+$&quot;</code></span>
+<span class="code-line"><i>85</i><code>            }</code></span>
+<span class="code-line"><i>86</i><code>          },</code></span>
+<span class="code-line"><i>87</i><code>          &quot;contracts&quot;: {</code></span>
+<span class="code-line"><i>88</i><code>            &quot;type&quot;: &quot;array&quot;,</code></span>
+<span class="code-line"><i>89</i><code>            &quot;items&quot;: {</code></span>
+<span class="code-line"><i>90</i><code>              &quot;type&quot;: &quot;string&quot;,</code></span>
+<span class="code-line"><i>91</i><code>              &quot;pattern&quot;: &quot;^0x[0-9a-fA-F]{40}$&quot;</code></span>
+<span class="code-line"><i>92</i><code>            }</code></span>
+<span class="code-line"><i>93</i><code>          },</code></span>
+<span class="code-line"><i>94</i><code>          &quot;research_only&quot;: {</code></span>
+<span class="code-line"><i>95</i><code>            &quot;const&quot;: true</code></span>
+<span class="code-line"><i>96</i><code>          },</code></span>
+<span class="code-line"><i>97</i><code>          &quot;strategy_consumption_allowed&quot;: {</code></span>
+<span class="code-line"><i>98</i><code>            &quot;const&quot;: false</code></span>
+<span class="code-line"><i>99</i><code>          },</code></span>
+<span class="code-line"><i>100</i><code>          &quot;order_input&quot;: {</code></span>
+<span class="code-line"><i>101</i><code>            &quot;const&quot;: false</code></span>
+<span class="code-line"><i>102</i><code>          }</code></span>
+<span class="code-line"><i>103</i><code>        },</code></span>
+<span class="code-line"><i>104</i><code>        &quot;additionalProperties&quot;: false</code></span>
+<span class="code-line"><i>105</i><code>      }</code></span>
+<span class="code-line"><i>106</i><code>    }</code></span>
+<span class="code-line"><i>107</i><code>  },</code></span>
+<span class="code-line"><i>108</i><code>  &quot;additionalProperties&quot;: false</code></span>
+<span class="code-line"><i>109</i><code>}</code></span></pre></article>
+    </main>
+    <footer>
+      <span>research_only=true</span>
+      <span>strategy_consumption_allowed=false</span>
+      <span>order_input=false</span>
+    </footer>
+  </body>
+</html>

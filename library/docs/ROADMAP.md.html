@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex,nofollow,noarchive" />
+    <meta name="theme-color" content="#090c0e" />
+    <title>Preparation roadmap · GIWA Control Room</title>
+    <link rel="stylesheet" href="../../assets/document.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#document">본문으로 바로가기</a>
+    <header class="document-header">
+      <a class="brand" href="../../index.html#research" aria-label="GIWA 대시보드로 돌아가기">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span><strong>GIWA</strong><small>CONTROL ROOM</small></span>
+      </a>
+      <nav aria-label="문서 동작">
+        <a href="../../index.html#research">← 대시보드</a>
+        <a href="https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/docs/ROADMAP.md" target="_blank" rel="noopener noreferrer">Private GitHub ↗</a>
+      </nav>
+    </header>
+    <main id="document" class="document-shell">
+      <div class="document-meta">
+        <span>REPORT</span>
+        <span>SHA256 a15d7da4917a</span>
+      </div>
+      <h1>Preparation roadmap</h1>
+      <p class="source-path">docs/ROADMAP.md</p>
+      <article class="markdown-body"><h1 id="preparation-roadmap">Preparation roadmap</h1>
+<h2 id="phase-0-completed-in-this-scaffold">Phase 0 — completed in this scaffold</h2>
+<ul>
+<li>Evidence-backed ecosystem inventory and deep-research report.</li>
+<li>Strict read-only GIWA Sepolia RPC client with chain-ID fail-close.</li>
+<li>Token and AMM specification outlines; no Solidity or deployment path.</li>
+<li>Safety flags and provenance requirements enforced by tests.</li>
+</ul>
+<h2 id="phase-1-local-deterministic-prototypes">Phase 1 — local deterministic prototypes</h2>
+<ul>
+<li>Pin compiler, Foundry, OpenZeppelin, and any AMM dependency by version and license.</li>
+<li>Implement a plain fixed-supply ERC-20 with invariant, fuzz, access-control, and static-analysis
+  tests. Avoid transfer taxes, hidden minting, blacklist traps, upgradeability, and misleading
+  metadata unless separately justified.</li>
+<li>Implement or integrate a minimal AMM only after choosing a legally reusable audited base.</li>
+<li>Run local Anvil tests only; publish a threat model and bytecode reproducibility procedure.</li>
+</ul>
+<p>This phase still has no signer, RPC broadcast, or public deployment.</p>
+<h2 id="phase-2-reviewed-giwa-sepolia-deployment-candidate">Phase 2 — reviewed GIWA Sepolia deployment candidate</h2>
+<p>Requires an explicit approval covering exact source revision, contracts, deployer authority,
+testnet addresses, and cleanup plan. Add a human-operated deployment runbook, not unattended
+automation. Verify source, roles, constructor arguments, events, invariants, frontend chain guard,
+and explorer metadata. Use only valueless test assets.</p>
+<h2 id="phase-3-product-experiment">Phase 3 — product experiment</h2>
+<p>Only after external security review and legal/product approval: multisig and timelock design,
+incident response, indexer reliability, monitoring, rate-limit strategy, oracle failure policy,
+bridge assumptions, accessibility, abuse controls, and transparent testnet disclosures.</p>
+<h2 id="phase-4-public-mainnet-consideration">Phase 4 — public mainnet consideration</h2>
+<p>Blocked until every gate in <code>MAINNET_GATES.md</code> is evidenced. Private-mainnet access or an
+accelerator milestone is not a substitute for public availability or production readiness.</p></article>
+    </main>
+    <footer>
+      <span>research_only=true</span>
+      <span>strategy_consumption_allowed=false</span>
+      <span>order_input=false</span>
+    </footer>
+  </body>
+</html>

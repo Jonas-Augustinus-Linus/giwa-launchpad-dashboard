@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex,nofollow,noarchive" />
+    <meta name="theme-color" content="#090c0e" />
+    <title>test_rpc.py · GIWA Control Room</title>
+    <link rel="stylesheet" href="../../assets/document.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#document">본문으로 바로가기</a>
+    <header class="document-header">
+      <a class="brand" href="../../index.html#research" aria-label="GIWA 대시보드로 돌아가기">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span><strong>GIWA</strong><small>CONTROL ROOM</small></span>
+      </a>
+      <nav aria-label="문서 동작">
+        <a href="../../index.html#research">← 대시보드</a>
+        <a href="https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/tests/test_rpc.py" target="_blank" rel="noopener noreferrer">Private GitHub ↗</a>
+      </nav>
+    </header>
+    <main id="document" class="document-shell">
+      <div class="document-meta">
+        <span>SOURCE CODE</span>
+        <span>SHA256 5bf70336ce70</span>
+      </div>
+      <h1>test_rpc.py</h1>
+      <p class="source-path">tests/test_rpc.py</p>
+      <article class="code-body"><pre class="source-code"><span class="code-line"><i>1</i><code>import json</code></span>
+<span class="code-line"><i>2</i><code>import unittest</code></span>
+<span class="code-line"><i>3</i><code></code></span>
+<span class="code-line"><i>4</i><code>from giwa_lab.probe import collect_probe</code></span>
+<span class="code-line"><i>5</i><code>from giwa_lab.rpc import JsonRpcClient, RpcSafetyError, validate_rpc_url</code></span>
+<span class="code-line"><i>6</i><code></code></span>
+<span class="code-line"><i>7</i><code></code></span>
+<span class="code-line"><i>8</i><code>class FakeResponse:</code></span>
+<span class="code-line"><i>9</i><code>    def __init__(self, payload):</code></span>
+<span class="code-line"><i>10</i><code>        self.payload = payload</code></span>
+<span class="code-line"><i>11</i><code></code></span>
+<span class="code-line"><i>12</i><code>    def __enter__(self):</code></span>
+<span class="code-line"><i>13</i><code>        return self</code></span>
+<span class="code-line"><i>14</i><code></code></span>
+<span class="code-line"><i>15</i><code>    def __exit__(self, *_args):</code></span>
+<span class="code-line"><i>16</i><code>        return False</code></span>
+<span class="code-line"><i>17</i><code></code></span>
+<span class="code-line"><i>18</i><code>    def read(self):</code></span>
+<span class="code-line"><i>19</i><code>        return json.dumps(self.payload).encode()</code></span>
+<span class="code-line"><i>20</i><code></code></span>
+<span class="code-line"><i>21</i><code></code></span>
+<span class="code-line"><i>22</i><code>class RpcSafetyTests(unittest.TestCase):</code></span>
+<span class="code-line"><i>23</i><code>    def test_public_http_is_rejected(self):</code></span>
+<span class="code-line"><i>24</i><code>        with self.assertRaises(RpcSafetyError):</code></span>
+<span class="code-line"><i>25</i><code>            validate_rpc_url(&quot;http://sepolia-rpc.giwa.io&quot;)</code></span>
+<span class="code-line"><i>26</i><code></code></span>
+<span class="code-line"><i>27</i><code>    def test_credentials_and_query_are_rejected(self):</code></span>
+<span class="code-line"><i>28</i><code>        for url in (&quot;https://user:secret@example.test&quot;, &quot;https://example.test?key=secret&quot;):</code></span>
+<span class="code-line"><i>29</i><code>            with self.subTest(url=url), self.assertRaises(RpcSafetyError):</code></span>
+<span class="code-line"><i>30</i><code>                validate_rpc_url(url)</code></span>
+<span class="code-line"><i>31</i><code></code></span>
+<span class="code-line"><i>32</i><code>    def test_loopback_http_is_allowed(self):</code></span>
+<span class="code-line"><i>33</i><code>        self.assertEqual(validate_rpc_url(&quot;http://127.0.0.1:8545&quot;), &quot;http://127.0.0.1:8545&quot;)</code></span>
+<span class="code-line"><i>34</i><code></code></span>
+<span class="code-line"><i>35</i><code>    def test_transaction_method_is_rejected_before_transport(self):</code></span>
+<span class="code-line"><i>36</i><code>        called = False</code></span>
+<span class="code-line"><i>37</i><code></code></span>
+<span class="code-line"><i>38</i><code>        def opener(*_args, **_kwargs):</code></span>
+<span class="code-line"><i>39</i><code>            nonlocal called</code></span>
+<span class="code-line"><i>40</i><code>            called = True</code></span>
+<span class="code-line"><i>41</i><code>            return FakeResponse({})</code></span>
+<span class="code-line"><i>42</i><code></code></span>
+<span class="code-line"><i>43</i><code>        client = JsonRpcClient(&quot;https://example.test&quot;, opener=opener)</code></span>
+<span class="code-line"><i>44</i><code>        with self.assertRaises(RpcSafetyError):</code></span>
+<span class="code-line"><i>45</i><code>            client.request(&quot;eth_sendRawTransaction&quot;, [&quot;0x00&quot;])</code></span>
+<span class="code-line"><i>46</i><code>        self.assertFalse(called)</code></span>
+<span class="code-line"><i>47</i><code></code></span>
+<span class="code-line"><i>48</i><code>    def test_allowlisted_request(self):</code></span>
+<span class="code-line"><i>49</i><code>        def opener(request, **_kwargs):</code></span>
+<span class="code-line"><i>50</i><code>            body = json.loads(request.data)</code></span>
+<span class="code-line"><i>51</i><code>            self.assertEqual(body[&quot;method&quot;], &quot;eth_chainId&quot;)</code></span>
+<span class="code-line"><i>52</i><code>            return FakeResponse({&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;id&quot;: 1, &quot;result&quot;: &quot;0x164ce&quot;})</code></span>
+<span class="code-line"><i>53</i><code></code></span>
+<span class="code-line"><i>54</i><code>        client = JsonRpcClient(&quot;https://example.test&quot;, opener=opener)</code></span>
+<span class="code-line"><i>55</i><code>        self.assertEqual(client.request(&quot;eth_chainId&quot;), &quot;0x164ce&quot;)</code></span>
+<span class="code-line"><i>56</i><code></code></span>
+<span class="code-line"><i>57</i><code></code></span>
+<span class="code-line"><i>58</i><code>class ProbeBoundaryTests(unittest.TestCase):</code></span>
+<span class="code-line"><i>59</i><code>    def test_wrong_chain_fails_before_other_calls(self):</code></span>
+<span class="code-line"><i>60</i><code>        class WrongChain:</code></span>
+<span class="code-line"><i>61</i><code>            def request(self, method, _params=None):</code></span>
+<span class="code-line"><i>62</i><code>                self.last_method = method</code></span>
+<span class="code-line"><i>63</i><code>                return &quot;0x1&quot;</code></span>
+<span class="code-line"><i>64</i><code></code></span>
+<span class="code-line"><i>65</i><code>        rpc = WrongChain()</code></span>
+<span class="code-line"><i>66</i><code>        with self.assertRaises(RpcSafetyError):</code></span>
+<span class="code-line"><i>67</i><code>            collect_probe(rpc)</code></span>
+<span class="code-line"><i>68</i><code>        self.assertEqual(rpc.last_method, &quot;eth_chainId&quot;)</code></span>
+<span class="code-line"><i>69</i><code></code></span>
+<span class="code-line"><i>70</i><code></code></span>
+<span class="code-line"><i>71</i><code>if __name__ == &quot;__main__&quot;:</code></span>
+<span class="code-line"><i>72</i><code>    unittest.main()</code></span></pre></article>
+    </main>
+    <footer>
+      <span>research_only=true</span>
+      <span>strategy_consumption_allowed=false</span>
+      <span>order_input=false</span>
+    </footer>
+  </body>
+</html>

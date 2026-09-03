@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex,nofollow,noarchive" />
+    <meta name="theme-color" content="#090c0e" />
+    <title>GIWA Simple DEX: 의사결정 요약 · GIWA Control Room</title>
+    <link rel="stylesheet" href="../../../../assets/document.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#document">본문으로 바로가기</a>
+    <header class="document-header">
+      <a class="brand" href="../../../../index.html#research" aria-label="GIWA 대시보드로 돌아가기">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span><strong>GIWA</strong><small>CONTROL ROOM</small></span>
+      </a>
+      <nav aria-label="문서 동작">
+        <a href="../../../../index.html#research">← 대시보드</a>
+        <a href="https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/RESEARCH/GIWA_simple_open_dex_volume_2026_20260903_132946/outputs/00_executive_summary.md" target="_blank" rel="noopener noreferrer">Private GitHub ↗</a>
+      </nav>
+    </header>
+    <main id="document" class="document-shell">
+      <div class="document-meta">
+        <span>REPORT</span>
+        <span>SHA256 a994cdebf5c7</span>
+      </div>
+      <h1>GIWA Simple DEX: 의사결정 요약</h1>
+      <p class="source-path">RESEARCH/GIWA_simple_open_dex_volume_2026_20260903_132946/outputs/00_executive_summary.md</p>
+      <article class="markdown-body"><h1 id="giwa-simple-dex">GIWA Simple DEX: 의사결정 요약</h1>
+<p>기준일: <strong>2026-09-03 KST</strong><br>
+모드: <strong>Insane Research strict / research only</strong></p>
+<h2 id="_1">결론</h2>
+<p>우리에게 가장 맞는 제품 가설은 <strong>독립 브랜드의 최소형 v3-compatible DEX</strong>다. 화면은
+<code>swap</code>, <code>liquidity</code>, <code>pool facts</code> 세 면으로 단순하게 유지하되, 희소한 초기 자본을 실제
+거래 가격대에 집중시켜 라우터가 선택할 수 있는 체결 품질을 만든다.</p>
+<p>단, 지금은 real-money launch 시점이 아니다. GIWA public mainnet, GIWA Wallet,
+issuer-backed stable quote asset, production bridge와 외부 aggregator route가 아직 확인되지
+않았다. GIWA Sepolia에는 이미 여러 swap·launchpad 실험이 있어 “최초 DEX”도 차별점이
+아니다. (src_201, src_211~src_217; clm_301~clm_304)</p>
+<h2 id="_2">우리가 벌어야 하는 방식</h2>
+<p>초기 수익 순서는 다음이 가장 방어적이다.</p>
+<ol>
+<li>거래량과 무관한 고정 개발·보안·데이터 B2B fee</li>
+<li>한국 전문 변호사의 서면 의견 뒤 팀 자기자본 LP가 다른 LP와 같은 규칙으로 받는 fee</li>
+<li>필요한 신고 수리 또는 역할이 분리된 적법 구조가 완성된 뒤 protocol/interface fee 검토</li>
+</ol>
+<p>초기에는 protocol fee switch, Korean-facing interface fee, paid router/referral, pooled LP
+vault, transfer tax, fee-share token을 모두 끈다. 오픈소스·비수탁이라는 말만으로 한국 VASP
+면제가 되지는 않는다. (src_234~src_244; clm_319~clm_325)</p>
+<h2 id="_3">거래량을 만드는 순서</h2>
+<p><code>canonical quote asset → anchor-pair depth → best execution → wallet/aggregator routing →
+independent repeat flow → fee → retained liquidity</code></p>
+<p>순서를 뒤집어 token emissions나 화면의 거래량 숫자부터 사면 organic volume이 아니다.
+초기에는 <code>WETH / 공식 stablecoin</code> 한 쌍, partner token / stablecoin 최대 2~3쌍만 열고,
+관련지갑·mock asset·reward round trip을 제외한 체결 품질과 재방문을 측정한다.
+(src_215~src_233, clm_313~clm_317, clm_327~clm_329)</p>
+<h2 id="uniswap">Uniswap 대응</h2>
+<ul>
+<li>현재 Uniswap의 공식 GIWA 준비 신호는 없다.</li>
+<li>canonical deployment, Uniswap Labs UI, Trading API와 유동성은 서로 별도다.</li>
+<li>GIWA와 canonical Uniswap 협의를 병행하되, 실제 wallet·API·liquidity package가 확정되면
+  같은 페어의 독립 core로 유동성을 쪼개지 않고 integration·LP 전략으로 pivot한다.</li>
+<li>독립 v3 배포를 택하면 GPL 조건과 Uniswap 상표 분리를 지키고 새 감사가 필요하다.</li>
+</ul>
+<p>(src_218~src_227, src_245~src_246; clm_306~clm_312, clm_330, clm_333)</p>
+<h2 id="gono-go">한 줄 go/no-go</h2>
+<p><strong>mainnet + canonical stablecoin + 두 개의 written distribution integrations + target-order
+price impact + audit + Korean role/fee legal opinion이 모두 나오기 전에는 DEX를 배포하지
+않는다.</strong> 하나라도 없으면 research/testnet 상태를 유지한다. (clm_328)</p>
+<blockquote>
+<p>이 문서는 기술·사업·규제 리서치이며 법률·세무·투자 자문이 아니다. “상대적으로
+방어적”은 적법 확인이나 인허가 면제를 뜻하지 않는다. 이번 세션에서는 코드 구현,
+배포, 서명, 거래, 토큰 발행과 유동성 공급을 하지 않았다.</p>
+</blockquote></article>
+    </main>
+    <footer>
+      <span>research_only=true</span>
+      <span>strategy_consumption_allowed=false</span>
+      <span>order_input=false</span>
+    </footer>
+  </body>
+</html>

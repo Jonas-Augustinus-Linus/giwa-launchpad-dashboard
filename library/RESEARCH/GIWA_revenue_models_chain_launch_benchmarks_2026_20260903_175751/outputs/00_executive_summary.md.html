@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex,nofollow,noarchive" />
+    <meta name="theme-color" content="#090c0e" />
+    <title>GIWA Launchpad 수익·인프라 리서치 — Executive Summary · GIWA Control Room</title>
+    <link rel="stylesheet" href="../../../../assets/document.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#document">본문으로 바로가기</a>
+    <header class="document-header">
+      <a class="brand" href="../../../../index.html#research" aria-label="GIWA 대시보드로 돌아가기">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span><strong>GIWA</strong><small>CONTROL ROOM</small></span>
+      </a>
+      <nav aria-label="문서 동작">
+        <a href="../../../../index.html#research">← 대시보드</a>
+        <a href="https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/RESEARCH/GIWA_revenue_models_chain_launch_benchmarks_2026_20260903_175751/outputs/00_executive_summary.md" target="_blank" rel="noopener noreferrer">Private GitHub ↗</a>
+      </nav>
+    </header>
+    <main id="document" class="document-shell">
+      <div class="document-meta">
+        <span>REPORT</span>
+        <span>SHA256 bca24a9bb5d5</span>
+      </div>
+      <h1>GIWA Launchpad 수익·인프라 리서치 — Executive Summary</h1>
+      <p class="source-path">RESEARCH/GIWA_revenue_models_chain_launch_benchmarks_2026_20260903_175751/outputs/00_executive_summary.md</p>
+      <article class="markdown-body"><h1 id="giwa-launchpad-executive-summary">GIWA Launchpad 수익·인프라 리서치 — Executive Summary</h1>
+<p>기준 시각: 2026-09-03 KST
+범위: research-only, 배포·서명·거래·유동성 공급 권한 없음</p>
+<h2 id="_1">결론</h2>
+<p>GIWA Launchpad의 첫 제품은 토큰 발행기가 아니라 <strong>Evidence OS + Pool Passport</strong>가 적합하다. GIWA는 현재 public mainnet이 아니라 Sepolia가 공개된 상태이고, 경제적 가치가 없는 test token만으로 DEX·NFT·밈코인 수수료 매출을 검증할 수 없다. 반면 노드·RPC·계약 코드·풀 이벤트의 출처, finality, proxy/admin 권한과 주소 충돌을 읽고 보존하는 제품은 지금 바로 research-only로 만들 수 있다. (clm_301, clm_333; src_301, src_303, src_307, src_309)</p>
+<p>권장 순서는 다음과 같다. (clm_334, clm_335)</p>
+<ol>
+<li><strong>P0 — Evidence OS:</strong> provider RPC + canonical raw event + reorg-safe index + Pool Passport.</li>
+<li><strong>P1 — Data pilot:</strong> 3개 design partner를 대상으로 setup fee와 monitoring MRR의 지불의사 검증. 공개 근거만으로 가격을 확정하지 않는다.</li>
+<li><strong>P2 — Vetted launch:</strong> public mainnet·canonical asset·감사·IP/소비자 고지가 갖춰진 뒤 목적이 분명한 NFT/프로젝트의 fixed launch fee부터 검토.</li>
+<li><strong>P3 — Interface fee:</strong> 실제로 UI/API가 라우팅한 유기 거래에만 투명하게 과금.</li>
+<li><strong>P4 — Protocol fee / treasury LP:</strong> 30/90일 유동성·재방문이 확인된 뒤 서로 다른 원장과 권한으로 심사.</li>
+<li><strong>LAST — Memecoin:</strong> 시장감시, creator 책임, bot·Sybil 통제와 법률 분류가 없으면 열지 않는다.</li>
+</ol>
+<h2 id="_2">노드는 있는가</h2>
+<p>있다. 현재 공식 node release는 v0.6.0이며 op-reth 2.3.3 + op-node 1.19.1 조합이다. 공식 testnet 사양은 최소 4 core / 8 GB RAM / 500 GB NVMe, 권장 8+ core / 16+ GB RAM / 1+ TB다. Ethereum Sepolia execution RPC와 beacon RPC가 필요하며, full·archive·execution·consensus sync 경로가 문서화돼 있다. 이 표는 <strong>Sepolia용</strong>이며 mainnet production sizing으로 승격하면 안 된다. (clm_301, clm_302; src_301, src_302, src_303)</p>
+<p>온체인 정보를 빠르게 얻는 데 노드는 필요하지만 충분하지 않다. 권장 경로는 <code>provider/private node → raw evidence store → finality/reorg reconciler → normalized index → read API/cache</code>다. Flashblocks의 빠른 pending 상태는 별도 lane에 저장하고 canonical block과 재조정한다. 공개 RPC는 rate-limited이므로 단일 production source로 두지 않는다. (clm_303, clm_304, clm_306; src_305, src_306, src_308, src_332)</p>
+<h2 id="_3">스왑 풀을 만들려면</h2>
+<p>현재 GIWA 공식 레지스트리에는 WETH9·Permit2·Multicall3는 있지만 canonical V3 Factory·Router·Position Manager·Quoter는 등재돼 있지 않다. 따라서 발견된 임의 바이트코드를 “공식 DEX”로 승격하지 않는다. 필요한 제품 묶음은 아래와 같다. (clm_308, clm_309; src_309, src_310, src_312)</p>
+<ul>
+<li>Core: Factory, Pool, fee tier, tick spacing, oracle observations.</li>
+<li>Periphery: Router, Quoter, Position Manager, Permit2, Multicall.</li>
+<li>Assets: canonical WETH/stablecoin, token registry, decimals·tax·mint/freeze 검사.</li>
+<li>Data: PoolCreated/Initialize/Mint/Burn/Swap/Collect 이벤트 인덱서, tentative/safe/finalized 상태.</li>
+<li>Trust: Pool Passport, source/code hash, proxy/admin, fee recipient, LP 권한, 감사·라이선스.</li>
+<li>Operations: governance/timelock, pause·incident plan, monitoring, regression and fork tests.</li>
+</ul>
+<h2 id="_4">수익은 네 개의 원장으로 본다</h2>
+<p><code>거래량 × fee</code>를 곧바로 우리 매출로 잡지 않는다. (clm_310, clm_318, clm_321)</p>
+<table>
+<thead>
+<tr>
+<th>원장</th>
+<th>실제 수취인</th>
+<th>GIWA Launchpad 매출 조건</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LP revenue</td>
+<td>유동성 공급자 또는 voter</td>
+<td>운영사가 자기 자본 LP일 때 실현 수수료만; IL/LVR·hedge·gas 차감</td>
+</tr>
+<tr>
+<td>Protocol / holder revenue</td>
+<td>treasury, token holder, burn contract</td>
+<td>fee switch와 수취 주소가 실제 활성화된 몫만</td>
+</tr>
+<tr>
+<td>Interface / launch revenue</td>
+<td>UI·router·drop 운영사</td>
+<td>해당 인터페이스가 만든 거래·민팅과 명시된 fee만</td>
+</tr>
+<tr>
+<td>Chain operator revenue</td>
+<td>sequencer/operator</td>
+<td>GIWA Launchpad가 체인 운영자라는 계약·권한이 있을 때만</td>
+</tr>
+</tbody>
+</table>
+<p>가장 현실적인 초기 후보는 <code>검증 setup + monitoring MRR</code>, 그 다음 <code>vetted launch fixed fee</code>, 이후 <code>interface fee</code>다. NFT primary fee는 일회성이고 secondary royalty는 항상 강제되지 않는다. 자기자본 LP는 fee보다 손실이 클 수 있다. creator coin과 memecoin은 높은 gross fee가 개별 발행 성공을 의미하지 않는다. (clm_322, clm_323, clm_327, clm_332; src_317, src_318, src_340, src_345, src_354, src_355)</p>
+<h2 id="_5">벤치마크에서 가져올 것</h2>
+<ul>
+<li><strong>Uniswap:</strong> 계약만이 아니라 UI·감사·문서·migration·subgraph를 함께 출시했고, protocol fee는 사용과 유동성이 자란 뒤 켰다. (clm_312, clm_313)</li>
+<li><strong>Base:</strong> builder-only 창과 day-one 앱·Coinbase 배포를 묶었고 수년 뒤에도 활동이 남았다. 공식 campaign 숫자는 self-report이며 사람 수나 Base 운영매출이 아니다. (clm_316, clm_317)</li>
+<li><strong>Aerodrome:</strong> emissions와 voting incentives로 유동성을 점화했다. 높은 점유율을 무보조 수요로 해석하지 않는다. (clm_314, clm_315)</li>
+<li><strong>Robinhood Chain:</strong> 2026-07-01 mainnet과 day-one Uniswap·Pleiades 배포는 확인됐고 9월 초 거래 규모도 컸지만, 관측 기간이 짧고 가스 보조의 부담 주체·기간도 미확인이라 지속 성공으로 판정하지 않는다. (clm_319, clm_320)</li>
+<li><strong>OpenSea / Zora:</strong> primary drop, marketplace, creator, protocol fee를 분리한다. 제품 정책과 contract capability도 분리한다. (clm_322, clm_324, clm_325)</li>
+<li><strong>Pump / Clanker / Flaunch:</strong> curve·canonical pool·creator fee가 cold start를 줄일 수 있으나 버전·풀·수취 주소별로 수익이 달라지고 발행 성공률과 platform fee는 분리된다. (clm_326, clm_327, clm_328, clm_329, clm_330)</li>
+</ul>
+<h2 id="confidence">Confidence</h2>
+<p><strong>중간(Moderate).</strong> GIWA의 현재 네트워크·노드·공식 계약 표면, 각 프로토콜의 공개 fee schedule과 launch sequence에는 높은 확신이 있다. GIWA의 상업적 지불의사, public mainnet 사양·일정, 실제 canonical DEX와 장기 liquidity에는 공개 근거가 없어 낮은 확신이다.</p>
+<h2 id="refuted">Refuted</h2>
+<ul>
+<li>총 DEX 거래량을 launchpad 운영사 매출로 보는 해석.</li>
+<li>일반 LP가 받은 모든 fee를 launchpad 매출로 보는 해석.</li>
+<li>높은 Pump platform fee가 대부분의 개별 token 성공을 뜻한다는 해석.</li>
+<li>Robinhood Chain 초기 DEX 흐름의 중심이 tokenized stock이었다는 해석.</li>
+</ul>
+<h2 id="unresolved">Unresolved</h2>
+<ul>
+<li>GIWA public mainnet 일정과 production node 사양.</li>
+<li>GIWA data/API의 실제 지불의사와 가격대.</li>
+<li>Robinhood Chain의 30/60/90일 잔존성, RWA 중심성, 가스 보조의 부담 주체·기간.</li>
+<li>Zora의 pair·chain별 일반화 가능한 단일 fee schedule.</li>
+<li>Flaunch analytics의 protocol-revenue 분류와 공식 0% share 간 event-level reconciliation.</li>
+</ul></article>
+    </main>
+    <footer>
+      <span>research_only=true</span>
+      <span>strategy_consumption_allowed=false</span>
+      <span>order_input=false</span>
+    </footer>
+  </body>
+</html>

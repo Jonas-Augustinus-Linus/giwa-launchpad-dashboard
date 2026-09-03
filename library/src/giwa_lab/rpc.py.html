@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex,nofollow,noarchive" />
+    <meta name="theme-color" content="#090c0e" />
+    <title>rpc.py · GIWA Control Room</title>
+    <link rel="stylesheet" href="../../../assets/document.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#document">본문으로 바로가기</a>
+    <header class="document-header">
+      <a class="brand" href="../../../index.html#research" aria-label="GIWA 대시보드로 돌아가기">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span><strong>GIWA</strong><small>CONTROL ROOM</small></span>
+      </a>
+      <nav aria-label="문서 동작">
+        <a href="../../../index.html#research">← 대시보드</a>
+        <a href="https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/src/giwa_lab/rpc.py" target="_blank" rel="noopener noreferrer">Private GitHub ↗</a>
+      </nav>
+    </header>
+    <main id="document" class="document-shell">
+      <div class="document-meta">
+        <span>SOURCE CODE</span>
+        <span>SHA256 a7b24363e7e2</span>
+      </div>
+      <h1>rpc.py</h1>
+      <p class="source-path">src/giwa_lab/rpc.py</p>
+      <article class="code-body"><pre class="source-code"><span class="code-line"><i>1</i><code>&quot;&quot;&quot;A deliberately small, read-only JSON-RPC client.&quot;&quot;&quot;</code></span>
+<span class="code-line"><i>2</i><code></code></span>
+<span class="code-line"><i>3</i><code>from __future__ import annotations</code></span>
+<span class="code-line"><i>4</i><code></code></span>
+<span class="code-line"><i>5</i><code>import json</code></span>
+<span class="code-line"><i>6</i><code>from dataclasses import dataclass</code></span>
+<span class="code-line"><i>7</i><code>from typing import Any, Callable</code></span>
+<span class="code-line"><i>8</i><code>from urllib.parse import urlsplit</code></span>
+<span class="code-line"><i>9</i><code>from urllib.request import Request, urlopen</code></span>
+<span class="code-line"><i>10</i><code></code></span>
+<span class="code-line"><i>11</i><code>from .constants import READ_ONLY_RPC_METHODS</code></span>
+<span class="code-line"><i>12</i><code></code></span>
+<span class="code-line"><i>13</i><code></code></span>
+<span class="code-line"><i>14</i><code>class RpcSafetyError(ValueError):</code></span>
+<span class="code-line"><i>15</i><code>    &quot;&quot;&quot;Raised when an endpoint or method violates the repository boundary.&quot;&quot;&quot;</code></span>
+<span class="code-line"><i>16</i><code></code></span>
+<span class="code-line"><i>17</i><code></code></span>
+<span class="code-line"><i>18</i><code>class RpcResponseError(RuntimeError):</code></span>
+<span class="code-line"><i>19</i><code>    &quot;&quot;&quot;Raised when a remote endpoint returns an invalid or error response.&quot;&quot;&quot;</code></span>
+<span class="code-line"><i>20</i><code></code></span>
+<span class="code-line"><i>21</i><code></code></span>
+<span class="code-line"><i>22</i><code>def validate_rpc_url(url: str) -&gt; str:</code></span>
+<span class="code-line"><i>23</i><code>    &quot;&quot;&quot;Accept HTTPS, or HTTP only for an explicit loopback development endpoint.&quot;&quot;&quot;</code></span>
+<span class="code-line"><i>24</i><code></code></span>
+<span class="code-line"><i>25</i><code>    parsed = urlsplit(url)</code></span>
+<span class="code-line"><i>26</i><code>    loopback = parsed.hostname in {&quot;localhost&quot;, &quot;127.0.0.1&quot;, &quot;::1&quot;}</code></span>
+<span class="code-line"><i>27</i><code>    if parsed.scheme != &quot;https&quot; and not (parsed.scheme == &quot;http&quot; and loopback):</code></span>
+<span class="code-line"><i>28</i><code>        raise RpcSafetyError(&quot;RPC must use HTTPS (HTTP is allowed only on loopback)&quot;)</code></span>
+<span class="code-line"><i>29</i><code>    if not parsed.hostname or parsed.username or parsed.password:</code></span>
+<span class="code-line"><i>30</i><code>        raise RpcSafetyError(&quot;RPC URL must have a host and must not contain credentials&quot;)</code></span>
+<span class="code-line"><i>31</i><code>    if parsed.query or parsed.fragment:</code></span>
+<span class="code-line"><i>32</i><code>        raise RpcSafetyError(&quot;RPC URL must not contain query parameters or fragments&quot;)</code></span>
+<span class="code-line"><i>33</i><code>    return url</code></span>
+<span class="code-line"><i>34</i><code></code></span>
+<span class="code-line"><i>35</i><code></code></span>
+<span class="code-line"><i>36</i><code>@dataclass</code></span>
+<span class="code-line"><i>37</i><code>class JsonRpcClient:</code></span>
+<span class="code-line"><i>38</i><code>    endpoint: str</code></span>
+<span class="code-line"><i>39</i><code>    timeout: float = 10.0</code></span>
+<span class="code-line"><i>40</i><code>    opener: Callable[..., Any] = urlopen</code></span>
+<span class="code-line"><i>41</i><code></code></span>
+<span class="code-line"><i>42</i><code>    def __post_init__(self) -&gt; None:</code></span>
+<span class="code-line"><i>43</i><code>        self.endpoint = validate_rpc_url(self.endpoint)</code></span>
+<span class="code-line"><i>44</i><code>        if self.timeout &lt;= 0 or self.timeout &gt; 30:</code></span>
+<span class="code-line"><i>45</i><code>            raise RpcSafetyError(&quot;RPC timeout must be in the range (0, 30] seconds&quot;)</code></span>
+<span class="code-line"><i>46</i><code></code></span>
+<span class="code-line"><i>47</i><code>    def request(self, method: str, params: list[Any] | None = None) -&gt; Any:</code></span>
+<span class="code-line"><i>48</i><code>        if method not in READ_ONLY_RPC_METHODS:</code></span>
+<span class="code-line"><i>49</i><code>            raise RpcSafetyError(f&quot;RPC method is not read-only allowlisted: {method}&quot;)</code></span>
+<span class="code-line"><i>50</i><code></code></span>
+<span class="code-line"><i>51</i><code>        payload = json.dumps(</code></span>
+<span class="code-line"><i>52</i><code>            {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;id&quot;: 1, &quot;method&quot;: method, &quot;params&quot;: params or []},</code></span>
+<span class="code-line"><i>53</i><code>            separators=(&quot;,&quot;, &quot;:&quot;),</code></span>
+<span class="code-line"><i>54</i><code>        ).encode(&quot;utf-8&quot;)</code></span>
+<span class="code-line"><i>55</i><code>        request = Request(</code></span>
+<span class="code-line"><i>56</i><code>            self.endpoint,</code></span>
+<span class="code-line"><i>57</i><code>            data=payload,</code></span>
+<span class="code-line"><i>58</i><code>            headers={&quot;Content-Type&quot;: &quot;application/json&quot;, &quot;User-Agent&quot;: &quot;giwa-lab/0.1 read-only&quot;},</code></span>
+<span class="code-line"><i>59</i><code>            method=&quot;POST&quot;,</code></span>
+<span class="code-line"><i>60</i><code>        )</code></span>
+<span class="code-line"><i>61</i><code>        try:</code></span>
+<span class="code-line"><i>62</i><code>            with self.opener(request, timeout=self.timeout) as response:</code></span>
+<span class="code-line"><i>63</i><code>                body = response.read()</code></span>
+<span class="code-line"><i>64</i><code>            decoded = json.loads(body)</code></span>
+<span class="code-line"><i>65</i><code>        except (OSError, UnicodeDecodeError, json.JSONDecodeError) as exc:</code></span>
+<span class="code-line"><i>66</i><code>            raise RpcResponseError(&quot;RPC transport or JSON response failed&quot;) from exc</code></span>
+<span class="code-line"><i>67</i><code></code></span>
+<span class="code-line"><i>68</i><code>        if not isinstance(decoded, dict) or decoded.get(&quot;jsonrpc&quot;) != &quot;2.0&quot;:</code></span>
+<span class="code-line"><i>69</i><code>            raise RpcResponseError(&quot;RPC response is not a JSON-RPC 2.0 object&quot;)</code></span>
+<span class="code-line"><i>70</i><code>        if decoded.get(&quot;error&quot;) is not None:</code></span>
+<span class="code-line"><i>71</i><code>            raise RpcResponseError(f&quot;RPC returned an error: {decoded[&#x27;error&#x27;]!r}&quot;)</code></span>
+<span class="code-line"><i>72</i><code>        if &quot;result&quot; not in decoded:</code></span>
+<span class="code-line"><i>73</i><code>            raise RpcResponseError(&quot;RPC response has no result&quot;)</code></span>
+<span class="code-line"><i>74</i><code>        return decoded[&quot;result&quot;]</code></span></pre></article>
+    </main>
+    <footer>
+      <span>research_only=true</span>
+      <span>strategy_consumption_allowed=false</span>
+      <span>order_input=false</span>
+    </footer>
+  </body>
+</html>

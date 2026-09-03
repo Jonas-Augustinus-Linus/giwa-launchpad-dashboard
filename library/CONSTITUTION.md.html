@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex,nofollow,noarchive" />
+    <meta name="theme-color" content="#090c0e" />
+    <title>GIWA Lab Constitution · GIWA Control Room</title>
+    <link rel="stylesheet" href="../assets/document.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#document">본문으로 바로가기</a>
+    <header class="document-header">
+      <a class="brand" href="../index.html#research" aria-label="GIWA 대시보드로 돌아가기">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span><strong>GIWA</strong><small>CONTROL ROOM</small></span>
+      </a>
+      <nav aria-label="문서 동작">
+        <a href="../index.html#research">← 대시보드</a>
+        <a href="https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/CONSTITUTION.md" target="_blank" rel="noopener noreferrer">Private GitHub ↗</a>
+      </nav>
+    </header>
+    <main id="document" class="document-shell">
+      <div class="document-meta">
+        <span>REPORT</span>
+        <span>SHA256 3fececbbb6d2</span>
+      </div>
+      <h1>GIWA Lab Constitution</h1>
+      <p class="source-path">CONSTITUTION.md</p>
+      <article class="markdown-body"><h1 id="giwa-lab-constitution">GIWA Lab Constitution</h1>
+<p>This repository is a research and testnet-readiness workspace. It is not a trading system,
+token issuer, launchpad, exchange, endorsement, or production deployment authority.</p>
+<h2 id="non-negotiable-boundaries">Non-negotiable boundaries</h2>
+<ol>
+<li><strong>Research only.</strong> Every ecosystem record and generated observation must preserve
+   <code>research_only=true</code>, <code>strategy_consumption_allowed=false</code>, and <code>order_input=false</code>.</li>
+<li><strong>Read-only by default.</strong> Repository tooling may query an allowlisted set of public
+   JSON-RPC read methods. It must not sign, send, relay, simulate for execution, or request
+   wallet secrets.</li>
+<li><strong>Testnet is not production.</strong> GIWA Sepolia tokens have no represented value. No testnet
+   metric may be described as users, adoption, liquidity, market demand, or mainnet readiness.</li>
+<li><strong>Fail closed.</strong> Tooling must stop if the chain ID is not exactly <code>91342</code>, an endpoint is
+   unsafe, evidence is missing, or a fact cannot be classified confidently.</li>
+<li><strong>Human authority.</strong> Adding any write path, contract deployment command, private key,
+   funded wallet, mainnet endpoint, liquidity action, market promotion, or external publication
+   requires a separate, explicit review and approval. A code merge is not that approval.</li>
+<li><strong>No implied affiliation or listing.</strong> Third-party projects must be labelled as such.
+   GIWA, Dunamu, Upbit, GASOK, or testnet participation must never be represented as a token
+   listing, endorsement, selection, or investment signal without direct official evidence.</li>
+<li><strong>Provenance over convenience.</strong> Current claims must point to registered evidence and retain
+   their observed date. UNKNOWN is preferable to inference.</li>
+<li><strong>No secrets.</strong> Secrets, private keys, mnemonics, access tokens, funded account details, and
+   user-identifying telemetry do not belong in source, logs, fixtures, screenshots, or research.</li>
+</ol>
+<p>These rules have precedence over convenience, examples, roadmaps, and automation in this repo.</p></article>
+    </main>
+    <footer>
+      <span>research_only=true</span>
+      <span>strategy_consumption_allowed=false</span>
+      <span>order_input=false</span>
+    </footer>
+  </body>
+</html>

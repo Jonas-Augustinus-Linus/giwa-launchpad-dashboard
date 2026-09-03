@@ -1,0 +1,629 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex,nofollow,noarchive" />
+    <meta name="theme-color" content="#090c0e" />
+    <title>GIWA 생태계와 토큰·DEX 준비성 심층 리서치 · GIWA Control Room</title>
+    <link rel="stylesheet" href="../../../../../assets/document.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#document">본문으로 바로가기</a>
+    <header class="document-header">
+      <a class="brand" href="../../../../../index.html#research" aria-label="GIWA 대시보드로 돌아가기">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span><strong>GIWA</strong><small>CONTROL ROOM</small></span>
+      </a>
+      <nav aria-label="문서 동작">
+        <a href="../../../../../index.html#research">← 대시보드</a>
+        <a href="https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/RESEARCH/GIWA_ecosystem_readiness_2026_20260825_050301/outputs/01_full_report/01_report.ko.md" target="_blank" rel="noopener noreferrer">Private GitHub ↗</a>
+      </nav>
+    </header>
+    <main id="document" class="document-shell">
+      <div class="document-meta">
+        <span>REPORT</span>
+        <span>SHA256 706300501b54</span>
+      </div>
+      <h1>GIWA 생태계와 토큰·DEX 준비성 심층 리서치</h1>
+      <p class="source-path">RESEARCH/GIWA_ecosystem_readiness_2026_20260825_050301/outputs/01_full_report/01_report.ko.md</p>
+      <article class="markdown-body"><h1 id="giwa-dex">GIWA 생태계와 토큰·DEX 준비성 심층 리서치</h1>
+<p>기준일: 2026-08-25 (KST)
+연구 성격: <code>research_only=true</code>, <code>strategy_consumption_allowed=false</code>, <code>order_input=false</code></p>
+<h2 id="1">1. 결론과 의사결정</h2>
+<p>GIWA에서 토큰과 DEX를 <strong>만드는 기술 자체는 이미 테스트넷에서 가능하다.</strong> GIWA 공식
+가이드는 OpenZeppelin ERC-20을 Foundry 또는 Hardhat으로 개발·테스트·배포·검증하는
+절차를 제공한다. Blockscout와 공개 RPC에서는 외부 런치패드·AMM 컨트랙트가 실제 코드로
+존재하고 일부는 소스까지 검증된 것을 확인했다. (GIWA, n.d., “토큰 컨트랙트 발행하기”;
+src_008; Blockscout/Codex, 2026-08-25, “GIWA Sepolia observation”; src_004) [검증 원장:
+clm_004, clm_005]</p>
+<p>하지만 이것은 <strong>지금 메인넷 밈코인이나 운영 DEX를 출시해도 된다</strong>는 뜻이 아니다.
+공식 문서와 공식 노드 저장소는 일반 개발자가 접속할 공개 네트워크를 Sepolia로 안내하고
+메인넷과 GIWA Wallet을 개발 중으로 표시한다. GASOK의 공개 일정도 2026년 8~9월
+제품화·private mainnet 배포, 10월 데모데이를 가리킨다. 따라서 현재는 공개 메인넷 운영
+단계가 아니라 출시 준비 단계로 분류해야 한다. (GIWA, n.d., “GIWA 체인에 연결하기”;
+src_001; GIWA, 2026, “GASOK”; src_024; Optimism Foundation, 2026-05-04; src_043)
+[검증 원장: clm_001, clm_014]</p>
+<p>권고는 세 단계다.</p>
+<ol>
+<li>지금: 근거 수집, 로컬 전용 컨트랙트 설계·테스트, 읽기 전용 테스트넷 관찰.</li>
+<li>별도 승인 후: 가치 없는 GIWA Sepolia 데모를 정확한 소스 리비전으로 제한 배포.</li>
+<li>공개 메인넷·보안·거버넌스·유동성 근거가 모두 생긴 뒤: 독립 감사와 법률/제품 승인을
+   거쳐 메인넷 후보를 새로 심사.</li>
+</ol>
+<p>현재 저장소는 1단계까지만 구현한다.</p>
+<h2 id="2">2. 범위와 방법</h2>
+<p>조사는 공식 문서, GIWA GitHub와 배포 아티팩트, 제공사 1차 문서, 제3자 프로젝트 소스,
+그리고 2026-08-25 공개 JSON-RPC와 Blockscout의 읽기 전용 관찰을 사용했다. 검색 결과의
+숫자나 프로젝트 자기소개만으로 채택하지 않고, 네트워크 상태·코드 존재·소스 검증 여부를
+교차 확인했다. 동적 관찰의 원문은 <code>artifacts/live_observation_2026-08-25.json</code>에 해시와
+함께 고정했다. (GIWA/Codex, 2026-08-25, JSON-RPC observation; src_003;
+Blockscout/Codex, 2026-08-25; src_004)</p>
+<p>증거 등급상 공식 문서와 공식 GitHub도 미래 약속이 아니라 현재 구현을 말할 때만
+확정 근거로 사용했다. 외부 제공사·프로젝트 문서는 그 제공사의 주장 범위에서만 인정했고,
+공식성·안전성·채택으로 확대하지 않았다. 테스트넷 이용약관은 테스트 토큰의 무가치성,
+운영 지속성 부재, 리셋·롤백·중단 가능성을 명시하므로 모든 결론의 상한으로 적용했다.
+(Dunamu, n.d., “GIWA 테스트넷 이용약관”; src_007) [검증 원장: clm_015]</p>
+<h2 id="3">3. 현재 네트워크</h2>
+<h3 id="31">3.1 공개 상태와 실행 환경</h3>
+<p>GIWA Sepolia는 OP Stack 기반 EVM-equivalent L2이며 체인 ID <code>91342</code> (<code>0x164ce</code>), 가스
+자산 ETH, 목표 블록 간격 약 1초, 블록 가스 한도 60M을 사용한다. 시퀀서는 L2 블록을
+먼저 만들며 공개 L2 mempool은 없다. 공식 문서는 <code>unsafe</code>, <code>safe</code>, <code>finalized</code> 헤드를
+구분한다. (GIWA, n.d., “이더리움과 GIWA의 차이”; src_010; ethereum-lists, 2026,
+chain metadata; src_041) [검증 원장: clm_002]</p>
+<p>읽기 전용 실측에서 표준 RPC는 <code>reth/v2.3.0</code> 계열 clientVersion, 체인 ID 91342,
+<code>syncing=false</code>를 반환했고 2026-08-25 05:16:20 KST의 블록 34,257,464를 제공했다.
+표준 RPC와 Flashblocks RPC가 같은 체인과 클라이언트를 보고하되 관찰 시점에 한 블록
+차이가 난 것은 정상적인 헤드 시점 차이로 해석했다. 이 결과는 당시 liveness만 증명하며
+SLA나 미래 가용성을 뜻하지 않는다. (GIWA/Codex, 2026-08-25; src_003)</p>
+<h3 id="32-karst">3.2 Karst와 노드 경로</h3>
+<p>Karst Upgrade 19는 2026-07-06 적용되었다. 공지는 Osaka EVM, L2CM, OPCMv2, 단일
+트랜잭션 가스 상한 16,777,216, op-reth 전용 전환, kona-client와 permissioned fault
+proof를 설명한다. 공식 chain-operations 저장소에는 실제 멀티시그 승인·실행 아티팩트가
+있고 현재 RPC도 op-reth를 응답하므로 예정 공지 이상의 실행 근거가 있다. (GIWA,
+2026-07-02, “Upgrade 19”; src_005; GIWA, 2026-07-06, chain operations; src_006;
+GIWA/Codex, 2026-08-25; src_003) [검증 원장: clm_003]</p>
+<p>op-geth 지원은 2026-05-31 종료되었다. 스냅샷 페이지에 남은 Geth 경로는 현재 운영
+지침으로 사용하면 안 되고, 최신 <code>giwa-io/node</code>의 <code>.env.sepolia</code>와 op-reth 경로가
+우선한다. (GIWA, 2026-04-16, “op-geth 지원 종료”; src_038; GIWA, n.d., “노드
+스냅샷”; src_039; GIWA, 2026-07-13, node repository; src_002) [검증 원장: clm_018]</p>
+<p>공식 표준 RPC와 Flashblocks RPC는 모두 개발용 rate-limited endpoint다. Flashblocks는
+최대 약 200ms 주기의 preconfirmation을 제공하지만 finality가 아니며, 지속 수집이나
+서비스에는 자체 op-reth 노드 또는 검토된 제공자가 필요하다. 공식 노드 문서는 최소
+4코어/8GB RAM/500GB SSD, 권장 8코어 이상/16GB RAM/1TB NVMe를 제시한다. (GIWA,
+n.d., “GIWA 체인에 연결하기”; src_001; GIWA, n.d., “Flashblocks”; src_011; GIWA,
+2026-07-13, node repository; src_002; GIWA, n.d., “노드 서비스”; src_021)
+[검증 원장: clm_021]</p>
+<p>운영 모델에는 중앙화·권한 가정이 남는다. 공개 자료상 primary sequencer는 Dunamu가
+운영하고 Optimism 측 백업 경로가 계획되며, 현재 단일 시퀀서와 permissioned fault proof를
+전제로 해야 한다. 그러므로 거래·브리지 UI는 preconfirmation, unsafe, safe, finalized를
+동일시하면 안 된다. (Optimism Foundation, 2026-05-04; src_043; GIWA, n.d., network
+differences; src_010; GIWA, 2026-07-02; src_005) [검증 원장: clm_019]</p>
+<h3 id="33">3.3 기본 인프라</h3>
+<p>GIWA Sepolia에는 Safe, Multicall3, deterministic deployer, Permit2, ERC-4337 v0.6/v0.7
+EntryPoint, EAS, WETH9, L1/L2 bridge와 messenger, mintable-token factory 같은 표준
+컨트랙트가 문서화되어 있다. 표본 주소들에 대한 <code>eth_getCode</code>도 비어 있지 않았다.
+(GIWA, n.d., “GIWA 컨트랙트”; src_009; GIWA/Codex, 2026-08-25; src_003)
+[검증 원장: clm_020]</p>
+<h2 id="4">4. 공식 생태계</h2>
+<h3 id="41-dojang-upid">4.1 Dojang과 up.id</h3>
+<p>Dojang은 EAS 기반 공식 신뢰 계층이다. Verified Address, Balance Root, Verified Balance,
+Verified Code 스키마와 테스트넷 주소가 공개되어 있고, <code>giwa-io/dojang</code> 소스 및
+<code>@giwa-io/dojang-contracts</code> 0.5.0 패키지가 제공된다. 2026-08-25 관찰에서 핵심 주소에
+바이트코드도 있었다. (GIWA, n.d., “Dojang”; src_012; GIWA, n.d., “Dojang
+컨트랙트”; src_013; GIWA, 2026-06-16, dojang source; src_014; GIWA, 2026-05-14,
+npm package; src_015; GIWA/Codex, 2026-08-25; src_003) [검증 원장: clm_008]</p>
+<p>up.id는 ENS 기반 <code>username.up.id</code> 이름이며 Verified Address 자격에 종속된다. 문서상
+지갑당 하나, 양도 불가 SBT, 유예·회수 규칙을 가진다. 이는 온보딩과 신뢰 표현에 쓸 수
+있는 GIWA-native 구성요소지만, 거래 권한이나 신용 보증으로 바꾸어 해석해서는 안 된다.
+(GIWA, n.d., “Upbit Web3 Names”; src_016; fangTiger, 2026-07-29, GiwaIntent;
+src_030) [검증 원장: clm_009]</p>
+<h3 id="42">4.2 오라클, 노드, 브리지</h3>
+<p>GIWA 오라클 문서는 Pyth와 RedStone을 열거한다. Pyth의 GIWA Sepolia 주소
+<code>0x2880…7B43</code>은 Pyth 문서와 일치하고 실측 bytecode도 존재한다. RedStone은 push와
+pull 양 경로를 GIWA 문서 및 자사 발표에서 설명한다. 제공사 지원은 가용성·feed 범위·
+신선도·오류 모드를 별도 검증해야 하며 이 저장소에서는 전략 입력으로 허용하지 않는다.
+(GIWA, n.d., “오라클”; src_017; Pyth, n.d., contract addresses; src_018; RedStone,
+2025-11-19; src_019; GIWA/Codex, 2026-08-25; src_003) [검증 원장: clm_010, clm_011]</p>
+<p>Nodit은 GIWA 공식 문서와 Nodit 문서 양쪽에서 GIWA Sepolia 노드·데이터 API 및 faucet
+지원이 확인된다. 이것은 테스트넷 제공자 지원 근거이지 메인넷 SLA는 아니다. (GIWA,
+n.d., “노드 서비스”; src_021; Nodit, n.d., “Faucets”; src_022) [검증 원장: clm_012]</p>
+<p>공식 브리지 문서는 Superbridge 기반 Sepolia UI를 안내하고 L2→L1 출금에 약 7일이
+걸린다고 설명한다. 표준 OP Stack bridge/messenger 주소에는 코드가 있다. 테스트 토큰
+이동 경로는 존재하지만 메인넷 canonical asset이나 경제적 유동성의 증거는 아니다.
+(GIWA, n.d., “브릿지”; src_023; GIWA, n.d., “컨트랙트”; src_009;
+GIWA/Codex, 2026-08-25; src_003) [검증 원장: clm_013]</p>
+<h3 id="43">4.3 개발 프로그램과 문서 공백</h3>
+<p>GASOK은 DeFi/RWA, Consumer/Social, GIWA-native, AI/Web3, Mass Adoption 트랙을 두고
+최대 10만 달러의 조건부 지원을 소개한다. 공개 일정은 6~7월 MVP/Testnet, 8~9월
+Productize와 private mainnet deployment, 10월 KBW Demo Day다. 그러나 프로그램은
+선정·혜택·지원이 Upbit 거래지원과 무관하다고 명시한다. (GIWA, 2026, “GASOK”; src_024)
+[검증 원장: clm_017]</p>
+<p>Giwa Toolkit, Upbit Oracle, 일반 Cross-chain, Security Council, Bug Bounty 페이지는
+현재 공개 페이지에서 구현 세부를 충분히 제공하지 않는다. 페이지 제목이 있다는 사실과
+사용 가능한 제품·API·운영 제도가 있다는 판단을 분리해야 한다. (GIWA, n.d., Toolkit;
+src_033; Upbit Oracle; src_034; Cross-chain; src_035; Security Council; src_036;
+Bug Bounty; src_037; documentation index; src_046)</p>
+<h2 id="5-3">5. 제3자 생태계</h2>
+<h3 id="51-joseonfun">5.1 Joseon.fun</h3>
+<p>Joseon.fun은 GIWA Sepolia용 독립 토큰 런처와 AMM이다. API health가 체인 ID 91342를
+응답하며 2026-07-28 V4의 LaunchFactory, SwapFactory, Router, MigrationManager,
+Registry, Locker, WETH9 주소들이 공개되어 있다. Blockscout 실측에서는 이 핵심
+컨트랙트들이 fully verified로 확인되었다. (Joseon.fun, 2026-07-28, “Network”; src_025;
+Joseon.fun, 2026-08-25, health endpoint; src_027; Blockscout/Codex, 2026-08-25; src_004)</p>
+<p>동시에 프로젝트 자체 안전 문서는 testnet only, 외부 감사 없음, admin key 단일 지갑,
+현재 스택의 live graduation 증거 부재, mainnet 전 multisig 필요를 밝힌다. 누구나 토큰을
+만들 수 있고 프로젝트가 토큰을 심사하지 않으므로, 이는 기술 실험 증거이지 재사용 승인이나
+투자 신뢰의 근거가 아니다. (Joseon.fun, 2026-07-28, “Safety and risk”; src_026)
+[검증 원장: clm_006]</p>
+<h3 id="52-notus">5.2 Notus</h3>
+<p>Notus는 pump-style bonding curve 런치패드 프로토타입이며 GIWA Sepolia V7.1 주소의
+소스 검증이 확인된다. 하지만 저장소에는 라이선스가 없고 GIWA DEX migrator, 실제 지갑
+E2E, 메인넷 permission 정책, 법률 검토가 TODO다. 소스가 보인다는 것과 안전·합법적으로
+재사용 가능하다는 것은 별개다. (giupy997, 2026-07-31, Notus repository; src_028;
+Blockscout/Codex, 2026-08-25; src_004) [검증 원장: clm_007]</p>
+<h3 id="53-giwaintent">5.3 GiwaIntent와 기타 실험</h3>
+<p>GiwaIntent는 Dojang과 up.id를 request-to-pay 흐름에 결합했고 두 핵심 컨트랙트가
+Blockscout에서 검증되어 있다. GIWA 고유 신뢰 도구의 실제 조합 사례로는 유용하지만,
+독립 감사, 라이선스, 지속 호스팅, 실제 지갑 KPI 근거는 완료되지 않았다. (fangTiger,
+2026-07-29, GiwaIntent; src_030; Blockscout/Codex, 2026-08-25; src_004)
+[검증 원장: clm_022]</p>
+<p><code>giwa-dex.vercel.app</code> 연계 저장소는 ETH–INDSR 한 페어만 다루는 작은 데모다. 연결된
+AMM과 토큰은 explorer에서 소스 검증되지 않았고, 저장소는 두 커밋, README·라이선스
+부재, 설정 내 오래된 chain-ID 오타가 있어 재사용 기반으로 부적합하다. (vikitoshi,
+2025-09-10, Giwa-Dex; src_029; Blockscout/Codex, 2026-08-25; src_004)
+[검증 원장: clm_023]</p>
+<p>SODAX는 GIWA testnet 연결과 cross-network execution 준비를 발표했지만, 자사 글에서도
+intent 구조가 테스트넷에서는 실질적으로 완전 동작하지 않는다고 밝힌다. 따라서 제공사 발표
+수준의 탐색 항목으로만 남긴다. (SODAX Team, 2026-06-01; src_031) GIWA Eco는 독립
+커뮤니티 디렉터리로 보이며 화면 간 프로젝트 수가 일관되지 않으므로 공식 GASOK roster나
+채택 증거로 쓰지 않았다. (GIWA Eco, 2026-06-26; src_032)</p>
+<h2 id="6-dex">6. 토큰·DEX 가능성</h2>
+<h3 id="61-erc-20">6.1 밈코인 또는 ERC-20</h3>
+<p><strong>기술 판정은 Yes, 출시 판정은 Testnet-only다.</strong> 공식 가이드의 Solidity/OpenZeppelin
+절차와 제3자 검증 컨트랙트는 GIWA Sepolia에서 ERC-20 생성·배포·검증이 가능함을
+뒷받침한다. 다만 테스트넷 토큰은 무가치하고, 유료 판매·무승인 상업 홍보와 CEX/DEX
+연계를 보장하지 않는 이용약관을 따라야 한다. (GIWA, n.d., token guide; src_008;
+Dunamu, n.d., testnet terms; src_007)</p>
+<p>별도 네이티브 <code>$GIWA</code> 토큰을 선매수해야 한다는 주장은 공식 FAQ와 충돌한다. 공식 계획은
+가스에 ETH를 쓰고 별도의 GIWA 네이티브 토큰을 만들지 않는 것이다. <code>giwa.markets</code> 같은
+독립 사이트는 스스로 GIWA/Upbit/Dunamu와 무관하다고 표시하므로 공식 근거가 아니다.
+(GIWA, n.d., FAQ; src_045; ethereum-lists, 2026; src_041; GIWA.MARKETS, 2026;
+src_042) [검증 원장: clm_016]</p>
+<p>안전한 첫 토큰 사양은 고정 공급, 단순 ERC-20, 투명한 테스트넷 표기, hidden mint·tax·
+blacklist·anti-sell·proxy가 없는 구조다. 이름과 티커는 GIWA/Upbit/Dunamu의 공식성을
+암시하지 않아야 한다. 이것은 본 리서치가 제안하는 설계 원칙이며 아직 구현이나 배포가 아니다.</p>
+<h3 id="62-dex">6.2 자체 DEX</h3>
+<p><strong>EVM 수준에서는 가능하지만 새로 검증해야 한다.</strong> 표준 컨트랙트, EVM 호환성, 실제
+제3자 AMM의 코드 존재는 custom AMM 구현 가능성을 입증한다. 반면 공식 문서 인덱스에는
+공식 DEX나 런치패드 제품이 확인되지 않았고, 발견된 구현은 감사·라이선스·관리자·E2E
+공백 때문에 그대로 포크할 기준을 충족하지 못한다. (GIWA, n.d., contracts; src_009;
+GIWA, n.d., documentation index; src_046; Joseon.fun, 2026-07-28; src_026;
+giupy997, 2026-07-31; src_028; vikitoshi, 2025-09-10; src_029)</p>
+<p>로컬 AMM 후보는 공급량·reserve 보존, <code>k</code> 불변식, 수수료·반올림, reentrancy, 악성
+토큰, slippage/deadline, LP 회계, donation/skim, oracle manipulation을 상태 기반 fuzz와
+differential test로 먼저 통과해야 한다. 공개 mempool이 없고 Flashblocks가 빠르더라도
+시퀀서 순서 결정과 preconfirmation 취소·재조직 위험은 남는다. (GIWA, n.d., network
+differences; src_010; GIWA, n.d., Flashblocks; src_011)</p>
+<h3 id="63-pumpfun">6.3 Pump.fun형 플랫폼 적합성</h3>
+<p>Pump.fun의 공식 구조는 단순 token factory가 아니다. 새 token을 표준 형태로 만들고,
+virtual token/quote reserves를 가진 constant-product bonding curve에서 즉시 buy/sell을
+제공하며, real reserve가 완료 조건에 도달하면 curve를 닫고 실제 자산을 canonical AMM으로
+permissionless하게 옮긴다. 사용자 보호 면에서는 <code>max quote in</code>·<code>min quote out</code> 같은
+slippage bound, migration의 one-time/idempotent 성질, post-graduation pool과 fee/admin
+surface가 함께 필요하다. (Pump.fun, 2026-07-15, Pump Program; src_047; PumpSwap;
+src_048; Pump.fun, 2026-05-20, fees; src_049) [검증 원장: clm_024]</p>
+<p>GIWA에서는 이를 EVM의 <code>TokenFactory → CurvePool → GraduationManager → AMM Pair</code>로
+나누어 구현할 수 있다. 1초 블록, EVM 호환성, Flashblocks, 표준 predeploy와 이미 존재하는
+외부 curve/AMM은 testnet prototype의 기술 조건을 뒷받침한다. Dojang Verified Address/
+Code와 up.id는 Solana 복제본이 아닌 GIWA-native 신뢰 badge를 만들 수 있는 차별점이다.
+(GIWA, n.d., network differences; src_010; Flashblocks; src_011; Dojang; src_012;
+up.id; src_016; Joseon.fun; src_025; Notus; src_028)</p>
+<p>그러나 현재 readiness는 다음처럼 갈린다.</p>
+<table>
+<thead>
+<tr>
+<th>영역</th>
+<th>판정</th>
+<th>설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>EVM·블록·gas</td>
+<td>녹색(테스트넷)</td>
+<td>chain ID 91342, 약 1초 블록, ETH gas, live op-reth</td>
+</tr>
+<tr>
+<td>표준 token factory</td>
+<td>녹색(테스트넷)</td>
+<td>공식 ERC-20 발행·검증 경로 존재</td>
+</tr>
+<tr>
+<td>bonding curve</td>
+<td>황색</td>
+<td>외부 구현은 있으나 독립 구현·감사·불변식 검증 필요</td>
+</tr>
+<tr>
+<td>graduation AMM</td>
+<td>적색</td>
+<td>공식 DEX 부재, 기존 migrator/AMM은 운영 기준 미달</td>
+</tr>
+<tr>
+<td>wallet onboarding</td>
+<td>적색</td>
+<td>MetaMask는 가능하나 GIWA Wallet은 개발 중</td>
+</tr>
+<tr>
+<td>bridge·quote liquidity</td>
+<td>황색/적색</td>
+<td>test bridge만 확인; mainnet canonical asset과 liquidity 미확정</td>
+</tr>
+<tr>
+<td>trust identity</td>
+<td>녹색(실험)</td>
+<td>Dojang/up.id의 구분된 badge 가능</td>
+</tr>
+<tr>
+<td>Security·governance</td>
+<td>적색</td>
+<td>공개 운영 상세와 독립 audit가 부족</td>
+</tr>
+<tr>
+<td>한국 공개 영업</td>
+<td>적색</td>
+<td>서비스 구조별 신고·ISMS·AML·법률 검토 선행</td>
+</tr>
+</tbody>
+</table>
+<p>따라서 <strong>제한된 GIWA Sepolia launch lab은 GO, 실자산 permissionless onboarding은
+NO-GO</strong>다. 기술 호환성 하나를 상업 출시 준비성과 동일시하면 안 된다. (GIWA, n.d.,
+connect; src_001; Dunamu, testnet terms; src_007; GIWA, GASOK; src_024;
+금융위원회·FIU, 2026-06-24; src_051) [검증 원장: clm_027]</p>
+<h3 id="64-solana">6.4 Solana형 밈코인 온보딩의 제품 조건</h3>
+<p>Pump.fun 모델의 장점은 creator가 초기 LP를 직접 준비하지 않아도 curve가 가격발견과 실제
+quote reserve 축적을 시작한다는 점이다. 하지만 발행 장벽이 낮을수록 churn, bot, sniper,
+사칭과 콘텐츠 문제가 커진다. 공개 사전논문과 재현 데이터는 여러 launch의 첫 구매 구간에
+반복 등장하는 wallet cohort를 탐지했지만, activity-matched placebo가 더 큰 겉보기 효과를
+보여 raw early-buyer 지표의 인과 해석을 경고한다. 따라서 “sniper가 붙었다”, “초기 거래가
+많다”를 품질이나 성공으로 표시해서는 안 된다. (Kamat, 2026-07-02; src_056; RED-COHORT
+dataset, 2026-07-24; src_073) [검증 원장: clm_038]</p>
+<p>단일 사전논문이 제시한 특정 기간 graduation 비율은 독립 재현 근거가 부족해 검증
+allowlist에서 제외했다. GABOJA의 사업계획에는 외부 시장의 단일 비율 대신 자체 테스트넷
+cohort의 생성→첫 거래→곡선 진행→졸업→7일·30일 잔존을 직접 측정해야 한다.</p>
+<p>가보자 후보의 제품 원칙은 다음과 같다.</p>
+<ul>
+<li>100% 표준 fixed-supply bytecode; hidden mint, tax, blacklist, anti-sell, proxy 금지.</li>
+<li>creator pre-allocation·creator fee는 기본 0으로 시작하고, 경제 설계·법률 검토 후 별도 결정.</li>
+<li>Dojang Verified Address, Verified Code, up.id를 각각 표시하되 수익·안전 보증으로 표현하지 않음.</li>
+<li>가격·시가총액보다 real reserve, sold supply, fee, admin, destination pool을 그대로 공개.</li>
+<li>atomic one-time graduation; 실패 시 전체 revert; 임의 liquidity withdrawal 경로 금지.</li>
+<li>이름·ticker·이미지·링크·댓글의 사칭/유해물 moderation과 투명한 이의제기 절차.</li>
+</ul>
+<p>Pump.fun도 하루 수백 개 stream을 내린다고 밝힐 만큼 user-generated content 운영면이 크다.
+토큰 컨트랙트만 안전해도 플랫폼이 안전한 것은 아니다. (Pump.fun, n.d., Community Notice;
+src_053) [검증 원장: clm_029]</p>
+<h3 id="65">6.5 한국 규제 경계</h3>
+<p>가상자산이용자보호법 제2조는 영업으로 하는 가상자산 매매·교환, 정해진 이전, 보관·관리,
+그리고 매매·교환의 중개·알선·대행을 가상자산사업자 행위로 정의한다. 금융위원회·FIU는
+2026-06-24 한국인을 대상으로 영업하는 국내외 사업자가 ISMS 등 요건을 갖춰 신고해야
+하며 미신고 영업에 형사처벌·접속차단 등 제재가 가능하다고 재강조했다. (대한민국,
+가상자산이용자보호법 제2조; src_050; 금융위원회·FIU, 2026-06-24; src_051)</p>
+<p>그러므로 “비수탁 UI” 또는 “스마트컨트랙트가 자동 실행”이라는 사실만으로 면제를 전제하지
+않는다. 운영주체, 한국 대상 마케팅, fee 수취, admin 권한, custody, frontend routing,
+creator 모집의 정확한 구조에 대해 출시 전 서면 법률 의견이 필요하다. 2단계 입법의 국내
+발행·상장 관련 세부가 확정됐다는 보도도 금융위원회가 부인했으므로 미래 규칙을 추정해
+설계하면 안 된다. (금융위원회, 2025-12-19; src_052) [검증 원장: clm_026]</p>
+<h3 id="66">6.6 브랜드와 도메인</h3>
+<p>브랜드 1순위는 <strong>가보자 / GABOJA</strong>, 도메인은 <strong><code>gaboja.fun</code></strong>이다. 한국식 추진력을
+살리면서 <code>떡상</code>, <code>불장</code>, <code>올라가</code>보다 가격 상승 약속이 약하고 비한국어 사용자도 발음하기
+쉽다. 권장 설명은 “A trust-first token launch lab for GIWA”이며, GIWA/Upbit/Dunamu와
+독립된 프로젝트임을 상시 표시한다.</p>
+<p>2026-08-25 05:43 KST <code>.fun</code> registry RDAP 및 public RDAP bootstrap 재확인에서
+<code>gazua.fun</code>은 이미 등록되어 있었고,
+<code>gaboja.fun</code>, <code>tteoksang.fun</code>, <code>buljang.fun</code>, <code>ssonda.fun</code>, <code>dalryeo.fun</code>, <code>ollaga.fun</code>은
+등록 가능 응답을 받았다. 이는 예약·가격 견적·실제 checkout·상표권 확인이 아니며 즉시
+변할 수 있다. (Tucows Registry/Radix/Codex, 2026-08-25; src_054; RDAP.org/Codex;
+src_072) [검증 원장: clm_028]</p>
+<p>후보 순서는 <code>gaboja.fun</code> → <code>ssonda.fun</code> → <code>tteoksang.fun</code>이다. <code>tteoksang</code>은 밈 적합성은
+높지만 글로벌 철자와 가격상승 암시가 약점이다. 구매 전 KIPRIS·국제 상표, 법인/서비스명,
+앱스토어, GitHub와 SNS handle을 별도 확인해야 한다. 본 조사에서는 도메인을 사거나
+예약하지 않았다.</p>
+<h2 id="7-x">7. 지역별 공개 담론과 X</h2>
+<h3 id="71-x">7.1 측정 단위와 X 한계</h3>
+<p>이번 조사는 “미국인·중국인·한국인·일본인의 여론조사”가 아니다. 한국어·영어·중국어·
+일본어로 공개된 GIWA 자료와 X 인접 게시물의 목적표집이다. 게시 언어, UI 언어, 계정명과
+미러 위치로 작성자의 국적·거주지를 추정하지 않았다. X의 공식 Optimism 게시물과 GIWA
+계정 URL은 보존했지만 비로그인 수집에서는 403 또는 내용 없는 셸이 반복되었고, 공개 미러는
+동적·불완전했다. 따라서 팔로워·조회·좋아요·리포스트를 더하거나 긍정률로 바꾸지 않았다.
+(X access observations; src_057, src_069; public indices; src_058, src_070) [검증 원장:
+clm_030]</p>
+<p>이 제한은 결함을 숨기는 주석이 아니라 결론의 범위다. 아래 표는 “어떤 서사가 보였는가”를
+말할 뿐, 어느 국가 인구가 얼마나 기대하는지를 말하지 않는다.</p>
+<table>
+<thead>
+<tr>
+<th>공개 담론 표본</th>
+<th>주된 기대</th>
+<th>동시에 보인 경계</th>
+<th>GABOJA에 주는 신호</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>한국어</td>
+<td>업비트 유통력, 한국 빌더, wallet·consumer 앱, 금융 인프라</td>
+<td>기존 Web3 wallet 채택 부진, 체인 정체성·킬러앱 미증명</td>
+<td>가장 강한 초기 PMF 가설; 실제 funnel로 검증</td>
+</tr>
+<tr>
+<td>영어/미국 매체</td>
+<td>OP Stack enterprise, 글로벌 개발자, Consensus·파트너십</td>
+<td>X 인접층의 미확정 airdrop·early-user 선점</td>
+<td>builder 메시지와 speculator 메시지 분리</td>
+</tr>
+<tr>
+<td>중국어</td>
+<td>faucet·bridge·UP.ID task 확산, airdrop 인접 관심</td>
+<td>no-native-token, 본토 사용자·소재지 미확인</td>
+<td>빠른 task localization은 유효, 보상 암시 금지</td>
+</tr>
+<tr>
+<td>일본어</td>
+<td>테스트넷 사용법, 전용 지갑, contract·UP.ID</td>
+<td>기능 제한, native token 부재, 작은 표본</td>
+<td>안전·실용 중심 UX가 적합; 대중 열기 가정 금지</td>
+</tr>
+</tbody>
+</table>
+<h3 id="72">7.2 한국어권</h3>
+<p>한국어권 표본은 가장 강한 전략 서사를 보인다. GASOK은 한국 빌더, wallet 탑재 가능성,
+KBW Demo Day를 공식적으로 연결하고, 국내 장문 의견은 업비트의 유통력과 한국 빌더
+네트워크를 CEX-chain flywheel의 출발점으로 본다. 동시에 같은 의견은 “왜 GIWA여야
+하는가”가 아직 선명하지 않다고 경고하고, 연합뉴스는 기존 국내 Web3 wallet의 신규 채택이
+답보였다는 맥락을 전한다. (GIWA, GASOK; src_024; Yonhap, 2026-08-20; src_061;
+ditto, 2026-03-10; src_062; Daily Hankook/Nate, 2026-05-01; src_071) [검증 원장:
+clm_031]</p>
+<p>연합뉴스가 인용한 업계 관점은 밈코인·NFT의 활발한 거래가 wallet 활성화에 필요하다고 본다.
+이는 GABOJA의 제품 적합성을 지지하지만 수요 검증은 아니다. 테스트넷에서 wallet connect→
+첫 launch/buy→7일 재방문→졸업 후 잔존의 실제 funnel로 반증 가능하게 만들어야 한다.
+(Yonhap; src_061; Joseon/Notus testnet evidence; src_025, src_028) [검증 원장: clm_036]</p>
+<h3 id="73">7.3 영어권·미국 접점</h3>
+<p>영어권의 공식·주류 층은 GIWA를 밈코인 체인보다 OP Stack enterprise 및 금융 인프라로
+소개한다. Optimism은 self-managed enterprise와 한국 파트너 생태계를 강조했고,
+CoinDesk는 Dunamu가 한국과 해외 개발자를 겨냥한 testnet·wallet 인프라를 내놓았다고
+보도했다. 미국 Consensus 참가는 해외 개발자·기관과의 접점을 넓히는 공급자 활동의
+증거이지 미국 사용자의 채택 증거는 아니다. (Optimism; src_043, src_044; CoinDesk;
+src_059; Japanese-localized Consensus coverage; src_067)</p>
+<p>반면 공개 social index에서는 faucet, bridge, verified token, UP.ID, “early” 같은 task·
+선점 언어가 보인다. 이 층은 보상을 확정하지 않은 채 airdrop 기대를 증폭할 수 있다.
+기업 인프라 narrative와 farming narrative를 하나의 낙관으로 합치면 안 된다. (direct X
+provenance; src_057; social index; src_070) [검증 원장: clm_032]</p>
+<h3 id="74">7.4 중국어권</h3>
+<p>Odaily의 중국어 가이드는 GIWA를 “인기 상호작용” 묶음에 넣고 faucet, bridge, verified
+token, UP.ID 순서를 제공한다. PANews는 다른 층에서 자체 native token이 없는 L2,
+스테이블코인 인프라와 거래소 사업 다각화라는 전략을 분석한다. 즉 task/farming 유통은
+빠르지만 infrastructure 분석도 존재한다. 어느 쪽도 중국 본토 사용자 수나 광범위한 수요를
+측정하지 않는다. (Odaily, 2026-07-22; src_063; PANews; src_064; social index;
+src_070) [검증 원장: clm_033]</p>
+<p>제품적으로는 중국어 task page와 사기 경고를 빠르게 준비하되, 지역 제한·규제·배포 채널은
+별도 검토해야 한다. 특히 “GIWA airdrop”, “Upbit 상장”, 비공식 <code>$GIWA</code>를 카피에 넣지
+않는다.</p>
+<h3 id="75">7.5 일본어권</h3>
+<p>확보한 일본어 표본은 가장 신중하다. 한 가이드는 mainnet·wallet 개발 중, rate-limited
+RPC와 제한된 현재 기능을 적고 공식 추가 정보를 기다린다. 다른 가이드와 X 미러는 전용
+테스트 지갑, 자체 native token 부재, contract 배포·검증과 UP.ID를 강조한다. 일본어 현지화
+기사는 일본 채택 수치보다 GIWA의 Consensus 해외 홍보를 보도한다. (note guides;
+src_065, src_066; KuCoin X mirror; src_068; Bloomingbit Japan; src_067) [검증 원장:
+clm_034]</p>
+<p>일본어 초기 제품은 가격·보상보다 안전한 테스트 지갑, 명확한 testnet 표기, contract
+verification과 학습형 onboarding을 전면에 두는 편이 표본과 맞는다.</p>
+<h3 id="76">7.6 연말 열기 가설</h3>
+<p>사용자의 “출시 때 또는 연말에 매우 핫할 것”이라는 가설에는 실제 촉매가 있다. GASOK의
+8~9월 제품화·private-mainnet 단계, 10월 KBW Demo Day, GIWA Wallet 계획, Optimism의
+파트너 홍보와 글로벌 행사 접점이 한 시기에 모인다. 그러나 공개 mainnet 날짜, wallet
+release, canonical quote asset·DEX·유동성, 반복 사용자 지표는 아직 확인되지 않았다.
+따라서 열기는 <strong>조건부 upside</strong>이지 base fact가 아니다. (GIWA; src_001, src_024;
+Optimism; src_043, src_044; CoinDesk; src_059; Yonhap; src_061) [검증 원장: clm_035]</p>
+<table>
+<thead>
+<tr>
+<th>시나리오</th>
+<th>필요한 관찰</th>
+<th>해석</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Bull</td>
+<td>public mainnet·wallet 공개, canonical bridge/quote asset/DEX, 감사된 GASOK flagship, KBW 노출과 30일 잔존</td>
+<td>GABOJA testnet 선점이 launch advantage로 전환 가능</td>
+</tr>
+<tr>
+<td>Base</td>
+<td>private-mainnet·builder 관심은 진행되나 wallet·유동성·소비자 앱이 늦음</td>
+<td>연구·프로토타입 가치는 크지만 mass launch는 연기</td>
+</tr>
+<tr>
+<td>Bear</td>
+<td>일정 지연, 공식 DEX·자산 부재, 가짜 <code>$GIWA</code>·airdrop scam, 취약한 외부 launchpad 사고</td>
+<td>hype가 신뢰 훼손으로 전환; 실자산 출시 금지 유지</td>
+</tr>
+</tbody>
+</table>
+<p>선행지표는 X likes가 아니라 공식 mainnet config·RPC·explorer, wallet 공개 build, GASOK
+선정 제품과 감사, canonical asset/DEX 주소, 신규→7일→30일 wallet retention, 실제 reserve를
+동반한 graduation이다. 여러 언어권의 early-user 콘텐츠가 미확정 airdrop 기대를 보이므로
+GABOJA에는 공식 링크, <code>TESTNET · NO VALUE</code>, non-affiliation, no-listing/no-reward 문구를
+초기 화면부터 둔다. (GIWA FAQ; src_045; regional guides; src_063, src_066, src_068,
+src_070) [검증 원장: clm_037]</p>
+<h2 id="8">8. 준비한 저장소와 로드맵</h2>
+<p>새 저장소의 현재 기능은 다음과 같다.</p>
+<ul>
+<li><code>data/ecosystem.json</code>: 12개 핵심 항목을 공식·제공사·제3자로 구분하고 근거 ID와
+  안전 플래그를 강제한다.</li>
+<li><code>src/giwa_lab/rpc.py</code>: 6개 읽기 전용 메서드만 allowlist하고 signing/send/debug/
+  personal 계열은 전송 전에 거부한다.</li>
+<li><code>src/giwa_lab/probe.py</code>: 체인 ID가 91342가 아니면 다른 호출 전에 실패하고, liveness와
+  선택 주소의 bytecode 존재만 JSON으로 출력한다.</li>
+<li><code>contracts/specs/</code>: 최소 ERC-20과 AMM의 보안·테스트 요구사항만 정의하며 Solidity와
+  배포 기능은 두지 않는다.</li>
+<li><code>docs/PUMP_PLATFORM.md</code>: 가보자 제품 수명주기, 컨트랙트 경계, GIWA-native 차별화,
+  moderation·법률·출시 게이트를 정의한다.</li>
+<li><code>data/brand_candidates.json</code>, <code>docs/BRAND_DOMAINS.md</code>: 시점 고정 RDAP 결과와 브랜드
+  순위를 기록하고 구매·상표 확인이 없었음을 명시한다.</li>
+<li><code>docs/ROADMAP.md</code>, <code>docs/MAINNET_GATES.md</code>: 로컬 prototype → 별도 승인된 testnet →
+  보안 검토 → 공개 mainnet 재심사의 순서를 명시한다.</li>
+</ul>
+<p>다음 작업은 로컬 Anvil에서만 수행할 수 있는 결정론적 컨트랙트 prototype이다. 컴파일러와
+OpenZeppelin/AMM 의존성·라이선스를 고정하고 unit/invariant/fuzz/static-analysis/
+reproducible-build를 통과시키는 단계다. 이 단계에도 signer와 RPC broadcast는 필요 없다.</p>
+<p>테스트넷 배포 후보는 그 뒤 별도 의사결정이다. 정확한 Git revision, 컨트랙트·생성자 인자,
+테스트넷 deployer와 권한, explorer 검증, valueless disclosure, 종료 계획을 사람이 승인해야
+한다. mainnet은 동일 코드를 단순 재배포하는 단계가 아니라 새 위협 모델과 감사가 필요한
+별도 제품이다.</p>
+<h2 id="9">9. 위험과 진입 게이트</h2>
+<table>
+<thead>
+<tr>
+<th>위험</th>
+<th>현재 상태</th>
+<th>필요한 게이트</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>네트워크 지속성</td>
+<td>테스트넷은 리셋·중단·종료 가능</td>
+<td>상태 의존성을 없애고 fixture/replay 보존 (src_007)</td>
+</tr>
+<tr>
+<td>RPC 운영</td>
+<td>공식 endpoint는 rate-limited</td>
+<td>자체 op-reth 또는 검토된 provider, 최소 RPC namespace (src_001, src_021)</td>
+</tr>
+<tr>
+<td>노드 공격면</td>
+<td>default RPC 범위 축소 이슈가 열려 있음</td>
+<td>loopback/private bind와 <code>eth/net/web3</code> 최소화 검토 (src_040)</td>
+</tr>
+<tr>
+<td>시퀀서·finality</td>
+<td>단일 시퀀서, permissioned proof</td>
+<td>unsafe/safe/finalized UI·정산 규칙 (src_005, src_010, src_043)</td>
+</tr>
+<tr>
+<td>브리지/오라클</td>
+<td>testnet 경로만 확인</td>
+<td>canonical mainnet asset·주소·staleness·failure policy</td>
+</tr>
+<tr>
+<td>제3자 코드</td>
+<td>감사/라이선스/admin/E2E 공백</td>
+<td>clean-room license, audit, multisig/timelock, 재현 빌드</td>
+</tr>
+<tr>
+<td>시장·상장 오인</td>
+<td>GIWA/Upbit 연계가 과장되기 쉬움</td>
+<td>무가치 표기, 공식성 금지, 법률/마케팅 심사 (src_024, src_045)</td>
+</tr>
+<tr>
+<td>한국 대상 영업</td>
+<td>매매·교환·중개 기능은 VASP 범위 가능성</td>
+<td>신고·ISMS·AML·Travel Rule·법률 의견 선행 (src_050, src_051, src_052)</td>
+</tr>
+<tr>
+<td>사용자 생성 콘텐츠</td>
+<td>사칭·저작권·불법/유해물·scam</td>
+<td>사전/사후 moderation, 신고·이의제기·투명성 로그 (src_053)</td>
+</tr>
+<tr>
+<td>bot·sniper·지표 왜곡</td>
+<td>초기 거래량이 유기 수요로 오인됨</td>
+<td>cohort/retention 분석, raw 주소≠사람, FOMO 순위 금지 (src_055, src_056)</td>
+</tr>
+</tbody>
+</table>
+<p>특히 explorer의 큰 트랜잭션·주소 숫자는 사용자 수가 아니다. 봇, faucet, 반복 호출,
+컨트랙트 내부 주소, 색인 방식이 섞이므로 adoption이나 경제 활동을 계산하지 않았다.
+Blockscout 관찰은 code/liveness 확인에만 썼다. (Blockscout/Codex, 2026-08-25; src_004;
+Optimism Foundation, 2026-08-10; src_044)</p>
+<h2 id="10-confidence">10. Confidence</h2>
+<ul>
+<li><strong>높음:</strong> GIWA Sepolia 공개 상태, chain ID, OP Stack/EVM 호환성, Karst 적용, op-reth
+  경로, ERC-20 개발 가능성, 공식 predeploy와 관찰한 bytecode. 공식 문서·저장소·RPC/
+  explorer를 교차했다.</li>
+<li><strong>중간:</strong> Dojang/up.id와 provider integrations의 현재 개발자 활용성. 구현과 주소는
+  확인했지만 장기 SLA·정책·제품 사용성은 별도 문제다.</li>
+<li><strong>중간 이하:</strong> 외부 dApp의 지속 운영·보안·채택. 배포 증거는 있어도 독립 감사와 운영
+  지표가 부족하다.</li>
+<li><strong>중간:</strong> 지역별 narrative의 존재와 차이. 복수 언어권 자료를 교차했지만 대표 표본이나
+  작성자 국적 자료가 아니며 X engagement는 수집하지 않았다.</li>
+<li><strong>판단 보류:</strong> 공개 메인넷 일정, 공식 DEX/런치패드, 메인넷 자산·유동성·거버넌스,
+  연말 실제 수요, 국가별 X 긍정률과 정확한 한국 규제 분류.</li>
+</ul>
+<p>원장 검증 시 확정 주장 37개, 미확정 12개, 반박 7개로 분리했다. 확정 주장의 추적 표시는
+본문의 <code>clm_001</code>부터 <code>clm_038</code> 사이에 있으며 번호가 연속이어도 검증에서 제외된 항목은
+본문 근거로 사용하지 않았다. 미확정·반박 항목은 아래 격리 구역에서만 다룬다.</p>
+<h2 id="11-unresolved">11. Unresolved</h2>
+<p>다음은 현재 증거로 확정하지 않는다.</p>
+<ul>
+<li>공개 메인넷 날짜와 누구나 사용할 수 있는 mainnet RPC·explorer·bridge의 최종 사양.</li>
+<li>GIWA가 직접 운영하는 DEX 또는 token launchpad의 존재.</li>
+<li>Toolkit, Upbit Oracle, 일반 cross-chain 페이지의 사용 가능한 공개 API·컨트랙트.</li>
+<li>Security Council 구성·권한·절차와 공개 bug bounty의 실운영 상세.</li>
+<li>GASOK의 공신력 있는 전체 선발팀 명단과 최종 숫자.</li>
+<li>메인넷 canonical stablecoin, liquidity venue, 생산 oracle 주소와 failure policy.</li>
+<li>Chainlink의 제공사 발표가 GIWA 공식 지원 매트릭스에 포함되는지 여부. Chainlink는
+  Data Streams의 GIWA Sepolia 지원을 발표했지만 GIWA oracle 페이지에는 현재 열거되지
+  않는다. (Chainlink, 2026-02-26; src_020; GIWA, n.d., oracles; src_017)</li>
+<li>정확한 가보자 운영 구조가 한국 규제상 어떤 신고·인가·통제 조합을 요구하는지. 기능별
+  위험은 확인했지만 개별 서면 법률 의견은 없다.</li>
+<li>공개 메인넷 전후의 관심이 실제 반복 사용자와 지속 유동성으로 이어질지. GASOK·Demo
+  Day는 촉매지만 수요 보장은 아니다.</li>
+<li>추천 이름의 상표·법인명·SNS 권리와 registrar 최종 결제 가격. RDAP만 확인했다.</li>
+<li>국가별 X 긍정률, engagement 총량과 작성자의 실제 국적·거주지. 전체 표본과 위치·봇 제거
+  근거가 없다.</li>
+<li>단일 Pump.fun 사전논문의 특정 기간 graduation 비율. 독립 재현 없이 GIWA 전망이나
+  사업계획 수치로 쓰지 않는다.</li>
+</ul>
+<h2 id="12-refuted">12. Refuted</h2>
+<p>다음 해석은 현재 근거와 충돌하므로 채택하지 않는다.</p>
+<ul>
+<li>독립 사이트가 표시하는 동명 자산을 GIWA 공식 네이티브 토큰으로 간주하거나 선매수를
+  권하는 해석. 공식 FAQ는 별도 네이티브 토큰 계획이 없고 ETH gas를 쓴다고 설명한다.</li>
+<li>GASOK 참여·지원·지갑 기회가 Upbit 거래지원을 보장한다는 해석. 프로그램이 직접
+  무관하다고 밝힌다.</li>
+<li>테스트넷 explorer의 누적 transaction/address 숫자를 같은 수의 사용자나 경제적
+  채택으로 간주하는 해석.</li>
+<li>최신 Karst 네트워크에서 op-geth가 계속 지원된다는 해석. 공식 지원 종료 공지와 현재
+  op-reth 경로가 반대 증거다.</li>
+<li>EVM 호환성과 빠른 블록 하나만으로 대규모 상업 onboarding 준비가 끝났다는 해석.</li>
+<li>registry에서 비어 보이는 도메인이 곧 독점적 브랜드 권리를 준다는 해석.</li>
+<li>한국어·영어·중국어·일본어 게시물 표본을 각 국가 전체의 여론 또는 작성자 국적으로
+  간주하는 해석.</li>
+</ul>
+<h2 id="13">13. 최종 권고</h2>
+<ol>
+<li><strong>GO:</strong> 현재 저장소의 근거 인벤토리와 read-only probe를 유지하고 월별 또는 공식
+   공지 발생 시 갱신한다.</li>
+<li><strong>CONDITIONAL GO:</strong> 다음 승인 범위는 로컬-only fixed-supply ERC-20과 AMM prototype,
+   fuzz/invariant/reproducible build까지로 제한한다.</li>
+<li><strong>BRAND HOLD:</strong> <code>가보자 / gaboja.fun</code>을 1순위로 두되, 등록·상표 확인은 별도 승인과
+   실시간 재확인 후 진행한다.</li>
+<li><strong>HOLD:</strong> GIWA Sepolia 배포는 정확한 revision·주소·권한·테스트 목적을 별도 승인받기
+   전까지 보류한다.</li>
+<li><strong>NO-GO:</strong> 실제 자산, 공개 판매, 메인넷 launch, 자동 유동성, 상장 암시, Das Kapital의
+   전략·주문 입력 연결은 현재 금지한다.</li>
+</ol>
+<p>GIWA는 기술적으로 준비할 가치가 있는 초기 OP Stack 생태계지만, 지금 얻을 수 있는
+우위는 “먼저 토큰을 파는 것”이 아니라 <strong>근거·보안·재현성을 먼저 쌓아 공개 메인넷이
+왔을 때 안전하게 선택할 수 있는 것</strong>이다.</p></article>
+    </main>
+    <footer>
+      <span>research_only=true</span>
+      <span>strategy_consumption_allowed=false</span>
+      <span>order_input=false</span>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,1292 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex,nofollow,noarchive" />
+    <meta name="theme-color" content="#090c0e" />
+    <title>sources.jsonl · GIWA Control Room</title>
+    <link rel="stylesheet" href="../../../../assets/document.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#document">본문으로 바로가기</a>
+    <header class="document-header">
+      <a class="brand" href="../../../../index.html#research" aria-label="GIWA 대시보드로 돌아가기">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span><strong>GIWA</strong><small>CONTROL ROOM</small></span>
+      </a>
+      <nav aria-label="문서 동작">
+        <a href="../../../../index.html#research">← 대시보드</a>
+        <a href="https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/RESEARCH/GIWA_ecosystem_readiness_2026_20260825_050301/sources/sources.jsonl" target="_blank" rel="noopener noreferrer">Private GitHub ↗</a>
+      </nav>
+    </header>
+    <main id="document" class="document-shell">
+      <div class="document-meta">
+        <span>EVIDENCE LEDGER</span>
+        <span>SHA256 5afd876e1d32</span>
+      </div>
+      <h1>sources.jsonl</h1>
+      <p class="source-path">RESEARCH/GIWA_ecosystem_readiness_2026_20260825_050301/sources/sources.jsonl</p>
+      <article class="structured-body"><div class="record-list"><details class="record" open><summary><span>001</span>GIWA 체인에 연결하기</summary><pre><code>{
+  &quot;id&quot;: &quot;src_001&quot;,
+  &quot;url&quot;: &quot;https://docs.giwa.io/get-started/connect-to-giwa&quot;,
+  &quot;title&quot;: &quot;GIWA 체인에 연결하기&quot;,
+  &quot;author&quot;: &quot;GIWA&quot;,
+  &quot;date&quot;: &quot;n.d.&quot;,
+  &quot;domain&quot;: &quot;docs.giwa.io&quot;,
+  &quot;type&quot;: &quot;official_documentation&quot;,
+  &quot;quality_rating&quot;: &quot;B&quot;,
+  &quot;fetched_at&quot;: &quot;2026-08-24T20:20:00Z&quot;,
+  &quot;content_hash&quot;: &quot;sha256:7e79201b0518e1882c00e5f148a62f3510690d02184b376e9e69e3d0a34fcd4e&quot;,
+  &quot;snippet&quot;: &quot;GIWA Mainnet is under development; GIWA Sepolia uses chain ID 91342, ETH, public standard and Flashblocks RPC endpoints that are rate-limited and not for production; GIWA Wallet is under development.&quot;,
+  &quot;subtopic&quot;: &quot;network_architecture_and_maturity&quot;,
+  &quot;claims&quot;: [
+    &quot;public network status&quot;,
+    &quot;chain parameters&quot;,
+    &quot;wallet status&quot;
+  ]
+}</code></pre></details><details class="record"><summary><span>002</span>GIWA Node at 00985a5d</summary><pre><code>{
+  &quot;id&quot;: &quot;src_002&quot;,
+  &quot;url&quot;: &quot;https://github.com/giwa-io/node/tree/00985a5dba4ecf594d120072fd3557f095d3c51f&quot;,
+  &quot;title&quot;: &quot;GIWA Node at 00985a5d&quot;,
+  &quot;author&quot;: &quot;GIWA&quot;,
+  &quot;date&quot;: &quot;2026-07-13&quot;,
+  &quot;domain&quot;: &quot;github.com&quot;,
+  &quot;type&quot;: &quot;official_software&quot;,
+  &quot;quality_rating&quot;: &quot;B&quot;,
+  &quot;fetched_at&quot;: &quot;2026-08-24T20:20:00Z&quot;,
+  &quot;content_hash&quot;: &quot;sha256:a00b3e19611cc8f0dc099e9569b35287222d48bb0214b500bbc3358eee1e6356&quot;,
+  &quot;snippet&quot;: &quot;The official node repository marks Mainnet as coming soon and Sepolia as supported, provides only .env.sepolia, uses op-reth, and documents node requirements and sync modes.&quot;,
+  &quot;subtopic&quot;: &quot;developer_and_repository_reality&quot;,
+  &quot;claims&quot;: [
+    &quot;mainnet status&quot;,
+    &quot;node implementation&quot;,
+    &quot;op-reth support&quot;
+  ]
+}</code></pre></details><details class="record"><summary><span>003</span>GIWA Sepolia JSON-RPC read-only observation</summary><pre><code>{
+  &quot;id&quot;: &quot;src_003&quot;,
+  &quot;url&quot;: &quot;https://sepolia-rpc.giwa.io&quot;,
+  &quot;title&quot;: &quot;GIWA Sepolia JSON-RPC read-only observation&quot;,
+  &quot;author&quot;: &quot;GIWA; observation by Codex&quot;,
+  &quot;date&quot;: &quot;2026-08-25&quot;,
+  &quot;domain&quot;: &quot;sepolia-rpc.giwa.io&quot;,
+  &quot;type&quot;: &quot;dynamic_api_observation&quot;,
+  &quot;quality_rating&quot;: &quot;B&quot;,
+  &quot;fetched_at&quot;: &quot;2026-08-24T20:16:20Z&quot;,
+  &quot;content_hash&quot;: &quot;sha256:f298513f7344098ffaa13542c300e0a21180c31a2faef56cbea46fa307776417&quot;,
+  &quot;snippet&quot;: &quot;Read-only calls returned reth/v2.3.0, chain ID 0x164ce, syncing=false, and block 34,257,464 timestamped 2026-08-25T05:16:20+09:00. Selected official and third-party addresses returned non-empty bytecode.&quot;,
+  &quot;subtopic&quot;: &quot;onchain_and_external_ecosystem&quot;,
+  &quot;claims&quot;: [
+    &quot;testnet liveness&quot;,
+    &quot;chain ID&quot;,
+    &quot;contract code presence&quot;
+  ]
+}</code></pre></details><details class="record"><summary><span>004</span>GIWA Sepolia Blockscout read-only observation</summary><pre><code>{
+  &quot;id&quot;: &quot;src_004&quot;,
+  &quot;url&quot;: &quot;https://sepolia-explorer.giwa.io&quot;,
+  &quot;title&quot;: &quot;GIWA Sepolia Blockscout read-only observation&quot;,
+  &quot;author&quot;: &quot;Blockscout; observation by Codex&quot;,
+  &quot;date&quot;: &quot;2026-08-25&quot;,
+  &quot;domain&quot;: &quot;sepolia-explorer.giwa.io&quot;,
+  &quot;type&quot;: &quot;dynamic_explorer_observation&quot;,
+  &quot;quality_rating&quot;: &quot;B&quot;,
+  &quot;fetched_at&quot;: &quot;2026-08-24T20:16:20Z&quot;,
+  &quot;content_hash&quot;: &quot;sha256:f298513f7344098ffaa13542c300e0a21180c31a2faef56cbea46fa307776417&quot;,
+  &quot;snippet&quot;: &quot;Blockscout independently exposed chain data and full source-verification status for the Joseon stack, Notus Launchpad, and GiwaIntent contracts. Aggregate counters lagged the RPC head and are not user or adoption metrics.&quot;,
+  &quot;subtopic&quot;: &quot;onchain_and_external_ecosystem&quot;,
+  &quot;claims&quot;: [
+    &quot;explorer availability&quot;,
+    &quot;source verification&quot;,
+    &quot;activity caveat&quot;
+  ]
+}</code></pre></details><details class="record"><summary><span>005</span>Upgrade 19 Karst 하드포크</summary><pre><code>{
+  &quot;id&quot;: &quot;src_005&quot;,
+  &quot;url&quot;: &quot;https://docs.giwa.io/notices/giwa-chain/upgrade-19&quot;,
+  &quot;title&quot;: &quot;Upgrade 19 Karst 하드포크&quot;,
+  &quot;author&quot;: &quot;GIWA&quot;,
+  &quot;date&quot;: &quot;2026-07-02&quot;,
+  &quot;domain&quot;: &quot;docs.giwa.io&quot;,
+  &quot;type&quot;: &quot;official_notice&quot;,
+  &quot;quality_rating&quot;: &quot;B&quot;,
+  &quot;fetched_at&quot;: &quot;2026-08-24T20:20:00Z&quot;,
+  &quot;content_hash&quot;: &quot;sha256:020e2df13bdc3b1b3fcc436bc29d87c4acc20fa0beb90df475e6d1bb2bf19fa7&quot;,
+  &quot;snippet&quot;: &quot;Karst was scheduled for GIWA Sepolia on 2026-07-06; it introduces Osaka EVM features, a per-transaction gas cap of 16,777,216, L2CM and OPCMv2; only op-reth and kona-client are supported and the fault proof is permissioned.&quot;,
+  &quot;subtopic&quot;: &quot;network_architecture_and_maturity&quot;,
+  &quot;claims&quot;: [
+    &quot;Karst upgrade&quot;,
+    &quot;gas cap&quot;,
+    &quot;permissioned fault proof&quot;
+  ]
+}</code></pre></details><details class="record"><summary><span>006</span>Upgrade 19 on-chain artifacts</summary><pre><code>{
+  &quot;id&quot;: &quot;src_006&quot;,
+  &quot;url&quot;: &quot;https://github.com/giwa-io/chain-operations/tree/595d52ea58f898e735f4b6b47e72f47f268d5afc/sepolia/2026-07-06-upgrade-19&quot;,
+  &quot;title&quot;: &quot;Upgrade 19 on-chain artifacts&quot;,
+  &quot;author&quot;: &quot;GIWA&quot;,
+  &quot;date&quot;: &quot;2026-07-06&quot;,
+  &quot;domain&quot;: &quot;github.com&quot;,
+  &quot;type&quot;: &quot;official_software_artifact&quot;,
+  &quot;quality_rating&quot;: &quot;B&quot;,
+  &quot;fetched_at&quot;: &quot;2026-08-24T20:20:00Z&quot;,
+  &quot;content_hash&quot;: &quot;sha256:5520d04a691e6e39512ba9c774890eeaad3fbafbc185cf03a6f33ab509bdac5e&quot;,
+  &quot;snippet&quot;: &quot;The official chain-operations repository records multisig approvals and Ethereum Sepolia execution transactions for the Karst OPCM upgrade.&quot;,
+  &quot;subtopic&quot;: &quot;developer_and_repository_reality&quot;,
+  &quot;claims&quot;: [
+    &quot;Karst operation executed&quot;,
+    &quot;public upgrade artifacts&quot;
+  ]
+}</code></pre></details><details class="record"><summary><span>007</span>GIWA 테스트넷 이용약관</summary><pre><code>{
+  &quot;id&quot;: &quot;src_007&quot;,
+  &quot;url&quot;: &quot;https://docs.giwa.io/terms-and-policies/testnet-terms-of-use&quot;,
+  &quot;title&quot;: &quot;GIWA 테스트넷 이용약관&quot;,
+  &quot;author&quot;: &quot;Dunamu Inc.&quot;,
+  &quot;date&quot;: &quot;n.d.&quot;,
+  &quot;domain&quot;: &quot;docs.giwa.io&quot;,
+  &quot;type&quot;: &quot;official_terms&quot;,
+  &quot;quality_rating&quot;: &quot;B&quot;,
+  &quot;fetched_at&quot;: &quot;2026-08-24T20:20:00Z&quot;,
+  &quot;content_hash&quot;: &quot;sha256:ab3bda961ae85bd0ca31b4d731b9c82eeda302dc8220876784a31f4350bba87c&quot;,
+  &quot;snippet&quot;: &quot;The service is for testing, development and verification; it may be reset, rolled back, interrupted or ended without notice; test tokens have no economic value; commercial promotion without approval and paid trading of test tokens are prohibited; CEX or DEX integration is not guaranteed.&quot;,
+  &quot;subtopic&quot;: &quot;network_architecture_and_maturity&quot;,
+  &quot;claims&quot;: [
+    &quot;testnet limitations&quot;,
+    &quot;test-token restrictions&quot;,
+    &quot;no exchange integration guarantee&quot;
+  ]
+}</code></pre></details><details class="record"><summary><span>008</span>토큰 컨트랙트 발행하기</summary><pre><code>{
+  &quot;id&quot;: &quot;src_008&quot;,
+  &quot;url&quot;: &quot;https://docs.giwa.io/get-started/smart-contract/issue-a-token&quot;,
+  &quot;title&quot;: &quot;토큰 컨트랙트 발행하기&quot;,
+  &quot;author&quot;: &quot;GIWA&quot;,
+  &quot;date&quot;: &quot;n.d.&quot;,
+  &quot;domain&quot;: &quot;docs.giwa.io&quot;,
+  &quot;type&quot;: &quot;official_documentation&quot;,
+  &quot;quality_rating&quot;: &quot;B&quot;,
+  &quot;fetched_at&quot;: &quot;2026-08-24T20:20:00Z&quot;,
+  &quot;content_hash&quot;: &quot;sha256:7fc8a04643557e625f86940927ead64d06f8a802a3c14bfb3ef60b21331b3e5d&quot;,
+  &quot;snippet&quot;: &quot;The official guide provides an OpenZeppelin ERC-20 example, Foundry tests, and a deployment script for GIWA Sepolia.&quot;,
+  &quot;subtopic&quot;: &quot;safe_preparation&quot;,
+  &quot;claims&quot;: [
+    &quot;ERC-20 development support&quot;,
+    &quot;testnet token deployment workflow&quot;
+  ]
+}</code></pre></details><details class="record"><summary><span>009</span>GIWA 컨트랙트</summary><pre><code>{
+  &quot;id&quot;: &quot;src_009&quot;,
+  &quot;url&quot;: &quot;https://docs.giwa.io/network-information/contracts&quot;,
+  &quot;title&quot;: &quot;GIWA 컨트랙트&quot;,
+  &quot;author&quot;: &quot;GIWA&quot;,
+  &quot;date&quot;: &quot;n.d.&quot;,
+  &quot;domain&quot;: &quot;docs.giwa.io&quot;,
+  &quot;type&quot;: &quot;official_documentation&quot;,
+  &quot;quality_rating&quot;: &quot;B&quot;,
+  &quot;fetched_at&quot;: &quot;2026-08-24T20:20:00Z&quot;,
+  &quot;content_hash&quot;: &quot;sha256:aa2b214586515061a7ca486fa37c6f2586b361d9216d54dffd2b2d98fce8f2c4&quot;,
+  &quot;snippet&quot;: &quot;The public contract registry lists testnet preinstalls, OP Stack bridge and messaging contracts, EAS, ERC-4337 EntryPoints, Safe, Permit2, Multicall3 and Playground contracts; its Mainnet section remains under development.&quot;,
+  &quot;subtopic&quot;: &quot;official_ecosystem&quot;,
+  &quot;claims&quot;: [
+    &quot;official contracts&quot;,
+    &quot;mainnet contract status&quot;,
+    &quot;available primitives&quot;
+  ]
+}</code></pre></details><details class="record"><summary><span>010</span>이더리움과 GIWA의 차이</summary><pre><code>{
+  &quot;id&quot;: &quot;src_010&quot;,
+  &quot;url&quot;: &quot;https://docs.giwa.io/network-information/diffs-ethereum-giwa&quot;,
+  &quot;title&quot;: &quot;이더리움과 GIWA의 차이&quot;,
+  &quot;author&quot;: &quot;GIWA&quot;,
+  &quot;date&quot;: &quot;n.d.&quot;,
+  &quot;domain&quot;: &quot;docs.giwa.io&quot;,
+  &quot;type&quot;: &quot;official_documentation&quot;,
+  &quot;quality_rating&quot;: &quot;B&quot;,
+  &quot;fetched_at&quot;: &quot;2026-08-24T20:20:00Z&quot;,
+  &quot;content_hash&quot;: &quot;sha256:e79ef3b77720949e388a64b19abb486e411b2ba431cb882276dfeedd669d6fef&quot;,
+  &quot;snippet&quot;: &quot;GIWA is OP Stack and EVM-equivalent, produces one-second blocks through a sequencer, has no public L2 mempool, and exposes unsafe, safe and finalized block states.&quot;,
+  &quot;subtopic&quot;: &quot;network_architecture_and_maturity&quot;,
+  &quot;claims&quot;: [
+    &quot;EVM equivalence&quot;,
+    &quot;block time&quot;,
+    &quot;sequencer and finality semantics&quot;
+  ]
+}</code></pre></details><details class="record"><summary><span>011</span>Flashblocks</summary><pre><code>{
+  &quot;id&quot;: &quot;src_011&quot;,
+  &quot;url&quot;: &quot;https://docs.giwa.io/network-information/flashblocks&quot;,
+  &quot;title&quot;: &quot;Flashblocks&quot;,
+  &quot;author&quot;: &quot;GIWA&quot;,
+  &quot;date&quot;: &quot;n.d.&quot;,
+  &quot;domain&quot;: &quot;docs.giwa.io&quot;,
+  &quot;type&quot;: &quot;official_documentation&quot;,
+  &quot;quality_rating&quot;: &quot;B&quot;,
+  &quot;fetched_at&quot;: &quot;2026-08-24T20:20:00Z&quot;,
+  &quot;content_hash&quot;: &quot;sha256:2aef1d4d5f004c27821a955ee999447362d2315ead1a810b819efef644771203&quot;,
+  &quot;snippet&quot;: &quot;Flashblocks supplies preconfirmation in up to 200ms through a development-only rate-limited RPC. Mainnet support is being prepared and preconfirmation is not finality.&quot;,
+  &quot;subtopic&quot;: &quot;official_ecosystem&quot;,
+  &quot;claims&quot;: [
+    &quot;Flashblocks support&quot;,
+    &quot;preconfirmation semantics&quot;,
+    &quot;production limitation&quot;
+  ]
+}</code></pre></details><details class="record"><summary><span>012</span>Dojang</summary><pre><code>{
+  &quot;id&quot;: &quot;src_012&quot;,
+  &quot;url&quot;: &quot;https://docs.giwa.io/giwa-ecosystem/dojang&quot;,
+  &quot;title&quot;: &quot;Dojang&quot;,
+  &quot;author&quot;: &quot;GIWA&quot;,
+  &quot;date&quot;: &quot;n.d.&quot;,
+  &quot;domain&quot;: &quot;docs.giwa.io&quot;,
+  &quot;type&quot;: &quot;official_documentation&quot;,
+  &quot;quality_rating&quot;: &quot;B&quot;,
+  &quot;fetched_at&quot;: &quot;2026-08-24T20:20:00Z&quot;,
+  &quot;content_hash&quot;: &quot;sha256:b13d84587629877e6dcfa3f1246f999e0c8545c19a0d3d9682ba89d3c2aaee5a&quot;,
+  &quot;snippet&quot;: &quot;Dojang uses EAS to issue Verified Address, Balance Root, Verified Balance and Verified Code attestations and identifies Upbit Korea as an issuer.&quot;,
+  &quot;subtopic&quot;: &quot;official_ecosystem&quot;,
+  &quot;claims&quot;: [
+    &quot;Dojang purpose&quot;,
+    &quot;attestation types&quot;,
+    &quot;issuer&quot;
+  ]
+}</code></pre></details><details class="record"><summary><span>013</span>Dojang 컨트랙트</summary><pre><code>{
+  &quot;id&quot;: &quot;src_013&quot;,
+  &quot;url&quot;: &quot;https://docs.giwa.io/giwa-ecosystem/dojang/contracts&quot;,
+  &quot;title&quot;: &quot;Dojang 컨트랙트&quot;,
+  &quot;author&quot;: &quot;GIWA&quot;,
+  &quot;date&quot;: &quot;n.d.&quot;,
+  &quot;domain&quot;: &quot;docs.giwa.io&quot;,
+  &quot;type&quot;: &quot;official_documentation&quot;,
+  &quot;quality_rating&quot;: &quot;B&quot;,
+  &quot;fetched_at&quot;: &quot;2026-08-24T20:20:00Z&quot;,
+  &quot;content_hash&quot;: &quot;sha256:afce2d9dcad2c36a12064f53f0fed1d49042a9a1f0dbd38ad733f27b707c5a12&quot;,
+  &quot;snippet&quot;: &quot;The page publishes testnet attesters, schema IDs and deployed addresses including EAS and DojangScroll.&quot;,
+  &quot;subtopic&quot;: &quot;official_ecosystem&quot;,
+  &quot;claims&quot;: [
+    &quot;Dojang deployment addresses&quot;,
+    &quot;schemas&quot;,
+    &quot;attesters&quot;
+  ]
+}</code></pre></details><details class="record"><summary><span>014</span>giwa-io/dojang at 26c225d3</summary><pre><code>{
+  &quot;id&quot;: &quot;src_014&quot;,
+  &quot;url&quot;: &quot;https://github.com/giwa-io/dojang/tree/26c225d3094f5bdebb7eee338167af3b1d0cb3a8&quot;,
+  &quot;title&quot;: &quot;giwa-io/dojang at 26c225d3&quot;,
+  &quot;author&quot;: &quot;GIWA&quot;,
+  &quot;date&quot;: &quot;2026-06-16&quot;,
+  &quot;domain&quot;: &quot;github.com&quot;,
+  &quot;type&quot;: &quot;official_software&quot;,
+  &quot;quality_rating&quot;: &quot;B&quot;,
+  &quot;fetched_at&quot;: &quot;2026-08-24T20:20:00Z&quot;,
+  &quot;content_hash&quot;: &quot;sha256:f3352fd59924348de297fbc48be29c04feacf877c7e95c54a175502bc06c5358&quot;,
+  &quot;snippet&quot;: &quot;The MIT-licensed Solidity repository contains Dojang contracts, tests, deployment artifacts, package exports, build, coverage, lint and Slither workflows.&quot;,
+  &quot;subtopic&quot;: &quot;developer_and_repository_reality&quot;,
+  &quot;claims&quot;: [
+    &quot;Dojang source availability&quot;,
+    &quot;license&quot;,
+    &quot;developer tooling&quot;
+  ]
+}</code></pre></details><details class="record"><summary><span>015</span>@giwa-io/dojang-contracts 0.5.0</summary><pre><code>{
+  &quot;id&quot;: &quot;src_015&quot;,
+  &quot;url&quot;: &quot;https://www.npmjs.com/package/@giwa-io/dojang-contracts&quot;,
+  &quot;title&quot;: &quot;@giwa-io/dojang-contracts 0.5.0&quot;,
+  &quot;author&quot;: &quot;GIWA&quot;,
+  &quot;date&quot;: &quot;2026-05-14&quot;,
+  &quot;domain&quot;: &quot;registry.npmjs.org&quot;,
+  &quot;type&quot;: &quot;package_registry&quot;,
+  &quot;quality_rating&quot;: &quot;B&quot;,
+  &quot;fetched_at&quot;: &quot;2026-08-24T20:20:00Z&quot;,
+  &quot;content_hash&quot;: &quot;sha256:e54e10cffc889448b2b539d05aee5b34e87f1608f2def92840496f8ef7baa784&quot;,
+  &quot;snippet&quot;: &quot;The npm registry exposes version 0.5.0 with TypeScript ABIs and Dojang addresses under MIT.&quot;,
+  &quot;subtopic&quot;: &quot;developer_and_repository_reality&quot;,
+  &quot;claims&quot;: [
+    &quot;published Dojang package&quot;,
+    &quot;version&quot;,
+    &quot;package scope&quot;
+  ]
+}</code></pre></details><details class="record"><summary><span>016</span>Upbit Web3 Names (up.id)</summary><pre><code>{
+  &quot;id&quot;: &quot;src_016&quot;,
+  &quot;url&quot;: &quot;https://docs.giwa.io/giwa-ecosystem/up-id&quot;,
+  &quot;title&quot;: &quot;Upbit Web3 Names (up.id)&quot;,
+  &quot;author&quot;: &quot;GIWA&quot;,
+  &quot;date&quot;: &quot;n.d.&quot;,
+  &quot;domain&quot;: &quot;docs.giwa.io&quot;,
+  &quot;type&quot;: &quot;official_documentation&quot;,
+  &quot;quality_rating&quot;: &quot;B&quot;,
+  &quot;fetched_at&quot;: &quot;2026-08-24T20:20:00Z&quot;,
+  &quot;content_hash&quot;: &quot;sha256:57529e8ec736b4276e73c2de6110a69ed79d8a4ac39c2cb741d003c080453293&quot;,
+  &quot;snippet&quot;: &quot;up.id is ENS-based, issued only to Verified Address wallets, non-transferable, limited to one per wallet, and subject to revocation and grace-period rules.&quot;,
+  &quot;subtopic&quot;: &quot;official_ecosystem&quot;,
+  &quot;claims&quot;: [
+    &quot;up.id design&quot;,
+    &quot;Verified Address dependency&quot;
+  ]
+}</code></pre></details><details class="record"><summary><span>017</span>GIWA 오라클</summary><pre><code>{
+  &quot;id&quot;: &quot;src_017&quot;,
+  &quot;url&quot;: &quot;https://docs.giwa.io/tools/oracles&quot;,
+  &quot;title&quot;: &quot;GIWA 오라클&quot;,
+  &quot;author&quot;: &quot;GIWA&quot;,
+  &quot;date&quot;: &quot;n.d.&quot;,
+  &quot;domain&quot;: &quot;docs.giwa.io&quot;,
+  &quot;type&quot;: &quot;official_documentation&quot;,
+  &quot;quality_rating&quot;: &quot;B&quot;,
+  &quot;fetched_at&quot;: &quot;2026-08-24T20:20:00Z&quot;,
+  &quot;content_hash&quot;: &quot;sha256:d95c77c78ae4be2788bfb10983044b25b4b24ea2f2f1af2010a8e5554976d829&quot;,
+  &quot;snippet&quot;: &quot;The official tools page lists RedStone push and pull services and a Pyth contract on GIWA Sepolia, while warning readers to verify provider information with the providers.&quot;,
+  &quot;subtopic&quot;: &quot;official_ecosystem&quot;,
+  &quot;claims&quot;: [
+    &quot;oracle options&quot;,
+    &quot;provider verification warning&quot;
+  ]
+}</code></pre></details><details class="record"><summary><span>018</span>Pyth Core contract addresses on EVM networks</summary><pre><code>{
+  &quot;id&quot;: &quot;src_018&quot;,
+  &quot;url&quot;: &quot;https://docs.pyth.network/price-feeds/core/contract-addresses/evm&quot;,
+  &quot;title&quot;: &quot;Pyth Core contract addresses on EVM networks&quot;,
+  &quot;author&quot;: &quot;Pyth Network&quot;,
+  &quot;date&quot;: &quot;n.d.&quot;,
+  &quot;domain&quot;: &quot;docs.pyth.network&quot;,
+  &quot;type&quot;: &quot;provider_documentation&quot;,
+  &quot;quality_rating&quot;: &quot;B&quot;,
+  &quot;fetched_at&quot;: &quot;2026-08-24T20:20:00Z&quot;,
+  &quot;content_hash&quot;: &quot;sha256:3e527c7ca5262fad034c2d86de8a0101fe8cb2b6f2fc7b0983795399da845169&quot;,
+  &quot;snippet&quot;: &quot;Pyth lists GIWA Sepolia Testnet and contract 0x2880ab155794e7179c9ee2e38200202908c17b43.&quot;,
+  &quot;subtopic&quot;: &quot;official_ecosystem&quot;,
+  &quot;claims&quot;: [
+    &quot;Pyth testnet support&quot;,
+    &quot;contract address&quot;
+  ]
+}</code></pre></details><details class="record"><summary><span>019</span>RedStone Launches on GIWA Testnet</summary><pre><code>{
+  &quot;id&quot;: &quot;src_019&quot;,
+  &quot;url&quot;: &quot;https://blog.redstone.finance/2025/11/19/redstone-launches-on-giwa-testnet-enabling-high-security-feeds-on-upbits-l2/&quot;,
+  &quot;title&quot;: &quot;RedStone Launches on GIWA Testnet&quot;,
+  &quot;author&quot;: &quot;RedStone&quot;,
+  &quot;date&quot;: &quot;2025-11-19&quot;,
+  &quot;domain&quot;: &quot;blog.redstone.finance&quot;,
+  &quot;type&quot;: &quot;provider_announcement&quot;,
+  &quot;quality_rating&quot;: &quot;D&quot;,
+  &quot;fetched_at&quot;: &quot;2026-08-24T20:20:00Z&quot;,
+  &quot;content_hash&quot;: &quot;sha256:b26f65dc7c1acbf616a053c632e042b98644c20fb45281f1a94d96ed83f79319&quot;,
+  &quot;snippet&quot;: &quot;RedStone says its BTC/USD and ETH/USD push feeds and 300-plus pull feeds are available on GIWA public testnet.&quot;,
+  &quot;subtopic&quot;: &quot;official_ecosystem&quot;,
+  &quot;claims&quot;: [
+    &quot;RedStone testnet support&quot;
+  ]
+}</code></pre></details><details class="record"><summary><span>020</span>Data Streams Expands to New Blockchains</summary><pre><code>{
+  &quot;id&quot;: &quot;src_020&quot;,
+  &quot;url&quot;: &quot;https://dev.chain.link/changelog/data-streams-expands-to-new-blockchains-cb729&quot;,
+  &quot;title&quot;: &quot;Data Streams Expands to New Blockchains&quot;,
+  &quot;author&quot;: &quot;Chainlink&quot;,
+  &quot;date&quot;: &quot;2026-02-26&quot;,
+  &quot;domain&quot;: &quot;dev.chain.link&quot;,
+  &quot;type&quot;: &quot;provider_changelog&quot;,
+  &quot;quality_rating&quot;: &quot;B&quot;,
+  &quot;fetched_at&quot;: &quot;2026-08-24T20:20:00Z&quot;,
+  &quot;content_hash&quot;: &quot;sha256:b87d684731f2a43be0201dbe946d0b8f0802d7cd74232414df99340fa0272fc8&quot;,
+  &quot;snippet&quot;: &quot;Chainlink&#x27;s changelog lists Giwa Sepolia Testnet among newly supported Data Streams networks.&quot;,
+  &quot;subtopic&quot;: &quot;official_ecosystem&quot;,
+  &quot;claims&quot;: [
+    &quot;provider-reported Chainlink support&quot;
+  ]
+}</code></pre></details><details class="record"><summary><span>021</span>GIWA 노드 서비스</summary><pre><code>{
+  &quot;id&quot;: &quot;src_021&quot;,
+  &quot;url&quot;: &quot;https://docs.giwa.io/tools/node-providers&quot;,
+  &quot;title&quot;: &quot;GIWA 노드 서비스&quot;,
+  &quot;author&quot;: &quot;GIWA&quot;,
+  &quot;date&quot;: &quot;n.d.&quot;,
+  &quot;domain&quot;: &quot;docs.giwa.io&quot;,
+  &quot;type&quot;: &quot;official_documentation&quot;,
+  &quot;quality_rating&quot;: &quot;B&quot;,
+  &quot;fetched_at&quot;: &quot;2026-08-24T20:20:00Z&quot;,
+  &quot;content_hash&quot;: &quot;sha256:cd3ab0c7489f6bc362a07b95b3cc5e79b0e3b0ec4cafb354f93da85f3df82fd7&quot;,
+  &quot;snippet&quot;: &quot;GIWA lists Nodit as a node and indexed-data provider for GIWA Sepolia only.&quot;,
+  &quot;subtopic&quot;: &quot;official_ecosystem&quot;,
+  &quot;claims&quot;: [
+    &quot;officially listed node provider&quot;
+  ]
+}</code></pre></details><details class="record"><summary><span>022</span>Nodit Faucets: GIWA Sepolia</summary><pre><code>{
+  &quot;id&quot;: &quot;src_022&quot;,
+  &quot;url&quot;: &quot;https://developer.nodit.io/en/guides/faucets/&quot;,
+  &quot;title&quot;: &quot;Nodit Faucets: GIWA Sepolia&quot;,
+  &quot;author&quot;: &quot;Nodit&quot;,
+  &quot;date&quot;: &quot;n.d.&quot;,
+  &quot;domain&quot;: &quot;developer.nodit.io&quot;,
+  &quot;type&quot;: &quot;provider_documentation&quot;,
+  &quot;quality_rating&quot;: &quot;B&quot;,
+  &quot;fetched_at&quot;: &quot;2026-08-24T20:20:00Z&quot;,
+  &quot;content_hash&quot;: &quot;sha256:682c1a13a053f4706d9cb15f94b401a2bc18b480adef19b960b0c2a0ec66df74&quot;,
+  &quot;snippet&quot;: &quot;Nodit&#x27;s current developer guide lists a GIWA Sepolia faucet and GIWA Node API reference.&quot;,
+  &quot;subtopic&quot;: &quot;official_ecosystem&quot;,
+  &quot;claims&quot;: [
+    &quot;Nodit testnet support&quot;
+  ]
+}</code></pre></details><details class="record"><summary><span>023</span>GIWA 브릿지</summary><pre><code>{
+  &quot;id&quot;: &quot;src_023&quot;,
+  &quot;url&quot;: &quot;https://docs.giwa.io/tools/bridges&quot;,
+  &quot;title&quot;: &quot;GIWA 브릿지&quot;,
+  &quot;author&quot;: &quot;GIWA&quot;,
+  &quot;date&quot;: &quot;n.d.&quot;,
+  &quot;domain&quot;: &quot;docs.giwa.io&quot;,
+  &quot;type&quot;: &quot;official_documentation&quot;,
+  &quot;quality_rating&quot;: &quot;B&quot;,
+  &quot;fetched_at&quot;: &quot;2026-08-24T20:20:00Z&quot;,
+  &quot;content_hash&quot;: &quot;sha256:3110bea16598f917d78252c9f9bd486d5d75b3f4bf4300928a5526d2647d2bd1&quot;,
+  &quot;snippet&quot;: &quot;GIWA lists Superbridge as the native GIWA Sepolia bridge and notes an approximately seven-day L2 withdrawal challenge period.&quot;,
+  &quot;subtopic&quot;: &quot;official_ecosystem&quot;,
+  &quot;claims&quot;: [
+    &quot;native testnet bridge&quot;,
+    &quot;withdrawal delay&quot;
+  ]
+}</code></pre></details><details class="record"><summary><span>024</span>GASOK Builder Program</summary><pre><code>{
+  &quot;id&quot;: &quot;src_024&quot;,
+  &quot;url&quot;: &quot;https://giwa.io/gasok&quot;,
+  &quot;title&quot;: &quot;GASOK Builder Program&quot;,
+  &quot;author&quot;: &quot;GIWA&quot;,
+  &quot;date&quot;: &quot;2026&quot;,
+  &quot;domain&quot;: &quot;giwa.io&quot;,
+  &quot;type&quot;: &quot;official_program_page&quot;,
+  &quot;quality_rating&quot;: &quot;B&quot;,
+  &quot;fetched_at&quot;: &quot;2026-08-24T20:20:00Z&quot;,
+  &quot;content_hash&quot;: &quot;sha256:5b527c621af8c039e626248f0963d2107282a9753ad1a2328487aea0b4d99f7a&quot;,
+  &quot;snippet&quot;: &quot;The program roadmap places MVP and testnet work in June-July 2026, productization and private-mainnet deployment in August-September, and Demo Day in October; it states selection and support are unrelated to Upbit asset-listing support.&quot;,
+  &quot;subtopic&quot;: &quot;network_architecture_and_maturity&quot;,
+  &quot;claims&quot;: [
+    &quot;builder roadmap&quot;,
+    &quot;private mainnet phase&quot;,
+    &quot;no listing implication&quot;
+  ]
+}</code></pre></details><details class="record"><summary><span>025</span>Joseon.fun Network</summary><pre><code>{
+  &quot;id&quot;: &quot;src_025&quot;,
+  &quot;url&quot;: &quot;https://docs.joseon.fun/network/&quot;,
+  &quot;title&quot;: &quot;Joseon.fun Network&quot;,
+  &quot;author&quot;: &quot;Joseon.fun&quot;,
+  &quot;date&quot;: &quot;2026-07-28&quot;,
+  &quot;domain&quot;: &quot;docs.joseon.fun&quot;,
+  &quot;type&quot;: &quot;third_party_documentation&quot;,
+  &quot;quality_rating&quot;: &quot;D&quot;,
+  &quot;fetched_at&quot;: &quot;2026-08-24T20:20:00Z&quot;,
+  &quot;content_hash&quot;: &quot;sha256:e947cfe696b1a7946ff5364eb3adf0654f375699ed16bdfe11c05dae881593be&quot;,
+  &quot;snippet&quot;: &quot;Joseon publishes GIWA Sepolia addresses for a launch factory, swap factory, router, migration manager, registry, permanent-liquidity locker and WETH9, and says they are source-verified.&quot;,
+  &quot;subtopic&quot;: &quot;onchain_and_external_ecosystem&quot;,
+  &quot;claims&quot;: [
+    &quot;third-party launchpad and DEX stack&quot;,
+    &quot;contract addresses&quot;
+  ]
+}</code></pre></details><details class="record"><summary><span>026</span>Joseon.fun Safety and risk</summary><pre><code>{
+  &quot;id&quot;: &quot;src_026&quot;,
+  &quot;url&quot;: &quot;https://docs.joseon.fun/security/&quot;,
+  &quot;title&quot;: &quot;Joseon.fun Safety and risk&quot;,
+  &quot;author&quot;: &quot;Joseon.fun&quot;,
+  &quot;date&quot;: &quot;2026-07-28&quot;,
+  &quot;domain&quot;: &quot;docs.joseon.fun&quot;,
+  &quot;type&quot;: &quot;third_party_documentation&quot;,
+  &quot;quality_rating&quot;: &quot;D&quot;,
+  &quot;fetched_at&quot;: &quot;2026-08-24T20:20:00Z&quot;,
+  &quot;content_hash&quot;: &quot;sha256:9455c9443aba3ee1ebd6f240d66c0781cac6bcb2c4239efb8cedc76db583f641&quot;,
+  &quot;snippet&quot;: &quot;Joseon states it is testnet-only, externally unaudited, and administered by single-wallet keys; it says no live graduation has yet occurred on its 2026-07-28 stack and a multisig is required before mainnet.&quot;,
+  &quot;subtopic&quot;: &quot;onchain_and_external_ecosystem&quot;,
+  &quot;claims&quot;: [
+    &quot;Joseon maturity&quot;,
+    &quot;audit status&quot;,
+    &quot;admin-key risk&quot;
+  ]
+}</code></pre></details><details class="record"><summary><span>027</span>Joseon indexer health endpoint</summary><pre><code>{
+  &quot;id&quot;: &quot;src_027&quot;,
+  &quot;url&quot;: &quot;https://api.joseon.fun/api/health&quot;,
+  &quot;title&quot;: &quot;Joseon indexer health endpoint&quot;,
+  &quot;author&quot;: &quot;Joseon.fun&quot;,
+  &quot;date&quot;: &quot;2026-08-25&quot;,
+  &quot;domain&quot;: &quot;api.joseon.fun&quot;,
+  &quot;type&quot;: &quot;dynamic_api_observation&quot;,
+  &quot;quality_rating&quot;: &quot;D&quot;,
+  &quot;fetched_at&quot;: &quot;2026-08-24T20:12:16Z&quot;,
+  &quot;content_hash&quot;: &quot;sha256:eea32bf96e12cdc7ee103b69ced646ee170822081b71c0f415cb55b8ae9f48ad&quot;,
+  &quot;snippet&quot;: &quot;The endpoint returned service=joseon-indexer, network=GIWA Sepolia, chainId=91342.&quot;,
+  &quot;subtopic&quot;: &quot;onchain_and_external_ecosystem&quot;,
+  &quot;claims&quot;: [
+    &quot;third-party indexer availability&quot;
+  ]
+}</code></pre></details><details class="record"><summary><span>028</span>Notus launchpad at f40eff47</summary><pre><code>{
+  &quot;id&quot;: &quot;src_028&quot;,
+  &quot;url&quot;: &quot;https://github.com/giupy997/launchpadgiwa/tree/f40eff47ce3466eef9a1c403534d1ec216c9e840&quot;,
+  &quot;title&quot;: &quot;Notus launchpad at f40eff47&quot;,
+  &quot;author&quot;: &quot;giupy997&quot;,
+  &quot;date&quot;: &quot;2026-07-31&quot;,
+  &quot;domain&quot;: &quot;github.com&quot;,
+  &quot;type&quot;: &quot;third_party_software&quot;,
+  &quot;quality_rating&quot;: &quot;B&quot;,
+  &quot;fetched_at&quot;: &quot;2026-08-24T20:20:00Z&quot;,
+  &quot;content_hash&quot;: &quot;sha256:f547281b33e90c523e6839d286c93ce25df8392b06b31517788a59092c93d6eb&quot;,
+  &quot;snippet&quot;: &quot;The repository implements a bonding-curve token launchpad and reports a source-verified GIWA Sepolia v7.1 deployment. Its GIWA DEX migrator, real-wallet E2E, mainnet permission policy and legal review remain TODO; no license is declared.&quot;,
+  &quot;subtopic&quot;: &quot;onchain_and_external_ecosystem&quot;,
+  &quot;claims&quot;: [
+    &quot;Notus implementation&quot;,
+    &quot;testnet deployment&quot;,
+    &quot;known gaps&quot;
+  ]
+}</code></pre></details><details class="record"><summary><span>029</span>Community GIWA fixed-pair DEX at 8cb8a6e7</summary><pre><code>{
+  &quot;id&quot;: &quot;src_029&quot;,
+  &quot;url&quot;: &quot;https://github.com/vikitoshi/Giwa-Dex/tree/8cb8a6e7912c654956299b5213c7c2369bfdb2fe&quot;,
+  &quot;title&quot;: &quot;Community GIWA fixed-pair DEX at 8cb8a6e7&quot;,
+  &quot;author&quot;: &quot;vikitoshi&quot;,
+  &quot;date&quot;: &quot;2025-09-10&quot;,
+  &quot;domain&quot;: &quot;github.com&quot;,
+  &quot;type&quot;: &quot;third_party_software&quot;,
+  &quot;quality_rating&quot;: &quot;B&quot;,
+  &quot;fetched_at&quot;: &quot;2026-08-24T20:20:00Z&quot;,
+  &quot;content_hash&quot;: &quot;sha256:e4c4f453a77acb7c5e2c850f382732f8e7caddee1461c3c07414462918a7aa3b&quot;,
+  &quot;snippet&quot;: &quot;A small frontend hard-codes one AMM, one INDSR token and one faucet. The repository has two commits, no README or declared license, duplicated config with a stale chain-id typo, and the AMM/token are not source-verified in Blockscout.&quot;,
+  &quot;subtopic&quot;: &quot;onchain_and_external_ecosystem&quot;,
+  &quot;claims&quot;: [
+    &quot;narrow community DEX demo&quot;,
+    &quot;provenance and maintenance gaps&quot;
+  ]
+}</code></pre></details><details class="record"><summary><span>030</span>GiwaIntent at 6253ca24</summary><pre><code>{
+  &quot;id&quot;: &quot;src_030&quot;,
+  &quot;url&quot;: &quot;https://github.com/fangTiger/giwa-intent/tree/6253ca24399b39b06c3fd39e2e97a02286feed22&quot;,
+  &quot;title&quot;: &quot;GiwaIntent at 6253ca24&quot;,
+  &quot;author&quot;: &quot;fangTiger&quot;,
+  &quot;date&quot;: &quot;2026-07-29&quot;,
+  &quot;domain&quot;: &quot;github.com&quot;,
+  &quot;type&quot;: &quot;third_party_software&quot;,
+  &quot;quality_rating&quot;: &quot;B&quot;,
+  &quot;fetched_at&quot;: &quot;2026-08-24T20:20:00Z&quot;,
+  &quot;content_hash&quot;: &quot;sha256:3444870bf4cdf27b5be1e72862b2b32d42dccf3210523b6b2392600580dfc2c6&quot;,
+  &quot;snippet&quot;: &quot;The repository implements Dojang-aware request-to-pay on GIWA Sepolia and publishes two Blockscout-verified contracts, while explicitly marking production hosting, wallet matrices, measured KPIs, external audit and license decisions incomplete.&quot;,
+  &quot;subtopic&quot;: &quot;onchain_and_external_ecosystem&quot;,
+  &quot;claims&quot;: [
+    &quot;GIWA-native payment example&quot;,
+    &quot;deployed contracts&quot;,
+    &quot;explicit maturity gaps&quot;
+  ]
+}</code></pre></details><details class="record"><summary><span>031</span>SODAX prepares cross-network execution for Giwa builders</summary><pre><code>{
+  &quot;id&quot;: &quot;src_031&quot;,
+  &quot;url&quot;: &quot;https://www.sodax.com/news/sodax-prepares-cross-network-execution-for-giwa-builders-out-of-gasok&quot;,
+  &quot;title&quot;: &quot;SODAX prepares cross-network execution for Giwa builders&quot;,
+  &quot;author&quot;: &quot;SODAX Team&quot;,
+  &quot;date&quot;: &quot;2026-06-01&quot;,
+  &quot;domain&quot;: &quot;www.sodax.com&quot;,
+  &quot;type&quot;: &quot;vendor_announcement&quot;,
+  &quot;quality_rating&quot;: &quot;D&quot;,
+  &quot;fetched_at&quot;: &quot;2026-08-24T20:20:00Z&quot;,
+  &quot;content_hash&quot;: &quot;sha256:1269157048356c080d7abf1ac8a0d35caedf17f3e08e25239bb36f2e29766f4d&quot;,
+  &quot;snippet&quot;: &quot;SODAX says it has connected its execution system to GIWA testnet and is preparing a mainnet integration, while also saying the intent architecture cannot work materially on testnet.&quot;,
+  &quot;subtopic&quot;: &quot;onchain_and_external_ecosystem&quot;,
+  &quot;claims&quot;: [
+    &quot;vendor-reported cross-network readiness&quot;
+  ]
+}</code></pre></details><details class="record"><summary><span>032</span>GIWA Eco directory</summary><pre><code>{
+  &quot;id&quot;: &quot;src_032&quot;,
+  &quot;url&quot;: &quot;https://www.giwaeco.com/en/explore&quot;,
+  &quot;title&quot;: &quot;GIWA Eco directory&quot;,
+  &quot;author&quot;: &quot;GIWA Eco&quot;,
+  &quot;date&quot;: &quot;2026-06-26&quot;,
+  &quot;domain&quot;: &quot;www.giwaeco.com&quot;,
+  &quot;type&quot;: &quot;community_directory&quot;,
+  &quot;quality_rating&quot;: &quot;D&quot;,
+  &quot;fetched_at&quot;: &quot;2026-08-24T20:20:00Z&quot;,
+  &quot;content_hash&quot;: &quot;sha256:66d9a6d1c4b26cf07a40dc90f7d6578ebfe5ba85384021407bb30b34ae190873&quot;,
+  &quot;snippet&quot;: &quot;The community directory currently displays ACRO as a GASOK DeFi/RWA entry, while its home page says no projects yet and separately claims 65 applicants without methodology or an official-selection reference.&quot;,
+  &quot;subtopic&quot;: &quot;onchain_and_external_ecosystem&quot;,
+  &quot;claims&quot;: [
+    &quot;community directory listing&quot;,
+    &quot;directory inconsistency&quot;
+  ]
+}</code></pre></details><details class="record"><summary><span>033</span>Giwa Toolkit</summary><pre><code>{
+  &quot;id&quot;: &quot;src_033&quot;,
+  &quot;url&quot;: &quot;https://docs.giwa.io/giwa-ecosystem/giwa-toolkit&quot;,
+  &quot;title&quot;: &quot;Giwa Toolkit&quot;,
+  &quot;author&quot;: &quot;GIWA&quot;,
+  &quot;date&quot;: &quot;n.d.&quot;,
+  &quot;domain&quot;: &quot;docs.giwa.io&quot;,
+  &quot;type&quot;: &quot;official_placeholder&quot;,
+  &quot;quality_rating&quot;: &quot;B&quot;,
+  &quot;fetched_at&quot;: &quot;2026-08-24T20:20:00Z&quot;,
+  &quot;content_hash&quot;: &quot;sha256:8b4621af4161354ba57a336c697be4eee59fa586be0ac394f363e1116cfdb959&quot;,
+  &quot;snippet&quot;: &quot;The current public page contains a title but no feature, API, contract, version or availability details.&quot;,
+  &quot;subtopic&quot;: &quot;official_ecosystem&quot;,
+  &quot;claims&quot;: [
+    &quot;public documentation gap&quot;
+  ]
+}</code></pre></details><details class="record"><summary><span>034</span>Upbit 오라클</summary><pre><code>{
+  &quot;id&quot;: &quot;src_034&quot;,
+  &quot;url&quot;: &quot;https://docs.giwa.io/giwa-ecosystem/upbit-oracle&quot;,
+  &quot;title&quot;: &quot;Upbit 오라클&quot;,
+  &quot;author&quot;: &quot;GIWA&quot;,
+  &quot;date&quot;: &quot;n.d.&quot;,
+  &quot;domain&quot;: &quot;docs.giwa.io&quot;,
+  &quot;type&quot;: &quot;official_placeholder&quot;,
+  &quot;quality_rating&quot;: &quot;B&quot;,
+  &quot;fetched_at&quot;: &quot;2026-08-24T20:20:00Z&quot;,
+  &quot;content_hash&quot;: &quot;sha256:be5fe12d727e85d732e5ee37277bd0ea14a106c70d9177bc9891262bdbdb0553&quot;,
+  &quot;snippet&quot;: &quot;The current public page contains a title but no feed, API, contract, provenance or availability details.&quot;,
+  &quot;subtopic&quot;: &quot;official_ecosystem&quot;,
+  &quot;claims&quot;: [
+    &quot;public documentation gap&quot;
+  ]
+}</code></pre></details><details class="record"><summary><span>035</span>크로스 체인</summary><pre><code>{
+  &quot;id&quot;: &quot;src_035&quot;,
+  &quot;url&quot;: &quot;https://docs.giwa.io/tools/cross-chain&quot;,
+  &quot;title&quot;: &quot;크로스 체인&quot;,
+  &quot;author&quot;: &quot;GIWA&quot;,
+  &quot;date&quot;: &quot;n.d.&quot;,
+  &quot;domain&quot;: &quot;docs.giwa.io&quot;,
+  &quot;type&quot;: &quot;official_placeholder&quot;,
+  &quot;quality_rating&quot;: &quot;B&quot;,
+  &quot;fetched_at&quot;: &quot;2026-08-24T20:20:00Z&quot;,
+  &quot;content_hash&quot;: &quot;sha256:298ce7b9df32c65c2a8fb2cc82f6bd91b559b7a62ae0659d0d78953672b92ba1&quot;,
+  &quot;snippet&quot;: &quot;The current public page contains a title but no provider, protocol, address or availability details.&quot;,
+  &quot;subtopic&quot;: &quot;official_ecosystem&quot;,
+  &quot;claims&quot;: [
+    &quot;public documentation gap&quot;
+  ]
+}</code></pre></details><details class="record"><summary><span>036</span>Security Council</summary><pre><code>{
+  &quot;id&quot;: &quot;src_036&quot;,
+  &quot;url&quot;: &quot;https://docs.giwa.io/security/security-council&quot;,
+  &quot;title&quot;: &quot;Security Council&quot;,
+  &quot;author&quot;: &quot;GIWA&quot;,
+  &quot;date&quot;: &quot;n.d.&quot;,
+  &quot;domain&quot;: &quot;docs.giwa.io&quot;,
+  &quot;type&quot;: &quot;official_placeholder&quot;,
+  &quot;quality_rating&quot;: &quot;B&quot;,
+  &quot;fetched_at&quot;: &quot;2026-08-24T20:20:00Z&quot;,
+  &quot;content_hash&quot;: &quot;sha256:a90794ebd0e63586e308c1e08f72530f639094d493cb53fbe2c57562d565b8a7&quot;,
+  &quot;snippet&quot;: &quot;The current public page contains a title but no membership, threshold, powers or operating procedure details.&quot;,
+  &quot;subtopic&quot;: &quot;network_architecture_and_maturity&quot;,
+  &quot;claims&quot;: [
+    &quot;public security-governance documentation gap&quot;
+  ]
+}</code></pre></details><details class="record"><summary><span>037</span>Bug Bounty 프로그램</summary><pre><code>{
+  &quot;id&quot;: &quot;src_037&quot;,
+  &quot;url&quot;: &quot;https://docs.giwa.io/security/bug-bounty&quot;,
+  &quot;title&quot;: &quot;Bug Bounty 프로그램&quot;,
+  &quot;author&quot;: &quot;GIWA&quot;,
+  &quot;date&quot;: &quot;n.d.&quot;,
+  &quot;domain&quot;: &quot;docs.giwa.io&quot;,
+  &quot;type&quot;: &quot;official_placeholder&quot;,
+  &quot;quality_rating&quot;: &quot;B&quot;,
+  &quot;fetched_at&quot;: &quot;2026-08-24T20:20:00Z&quot;,
+  &quot;content_hash&quot;: &quot;sha256:8c4f7228dcc60e598d6e4a6d60eedc0b1e1fd26f3c716478d2e22b06089b4591&quot;,
+  &quot;snippet&quot;: &quot;The current public page contains a title but no scope, reward, rules or reporting details.&quot;,
+  &quot;subtopic&quot;: &quot;network_architecture_and_maturity&quot;,
+  &quot;claims&quot;: [
+    &quot;public security-process documentation gap&quot;
+  ]
+}</code></pre></details><details class="record"><summary><span>038</span>op-geth 지원 종료 및 op-reth 전환</summary><pre><code>{
+  &quot;id&quot;: &quot;src_038&quot;,
+  &quot;url&quot;: &quot;https://docs.giwa.io/notices/giwa-chain/op-geth-sunset&quot;,
+  &quot;title&quot;: &quot;op-geth 지원 종료 및 op-reth 전환&quot;,
+  &quot;author&quot;: &quot;GIWA&quot;,
+  &quot;date&quot;: &quot;2026-04-16&quot;,
+  &quot;domain&quot;: &quot;docs.giwa.io&quot;,
+  &quot;type&quot;: &quot;official_notice&quot;,
+  &quot;quality_rating&quot;: &quot;B&quot;,
+  &quot;fetched_at&quot;: &quot;2026-08-24T20:20:00Z&quot;,
+  &quot;content_hash&quot;: &quot;sha256:c158af9ba1acd8cf3f839f9941e4e94c8042be43aa957f15ada7a227f3dae656&quot;,
+  &quot;snippet&quot;: &quot;Official op-geth support ended 2026-05-31; operators must use op-reth and move fault-proof tooling to kona-client.&quot;,
+  &quot;subtopic&quot;: &quot;developer_and_repository_reality&quot;,
+  &quot;claims&quot;: [
+    &quot;op-geth sunset&quot;,
+    &quot;required execution client&quot;
+  ]
+}</code></pre></details><details class="record"><summary><span>039</span>GIWA 노드 스냅샷</summary><pre><code>{
+  &quot;id&quot;: &quot;src_039&quot;,
+  &quot;url&quot;: &quot;https://docs.giwa.io/node-operators/snapshots&quot;,
+  &quot;title&quot;: &quot;GIWA 노드 스냅샷&quot;,
+  &quot;author&quot;: &quot;GIWA&quot;,
+  &quot;date&quot;: &quot;n.d.&quot;,
+  &quot;domain&quot;: &quot;docs.giwa.io&quot;,
+  &quot;type&quot;: &quot;official_documentation&quot;,
+  &quot;quality_rating&quot;: &quot;B&quot;,
+  &quot;fetched_at&quot;: &quot;2026-08-24T20:20:00Z&quot;,
+  &quot;content_hash&quot;: &quot;sha256:a408dd97b31bc9e508b7c316ef26e8dfe515b4d9b769247b7f0e6aa3114086d0&quot;,
+  &quot;snippet&quot;: &quot;The snapshot page still publishes both Geth and Reth restore paths, creating a current-documentation conflict with the op-geth sunset notice and node README.&quot;,
+  &quot;subtopic&quot;: &quot;developer_and_repository_reality&quot;,
+  &quot;claims&quot;: [
+    &quot;snapshot workflow&quot;,
+    &quot;documentation inconsistency&quot;
+  ]
+}</code></pre></details><details class="record"><summary><span>040</span>Reduce default op-reth RPC APIs</summary><pre><code>{
+  &quot;id&quot;: &quot;src_040&quot;,
+  &quot;url&quot;: &quot;https://github.com/giwa-io/node/issues/42&quot;,
+  &quot;title&quot;: &quot;Reduce default op-reth RPC APIs&quot;,
+  &quot;author&quot;: &quot;GIWA contributors&quot;,
+  &quot;date&quot;: &quot;2026-08-06&quot;,
+  &quot;domain&quot;: &quot;github.com&quot;,
+  &quot;type&quot;: &quot;official_issue&quot;,
+  &quot;quality_rating&quot;: &quot;B&quot;,
+  &quot;fetched_at&quot;: &quot;2026-08-24T20:20:00Z&quot;,
+  &quot;content_hash&quot;: &quot;sha256:e192f6ca18ef10c117d796a2d72fa9c307df5faa0a268ddc13590837697d1274&quot;,
+  &quot;snippet&quot;: &quot;An open issue documents that current default HTTP and WS namespaces include debug, txpool and miner and proposes restricting defaults to eth, net and web3.&quot;,
+  &quot;subtopic&quot;: &quot;safe_preparation&quot;,
+  &quot;claims&quot;: [
+    &quot;node RPC exposure risk&quot;,
+    &quot;hardening proposal&quot;
+  ]
+}</code></pre></details><details class="record"><summary><span>041</span>GIWA Sepolia chain metadata</summary><pre><code>{
+  &quot;id&quot;: &quot;src_041&quot;,
+  &quot;url&quot;: &quot;https://github.com/ethereum-lists/chains/blob/57b5097cef3751b562d10aaa0fa54674f636a357/_data/chains/eip155-91342.json&quot;,
+  &quot;title&quot;: &quot;GIWA Sepolia chain metadata&quot;,
+  &quot;author&quot;: &quot;ethereum-lists contributors&quot;,
+  &quot;date&quot;: &quot;2026&quot;,
+  &quot;domain&quot;: &quot;github.com&quot;,
+  &quot;type&quot;: &quot;chain_registry&quot;,
+  &quot;quality_rating&quot;: &quot;B&quot;,
+  &quot;fetched_at&quot;: &quot;2026-08-24T20:20:00Z&quot;,
+  &quot;content_hash&quot;: &quot;sha256:4051f5e28f64d8e1aa33627a6b25f790efb1e08a7007510e4d5b49253ea57a58&quot;,
+  &quot;snippet&quot;: &quot;The chain registry records chain ID 91342 and Sepolia Ether (ETH) as the native currency with the official RPC and explorer.&quot;,
+  &quot;subtopic&quot;: &quot;network_architecture_and_maturity&quot;,
+  &quot;claims&quot;: [
+    &quot;chain metadata&quot;,
+    &quot;ETH gas token&quot;
+  ]
+}</code></pre></details><details class="record"><summary><span>042</span>GIWA.MARKETS</summary><pre><code>{
+  &quot;id&quot;: &quot;src_042&quot;,
+  &quot;url&quot;: &quot;https://giwa.markets/&quot;,
+  &quot;title&quot;: &quot;GIWA.MARKETS&quot;,
+  &quot;author&quot;: &quot;GIWA.MARKETS&quot;,
+  &quot;date&quot;: &quot;2026&quot;,
+  &quot;domain&quot;: &quot;giwa.markets&quot;,
+  &quot;type&quot;: &quot;independent_project_page&quot;,
+  &quot;quality_rating&quot;: &quot;D&quot;,
+  &quot;fetched_at&quot;: &quot;2026-08-24T20:20:00Z&quot;,
+  &quot;content_hash&quot;: &quot;sha256:f6b6d63fdf465908ddff44fb013ffad3022b970608467aefd752f5d1fd1000d5&quot;,
+  &quot;snippet&quot;: &quot;The independent site promotes a $GIWA token on another chain and a future migration, while explicitly saying it is not affiliated with or endorsed by Upbit, Dunamu or GIWA.&quot;,
+  &quot;subtopic&quot;: &quot;onchain_and_external_ecosystem&quot;,
+  &quot;claims&quot;: [
+    &quot;unaffiliated token marketing&quot;,
+    &quot;explicit non-affiliation&quot;
+  ]
+}</code></pre></details><details class="record"><summary><span>043</span>Upbit Announces Planned Partnership with The Optimism Foundation on GIWA Chain</summary><pre><code>{
+  &quot;id&quot;: &quot;src_043&quot;,
+  &quot;url&quot;: &quot;https://optimism.io/blog/dunamu-just-signed-an-mou-on-giwa-chain.-korea-s-largest-exchange-is-picking-a-side-on-infrastructure&quot;,
+  &quot;title&quot;: &quot;Upbit Announces Planned Partnership with The Optimism Foundation on GIWA Chain&quot;,
+  &quot;author&quot;: &quot;Jing Wang; Optimism Foundation&quot;,
+  &quot;date&quot;: &quot;2026-05-04&quot;,
+  &quot;domain&quot;: &quot;optimism.io&quot;,
+  &quot;type&quot;: &quot;partner_announcement&quot;,
+  &quot;quality_rating&quot;: &quot;B&quot;,
+  &quot;fetched_at&quot;: &quot;2026-08-24T20:20:00Z&quot;,
+  &quot;content_hash&quot;: &quot;sha256:b31ecbf7a4b9d8464f37419471a0e5cd935ab713cae2b66bb2f47e8a69fdbe17&quot;,
+  &quot;snippet&quot;: &quot;Optimism says GIWA is live on testnet, mainnet is planned to follow, and the chain is intended for the Self-Managed OP Enterprise tier with Dunamu operating the primary sequencer and Optimism providing a backup safety net.&quot;,
+  &quot;subtopic&quot;: &quot;network_architecture_and_maturity&quot;,
+  &quot;claims&quot;: [
+    &quot;partner relationship&quot;,
+    &quot;self-managed model&quot;,
+    &quot;mainnet direction&quot;
+  ]
+}</code></pre></details><details class="record"><summary><span>044</span>Optimism in Korea: the partners, the proof, and where to find us at KBW</summary><pre><code>{
+  &quot;id&quot;: &quot;src_044&quot;,
+  &quot;url&quot;: &quot;https://optimism.io/blog/optimism-in-korea-the-partners-the-proof-and-where-to-find-us-at-kbw&quot;,
+  &quot;title&quot;: &quot;Optimism in Korea: the partners, the proof, and where to find us at KBW&quot;,
+  &quot;author&quot;: &quot;Optimism Foundation&quot;,
+  &quot;date&quot;: &quot;2026-08-10&quot;,
+  &quot;domain&quot;: &quot;optimism.io&quot;,
+  &quot;type&quot;: &quot;partner_update&quot;,
+  &quot;quality_rating&quot;: &quot;B&quot;,
+  &quot;fetched_at&quot;: &quot;2026-08-24T20:20:00Z&quot;,
+  &quot;content_hash&quot;: &quot;sha256:1e31c66df751190df015bcd654742bc68b9edf30aebbe1a8bbeed3ae5b19245e&quot;,
+  &quot;snippet&quot;: &quot;Optimism describes GIWA as the first Self-Managed OP Enterprise deployment and a testnet technical reference; its transaction count is an infrastructure activity claim, not a unique-user or economic-adoption measure.&quot;,
+  &quot;subtopic&quot;: &quot;network_architecture_and_maturity&quot;,
+  &quot;claims&quot;: [
+    &quot;self-managed implementation&quot;,
+    &quot;testnet activity framing&quot;
+  ]
+}</code></pre></details><details class="record"><summary><span>045</span>GIWA 자주 묻는 질문</summary><pre><code>{
+  &quot;id&quot;: &quot;src_045&quot;,
+  &quot;url&quot;: &quot;https://docs.giwa.io/introduction/faq&quot;,
+  &quot;title&quot;: &quot;GIWA 자주 묻는 질문&quot;,
+  &quot;author&quot;: &quot;GIWA&quot;,
+  &quot;date&quot;: &quot;n.d.&quot;,
+  &quot;domain&quot;: &quot;docs.giwa.io&quot;,
+  &quot;type&quot;: &quot;official_documentation&quot;,
+  &quot;quality_rating&quot;: &quot;B&quot;,
+  &quot;fetched_at&quot;: &quot;2026-08-24T20:20:00Z&quot;,
+  &quot;content_hash&quot;: &quot;sha256:82c6f016583129273cd8431ffef1591c877dcbb20e5372b187df1cf0cf6f00f4&quot;,
+  &quot;snippet&quot;: &quot;GIWA says it does not plan to issue its own native token; ETH is the native gas asset, with stablecoin paymaster support described as future work.&quot;,
+  &quot;subtopic&quot;: &quot;network_architecture_and_maturity&quot;,
+  &quot;claims&quot;: [
+    &quot;no official native GIWA token plan&quot;,
+    &quot;ETH gas&quot;,
+    &quot;future paymaster&quot;
+  ]
+}</code></pre></details><details class="record"><summary><span>046</span>GIWA Documentation Index</summary><pre><code>{
+  &quot;id&quot;: &quot;src_046&quot;,
+  &quot;url&quot;: &quot;https://docs.giwa.io/llms.txt&quot;,
+  &quot;title&quot;: &quot;GIWA Documentation Index&quot;,
+  &quot;author&quot;: &quot;GIWA&quot;,
+  &quot;date&quot;: &quot;n.d.&quot;,
+  &quot;domain&quot;: &quot;docs.giwa.io&quot;,
+  &quot;type&quot;: &quot;official_documentation_index&quot;,
+  &quot;quality_rating&quot;: &quot;B&quot;,
+  &quot;fetched_at&quot;: &quot;2026-08-24T20:20:00Z&quot;,
+  &quot;content_hash&quot;: &quot;sha256:95984835541276925811eb8928065e7b4edd50f6b058f98fbac600f2ec39381d&quot;,
+  &quot;snippet&quot;: &quot;The current index enumerates network, ecosystem, developer, provider, node and policy pages but contains no official DEX or token-launchpad product page.&quot;,
+  &quot;subtopic&quot;: &quot;official_ecosystem&quot;,
+  &quot;claims&quot;: [
+    &quot;documentation inventory&quot;,
+    &quot;official DEX documentation gap&quot;
+  ]
+}</code></pre></details><details class="record"><summary><span>047</span>Pump Program protocol documentation at 9c82f61c</summary><pre><code>{
+  &quot;id&quot;: &quot;src_047&quot;,
+  &quot;url&quot;: &quot;https://github.com/pump-fun/pump-public-docs/blob/9c82f61cb711b044a17f770ab8ce9f9bdf78f333/docs/PUMP_PROGRAM_README.md&quot;,
+  &quot;title&quot;: &quot;Pump Program protocol documentation at 9c82f61c&quot;,
+  &quot;author&quot;: &quot;Pump.fun&quot;,
+  &quot;date&quot;: &quot;2026-07-15&quot;,
+  &quot;domain&quot;: &quot;github.com&quot;,
+  &quot;type&quot;: &quot;official_software_documentation&quot;,
+  &quot;quality_rating&quot;: &quot;B&quot;,
+  &quot;fetched_at&quot;: &quot;2026-08-24T20:46:00Z&quot;,
+  &quot;content_hash&quot;: &quot;sha256:3532f985fcab38480392759a6c2f01015b7178b9f2c7dc0db8c9f85ce9f72571&quot;,
+  &quot;snippet&quot;: &quot;The official protocol document describes instant coin creation, a Uniswap-V2-style virtual constant-product curve, real and virtual reserves, buy and sell slippage bounds, completion, and permissionless migration to PumpSwap.&quot;,
+  &quot;subtopic&quot;: &quot;pump_platform_design&quot;,
+  &quot;claims&quot;: [
+    &quot;bonding curve architecture&quot;,
+    &quot;permissionless graduation&quot;,
+    &quot;slippage controls&quot;
+  ]
+}</code></pre></details><details class="record"><summary><span>048</span>PumpSwap protocol documentation at 9c82f61c</summary><pre><code>{
+  &quot;id&quot;: &quot;src_048&quot;,
+  &quot;url&quot;: &quot;https://github.com/pump-fun/pump-public-docs/blob/9c82f61cb711b044a17f770ab8ce9f9bdf78f333/docs/PUMP_SWAP_README.md&quot;,
+  &quot;title&quot;: &quot;PumpSwap protocol documentation at 9c82f61c&quot;,
+  &quot;author&quot;: &quot;Pump.fun&quot;,
+  &quot;date&quot;: &quot;2026-07-15&quot;,
+  &quot;domain&quot;: &quot;github.com&quot;,
+  &quot;type&quot;: &quot;official_software_documentation&quot;,
+  &quot;quality_rating&quot;: &quot;B&quot;,
+  &quot;fetched_at&quot;: &quot;2026-08-24T20:46:00Z&quot;,
+  &quot;content_hash&quot;: &quot;sha256:3ac4a835604d7fd3855d66531d109c0547e006bd314b5e5d6cb27b1e20d27abc&quot;,
+  &quot;snippet&quot;: &quot;PumpSwap is a constant-product AMM with canonical migrated pools, explicit buy/sell slippage bounds, liquidity operations, fees, and global administrator controls that can disable major actions.&quot;,
+  &quot;subtopic&quot;: &quot;pump_platform_design&quot;,
+  &quot;claims&quot;: [
+    &quot;post-graduation AMM&quot;,
+    &quot;canonical pools&quot;,
+    &quot;admin and fee surface&quot;
+  ]
+}</code></pre></details><details class="record"><summary><span>049</span>Pump.fun fees</summary><pre><code>{
+  &quot;id&quot;: &quot;src_049&quot;,
+  &quot;url&quot;: &quot;https://pump.fun/docs/fees&quot;,
+  &quot;title&quot;: &quot;Pump.fun fees&quot;,
+  &quot;author&quot;: &quot;Pump.fun&quot;,
+  &quot;date&quot;: &quot;2026-05-20&quot;,
+  &quot;domain&quot;: &quot;pump.fun&quot;,
+  &quot;type&quot;: &quot;official_product_documentation&quot;,
+  &quot;quality_rating&quot;: &quot;B&quot;,
+  &quot;fetched_at&quot;: &quot;2026-08-24T20:46:00Z&quot;,
+  &quot;content_hash&quot;: &quot;sha256:79661ffde17eea364ed6234f9664cc3852ebb8445d5ed2227ae810de97409b24&quot;,
+  &quot;snippet&quot;: &quot;Pump.fun documents zero creation fee, a graduation fee, 1.25 percent bonding-curve trading fees split between creator and protocol, and tiered post-graduation canonical-pool fees as of May 2026.&quot;,
+  &quot;subtopic&quot;: &quot;pump_platform_design&quot;,
+  &quot;claims&quot;: [
+    &quot;fee model&quot;,
+    &quot;creator incentives&quot;,
+    &quot;graduation economics&quot;
+  ]
+}</code></pre></details><details class="record"><summary><span>050</span>가상자산 이용자 보호 등에 관한 법률 제2조 정의</summary><pre><code>{
+  &quot;id&quot;: &quot;src_050&quot;,
+  &quot;url&quot;: &quot;https://www.law.go.kr/lsLinkCommonInfo.do?chrClsCd=010202&amp;lsJoLnkSeq=1032053779&quot;,
+  &quot;title&quot;: &quot;가상자산 이용자 보호 등에 관한 법률 제2조 정의&quot;,
+  &quot;author&quot;: &quot;대한민국&quot;,
+  &quot;date&quot;: &quot;effective 2024-07-19&quot;,
+  &quot;domain&quot;: &quot;law.go.kr&quot;,
+  &quot;type&quot;: &quot;primary_law&quot;,
+  &quot;quality_rating&quot;: &quot;A&quot;,
+  &quot;fetched_at&quot;: &quot;2026-08-24T20:46:00Z&quot;,
+  &quot;content_hash&quot;: &quot;sha256:f88d5bfe0cbe17ab5d999c3d0e7e836e222d749bcd8681e5a296de4a0803f958&quot;,
+  &quot;snippet&quot;: &quot;The statute defines virtual-asset businesses to include virtual-asset sale and purchase, asset-for-asset exchange, specified transfers, custody or management, and brokering, arranging, or acting as agent for sales and exchanges when conducted as a business.&quot;,
+  &quot;subtopic&quot;: &quot;korea_legal_boundary&quot;,
+  &quot;claims&quot;: [
+    &quot;VASP activity definition&quot;,
+    &quot;market and user definitions&quot;
+  ]
+}</code></pre></details><details class="record"><summary><span>051</span>불법 가상자산 취급업자 이용 및 거래 주의</summary><pre><code>{
+  &quot;id&quot;: &quot;src_051&quot;,
+  &quot;url&quot;: &quot;https://www.fsc.go.kr/no010101/87177?curPage=4&quot;,
+  &quot;title&quot;: &quot;불법 가상자산 취급업자 이용 및 거래 주의&quot;,
+  &quot;author&quot;: &quot;금융위원회·금융정보분석원&quot;,
+  &quot;date&quot;: &quot;2026-06-24&quot;,
+  &quot;domain&quot;: &quot;fsc.go.kr&quot;,
+  &quot;type&quot;: &quot;regulator_guidance&quot;,
+  &quot;quality_rating&quot;: &quot;A&quot;,
+  &quot;fetched_at&quot;: &quot;2026-08-24T20:46:00Z&quot;,
+  &quot;content_hash&quot;: &quot;sha256:96ccada6bdc5cb53abe73e052e8e3bd8012a7e29c4b1491eb883bae7786de000&quot;,
+  &quot;snippet&quot;: &quot;FSC and KoFIU state that Korean-targeted virtual-asset business activity requires KoFIU filing and applicable conditions including ISMS, including foreign operators targeting Koreans; they describe criminal penalties and blocking/enforcement against unreported businesses.&quot;,
+  &quot;subtopic&quot;: &quot;korea_legal_boundary&quot;,
+  &quot;claims&quot;: [
+    &quot;registration risk&quot;,
+    &quot;Korean-targeted service enforcement&quot;,
+    &quot;marketing red flags&quot;
+  ]
+}</code></pre></details><details class="record"><summary><span>052</span>가상자산 2단계법 주요내용은 확정된 바 없습니다</summary><pre><code>{
+  &quot;id&quot;: &quot;src_052&quot;,
+  &quot;url&quot;: &quot;https://www.fsc.go.kr/no010102/85893&quot;,
+  &quot;title&quot;: &quot;가상자산 2단계법 주요내용은 확정된 바 없습니다&quot;,
+  &quot;author&quot;: &quot;금융위원회&quot;,
+  &quot;date&quot;: &quot;2025-12-19&quot;,
+  &quot;domain&quot;: &quot;fsc.go.kr&quot;,
+  &quot;type&quot;: &quot;regulator_clarification&quot;,
+  &quot;quality_rating&quot;: &quot;A&quot;,
+  &quot;fetched_at&quot;: &quot;2026-08-24T20:46:00Z&quot;,
+  &quot;content_hash&quot;: &quot;sha256:045103bd08dae9138b7cc01f8502bab0ed290b36b2d1312135bdd3cb11734a6b&quot;,
+  &quot;snippet&quot;: &quot;FSC cautions that reported second-stage virtual-asset legislation details, including domestic issuance and listing-review proposals, were not finalized and remained under consultation.&quot;,
+  &quot;subtopic&quot;: &quot;korea_legal_boundary&quot;,
+  &quot;claims&quot;: [
+    &quot;future issuance rules unresolved&quot;,
+    &quot;do not rely on press speculation&quot;
+  ]
+}</code></pre></details><details class="record"><summary><span>053</span>Pump Community Notice</summary><pre><code>{
+  &quot;id&quot;: &quot;src_053&quot;,
+  &quot;url&quot;: &quot;https://pump.fun/docs/moderation-message&quot;,
+  &quot;title&quot;: &quot;Pump Community Notice&quot;,
+  &quot;author&quot;: &quot;Pump.fun&quot;,
+  &quot;date&quot;: &quot;n.d.&quot;,
+  &quot;domain&quot;: &quot;pump.fun&quot;,
+  &quot;type&quot;: &quot;official_product_notice&quot;,
+  &quot;quality_rating&quot;: &quot;B&quot;,
+  &quot;fetched_at&quot;: &quot;2026-08-24T20:46:00Z&quot;,
+  &quot;content_hash&quot;: &quot;sha256:4386a293382d6d3b1ebcdd5d0cadba1f7b747f74c7ebe355c7cb1eac39e189c4&quot;,
+  &quot;snippet&quot;: &quot;Pump.fun reports removing hundreds of livestreams per day and describes active moderation work, illustrating that user-generated token media creates a material operational moderation surface beyond smart contracts.&quot;,
+  &quot;subtopic&quot;: &quot;pump_platform_risk&quot;,
+  &quot;claims&quot;: [
+    &quot;content moderation scale&quot;,
+    &quot;user-generated content risk&quot;
+  ]
+}</code></pre></details><details class="record"><summary><span>054</span>.fun registry RDAP domain observation</summary><pre><code>{
+  &quot;id&quot;: &quot;src_054&quot;,
+  &quot;url&quot;: &quot;https://rdap.radix.host/rdap/&quot;,
+  &quot;title&quot;: &quot;.fun registry RDAP domain observation&quot;,
+  &quot;author&quot;: &quot;Tucows Registry / Radix; observation by Codex&quot;,
+  &quot;date&quot;: &quot;2026-08-25&quot;,
+  &quot;domain&quot;: &quot;rdap.radix.host&quot;,
+  &quot;type&quot;: &quot;dynamic_registry_observation&quot;,
+  &quot;quality_rating&quot;: &quot;A&quot;,
+  &quot;fetched_at&quot;: &quot;2026-08-24T20:43:09Z&quot;,
+  &quot;content_hash&quot;: &quot;sha256:d707c1b80a890770cedf5ffd6cfdccbf84979464851233989973e6c8622bec73&quot;,
+  &quot;snippet&quot;: &quot;Registry RDAP returned gazua.fun as registered and explicitly returned gaboja.fun, tteoksang.fun, buljang.fun, ssonda.fun, dalryeo.fun, and ollaga.fun as available for registration at the observation time. This is not a reservation, price quote, or trademark clearance.&quot;,
+  &quot;subtopic&quot;: &quot;brand_and_domains&quot;,
+  &quot;claims&quot;: [
+    &quot;point-in-time domain registration status&quot;,
+    &quot;availability caveat&quot;
+  ]
+}</code></pre></details><details class="record"><summary><span>055</span>Predicting the success of new crypto-tokens: the Pump.fun case</summary><pre><code>{
+  &quot;id&quot;: &quot;src_055&quot;,
+  &quot;url&quot;: &quot;https://arxiv.org/abs/2602.14860&quot;,
+  &quot;title&quot;: &quot;Predicting the success of new crypto-tokens: the Pump.fun case&quot;,
+  &quot;author&quot;: &quot;Giulio Marino; Manuel Naviglio; Francesco Tarantelli; Fabrizio Lillo&quot;,
+  &quot;date&quot;: &quot;2026-02-16&quot;,
+  &quot;domain&quot;: &quot;arxiv.org&quot;,
+  &quot;type&quot;: &quot;research_preprint&quot;,
+  &quot;quality_rating&quot;: &quot;C&quot;,
+  &quot;fetched_at&quot;: &quot;2026-08-24T20:46:00Z&quot;,
+  &quot;content_hash&quot;: &quot;sha256:58e8b36d10a4c955876e87d78a49078cedb5fbb242313c97ab2de784a48b812b&quot;,
+  &quot;snippet&quot;: &quot;A one-month on-chain Pump.fun dataset reports approximately 0.63 percent graduation, very high launch churn, weaker graduation among bot-dominated activity, and mechanism-level incentives for pre-graduation creator selling; the work is a preprint and does not establish GIWA outcomes.&quot;,
+  &quot;subtopic&quot;: &quot;pump_platform_risk&quot;,
+  &quot;claims&quot;: [
+    &quot;low graduation base rate in sample&quot;,
+    &quot;bot and creator incentive risks&quot;,
+    &quot;not transferable directly to GIWA&quot;
+  ]
+}</code></pre></details><details class="record"><summary><span>056</span>Coordinated Sniper Cohorts on Pump.fun</summary><pre><code>{
+  &quot;id&quot;: &quot;src_056&quot;,
+  &quot;url&quot;: &quot;https://arxiv.org/abs/2607.02795&quot;,
+  &quot;title&quot;: &quot;Coordinated Sniper Cohorts on Pump.fun&quot;,
+  &quot;author&quot;: &quot;Arati Uday Kamat&quot;,
+  &quot;date&quot;: &quot;2026-07-02&quot;,
+  &quot;domain&quot;: &quot;arxiv.org&quot;,
+  &quot;type&quot;: &quot;research_preprint&quot;,
+  &quot;quality_rating&quot;: &quot;C&quot;,
+  &quot;fetched_at&quot;: &quot;2026-08-24T20:47:00Z&quot;,
+  &quot;content_hash&quot;: &quot;sha256:34ac38e41b8b36aa2fd551e11f81def43cf4e39beece8d1a376a06d4754c874e&quot;,
+  &quot;snippet&quot;: &quot;The preprint detects persistent early-buyer wallet cohorts across Pump.fun launches but finds that naive apparent uplift does not survive an activity-matched placebo, warning against both sniper coordination and causal claims from raw early-wallet metrics.&quot;,
+  &quot;subtopic&quot;: &quot;pump_platform_risk&quot;,
+  &quot;claims&quot;: [
+    &quot;coordinated early-wallet activity&quot;,
+    &quot;naive metric inference risk&quot;
+  ]
+}</code></pre></details><details class="record"><summary><span>057</span>Optimism post referencing GIWA in OP Stack enterprise framing</summary><pre><code>{
+  &quot;id&quot;: &quot;src_057&quot;,
+  &quot;url&quot;: &quot;https://x.com/Optimism/status/2090109453521535442&quot;,
+  &quot;title&quot;: &quot;Optimism post referencing GIWA in OP Stack enterprise framing&quot;,
+  &quot;author&quot;: &quot;Optimism&quot;,
+  &quot;date&quot;: &quot;2026-08-19&quot;,
+  &quot;domain&quot;: &quot;x.com&quot;,
+  &quot;type&quot;: &quot;direct_social_url_access_observation&quot;,
+  &quot;quality_rating&quot;: &quot;D&quot;,
+  &quot;fetched_at&quot;: &quot;2026-08-24T21:20:00Z&quot;,
+  &quot;content_hash&quot;: &quot;sha256:b80f8c14fa7c71cc1be83688fb21f537e8d733289d758e944c78b0434782145c&quot;,
+  &quot;snippet&quot;: &quot;The direct X post URL is attributable to Optimism, but unauthenticated research fetches returned a restricted shell rather than durable post content. The URL is retained as provenance and not used for engagement counts.&quot;,
+  &quot;subtopic&quot;: &quot;regional_public_discourse&quot;,
+  &quot;claims&quot;: [
+    &quot;official social provenance&quot;,
+    &quot;X access limitation&quot;
+  ]
+}</code></pre></details><details class="record"><summary><span>058</span>Public mirror index for GIWA_by_Upbit</summary><pre><code>{
+  &quot;id&quot;: &quot;src_058&quot;,
+  &quot;url&quot;: &quot;https://instalker.org/GIWA_by_Upbit&quot;,
+  &quot;title&quot;: &quot;Public mirror index for GIWA_by_Upbit&quot;,
+  &quot;author&quot;: &quot;Instalker; underlying account GIWA&quot;,
+  &quot;date&quot;: &quot;observed 2026-08-25&quot;,
+  &quot;domain&quot;: &quot;instalker.org&quot;,
+  &quot;type&quot;: &quot;social_mirror_index&quot;,
+  &quot;quality_rating&quot;: &quot;D&quot;,
+  &quot;fetched_at&quot;: &quot;2026-08-24T21:20:00Z&quot;,
+  &quot;content_hash&quot;: &quot;sha256:5c8563e86c729b39910d1a05f575d0b6e90b758a0ef416b1dee0f7295cceaa02&quot;,
+  &quot;snippet&quot;: &quot;Search indexing exposed excerpts from the public GIWA account about testnet, Karst and GASOK, while direct replay was Cloudflare-blocked. Follower and post counters are dynamic mirror fields and are not treated as adoption evidence.&quot;,
+  &quot;subtopic&quot;: &quot;regional_public_discourse&quot;,
+  &quot;claims&quot;: [
+    &quot;official-account themes&quot;,
+    &quot;mirror limitation&quot;
+  ]
+}</code></pre></details><details class="record"><summary><span>059</span>Upbit Operator Dunamu Unveils Layer-2 Blockchain GIWA</summary><pre><code>{
+  &quot;id&quot;: &quot;src_059&quot;,
+  &quot;url&quot;: &quot;https://www.coindesk.com/web3/2025/09/09/upbit-parent-dunamu-unveils-layer-2-blockchain-giwa&quot;,
+  &quot;title&quot;: &quot;Upbit Operator Dunamu Unveils Layer-2 Blockchain GIWA&quot;,
+  &quot;author&quot;: &quot;Francisco Rodrigues; CoinDesk&quot;,
+  &quot;date&quot;: &quot;2025-09-09&quot;,
+  &quot;domain&quot;: &quot;www.coindesk.com&quot;,
+  &quot;type&quot;: &quot;independent_industry_reporting&quot;,
+  &quot;quality_rating&quot;: &quot;C&quot;,
+  &quot;fetched_at&quot;: &quot;2026-08-24T21:20:00Z&quot;,
+  &quot;content_hash&quot;: &quot;sha256:8f5d2e67ce64ad98786cf9259dd2f34f88dfae9ba34ad3c3ff51a4184259946f&quot;,
+  &quot;snippet&quot;: &quot;English-language crypto press framed GIWA as Dunamu&#x27;s OP-rollup infrastructure and wallet initiative, available on testnet, aimed at Korean and overseas developers; it reported no fixed wallet launch date.&quot;,
+  &quot;subtopic&quot;: &quot;regional_public_discourse&quot;,
+  &quot;claims&quot;: [
+    &quot;English media framing&quot;,
+    &quot;international ambition&quot;,
+    &quot;testnet caveat&quot;
+  ]
+}</code></pre></details><details class="record"><summary><span>060</span>Upbit launches GIWA testnet</summary><pre><code>{
+  &quot;id&quot;: &quot;src_060&quot;,
+  &quot;url&quot;: &quot;https://www.theblock.co/amp/post/369947/upbit-launches-giwa-testnet&quot;,
+  &quot;title&quot;: &quot;Upbit launches GIWA testnet&quot;,
+  &quot;author&quot;: &quot;The Block&quot;,
+  &quot;date&quot;: &quot;2025-09&quot;,
+  &quot;domain&quot;: &quot;www.theblock.co&quot;,
+  &quot;type&quot;: &quot;independent_industry_reporting_access_observation&quot;,
+  &quot;quality_rating&quot;: &quot;C&quot;,
+  &quot;fetched_at&quot;: &quot;2026-08-24T21:20:00Z&quot;,
+  &quot;content_hash&quot;: &quot;sha256:54bff284397a22078b9a0ef4c9c5e1e6ed5e4cd3ca0eb5f51a029738c1c448cf&quot;,
+  &quot;snippet&quot;: &quot;A second English crypto outlet indexed the GIWA testnet launch, but the article returned an access restriction during this run; it is used only as coverage-existence evidence, not for detailed facts.&quot;,
+  &quot;subtopic&quot;: &quot;regional_public_discourse&quot;,
+  &quot;claims&quot;: [
+    &quot;English coverage existence&quot;
+  ]
+}</code></pre></details><details class="record"><summary><span>061</span>Korean exchanges accelerate Web3 wallet plans</summary><pre><code>{
+  &quot;id&quot;: &quot;src_061&quot;,
+  &quot;url&quot;: &quot;https://www.yna.co.kr/amp/view/AKR20260819163000002&quot;,
+  &quot;title&quot;: &quot;Korean exchanges accelerate Web3 wallet plans&quot;,
+  &quot;author&quot;: &quot;Yoo Dong-hyun; Yonhap News Agency&quot;,
+  &quot;date&quot;: &quot;2026-08-20&quot;,
+  &quot;domain&quot;: &quot;www.yna.co.kr&quot;,
+  &quot;type&quot;: &quot;independent_news_reporting&quot;,
+  &quot;quality_rating&quot;: &quot;B&quot;,
+  &quot;fetched_at&quot;: &quot;2026-08-24T21:20:00Z&quot;,
+  &quot;content_hash&quot;: &quot;sha256:a871992b42f4e151ae282c4d4b85a8797afdc7618b4bfa9ac9d650204d7d47d5&quot;,
+  &quot;snippet&quot;: &quot;Yonhap reports GIWA Wallet is planned as the access path to GIWA Chain, notes weak adoption of an existing Korean Web3 wallet, and quotes an industry source arguing that active memecoin and NFT trading is needed for Web3 activation. The quote is a market view, not demand measurement.&quot;,
+  &quot;subtopic&quot;: &quot;regional_public_discourse&quot;,
+  &quot;claims&quot;: [
+    &quot;Korean wallet context&quot;,
+    &quot;memecoin fit thesis&quot;,
+    &quot;adoption caveat&quot;
+  ]
+}</code></pre></details><details class="record"><summary><span>062</span>Upbit&#x27;s GIWA Chain: a second opportunity for Korean crypto</summary><pre><code>{
+  &quot;id&quot;: &quot;src_062&quot;,
+  &quot;url&quot;: &quot;https://buttondown.com/ditto/archive/giwa/&quot;,
+  &quot;title&quot;: &quot;Upbit&#x27;s GIWA Chain: a second opportunity for Korean crypto&quot;,
+  &quot;author&quot;: &quot;ditto&quot;,
+  &quot;date&quot;: &quot;2026-03-10&quot;,
+  &quot;domain&quot;: &quot;buttondown.com&quot;,
+  &quot;type&quot;: &quot;independent_opinion&quot;,
+  &quot;quality_rating&quot;: &quot;D&quot;,
+  &quot;fetched_at&quot;: &quot;2026-08-24T21:20:00Z&quot;,
+  &quot;content_hash&quot;: &quot;sha256:a437ead923f67ccde3266e3426dfcd611b35266e85a51c0129195857c909d70d&quot;,
+  &quot;snippet&quot;: &quot;A Korean industry essay presents the bullish CEX-chain flywheel and home-market builder thesis, while explicitly warning that GIWA still has to prove why users and builders should choose it and that incentives alone do not retain them.&quot;,
+  &quot;subtopic&quot;: &quot;regional_public_discourse&quot;,
+  &quot;claims&quot;: [
+    &quot;Korean strategic thesis&quot;,
+    &quot;identity and retention caveat&quot;
+  ]
+}</code></pre></details><details class="record"><summary><span>063</span>Popular interaction roundup including GIWA Chain</summary><pre><code>{
+  &quot;id&quot;: &quot;src_063&quot;,
+  &quot;url&quot;: &quot;https://www.odaily.news/zh-TW/post/5212029&quot;,
+  &quot;title&quot;: &quot;Popular interaction roundup including GIWA Chain&quot;,
+  &quot;author&quot;: &quot;Asher; Odaily&quot;,
+  &quot;date&quot;: &quot;2026-07-22&quot;,
+  &quot;domain&quot;: &quot;www.odaily.news&quot;,
+  &quot;type&quot;: &quot;independent_industry_guide&quot;,
+  &quot;quality_rating&quot;: &quot;C&quot;,
+  &quot;fetched_at&quot;: &quot;2026-08-24T21:20:00Z&quot;,
+  &quot;content_hash&quot;: &quot;sha256:99b93ee27aa2b58e7ca0b4cc49815db5ede7bb19d9be92a7adc8c43cb17788ac&quot;,
+  &quot;snippet&quot;: &quot;Chinese-language coverage places GIWA inside a hot-interactions roundup and gives faucet, bridge, verified-token and UP.ID tasks. It demonstrates task-oriented attention, not confirmed rewards or mainland-China user demand.&quot;,
+  &quot;subtopic&quot;: &quot;regional_public_discourse&quot;,
+  &quot;claims&quot;: [
+    &quot;Chinese task-oriented framing&quot;,
+    &quot;airdrop-adjacent attention&quot;
+  ]
+}</code></pre></details><details class="record"><summary><span>064</span>Upbit enters stablecoin infrastructure with no-token L2 GIWA</summary><pre><code>{
+  &quot;id&quot;: &quot;src_064&quot;,
+  &quot;url&quot;: &quot;https://www.panewslab.com/zh/articles/0308a43f-5f60-4949-8390-c63f9b2c87d9&quot;,
+  &quot;title&quot;: &quot;Upbit enters stablecoin infrastructure with no-token L2 GIWA&quot;,
+  &quot;author&quot;: &quot;Zen; PANews&quot;,
+  &quot;date&quot;: &quot;2026&quot;,
+  &quot;domain&quot;: &quot;www.panewslab.com&quot;,
+  &quot;type&quot;: &quot;independent_analysis&quot;,
+  &quot;quality_rating&quot;: &quot;C&quot;,
+  &quot;fetched_at&quot;: &quot;2026-08-24T21:20:00Z&quot;,
+  &quot;content_hash&quot;: &quot;sha256:2928b068831232acc3e18afe98ba57a298d0e730bb61e76c885ee96b1e190181&quot;,
+  &quot;snippet&quot;: &quot;Chinese-language analysis emphasizes GIWA&#x27;s no-native-token choice, Upbit&#x27;s infrastructure diversification, stablecoin ambitions and competition with Korean technology groups. Strategic interpretation is the author&#x27;s, not an official adoption result.&quot;,
+  &quot;subtopic&quot;: &quot;regional_public_discourse&quot;,
+  &quot;claims&quot;: [
+    &quot;Chinese strategic framing&quot;,
+    &quot;no-token emphasis&quot;
+  ]
+}</code></pre></details><details class="record"><summary><span>065</span>GIWAchain overview</summary><pre><code>{
+  &quot;id&quot;: &quot;src_065&quot;,
+  &quot;url&quot;: &quot;https://note.com/gamingscore/n/nd7c4e53b7a00&quot;,
+  &quot;title&quot;: &quot;GIWAchain overview&quot;,
+  &quot;author&quot;: &quot;Tekiato&quot;,
+  &quot;date&quot;: &quot;2025-10-27&quot;,
+  &quot;domain&quot;: &quot;note.com&quot;,
+  &quot;type&quot;: &quot;independent_user_guide&quot;,
+  &quot;quality_rating&quot;: &quot;D&quot;,
+  &quot;fetched_at&quot;: &quot;2026-08-24T21:20:00Z&quot;,
+  &quot;content_hash&quot;: &quot;sha256:1c8b0701a86c5dc1a3eebdf282023680596a924b9dd9d7c76f57a3c09401f50e&quot;,
+  &quot;snippet&quot;: &quot;A Japanese-language guide describes the testnet, rate-limited RPC, wallet and mainnet as under development, says current activities are limited, and waits for further official information.&quot;,
+  &quot;subtopic&quot;: &quot;regional_public_discourse&quot;,
+  &quot;claims&quot;: [
+    &quot;Japanese practical framing&quot;,
+    &quot;readiness caution&quot;
+  ]
+}</code></pre></details><details class="record"><summary><span>066</span>Japanese GIWA testnet and Upbit Web3 Name guide</summary><pre><code>{
+  &quot;id&quot;: &quot;src_066&quot;,
+  &quot;url&quot;: &quot;https://note.com/neko_smg/n/neba58f1fd6ef&quot;,
+  &quot;title&quot;: &quot;Japanese GIWA testnet and Upbit Web3 Name guide&quot;,
+  &quot;author&quot;: &quot;sasami&quot;,
+  &quot;date&quot;: &quot;updated 2026-05&quot;,
+  &quot;domain&quot;: &quot;note.com&quot;,
+  &quot;type&quot;: &quot;independent_user_guide&quot;,
+  &quot;quality_rating&quot;: &quot;D&quot;,
+  &quot;fetched_at&quot;: &quot;2026-08-24T21:20:00Z&quot;,
+  &quot;content_hash&quot;: &quot;sha256:99e7da56c0a5f816875296eddf564fa4055c391b1f22133b469d1210c0802c4c&quot;,
+  &quot;snippet&quot;: &quot;A Japanese airdrop-oriented guide nevertheless notes that GIWA plans no native token, recommends a dedicated test wallet and focuses on contract deployment, verification and UP.ID rather than asserting a confirmed reward.&quot;,
+  &quot;subtopic&quot;: &quot;regional_public_discourse&quot;,
+  &quot;claims&quot;: [
+    &quot;Japanese early-user framing&quot;,
+    &quot;no-token caution&quot;,
+    &quot;technical tasks&quot;
+  ]
+}</code></pre></details><details class="record"><summary><span>067</span>GIWA participates in Consensus 2026 and expands overseas outreach</summary><pre><code>{
+  &quot;id&quot;: &quot;src_067&quot;,
+  &quot;url&quot;: &quot;https://jp.bloomingbit.io/feed/news/111286&quot;,
+  &quot;title&quot;: &quot;GIWA participates in Consensus 2026 and expands overseas outreach&quot;,
+  &quot;author&quot;: &quot;Suehyeon Lee; Bloomingbit Japan&quot;,
+  &quot;date&quot;: &quot;2026-05-04&quot;,
+  &quot;domain&quot;: &quot;jp.bloomingbit.io&quot;,
+  &quot;type&quot;: &quot;localized_industry_reporting&quot;,
+  &quot;quality_rating&quot;: &quot;C&quot;,
+  &quot;fetched_at&quot;: &quot;2026-08-24T21:20:00Z&quot;,
+  &quot;content_hash&quot;: &quot;sha256:814f45e907809ec22e1b323005f99cb133e0bbe9ede4a9766e12c853880d8dc2&quot;,
+  &quot;snippet&quot;: &quot;Japanese-localized coverage reports GIWA&#x27;s Consensus 2026 booth and presentation of Chain, Wallet, Dojang, Bojagi, UP.ID and GASOK as global developer outreach; it does not report Japanese user adoption.&quot;,
+  &quot;subtopic&quot;: &quot;regional_public_discourse&quot;,
+  &quot;claims&quot;: [
+    &quot;Japanese coverage&quot;,
+    &quot;global outreach&quot;
+  ]
+}</code></pre></details><details class="record"><summary><span>068</span>Mirror of Japanese X GIWA testnet guide</summary><pre><code>{
+  &quot;id&quot;: &quot;src_068&quot;,
+  &quot;url&quot;: &quot;https://www.kucoin.com/news/community/ETH/6a0a6494c8707a00078b2f17&quot;,
+  &quot;title&quot;: &quot;Mirror of Japanese X GIWA testnet guide&quot;,
+  &quot;author&quot;: &quot;sasami; mirrored by KuCoin community&quot;,
+  &quot;date&quot;: &quot;2026-05-18&quot;,
+  &quot;domain&quot;: &quot;www.kucoin.com&quot;,
+  &quot;type&quot;: &quot;social_post_mirror&quot;,
+  &quot;quality_rating&quot;: &quot;D&quot;,
+  &quot;fetched_at&quot;: &quot;2026-08-24T21:20:00Z&quot;,
+  &quot;content_hash&quot;: &quot;sha256:bd35469eac5ea1261908e34270a6ce3fee3c2768e0021a83f11dcea0ae45e86b&quot;,
+  &quot;snippet&quot;: &quot;The mirror preserves a Japanese X post recommending a new dedicated wallet, noting no native token, and listing testnet tasks. It is a third-party mirror and not a representative survey.&quot;,
+  &quot;subtopic&quot;: &quot;regional_public_discourse&quot;,
+  &quot;claims&quot;: [
+    &quot;Japanese X-adjacent safety framing&quot;
+  ]
+}</code></pre></details><details class="record"><summary><span>069</span>GIWA official X account URL</summary><pre><code>{
+  &quot;id&quot;: &quot;src_069&quot;,
+  &quot;url&quot;: &quot;https://x.com/GIWA_by_Upbit&quot;,
+  &quot;title&quot;: &quot;GIWA official X account URL&quot;,
+  &quot;author&quot;: &quot;GIWA&quot;,
+  &quot;date&quot;: &quot;observed 2026-08-25&quot;,
+  &quot;domain&quot;: &quot;x.com&quot;,
+  &quot;type&quot;: &quot;direct_social_url_access_observation&quot;,
+  &quot;quality_rating&quot;: &quot;D&quot;,
+  &quot;fetched_at&quot;: &quot;2026-08-24T21:20:00Z&quot;,
+  &quot;content_hash&quot;: &quot;sha256:eb2d1d82f0bb133a344236b2f64d19153af351291016ceca2dc26bd4c9b7e79a&quot;,
+  &quot;snippet&quot;: &quot;The official account URL is retained for provenance, but unauthenticated fetching did not yield a durable complete timeline. No country-level sentiment or engagement total is inferred from it.&quot;,
+  &quot;subtopic&quot;: &quot;regional_public_discourse&quot;,
+  &quot;claims&quot;: [
+    &quot;official account provenance&quot;,
+    &quot;timeline access limitation&quot;
+  ]
+}</code></pre></details><details class="record"><summary><span>070</span>Public index of English and Chinese GIWA early-user posts</summary><pre><code>{
+  &quot;id&quot;: &quot;src_070&quot;,
+  &quot;url&quot;: &quot;https://followin.io/en/kol/4077102285&quot;,
+  &quot;title&quot;: &quot;Public index of English and Chinese GIWA early-user posts&quot;,
+  &quot;author&quot;: &quot;Followin; underlying social authors&quot;,
+  &quot;date&quot;: &quot;observed 2026-08-25&quot;,
+  &quot;domain&quot;: &quot;followin.io&quot;,
+  &quot;type&quot;: &quot;social_mirror_index&quot;,
+  &quot;quality_rating&quot;: &quot;D&quot;,
+  &quot;fetched_at&quot;: &quot;2026-08-24T21:20:00Z&quot;,
+  &quot;content_hash&quot;: &quot;sha256:cd63de7b7159b644dadfef64b9b40b0e3e79e4aeb1d33cd0534c845a539e07ec&quot;,
+  &quot;snippet&quot;: &quot;The index captures early-user language such as bridge, faucet, verified token, UP.ID and act before broad attention. Such posts are promotional leads and cannot confirm an airdrop, financing amount, adoption or author geography.&quot;,
+  &quot;subtopic&quot;: &quot;regional_public_discourse&quot;,
+  &quot;claims&quot;: [
+    &quot;airdrop-farming language&quot;,
+    &quot;social provenance caveat&quot;
+  ]
+}</code></pre></details><details class="record"><summary><span>071</span>GIWA expands as financial infrastructure</summary><pre><code>{
+  &quot;id&quot;: &quot;src_071&quot;,
+  &quot;url&quot;: &quot;https://m.news.nate.com/view/20260501n08917&quot;,
+  &quot;title&quot;: &quot;GIWA expands as financial infrastructure&quot;,
+  &quot;author&quot;: &quot;Daily Hankook; syndicated by Nate&quot;,
+  &quot;date&quot;: &quot;2026-05-01&quot;,
+  &quot;domain&quot;: &quot;m.news.nate.com&quot;,
+  &quot;type&quot;: &quot;independent_news_syndication&quot;,
+  &quot;quality_rating&quot;: &quot;C&quot;,
+  &quot;fetched_at&quot;: &quot;2026-08-24T21:20:00Z&quot;,
+  &quot;content_hash&quot;: &quot;sha256:70c09e4d6a87a3ad8f84b6aa18385d21e90aac020efd83941a3c681c47bd330a&quot;,
+  &quot;snippet&quot;: &quot;Korean reporting emphasizes enterprise and financial-infrastructure partnerships involving GIWA, illustrating that domestic public framing is not limited to speculative tokens.&quot;,
+  &quot;subtopic&quot;: &quot;regional_public_discourse&quot;,
+  &quot;claims&quot;: [
+    &quot;Korean institutional framing&quot;
+  ]
+}</code></pre></details><details class="record"><summary><span>072</span>Public RDAP bootstrap observation for .fun candidates</summary><pre><code>{
+  &quot;id&quot;: &quot;src_072&quot;,
+  &quot;url&quot;: &quot;https://rdap.org/domain/gaboja.fun&quot;,
+  &quot;title&quot;: &quot;Public RDAP bootstrap observation for .fun candidates&quot;,
+  &quot;author&quot;: &quot;RDAP.org; observation by Codex&quot;,
+  &quot;date&quot;: &quot;2026-08-25&quot;,
+  &quot;domain&quot;: &quot;rdap.org&quot;,
+  &quot;type&quot;: &quot;dynamic_registry_bootstrap_observation&quot;,
+  &quot;quality_rating&quot;: &quot;B&quot;,
+  &quot;fetched_at&quot;: &quot;2026-08-24T21:22:06Z&quot;,
+  &quot;content_hash&quot;: &quot;sha256:3d84b7c0fc5e61a803626086902c3088ba962525aa5ac46a9e3c68a7212bdf42&quot;,
+  &quot;snippet&quot;: &quot;The public RDAP bootstrap independently routed .fun queries to the registry: gazua.fun resolved as an existing object while gaboja.fun, tteoksang.fun, buljang.fun, ssonda.fun, dalryeo.fun and ollaga.fun returned no domain object at observation time. This remains a point-in-time check, not a reservation or rights clearance.&quot;,
+  &quot;subtopic&quot;: &quot;brand_and_domains&quot;,
+  &quot;claims&quot;: [
+    &quot;second RDAP observation&quot;,
+    &quot;availability caveat&quot;
+  ]
+}</code></pre></details><details class="record"><summary><span>073</span>RED-COHORT-2026-v1 reproducibility dataset</summary><pre><code>{
+  &quot;id&quot;: &quot;src_073&quot;,
+  &quot;url&quot;: &quot;https://zenodo.org/records/21536881&quot;,
+  &quot;title&quot;: &quot;RED-COHORT-2026-v1 reproducibility dataset&quot;,
+  &quot;author&quot;: &quot;Arati Uday Kamat&quot;,
+  &quot;date&quot;: &quot;2026-07-24&quot;,
+  &quot;domain&quot;: &quot;zenodo.org&quot;,
+  &quot;type&quot;: &quot;primary_research_dataset&quot;,
+  &quot;quality_rating&quot;: &quot;B&quot;,
+  &quot;fetched_at&quot;: &quot;2026-08-24T21:25:00Z&quot;,
+  &quot;content_hash&quot;: &quot;sha256:850816df49a90a1dcb1417e5027a08345ad175dbe2fc11aa8b7e6843105ee82e&quot;,
+  &quot;snippet&quot;: &quot;The public dataset accompanying the Pump.fun cohort preprint contains the detected cohort catalogue, buyer-event observations, scripts and robustness artifacts, allowing the study&#x27;s descriptive claims and placebo warning to be inspected but not establishing GIWA outcomes.&quot;,
+  &quot;subtopic&quot;: &quot;pump_platform_risk&quot;,
+  &quot;claims&quot;: [
+    &quot;reproducibility artifacts&quot;,
+    &quot;causal-inference limitation&quot;
+  ]
+}</code></pre></details></div></article>
+    </main>
+    <footer>
+      <span>research_only=true</span>
+      <span>strategy_consumption_allowed=false</span>
+      <span>order_input=false</span>
+    </footer>
+  </body>
+</html>

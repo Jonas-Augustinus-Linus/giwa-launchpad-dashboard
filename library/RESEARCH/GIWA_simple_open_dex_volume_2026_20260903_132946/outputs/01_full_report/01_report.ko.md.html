@@ -1,0 +1,811 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex,nofollow,noarchive" />
+    <meta name="theme-color" content="#090c0e" />
+    <title>GIWA Simple Open DEX: fee와 organic volume을 함께 만드는 조건 · GIWA Control Room</title>
+    <link rel="stylesheet" href="../../../../../assets/document.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#document">본문으로 바로가기</a>
+    <header class="document-header">
+      <a class="brand" href="../../../../../index.html#research" aria-label="GIWA 대시보드로 돌아가기">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span><strong>GIWA</strong><small>CONTROL ROOM</small></span>
+      </a>
+      <nav aria-label="문서 동작">
+        <a href="../../../../../index.html#research">← 대시보드</a>
+        <a href="https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/RESEARCH/GIWA_simple_open_dex_volume_2026_20260903_132946/outputs/01_full_report/01_report.ko.md" target="_blank" rel="noopener noreferrer">Private GitHub ↗</a>
+      </nav>
+    </header>
+    <main id="document" class="document-shell">
+      <div class="document-meta">
+        <span>REPORT</span>
+        <span>SHA256 adbe10be383e</span>
+      </div>
+      <h1>GIWA Simple Open DEX: fee와 organic volume을 함께 만드는 조건</h1>
+      <p class="source-path">RESEARCH/GIWA_simple_open_dex_volume_2026_20260903_132946/outputs/01_full_report/01_report.ko.md</p>
+      <article class="markdown-body"><h1 id="giwa-simple-open-dex-fee-organic-volume">GIWA Simple Open DEX: fee와 organic volume을 함께 만드는 조건</h1>
+<p>기준일: <strong>2026-09-03 KST</strong><br>
+연구 모드: <strong>Insane Research strict</strong><br>
+경계: <code>research_only=true</code>, <code>strategy_consumption_allowed=false</code>, <code>order_input=false</code></p>
+<blockquote>
+<p>이 보고서는 기술·사업·규제 리서치이며 법률·세무·투자 자문이 아니다. 상대적 위험
+등급은 적법 확인이나 인허가 면제를 뜻하지 않는다. 배포, 서명, 거래, 유동성 공급,
+토큰 발행·판매와 외부 프로젝트 접촉은 수행하지 않았다.</p>
+</blockquote>
+<h2 id="1">1. 판단 요약</h2>
+<h3 id="11">1.1 가장 맞는 제품</h3>
+<p>사용자의 Solana 밈, Solana DEX utility, 생태계 기여 경험을 합치면 가장 맞는 제품은
+<strong>독립 브랜드의 최소형 v3-compatible GIWA liquidity venue</strong>다.</p>
+<ul>
+<li>trader 화면은 v2처럼 단순하게 만든다.</li>
+<li>core는 희소한 자본을 실제 거래 가격대에 집중시킬 수 있는 concentrated-liquidity
+  구조를 우선 검토한다.</li>
+<li>pool·fee tier 수를 제한하고, vault·keeper·farm·referral·launchpad·bridge를 빼서
+  attack surface를 줄인다.</li>
+<li>team protocol/interface fee는 초기 <code>0</code>으로 두고, 고정 B2B fee와 조건부 own-capital
+  LP fee를 수익의 첫 단계로 삼는다.</li>
+<li>GIWA·Uniswap 양쪽과 canonical deployment를 논의하되, 공식 venue가 wallet·API·
+  liquidity까지 갖추면 같은 페어로 싸우지 않고 integration·LP route로 전환한다.</li>
+</ul>
+<p>(src_211, src_218~src_227, src_230~src_231; clm_309~clm_312, clm_330)</p>
+<h3 id="12">1.2 지금은 배포할 때가 아니다</h3>
+<p>2026-09-03 현재 공식 문서는 public mainnet과 GIWA Wallet을 개발 중으로 표시한다. 공개
+테스트망은 GIWA Sepolia, chain ID <code>91342</code>, ETH gas이며 public RPC는 production 용도가
+아니다. Circle의 issuer registry에는 GIWA USDC가 없고 LI.FI와 OpenOcean의 현재 지원
+표면에도 GIWA route가 없다. 따라서 “접속 가능한 테스트넷”은 있지만 검증 가능한
+real-value order flow는 아직 없다. 이것은 접근 불가가 아니라 <strong>생산 유통 전제의 부재</strong>에
+관한 판단이다. (src_201~src_205, src_209, src_215~src_217; clm_301~clm_303)</p>
+<h3 id="13">1.3 거래량에 대한 정직한 전제</h3>
+<p>거래량은 UI가 아니라 <strong>자산 수요, 유동성 깊이, 실행 가격과 유통 경로</strong>의 결과다.</p>
+<pre><code class="language-text">canonical asset
+      ↓
+anchor-pair depth
+      ↓
+best net execution
+      ↓
+wallet / partner / aggregator routing
+      ↓
+independent repeat flow
+      ↓
+fees and retained liquidity
+</code></pre>
+<p>어느 한 고리가 끊기면 화면을 아무리 단순하게 만들어도 volume은 생기지 않는다. 반대로
+UI는 단순해도 위 고리가 연결되면 주문이 올 수 있다. (src_208, src_215~src_217,
+src_227~src_233; clm_313~clm_316)</p>
+<h2 id="2">2. 네 가지 목표가 충돌하는 지점</h2>
+<p>우리가 원하는 네 가지는 동시에 최대화되지 않는다.</p>
+<table>
+<thead>
+<tr>
+<th>목표</th>
+<th>원하는 것</th>
+<th>충돌하는 것</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Simple</td>
+<td>작은 code·UI surface</td>
+<td>CLMM position 관리, routing과 안전 고지는 복잡함</td>
+</tr>
+<tr>
+<td>Volume</td>
+<td>깊은 liquidity와 distribution</td>
+<td>own fork는 liquidity를 쪼개고 incentive는 비용을 만듦</td>
+</tr>
+<tr>
+<td>Fee</td>
+<td>거래에 비례하는 team revenue</td>
+<td>한국 VASP·중개·영업성 및 이해상충 위험</td>
+</tr>
+<tr>
+<td>Decentralized</td>
+<td>permissionless·non-custodial</td>
+<td>hosted UI, admin key와 GIWA sequencer trust layer는 별도</td>
+</tr>
+</tbody>
+</table>
+<p>따라서 우선순위를 정해야 한다. 이 보고서는 <strong>체결 품질과 법적 생존성</strong>을 1순위,
+<strong>단순 UI</strong>를 2순위, <strong>team direct take rate</strong>를 마지막으로 둔다. direct fee를 먼저 켰다가
+order flow도 없고 규제 위험만 생기는 구성이 가장 나쁘다. (src_204, src_206, src_234~src_244;
+clm_319~clm_325, clm_332)</p>
+<h2 id="3-giwa">3. GIWA의 현시점 시장과 유통 현실</h2>
+<h3 id="31">3.1 생산 인프라 체크</h3>
+<table>
+<thead>
+<tr>
+<th>전제</th>
+<th>현재 확인</th>
+<th>해석</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Public mainnet</td>
+<td>개발 중</td>
+<td>실자산 fee 모델을 켤 수 없음</td>
+</tr>
+<tr>
+<td>GIWA Wallet</td>
+<td>개발 중</td>
+<td>conditional in-app opportunity만 존재</td>
+</tr>
+<tr>
+<td>Gas</td>
+<td>ETH</td>
+<td>별도 GIWA native token 전제가 필요 없음</td>
+</tr>
+<tr>
+<td>Canonical bridge</td>
+<td>Sepolia Superbridge</td>
+<td>출금 challenge 약 7일; production route 아님</td>
+</tr>
+<tr>
+<td>Quote asset</td>
+<td>Sepolia WETH9, issuer-backed stablecoin 미확인</td>
+<td>mock USDC를 기준자산으로 쓰면 안 됨</td>
+</tr>
+<tr>
+<td>Aggregation</td>
+<td>LI.FI 70-chain snapshot과 OpenOcean surface에 GIWA 없음</td>
+<td>onboarding package가 필요</td>
+</tr>
+<tr>
+<td>Public RPC</td>
+<td>rate-limited</td>
+<td>production RPC 두 경로와 indexer가 별도 필요</td>
+</tr>
+<tr>
+<td>Trust layer</td>
+<td>sequencer, permissioned dispute-game contract 표면</td>
+<td>DEX core와 chain trust를 구분해 공시</td>
+</tr>
+</tbody>
+</table>
+<p>(src_201~src_207, src_215~src_217, src_247; clm_301~clm_303, clm_318,
+clm_327, clm_332)</p>
+<p>network gas는 우리 매출이 아니다. GIWA의 execution·security fee와 OP Stack fee-vault는
+chain-level 흐름이며, dapp이 transaction을 생성했다는 이유로 수수료를 나눠 받지 않는다.
+LP, protocol, interface, service fee를 network gas와 분리해서 보여줘야 한다. (src_207,
+src_226, src_247; clm_318)</p>
+<h3 id="32">3.2 스왑 경쟁은 이미 있다</h3>
+<p>GIWA Sepolia에서는 다음을 직접 확인했다.</p>
+<table>
+<thead>
+<tr>
+<th>표면</th>
+<th>관찰</th>
+<th>확대하면 안 되는 결론</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GIWATER</td>
+<td>testnet swap·pool UI</td>
+<td>공식 또는 production DEX</td>
+</tr>
+<tr>
+<td>Joseon.fun</td>
+<td>test launch inventory와 AMM API</td>
+<td>실수요·감사·mainnet liquidity</td>
+</tr>
+<tr>
+<td>Ammora</td>
+<td>write-enabled Sepolia beta</td>
+<td>production readiness</td>
+</tr>
+<tr>
+<td>별도 V3형 stack</td>
+<td>성공 <code>exactInputSingle</code> transaction</td>
+<td>canonical Uniswap 또는 audited venue</td>
+</tr>
+</tbody>
+</table>
+<p>test token은 경제적 가치가 없고 testnet은 변경·중단될 수 있다. 그러므로 “첫 GIWA
+스왑”이라는 positioning은 이미 성립하지 않고, test transaction 수나 화면상 USD 숫자를
+adoption으로 부르면 안 된다. 차별화는 <strong>depth, partner routing, verified asset, audit와
+fee transparency</strong>여야 한다. (src_209, src_211~src_214; clm_304)</p>
+<h3 id="33">3.3 며칠 전 프로젝트 발표의 사용법</h3>
+<p>GASOK 공식 페이지는 Phase 3를 2026년 8~9월 test metric과 private-mainnet 작업으로
+설명하고, GIWA Wallet 노출도 ‘기회’로 표현한다. Upbit 거래지원과도 무관하다. 이름별
+공개 표는 공식 roster가 아니라 프로젝트 자기발표와 커뮤니티 집계다. 따라서 그 목록은
+partnership lead로만 쓰고 선정·상장·실사용 보장으로 쓰지 않는다. (src_208, src_210;
+clm_305)</p>
+<h2 id="4-dex">4. 권고 DEX 구조</h2>
+<h3 id="41">4.1 선택지 비교</h3>
+<table>
+<thead>
+<tr>
+<th>선택지</th>
+<th style="text-align: right;">자본 효율</th>
+<th style="text-align: right;">운영 복잡도</th>
+<th style="text-align: right;">order-flow 전망</th>
+<th style="text-align: right;">team fee 통제</th>
+<th>판단</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>v2-style own fork</td>
+<td style="text-align: right;">낮음</td>
+<td style="text-align: right;">낮음</td>
+<td style="text-align: right;">깊은 seed capital 없으면 약함</td>
+<td style="text-align: right;">높음</td>
+<td>test·비상안</td>
+</tr>
+<tr>
+<td>최소 v3-compatible own venue</td>
+<td style="text-align: right;">높음, range 내</td>
+<td style="text-align: right;">중간~높음</td>
+<td style="text-align: right;">scarce capital에 가장 유리</td>
+<td style="text-align: right;">높음</td>
+<td>조건부 기본안</td>
+</tr>
+<tr>
+<td>canonical Uniswap</td>
+<td style="text-align: right;">높음</td>
+<td style="text-align: right;">core 운영 낮음</td>
+<td style="text-align: right;">brand·standard 장점, UI/API는 별도</td>
+<td style="text-align: right;">낮음</td>
+<td>병행 협의</td>
+</tr>
+<tr>
+<td>gauge/emission MetaDEX</td>
+<td style="text-align: right;">조건부 높음</td>
+<td style="text-align: right;">매우 높음</td>
+<td style="text-align: right;">token budget·voter network 필요</td>
+<td style="text-align: right;">복잡</td>
+<td>초기 제외</td>
+</tr>
+</tbody>
+</table>
+<p>v2는 <code>x*y=k</code> full-range pool과 단일 30bp fee로 단순하다. 반면 v3는 특정 range에 capital을
+집중하고 여러 fee tier를 쓸 수 있다. 초기 GIWA처럼 유동성이 부족할 때 라우터가 선택할
+가격을 만들기에는 후자가 낫다. 다만 range를 벗어나면 fee를 못 벌고, LP가 관리·재조정·
+gas와 predictable loss를 부담하므로 “효율이 높다”와 “LP가 돈을 번다”는 같은 말이
+아니다. (src_221, src_223~src_224, src_230~src_231; clm_309, clm_310, clm_312)</p>
+<h3 id="42-core">4.2 최소 core</h3>
+<p>권고 production hypothesis는 다음뿐이다.</p>
+<ol>
+<li>immutable, non-upgradeable factory와 pools</li>
+<li>처음에는 correlated pair와 volatile pair에 필요한 fee tier만 허용</li>
+<li>user가 직접 소유하는 LP NFT·position; team custody 없음</li>
+<li>router는 quote, minimum received와 slippage bound를 명시</li>
+<li>verified token registry는 표시 계층이고 permissionless contract를 잠그지 않음</li>
+<li>source verification, bytecode hash, deployer·owner·fee recipient 공개</li>
+<li>protocol fee switch <code>off</code>; 켤 수 있다면 권한·cap·timelock과 법적 gate를 별도 공시</li>
+</ol>
+<p>초기 제외 항목은 managed vault, auto-rebalancer, keeper, farm, gauge, ve-token, bridge,
+gasless relay, referral, limit order, leverage와 token launch다. 각 기능은 custody·admin·
+routing·audit surface를 늘린다. (src_211, src_224, src_231, src_234, src_243; clm_311)</p>
+<h3 id="43">4.3 오픈소스와 브랜드</h3>
+<p>Uniswap v2 core는 GPL-3.0이다. v3 core의 license file은 2023-04-01 이전을 change date로
+두고 GPL-2.0-or-later로 전환한다. 이것은 독립 fork 검토 가능성을 열지만, 실제 사용할
+core·periphery·SDK·frontend의 파일별 license 의무와 수정 공개 범위는 다시 점검해야 한다.
+또 code permission은 <code>Uniswap</code> 이름·로고, canonical status, 기존 audit와 liquidity를
+넘겨주지 않는다. 독립 브랜드와 새 감사가 기본이다. (src_222, src_225, src_246;
+clm_308)</p>
+<h3 id="44">4.4 완전 탈중앙화라는 표현을 피한다</h3>
+<p>정확한 문구는 “non-custodial, permissionless AMM contracts with an open-source interface”에
+가깝다. GIWA의 sequencer·dispute-game 구성과 우리 hosted UI, indexer, token list는 별도
+trust layer다. 권한을 공개하고 줄이는 것은 가능하지만 전체 시스템에 단일 운영 표면이
+없다고 주장할 수는 없다. (src_204, src_206, src_243; clm_332)</p>
+<h2 id="5-fee-waterfall">5. fee waterfall과 한국 법률 경계</h2>
+<h3 id="51">5.1 같은 ‘수수료’가 아니다</h3>
+<table>
+<thead>
+<tr>
+<th>fee</th>
+<th>누가 지불</th>
+<th>기본 수취인</th>
+<th>우리 매출 가능성</th>
+<th>초기 상태</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Network gas</td>
+<td>transaction sender</td>
+<td>GIWA chain fee vault</td>
+<td>chain과 별도 계약 없이는 없음</td>
+<td>필수 비용</td>
+</tr>
+<tr>
+<td>LP swap fee</td>
+<td>trader</td>
+<td>active LP</td>
+<td>team이 자기자본 LP면 지분만큼</td>
+<td>법률의견 전 Amber</td>
+</tr>
+<tr>
+<td>Protocol fee</td>
+<td>LP fee 일부 또는 pool rule</td>
+<td>protocol treasury</td>
+<td>직접 거래비례 매출</td>
+<td>Off / Red</td>
+</tr>
+<tr>
+<td>Interface fee</td>
+<td>우리 UI 사용자</td>
+<td>interface operator</td>
+<td>자체 UI flow에 한함</td>
+<td>Off / Red</td>
+</tr>
+<tr>
+<td>Router/referral fee</td>
+<td>routed user</td>
+<td>router/referrer</td>
+<td>routed output의 일부</td>
+<td>Off / Red</td>
+</tr>
+<tr>
+<td>Fixed B2B service</td>
+<td>project customer</td>
+<td>개발·보안·데이터 법인</td>
+<td>거래와 무관한 정액</td>
+<td>상대적 우선</td>
+</tr>
+</tbody>
+</table>
+<p>(src_207, src_221, src_226, src_247; clm_317, clm_318, clm_325)</p>
+<h3 id="52-fee">5.2 단순 fee 산식</h3>
+<pre><code class="language-text">team LP gross fee
+= organic pool volume × pool LP fee × team share of active liquidity
+
+protocol revenue
+= organic pool volume × effective protocol take rate
+
+interface revenue
+= volume actually routed through our interface × disclosed interface rate
+
+net contribution
+= all team receipts
+ - incentives - rebates - RPC/indexer - audit/security - compliance/tax
+ - LP predictable loss/rebalancing/hedging cost
+</code></pre>
+<p>월 organic volume이 <code>$10m</code>, pool fee가 <code>30bp</code>, team이 active liquidity의 <code>20%</code>를 실제로
+차지한다는 <strong>산술 예시</strong>라면 LP gross fee는 <code>$6,000</code>이다. protocol take가 <code>5bp</code>이면
+<code>$5,000</code>, own-interface fee가 <code>10bp</code>이면 <code>$10,000</code>이다. 그러나 후자의 두 항목은 한국
+법률상 출시 권고가 아니라 위험 규모를 보여주는 계산이며, LP <code>$6,000</code>도 자산 손실·range
+이탈·hedging·gas 전 금액이다. 월 고정비 <code>$10,000</code>을 <code>5bp</code> take만으로 충당하려면
+<code>$20m</code> organic volume이 필요하다. gross chain volume을 우리 매출로 세면 안 된다.
+(src_221, src_226, src_230~src_231; clm_310, clm_317)</p>
+<h3 id="53">5.3 한국 기능별 보수적 등급</h3>
+<p><code>Green</code>도 면제나 적법 확정이 아니라 상대적으로 낮은 VASP 노출을 뜻한다.</p>
+<table>
+<thead>
+<tr>
+<th>구조</th>
+<th style="text-align: right;">등급</th>
+<th>이유</th>
+<th>반드시 꺼둘 것</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>source code 공개, 미배포</td>
+<td style="text-align: right;">🟢</td>
+<td>순수 기술 제공에 가까움</td>
+<td>official UI·router·fee wallet</td>
+</tr>
+<tr>
+<td>immutable AMM, 운영권 없음</td>
+<td style="text-align: right;">🟠</td>
+<td>국내 DEX 전용 safe harbor·직접 판례 없음</td>
+<td>proxy·admin·fee setter</td>
+</tr>
+<tr>
+<td>team own-capital LP</td>
+<td style="text-align: right;">🟠</td>
+<td>own-account 원칙은 유리하나 AMM 직접 판례 아님</td>
+<td>외부자금·정산·수익보장</td>
+</tr>
+<tr>
+<td>deployer/admin 권한 유지</td>
+<td style="text-align: right;">🔴</td>
+<td>지속적 통제의 강한 증거</td>
+<td>upgrade·pause·whitelist·sweep</td>
+</tr>
+<tr>
+<td>protocol fee switch</td>
+<td style="text-align: right;">🔴</td>
+<td>거래비례 이익과 설정권 결합</td>
+<td>fee recipient·rate 변경</td>
+</tr>
+<tr>
+<td>frontend/interface fee</td>
+<td style="text-align: right;">🔴</td>
+<td>이용자 편익을 위한 반복 routing과 대가</td>
+<td>fee injection·gasless relay</td>
+</tr>
+<tr>
+<td>paid router/aggregator</td>
+<td style="text-align: right;">🔴</td>
+<td>경로 선택·실행 지원과 보수 결합</td>
+<td>spread·MEV share·order relay</td>
+</tr>
+<tr>
+<td>customer LP-token vault</td>
+<td style="text-align: right;">🔴</td>
+<td>보관·관리·투자상품 위험</td>
+<td>admin withdrawal·guaranteed APR</td>
+</tr>
+<tr>
+<td>team transfer tax</td>
+<td style="text-align: right;">🔴</td>
+<td>통제·광고·증권성·부정거래 위험 중첩</td>
+<td>dynamic tax·exempt list·swapback</td>
+</tr>
+<tr>
+<td>fixed B2B dev/security/data</td>
+<td style="text-align: right;">🟢~🟠</td>
+<td>거래·보관과 분리할수록 경계 선명</td>
+<td>volume·성공보수 연동</td>
+</tr>
+</tbody>
+</table>
+<p>대한민국 법은 매매·교환뿐 아니라 그 중개·알선·대행을 영업으로 하는 자를 VASP에
+포함한다. 특정금융정보법 제7조상 신고 대상이면 신고가 수리되기 전 영업해서는 안 된다.
+대법원은 오로지 자기 계산·자기 이익을 위한 일반 이용자의 반복 거래와 불특정 다수의
+편익을 위해 거래하고 대가를 받는 반복 행위를 구분했다. own-capital LP는 상대적으로
+유리하지만, team이 DEX·UI·admin·fee를 함께 운영하면 단순 LP라는 설명이 약해진다.
+(src_234~src_237, src_244; clm_319, clm_320)</p>
+<p>금융위의 단순 P2P·wallet platform 반례와 FATF의 underlying-software 구분 때문에 “모든
+코드 개발자는 VASP”도 정확하지 않다. 동시에 open source·immutable·non-custodial이라는
+label만으로 자동 면제되지도 않는다. 실제 actor, admin key, UI, calldata·route 생성,
+fee recipient, 고객 편익과 반복 영업을 기능별로 본다. FATF는 한국의 구속법이 아니라
+기능 분석의 보조 근거다. (src_234~src_235, src_238, src_243; clm_321)</p>
+<h3 id="54">5.4 권고 수익 순서</h3>
+<ol>
+<li>프로젝트에 코드 통합·보안 검토·pool telemetry를 제공하고 원화/법정화폐 정액을 받는다.</li>
+<li>team wallet과 자본·LP range·철수 규칙을 공개하고, 서면 의견 뒤 자기자본 LP fee를
+   검토한다.</li>
+<li>protocol·interface·router fee가 꼭 필요하면 actor/flow map을 만든 뒤 전문 변호사의
+   VASP 의견, 필요한 신고 수리 또는 실질 역할이 분리된 신고사업자 구조를 먼저 완성한다.</li>
+<li>protocol fee와 interface fee를 동시에 겹치지 않는다.</li>
+<li>fee-share token, transfer tax, hidden spread, referral과 customer asset vault는 초기부터
+   제외한다.</li>
+</ol>
+<p>(src_221, src_226, src_231, src_234~src_244; clm_322~clm_325)</p>
+<h2 id="6-organic-volume">6. organic volume을 만드는 방법</h2>
+<h3 id="61-volume">6.1 volume의 다섯 원천</h3>
+<ol>
+<li><strong>Anchor corridor:</strong> redeemability와 bridge path가 검증된 stablecoin과 WETH 교환.</li>
+<li><strong>Utility conversion:</strong> game, payment, consumer reward를 stable asset으로 바꾸는 반복 수요.</li>
+<li><strong>Launch inventory:</strong> partner project의 token launch와 treasury liquidity.</li>
+<li><strong>Embedded distribution:</strong> GIWA Wallet, project UI와 외부 wallet에서 바로 호출되는 route.</li>
+<li><strong>Arbitrage/reference market:</strong> 외부 시장·bridge가 있어 price discrepancy를 닫는 flow.</li>
+</ol>
+<p>첫 번째와 다섯 번째는 production bridge와 canonical asset이 없으면 작동하지 않는다.
+두 번째와 세 번째는 project가 실제 token·contract·user route를 서면으로 제공해야 한다.
+네 번째는 좋은 가격과 integration acceptance가 필요하다. logo partnership만으로 생기는
+volume source는 없다. (src_203, src_208, src_215~src_217, src_221, src_227; clm_303,
+clm_314, clm_315)</p>
+<h3 id="62">6.2 체결 품질을 먼저 산다</h3>
+<p>인센티브를 쓴다면 raw TVL·volume이 아니라 다음에만 제한한다.</p>
+<ul>
+<li>time-weighted in-range depth</li>
+<li>target order size의 quote improvement</li>
+<li>liquidity uptime와 public lock/withdrawal terms</li>
+<li>independent LP의 own-capital commitment</li>
+<li>finite, declining budget와 명확한 종료일</li>
+</ul>
+<p>보상 조건에서 volume, 거래 횟수, 가격목표를 빼야 한다. reward가 왕복 수수료보다 크면
+self-trade를 경제적으로 유도한다. Aerodrome의 gauge flywheel은 깊은 시장을 조직하는 한
+방법이지만 새 token, voter network와 지속 emission budget이 필요하다. 독립 분석에서도
+보상 기간에 늘어난 liquidity가 종료 후 감소했고 지속 효과는 모든 pool에서 확인되지
+않았다. 그대로 복제할 이유가 없다. (src_228~src_233, src_239~src_240; clm_313,
+clm_324)</p>
+<h3 id="63-raw-volume-kpi">6.3 raw volume을 버린 KPI</h3>
+<p>organic dataset에서 먼저 제외할 것:</p>
+<ul>
+<li>team·treasury·known LP와 related wallets</li>
+<li>faucet·mock asset transactions</li>
+<li>same-fund round trip과 sybil cluster</li>
+<li>reward eligibility만 노린 swaps</li>
+<li>team UI가 자기 pool에 보낸 internal test</li>
+<li>reverted transaction과 duplicated indexer events</li>
+</ul>
+<p>그 뒤 다음을 측정한다.</p>
+<table>
+<thead>
+<tr>
+<th>KPI</th>
+<th>질문</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>P50/P90 price impact</td>
+<td>의도한 크기의 주문을 얼마나 잘 받는가</td>
+</tr>
+<tr>
+<td>external funded wallets</td>
+<td>관계 없는 경제 주체가 들어오는가</td>
+</tr>
+<tr>
+<td>7d/30d repeat rate</td>
+<td>한 번 찍고 떠난 traffic인가</td>
+</tr>
+<tr>
+<td>partner/router share</td>
+<td>우리 marketing 밖에서도 route가 오는가</td>
+</tr>
+<tr>
+<td>organic volume / real TVL</td>
+<td>자본이 실제로 회전하는가</td>
+</tr>
+<tr>
+<td>fees / incentive cost</td>
+<td>주문 흐름을 사는 비용보다 가치가 큰가</td>
+</tr>
+<tr>
+<td>post-incentive retained depth</td>
+<td>subsidy가 끝나도 liquidity가 남는가</td>
+</tr>
+<tr>
+<td>top-10 share</td>
+<td>극소수 지갑이 숫자를 만드는가</td>
+</tr>
+<tr>
+<td>swap success and stale quote</td>
+<td>UX가 아니라 execution이 안정적인가</td>
+</tr>
+</tbody>
+</table>
+<p>peer-reviewed research는 DEX의 비정상 거래를 pattern·entity method로 분류할 수 있음을
+보였지만 그 수치는 법원 확정이 아니다. 따라서 자동 플래그 뒤 수동 검토와 공개 exclusion
+rule을 함께 둔다. (src_229, src_232~src_233, src_239~src_240; clm_316)</p>
+<h2 id="7-anchor-pair">7. 파트너와 anchor-pair 전략</h2>
+<h3 id="71-outreach-lead">7.1 outreach lead 순위</h3>
+<p>아래는 공식 GASOK roster나 계약 상대 확정표가 아니라 <strong>검증할 순서</strong>다.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">순위</th>
+<th>후보</th>
+<th>얻고 싶은 flow</th>
+<th>현재 반증·조건</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td>Joseon.fun</td>
+<td>launch inventory와 graduation liquidity</td>
+<td>자체 AMM 경쟁자; written routing deal 필요</td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td>Naru</td>
+<td>Korean token discovery·analytics surface</td>
+<td>seeded/testnet simulated demo</td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td>Kachi</td>
+<td>meme launch·discovery inventory</td>
+<td>app가 no-real-money testnet임을 명시</td>
+</tr>
+<tr>
+<td style="text-align: right;">4</td>
+<td>Islet Online</td>
+<td>existing consumer audience</td>
+<td>offchain audience가 swap demand는 아님</td>
+</tr>
+<tr>
+<td style="text-align: right;">5</td>
+<td>Flizy</td>
+<td>chat-wallet recipient conversion</td>
+<td>project-operated testnet signal뿐</td>
+</tr>
+<tr>
+<td style="text-align: right;">Watch</td>
+<td>SuperWalk</td>
+<td>장기 consumer distribution</td>
+<td>immediate GIWA route commitment 없음</td>
+</tr>
+</tbody>
+</table>
+<p>(src_208, src_210, src_213, src_248~src_252; clm_326)</p>
+<p>각 미팅에서 받아야 하는 것은 logo가 아니라 다음 여섯 가지다.</p>
+<ol>
+<li>production token contract와 legal issuer</li>
+<li>실제 유입 화면과 router 호출 지점</li>
+<li>월간 intended swap users와 trade-size distribution의 근거</li>
+<li>양쪽 자산의 own-capital liquidity commitment</li>
+<li>incentive budget, 종료일과 related-wallet list</li>
+<li>contract·analytics·security contact와 incident owner</li>
+</ol>
+<h3 id="72-pair">7.2 pair를 적게 연다</h3>
+<p>첫 공식 corridor는 <code>WETH / canonical stablecoin</code> 하나다. project token은 stable quote에
+연결하고, project-to-project 또는 meme-to-meme pair는 초기 공식 화면에서 만들지 않는다.
+같은 pair에 여러 fee tier를 동시에 열어 scarce liquidity를 갈라놓지도 않는다. permissionless
+contract에서 임의 pool 생성을 막을 필요는 없지만, 공식 token list와 route에는 검증된
+pool만 기본 표시한다. (src_204, src_215, src_221, src_227; clm_327)</p>
+<p><code>Mock USDC</code>, oracle의 USDC price feed, 이름만 USDC인 ERC-20은 redeemable settlement
+asset이 아니다. issuer address, mint/burn authority, L1 backing, bridge canonicality와 pause·
+freeze 권한을 확인한 뒤에만 기준자산으로 쓴다.</p>
+<h2 id="8-90-validation-scorecard">8. 90일 validation scorecard</h2>
+<p>이 숫자들은 역사적 사실이나 수익 예측이 아니라 <strong>현재 실데이터가 없는 상태에서 founder가
+채택·수정할 내부 go/no-go threshold</strong>다. mainnet 전에는 testnet rehearsal에만 적용하고
+매출·TVL로 표현하지 않는다.</p>
+<h3 id="81-hard-gates">8.1 출시 전 hard gates</h3>
+<p>다음이 모두 충족돼야 한다.</p>
+<ul>
+<li>official public mainnet RPC, chain ID, explorer와 bridge contracts</li>
+<li>issuer 또는 canonical bridge가 명확한 stable quote asset 하나</li>
+<li>서로 독립적인 production RPC 두 경로와 indexer</li>
+<li>core·periphery·frontend audit, source verification와 incident plan</li>
+<li>written integrations 두 건: launch inventory 하나 + wallet/consumer surface 하나</li>
+<li>intended order size의 P90 all-in price impact <code>≤1%</code></li>
+<li>aggregator/analytics onboarding package 제출 가능 상태</li>
+<li>actor/admin/data/asset/fee flow map과 한국 전문 변호사 서면 의견</li>
+</ul>
+<p>초기 intended order size를 <code>$10k</code> equivalent로 가정할 수 있으나 실제 partner order
+distribution을 받으면 다시 정해야 한다. (src_201, src_203~src_204, src_215, src_217,
+src_219, src_231, src_234, src_244; clm_328)</p>
+<h3 id="82-90-checkpoint">8.2 첫 90일 내부 checkpoint</h3>
+<table>
+<thead>
+<tr>
+<th>시점</th>
+<th>provisional checkpoint</th>
+<th>실패 시</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Day 30</td>
+<td>external funded wallets ≥100, 7d repeat ≥20%, partner-surface share ≥20%</td>
+<td>pair·distribution 재설계</td>
+</tr>
+<tr>
+<td>Day 60</td>
+<td>external funded wallets ≥500/month, non-incentivized volume ≥40%, top-10 share &lt;50%, external routes ≥30%</td>
+<td>확장 중지</td>
+</tr>
+<tr>
+<td>Day 90</td>
+<td>trailing-30d organic volume ≥ average real TVL의 5배, non-incentivized ≥50%, team receipts가 variable ops+incentives의 ≥25%</td>
+<td>종료 또는 integration-only pivot</td>
+</tr>
+</tbody>
+</table>
+<p>이 checkpoint는 “많이 거래하라”는 사용자 보상이 아니다. 내부 관찰 기준이며 reward는
+거래량에 연동하지 않는다.</p>
+<h3 id="83-kill-criteria">8.3 kill criteria</h3>
+<p>다음 중 하나면 real-money launch 또는 확장을 중단한다.</p>
+<ul>
+<li>public mainnet 또는 canonical stablecoin이 없음</li>
+<li>only manual RPC와 7-day bridge뿐이고 LP rebalancing route가 없음</li>
+<li>partner가 contract·route·capital 없이 logo만 제공</li>
+<li>Day 30 external funded wallets <code>&amp;lt;100</code> 또는 organic daily average <code>&amp;lt;$50k</code></li>
+<li>Day 60 non-incentivized share <code>&amp;lt;30%</code>, top-10 share <code>&gt;70%</code> 또는 suspected self/wash <code>&gt;20%</code></li>
+<li>Day 60까지 third-party wallet/router/indexer inflow가 <code>0</code></li>
+<li>Day 90 team receipt가 variable cost·incentive의 <code>25%</code>도 못 덮음</li>
+<li>subsidy 제거 뒤 volume이 <code>70%</code> 이상 사라짐</li>
+<li>canonical asset depeg, bridge pause, unresolved critical audit issue 또는 swap failure <code>&gt;1%</code></li>
+</ul>
+<p>이 기준은 gross TVL 하나가 아니라 organic flow, concentration, execution, LP risk와 legal
+readiness를 묶는다. (src_229~src_233, src_239; clm_329)</p>
+<h2 id="9-uiux">9. 최소 UI/UX와 신뢰 표면</h2>
+<h3 id="91">9.1 필요한 화면</h3>
+<p><strong>Swap</strong></p>
+<ul>
+<li>connect wallet / add correct chain</li>
+<li>verified token name, symbol, address와 warning</li>
+<li>exact-in 또는 exact-out quote</li>
+<li>route, pool, fee tier와 quote timestamp</li>
+<li>network gas / LP / protocol / interface fee를 별도 표시</li>
+<li>price impact, slippage, minimum received와 deadline</li>
+<li>approve와 swap 상태, explorer link</li>
+</ul>
+<p><strong>Liquidity</strong></p>
+<ul>
+<li>pair와 current price</li>
+<li>user-owned range와 out-of-range warning</li>
+<li>fee tier, deposited assets와 earned fees</li>
+<li>add, collect, remove</li>
+<li>no APR promise; historical fee와 risk를 분리</li>
+</ul>
+<p><strong>Pool facts</strong></p>
+<ul>
+<li>contract, factory, router와 bytecode/source status</li>
+<li>reserve 또는 active liquidity, 24h fee와 volume methodology</li>
+<li>deployer, owner, admin, pauser, fee recipient</li>
+<li>audit, bug bounty, incident contact와 last updated time</li>
+</ul>
+<p>초기에는 chart, leaderboard, farm, referral, bridge, limit order, cross-chain, NFT badge와 meme
+feed를 넣지 않는다. Simple은 정보를 숨기는 것이 아니라 <strong>거래 결정에 꼭 필요한 정보만
+정확히 보여주는 것</strong>이다. (src_203, src_217, src_220~src_221, src_226~src_227;
+clm_331)</p>
+<h3 id="92">9.2 오픈소스 운영 원칙</h3>
+<ul>
+<li>core, periphery, interface와 indexer repository 분리</li>
+<li>reproducible build와 deployed bytecode hash</li>
+<li>no proxy, hidden admin, upgrade or rescue path</li>
+<li>public fee-recipient wallet과 change log</li>
+<li>signed release tag, dependency lock와 vulnerability disclosure</li>
+<li>community mirror가 가능하도록 read-only API schema 공개</li>
+</ul>
+<p>오픈소스는 보안·법률의 대체물이 아니다. 그러나 동일 bytecode, 권한과 fee를 누구나
+검증하게 만들면 partnership과 routing review의 비용을 줄일 수 있다. (src_225~src_227,
+src_234~src_235, src_243, src_246; clm_308, clm_321)</p>
+<h2 id="10-uniswap">10. Uniswap이 오거나 오지 않을 때</h2>
+<h3 id="101">10.1 현재 답</h3>
+<p>Uniswap의 official v3 deployment registry와 Trading API support table에는 GIWA가 없다.
+Uniswap의 general strategy는 새 asset과 chain으로 확장하고 liquidity bootstrapping에
+투자한다는 방향을 제시하지만, GIWA proposal·grant·integration·launch date를 뜻하지
+않는다. (src_201, src_218~src_220, src_245; clm_306, clm_333)</p>
+<h3 id="102-proposal-package">10.2 병행할 proposal package</h3>
+<p>canonical 협의를 시작할 때는 다음을 준비한다.</p>
+<ol>
+<li>official mainnet chain facts와 security architecture</li>
+<li>canonical bridge·stablecoin and WETH addresses</li>
+<li>deterministic v2/v3 deployment addresses와 verification</li>
+<li>audit, bug bounty, monitoring와 emergency communication</li>
+<li>committed LP capital and anchor issuers</li>
+<li>GIWA Wallet and ecosystem distribution commitments</li>
+<li>governance sponsor와 conflict disclosure</li>
+<li>app.uniswap.org, Trading API와 analytics integration은 별도 요청임을 인정</li>
+</ol>
+<p>canonical status만 받은 뒤 Labs UI와 liquidity가 자동으로 온다고 가정해서는 안 된다.
+(src_218~src_220, src_227; clm_307)</p>
+<h3 id="103-decision-tree">10.3 decision tree</h3>
+<pre><code class="language-text">Public mainnet + canonical asset?
+  ├─ No  → research/testnet only
+  └─ Yes
+      ├─ Canonical Uniswap + wallet/API/liquidity package confirmed
+      │    → do not split the same pairs; integrate, provide partner routing,
+      │      fixed services and legally-reviewed own LP
+      └─ No canonical venue, but GIWA wallet + 2 partners + LP depth confirmed
+           → independent minimal v3-compatible venue, fee switch off
+</code></pre>
+<p>(src_201, src_218~src_220, src_227, src_231; clm_330)</p>
+<h2 id="11_1">11. 최종 제안</h2>
+<h3 id="111">11.1 제품 정의</h3>
+<blockquote>
+<p><strong>GIWA-native minimal liquidity venue:</strong> verified anchor assets와 소수 partner pool에
+concentrated liquidity를 모으고, 가장 단순한 trader UI와 가장 투명한 fee·admin·contract
+facts를 제공하는 open-source non-custodial DEX.</p>
+</blockquote>
+<p>이것은 “또 하나의 generic swap”이 아니다. 성패는 core code보다 <strong>canonical quote,
+wallet distribution, anchor partners와 independent liquidity commitment</strong>를 선점하는 데
+달렸다.</p>
+<h3 id="112">11.2 무엇을 하지 않는가</h3>
+<ul>
+<li>DEX token·ve-token·farm·perpetual emissions</li>
+<li>team transfer tax, buy/sell tax와 hidden spread</li>
+<li>volume mining, wash trading, price support와 listing promise</li>
+<li>customer LP-token custody와 managed vault</li>
+<li>mainnet·USDC·Uniswap·GIWA Wallet 지원을 근거 없이 가정</li>
+<li>testnet volume·TVL을 실수요로 홍보</li>
+</ul>
+<p>가상자산이용자보호법상 통정·가장매매, 인위적 가격·거래량 형성과 허위·중요사항 누락은
+금지선이다. fee-share·buyback을 tokenholder return으로 약속하면 투자계약증권 검토도
+추가된다. GIWA가 별도 native token을 계획하지 않는 만큼 초기 DEX token은 필요도 없다.
+(src_205, src_239~src_242; clm_323, clm_324)</p>
+<h3 id="113">11.3 다음 결정</h3>
+<p>지금 내려야 할 결정은 contract를 쓰는 결정이 아니라 다음 세 문서를 확보하는 결정이다.</p>
+<ol>
+<li><strong>GIWA distribution term sheet:</strong> wallet, canonical assets, launch timing과 project routing</li>
+<li><strong>Liquidity commitment sheet:</strong> 자본 소유자, pair, range, 기간, withdrawal와 disclosure</li>
+<li><strong>Korean actor-and-fee legal memo:</strong> core, UI, router, admin, LP와 각 recipient의 역할</li>
+</ol>
+<p>세 문서가 없으면 멋진 DEX가 아니라 유동성 없는 fork와 법적 책임만 갖게 된다. 세 문서가
+나오면 UI는 정말 단순해도 된다. 그때 우리가 팔아야 할 것은 화면이 아니라 <strong>좋은 체결과
+신뢰할 수 있는 시장</strong>이다. (src_208, src_215~src_220, src_234~src_244; clm_303,
+clm_314, clm_319, clm_328)</p></article>
+    </main>
+    <footer>
+      <span>research_only=true</span>
+      <span>strategy_consumption_allowed=false</span>
+      <span>order_input=false</span>
+    </footer>
+  </body>
+</html>

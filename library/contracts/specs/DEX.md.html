@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex,nofollow,noarchive" />
+    <meta name="theme-color" content="#090c0e" />
+    <title>DEX / AMM specification candidate · GIWA Control Room</title>
+    <link rel="stylesheet" href="../../../assets/document.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#document">본문으로 바로가기</a>
+    <header class="document-header">
+      <a class="brand" href="../../../index.html#research" aria-label="GIWA 대시보드로 돌아가기">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span><strong>GIWA</strong><small>CONTROL ROOM</small></span>
+      </a>
+      <nav aria-label="문서 동작">
+        <a href="../../../index.html#research">← 대시보드</a>
+        <a href="https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/contracts/specs/DEX.md" target="_blank" rel="noopener noreferrer">Private GitHub ↗</a>
+      </nav>
+    </header>
+    <main id="document" class="document-shell">
+      <div class="document-meta">
+        <span>REPORT</span>
+        <span>SHA256 d5de4038338f</span>
+      </div>
+      <h1>DEX / AMM specification candidate</h1>
+      <p class="source-path">contracts/specs/DEX.md</p>
+      <article class="markdown-body"><h1 id="dex-amm-specification-candidate">DEX / AMM specification candidate</h1>
+<p>Purpose: evaluate a valueless local and GIWA Sepolia liquidity experiment. It must not be
+presented as an official GIWA DEX or used for real-asset trading.</p>
+<h2 id="design-questions-to-resolve">Design questions to resolve</h2>
+<ul>
+<li>Build versus integrate: select only a license-compatible, maintained, independently audited
+  AMM base; do not copy the discovered fixed-pair prototype.</li>
+<li>Pool model and invariant; fee accounting; protocol-fee authority; minimum liquidity; rounding;
+  fee-on-transfer and non-standard token behavior; reentrancy and callback surface.</li>
+<li>Router slippage/deadline protections; deterministic pair creation; LP token mechanics; reserve
+  synchronization; donation and skim behavior; TWAP manipulation and oracle separation.</li>
+<li>Admin roles, upgrades, pause behavior, multisig/timelock, monitoring, emergency exit, and an
+  explicit no-custody/no-hidden-control statement.</li>
+<li>GIWA sequencing and Flashblocks assumptions. Preconfirmation is not finality and the absence of
+  a public L2 mempool does not eliminate ordering, sandwich, or sequencer risks.</li>
+</ul>
+<h2 id="required-evidence-before-a-testnet-deployment-proposal">Required evidence before a testnet deployment proposal</h2>
+<ul>
+<li>Unit, differential, invariant, stateful fuzz, adversarial-token, and fork-independent local
+  tests; gas bounds and denial-of-service analysis.</li>
+<li>Pinned source revision, compiler and dependencies; clean-room license review; reproducible
+  bytecode; static analysis and independent audit.</li>
+<li>Human-reviewed deployment parameters and roles; verified explorer source; post-deploy invariant
+  checks; transparent testnet-only UI; no automated liquidity or public purchase invitation.</li>
+</ul></article>
+    </main>
+    <footer>
+      <span>research_only=true</span>
+      <span>strategy_consumption_allowed=false</span>
+      <span>order_input=false</span>
+    </footer>
+  </body>
+</html>

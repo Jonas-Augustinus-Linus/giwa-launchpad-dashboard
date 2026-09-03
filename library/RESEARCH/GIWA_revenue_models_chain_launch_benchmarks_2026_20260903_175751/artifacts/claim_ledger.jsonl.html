@@ -1,0 +1,657 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex,nofollow,noarchive" />
+    <meta name="theme-color" content="#090c0e" />
+    <title>claim_ledger.jsonl · GIWA Control Room</title>
+    <link rel="stylesheet" href="../../../../assets/document.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#document">본문으로 바로가기</a>
+    <header class="document-header">
+      <a class="brand" href="../../../../index.html#research" aria-label="GIWA 대시보드로 돌아가기">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span><strong>GIWA</strong><small>CONTROL ROOM</small></span>
+      </a>
+      <nav aria-label="문서 동작">
+        <a href="../../../../index.html#research">← 대시보드</a>
+        <a href="https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/RESEARCH/GIWA_revenue_models_chain_launch_benchmarks_2026_20260903_175751/artifacts/claim_ledger.jsonl" target="_blank" rel="noopener noreferrer">Private GitHub ↗</a>
+      </nav>
+    </header>
+    <main id="document" class="document-shell">
+      <div class="document-meta">
+        <span>EVIDENCE LEDGER</span>
+        <span>SHA256 c00f1e6e27a3</span>
+      </div>
+      <h1>claim_ledger.jsonl</h1>
+      <p class="source-path">RESEARCH/GIWA_revenue_models_chain_launch_benchmarks_2026_20260903_175751/artifacts/claim_ledger.jsonl</p>
+      <article class="structured-body"><div class="record-list"><details class="record" open><summary><span>001</span>Record 1</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_301&quot;,
+  &quot;text&quot;: &quot;2026-09-03 현재 공개된 GIWA 네트워크는 chain ID 91342의 GIWA Sepolia이며, 노드 문서는 테스트넷 최소 4코어·8GB RAM·500GB NVMe와 권장 8코어 이상·16GB RAM 이상·1TB 이상을 제시한다.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;numeric&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_301&quot;,
+    &quot;src_303&quot;
+  ],
+  &quot;counter_search&quot;: &quot;공식 네트워크 문서와 현재 노드 README를 대조했다. 두 자료 모두 public mainnet 설정을 제공하지 않았고 하드웨어 표는 testnet 범위임을 확인했다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>002</span>Record 2</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_302&quot;,
+  &quot;text&quot;: &quot;현재 GIWA node v0.6.0은 op-reth 2.3.3과 op-node 1.19.1 조합이며 op-geth 경로가 제거됐다.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;descriptive&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_302&quot;,
+    &quot;src_301&quot;
+  ],
+  &quot;counter_search&quot;: &quot;릴리스 태그와 공식 네트워크 문서를 재확인하고 더 최신 릴리스 및 mainnet 구성의 존재를 반대 방향으로 검색했으나 찾지 못했다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>003</span>Record 3</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_303&quot;,
+  &quot;text&quot;: &quot;GIWA와 Robinhood Chain의 공개 RPC는 rate limit가 있어 production 데이터의 단일 진실원장으로 사용하기보다 provider 또는 private node와 failover를 둬야 한다.&quot;,
+  &quot;risk&quot;: &quot;normal&quot;,
+  &quot;claim_type&quot;: &quot;causal&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_301&quot;,
+    &quot;src_332&quot;
+  ],
+  &quot;counter_search&quot;: &quot;공개 RPC만으로 production SLA를 보장한다는 공식 문서를 반대 검색했으나 확인되지 않았다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>004</span>Record 4</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_304&quot;,
+  &quot;text&quot;: &quot;GIWA Flashblocks는 약 200ms의 pending preconfirmation 경로이므로 canonical block 상태와 분리 저장하고 뒤에 재조정해야 한다.&quot;,
+  &quot;risk&quot;: &quot;normal&quot;,
+  &quot;claim_type&quot;: &quot;causal&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_305&quot;,
+    &quot;src_308&quot;
+  ],
+  &quot;counter_search&quot;: &quot;Flashblocks가 finalized state라는 반대 근거를 검색했으나 공식 문서는 pending state로 설명한다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>005</span>Record 5</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_305&quot;,
+  &quot;text&quot;: &quot;GIWA 노드의 기본 HTTP·WS 바인딩과 debug·txpool·miner 네임스페이스는 그대로 인터넷에 노출하지 말고 방화벽·인증 프록시·TLS·rate limit·API 제한을 적용해야 한다.&quot;,
+  &quot;risk&quot;: &quot;normal&quot;,
+  &quot;claim_type&quot;: &quot;causal&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_304&quot;,
+    &quot;src_301&quot;
+  ],
+  &quot;counter_search&quot;: &quot;기본 설정이 public production hardening을 포함한다는 근거를 찾지 못했다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>006</span>Record 6</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_306&quot;,
+  &quot;text&quot;: &quot;빠른 온체인 조회 제품은 RPC만이 아니라 canonical raw event 보존, finality/reorg 처리, 정규화 인덱스와 read API가 함께 있어야 한다.&quot;,
+  &quot;risk&quot;: &quot;normal&quot;,
+  &quot;claim_type&quot;: &quot;causal&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_306&quot;,
+    &quot;src_332&quot;,
+    &quot;src_315&quot;
+  ],
+  &quot;counter_search&quot;: &quot;provider 원시 RPC만으로 과거 인덱싱과 재조정이 해결되는지 확인했으나 archive 및 indexed-data 계층이 별도로 요구된다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>007</span>Record 7</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_307&quot;,
+  &quot;text&quot;: &quot;2026-09-03 관측에서 GIWA Sepolia explorer는 finished_indexing=false와 약 0.99의 indexed block ratio를 반환했다.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;numeric&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_308&quot;,
+    &quot;src_301&quot;
+  ],
+  &quot;counter_search&quot;: &quot;공식 explorer API의 동시점 상태를 다시 확인했으며 이는 가변 스냅샷이므로 현재 완료 상태를 일반화하지 않았다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>008</span>Record 8</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_308&quot;,
+  &quot;text&quot;: &quot;GIWA 공식 네트워크 계약 레지스트리에는 WETH9·Permit2·Multicall3가 있으나 canonical V3 Factory·Router·Position Manager·Quoter는 등재돼 있지 않다.&quot;,
+  &quot;risk&quot;: &quot;normal&quot;,
+  &quot;claim_type&quot;: &quot;descriptive&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_309&quot;,
+    &quot;src_303&quot;
+  ],
+  &quot;counter_search&quot;: &quot;공식 GIWA 조직과 노드 문서에서 별도 canonical V3 배포 목록을 검색했으나 찾지 못했다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>009</span>Record 9</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_309&quot;,
+  &quot;text&quot;: &quot;V3 swap 제품은 Factory와 Pool뿐 아니라 Router·Quoter·Permit2·Position Manager·토큰 레지스트리·인덱서·리스크 모니터링을 하나의 배포 묶음으로 설계해야 한다.&quot;,
+  &quot;risk&quot;: &quot;normal&quot;,
+  &quot;claim_type&quot;: &quot;descriptive&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_310&quot;,
+    &quot;src_312&quot;
+  ],
+  &quot;counter_search&quot;: &quot;core pool만으로 안전한 사용자 제품이 성립하는지 반대 사례를 찾았지만 공식 구조는 주변 계약과 인터페이스를 함께 둔다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>010</span>Record 10</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_310&quot;,
+  &quot;text&quot;: &quot;DEX 회계는 user fees, LP 또는 supply-side revenue, protocol 또는 holder revenue, interface revenue와 incentives를 별도 원장으로 기록해야 한다.&quot;,
+  &quot;risk&quot;: &quot;normal&quot;,
+  &quot;claim_type&quot;: &quot;descriptive&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_315&quot;,
+    &quot;src_311&quot;,
+    &quot;src_327&quot;
+  ],
+  &quot;counter_search&quot;: &quot;거래량 또는 총수수료를 운영사 순매출로 정의하는 공식 방법론을 찾지 못했다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>011</span>Record 11</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_311&quot;,
+  &quot;text&quot;: &quot;Uniswap v2 현행 예시는 거래 0.30% 중 LP 0.25%와 protocol 0.05%를 분리하며, v3 protocol fee는 모든 풀에 동일하게 적용되지 않는다.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;numeric&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_311&quot;,
+    &quot;src_316&quot;
+  ],
+  &quot;counter_search&quot;: &quot;공식 support schedule을 독립 fee dataset의 수취인 분류와 대조했으며 버전·풀별 차이를 확인했다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>012</span>Record 12</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_312&quot;,
+  &quot;text&quot;: &quot;Uniswap은 2018년 제품 출시 후 수년간 LP 우선 구조로 성장했고 2025-12-28 실행된 governance proposal 뒤 protocol fee와 UNI burn을 활성화했다.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;descriptive&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_314&quot;,
+    &quot;src_328&quot;,
+    &quot;src_316&quot;
+  ],
+  &quot;counter_search&quot;: &quot;초기 출시부터 holder fee가 활성화됐다는 반대 기록을 검색했으나 공식 역사와 실행 제안이 이를 지지하지 않는다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>013</span>Record 13</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_313&quot;,
+  &quot;text&quot;: &quot;Uniswap v1·v2·v3의 출시 묶음은 core contracts 외에도 interface·audit·documentation·migration path와 v2의 subgraph를 포함했다.&quot;,
+  &quot;risk&quot;: &quot;normal&quot;,
+  &quot;claim_type&quot;: &quot;descriptive&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_314&quot;,
+    &quot;src_364&quot;,
+    &quot;src_365&quot;,
+    &quot;src_312&quot;
+  ],
+  &quot;counter_search&quot;: &quot;계약만 배포하고 사용자·데이터·이전 경로를 후순위로 둔 공식 출시 기록을 찾지 못했다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>014</span>Record 14</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_314&quot;,
+  &quot;text&quot;: &quot;Aerodrome의 수익 분배는 pool staking 상태에 따라 veAERO voters 또는 LP로 가며, 팀 몫은 거래수수료와 별개인 emissions 5%로 문서화돼 있다.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;numeric&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_313&quot;,
+    &quot;src_325&quot;
+  ],
+  &quot;counter_search&quot;: &quot;fee와 emissions를 동일 매출로 합산하는 반대 해석을 점검했으나 공식 문서와 데이터 어댑터가 항목을 분리한다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>015</span>Record 15</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_315&quot;,
+  &quot;text&quot;: &quot;Aerodrome의 초기·후속 유동성은 emissions와 voting incentives에 의존하므로 거래 점유율만으로 무보조 organic 성공을 주장할 수 없다.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;causal&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_313&quot;,
+    &quot;src_366&quot;,
+    &quot;src_325&quot;
+  ],
+  &quot;counter_search&quot;: &quot;incentive가 없었다는 반대 근거와 incentive 대비 revenue를 검색했으며 공식 구조와 독립 보도 모두 보조 메커니즘을 확인했다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>016</span>Record 16</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_316&quot;,
+  &quot;text&quot;: &quot;Base는 builder-only mainnet 뒤 공개 GA와 앱·서비스·Coinbase 배포를 묶었고, 독립 시계열은 수년 뒤에도 온체인 활동이 남아 있음을 보여준다.&quot;,
+  &quot;risk&quot;: &quot;normal&quot;,
+  &quot;claim_type&quot;: &quot;causal&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_320&quot;,
+    &quot;src_321&quot;,
+    &quot;src_367&quot;
+  ],
+  &quot;counter_search&quot;: &quot;출시 캠페인 뒤 활동이 소멸했다는 반대 가설을 장기 시계열로 점검했지만 잔존 활동을 확인했다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>017</span>Record 17</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_317&quot;,
+  &quot;text&quot;: &quot;Base가 공개한 2023 mint·wallet 수치와 2024 builder mint revenue는 self-report이며 wallet 수를 사람 수나 Base 운영사 매출로 해석하면 안 된다.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;numeric&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_322&quot;,
+    &quot;src_323&quot;,
+    &quot;src_324&quot;,
+    &quot;src_367&quot;
+  ],
+  &quot;counter_search&quot;: &quot;공식 숫자의 귀속과 독립 주소지표의 한계를 대조했으며 Sybil 제거 인원수 또는 Coinbase 순매출로 확정할 근거를 찾지 못했다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>018</span>Record 18</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_318&quot;,
+  &quot;text&quot;: &quot;Coinbase의 Base sequencer revenue, 참여 프로젝트의 mint revenue와 DEX LP·protocol revenue는 서로 다른 수익 귀속이다.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;financial&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_324&quot;,
+    &quot;src_323&quot;,
+    &quot;src_315&quot;
+  ],
+  &quot;counter_search&quot;: &quot;동일 회계 항목이라는 반대 근거를 검색했으나 filing과 fee methodology가 각각 분리한다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>019</span>Record 19</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_319&quot;,
+  &quot;text&quot;: &quot;Robinhood Chain은 2026-07-01 public mainnet을 열었고 Uniswap을 primary public AMM으로, Pleiades를 proprietary AMM으로 발표했다.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;descriptive&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_331&quot;,
+    &quot;src_329&quot;
+  ],
+  &quot;counter_search&quot;: &quot;testnet-only 상태가 계속된다는 과거 자료와 더 최신 공식 발표를 대조해 public mainnet 전환을 확인했다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>020</span>Record 20</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_320&quot;,
+  &quot;text&quot;: &quot;2026-09-03 rolling snapshot에서 Robinhood Chain 30일 DEX volume은 약 203.6억 달러이고 약 83.2%가 Uniswap으로 분류됐다.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;numeric&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_334&quot;,
+    &quot;src_335&quot;,
+    &quot;src_331&quot;
+  ],
+  &quot;counter_search&quot;: &quot;management launch 수치와 independent adapter를 대조하고 adapter 수정 가능성을 확인했으며, 스냅샷 값을 지속 성과로 일반화하지 않았다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>021</span>Record 21</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_321&quot;,
+  &quot;text&quot;: &quot;Robinhood Chain의 DEX fee, chain gas residual, app fee와 Robinhood 회계 매출은 동일 항목이 아니며 공개 데이터는 이들을 자동으로 연결하지 않는다.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;financial&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_338&quot;,
+    &quot;src_339&quot;,
+    &quot;src_337&quot;,
+    &quot;src_315&quot;
+  ],
+  &quot;counter_search&quot;: &quot;DEX volume 또는 chain-profit estimate가 Robinhood GAAP revenue라는 근거를 반대 검색했으나 공식 terms와 방법론은 귀속을 분리한다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>022</span>Record 22</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_322&quot;,
+  &quot;text&quot;: &quot;OpenSea의 2026-05-12 공개 schedule은 NFT sale 1%, hosted primary drop 10%, swap 0%이며 hosted drop payout wallet은 나머지 90%를 받는다.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;numeric&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_340&quot;,
+    &quot;src_341&quot;,
+    &quot;src_344&quot;
+  ],
+  &quot;counter_search&quot;: &quot;SeaDrop code에서 10%가 불변인지 확인했으나 fee recipient는 configurable하여 hosted product policy와 contract capability를 구분했다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>023</span>Record 23</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_323&quot;,
+  &quot;text&quot;: &quot;NFT secondary creator earnings는 marketplace policy와 contract enforcement에 따라 optional 또는 enforced가 될 수 있어 고정 매출로 보장되지 않는다.&quot;,
+  &quot;risk&quot;: &quot;normal&quot;,
+  &quot;claim_type&quot;: &quot;descriptive&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_345&quot;,
+    &quot;src_369&quot;
+  ],
+  &quot;counter_search&quot;: &quot;모든 거래에서 royalty가 강제된다는 반대 근거를 공식 정책 변경 기록으로 점검했다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>024</span>Record 24</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_324&quot;,
+  &quot;text&quot;: &quot;Zora의 Base·Robinhood custom pair 1% fee는 creator 0.70%, protocol 0.25%, Doppler 0.05%로 문서화돼 있다.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;numeric&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_342&quot;,
+    &quot;src_347&quot;,
+    &quot;src_349&quot;
+  ],
+  &quot;counter_search&quot;: &quot;일반 coin fee 문서와 custom pair schedule을 구분하고 독립 adapter의 지연 가능성을 함께 확인했다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>025</span>Record 25</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_325&quot;,
+  &quot;text&quot;: &quot;Zora는 current product에서 legacy NFT mint를 deprecated하고 custom-pair creator coins와 multichain distribution으로 이동했다.&quot;,
+  &quot;risk&quot;: &quot;normal&quot;,
+  &quot;claim_type&quot;: &quot;descriptive&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_343&quot;,
+    &quot;src_349&quot;
+  ],
+  &quot;counter_search&quot;: &quot;current NFT mint 지원이 계속된다는 반대 자료를 검색했으나 공식 change log는 deprecation을 명시한다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>026</span>Record 26</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_326&quot;,
+  &quot;text&quot;: &quot;Pump.fun의 current curve schedule은 creation fee 0, swap 1.25% 중 creator 0.30%와 protocol 0.95%, graduation 0.015 SOL을 구분한다.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;numeric&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_350&quot;,
+    &quot;src_353&quot;
+  ],
+  &quot;counter_search&quot;: &quot;공식 schedule을 독립 fee adapter와 대조하고 post-graduation dynamic split을 별도 단계로 분리했다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>027</span>Record 27</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_327&quot;,
+  &quot;text&quot;: &quot;Pump.fun은 curve threshold 뒤 canonical PumpSwap pool로 자동·불가역 migration하지만, 대규모 platform fee가 개별 token의 graduation 또는 보유자 성공을 뜻하지 않는다.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;causal&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_350&quot;,
+    &quot;src_351&quot;,
+    &quot;src_353&quot;,
+    &quot;src_354&quot;,
+    &quot;src_355&quot;
+  ],
+  &quot;counter_search&quot;: &quot;832,941개 launch 표본의 fast-window graduation 하한과 coordinated-wallet 연구를 platform fee 데이터에 대조했다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>028</span>Record 28</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_328&quot;,
+  &quot;text&quot;: &quot;Clanker v3.1의 1% pool fee 중 20% team 구조는 historical model이고 current V4는 선택 creator fee의 20%를 protocol fee로 계산하며 canonical initial pool에 reward를 한정한다.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;numeric&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_356&quot;,
+    &quot;src_357&quot;,
+    &quot;src_362&quot;
+  ],
+  &quot;counter_search&quot;: &quot;v3.1 비율을 current 전체에 적용하는 해석을 current docs 및 독립 activity series와 대조해 버전별로 분리했다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>029</span>Record 29</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_329&quot;,
+  &quot;text&quot;: &quot;Flaunch의 공식 기본 1% swap fee는 referrer·protocol·creator·bid wall 순으로 분배되고 현재 protocol share는 0이지만, pool별 fee-distribution override가 가능하다.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;numeric&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_358&quot;,
+    &quot;src_359&quot;
+  ],
+  &quot;counter_search&quot;: &quot;독립 dashboard의 protocol revenue 표기와 pool override 가능성을 확인해 기본 waterfall만 verified하고 analytics 수치는 별도 unresolved로 격리했다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>030</span>Record 30</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_330&quot;,
+  &quot;text&quot;: &quot;Flaunch는 기존 ERC-20을 import해 launch·liquidity·fee-rights 구조로 연결하는 follow-on 경로와 공개 계약 코드를 제공한다.&quot;,
+  &quot;risk&quot;: &quot;normal&quot;,
+  &quot;claim_type&quot;: &quot;descriptive&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_370&quot;,
+    &quot;src_360&quot;
+  ],
+  &quot;counter_search&quot;: &quot;신규 발행만 가능한지 반대 검색했으나 official import guide와 contracts가 후속 경로를 보여준다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>031</span>Record 31</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_331&quot;,
+  &quot;text&quot;: &quot;source-visible은 production-reusable과 동일하지 않으며 MIT 공개 코드, BSL 제한 코드, SDK·IDL만 공개된 통합 표면을 별도 code-state로 기록해야 한다.&quot;,
+  &quot;risk&quot;: &quot;normal&quot;,
+  &quot;claim_type&quot;: &quot;descriptive&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_344&quot;,
+    &quot;src_348&quot;,
+    &quot;src_352&quot;,
+    &quot;src_359&quot;
+  ],
+  &quot;counter_search&quot;: &quot;저장소 공개만으로 production license가 성립하는지 각 프로젝트의 code·license·product docs를 대조했다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>032</span>Record 32</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_332&quot;,
+  &quot;text&quot;: &quot;자기자본 LP의 실현 fee만 운영사 LP revenue가 될 수 있고, concentrated liquidity의 impermanent loss·range risk·운영비를 차감해야 한다.&quot;,
+  &quot;risk&quot;: &quot;normal&quot;,
+  &quot;claim_type&quot;: &quot;causal&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_311&quot;,
+    &quot;src_312&quot;,
+    &quot;src_317&quot;,
+    &quot;src_318&quot;
+  ],
+  &quot;counter_search&quot;: &quot;fee APR가 무위험 수익이라는 반대 가설을 LP risk 연구와 공식 fee recipient 설명으로 점검했다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>033</span>Record 33</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_333&quot;,
+  &quot;text&quot;: &quot;GIWA의 현재 verified surface는 Sepolia read-only network·node·contract registry이고, test token은 경제적 가치가 없어 DEX·NFT·memecoin fee forecast의 실매출 근거로 쓸 수 없다.&quot;,
+  &quot;risk&quot;: &quot;normal&quot;,
+  &quot;claim_type&quot;: &quot;descriptive&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_301&quot;,
+    &quot;src_303&quot;,
+    &quot;src_307&quot;,
+    &quot;src_309&quot;
+  ],
+  &quot;counter_search&quot;: &quot;public mainnet 및 경제적 token 권한을 반대 검색했으나 현재 공식 자료에서 찾지 못했다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>034</span>Record 34</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_334&quot;,
+  &quot;text&quot;: &quot;GIWA에는 먼저 evidence index와 Pool Passport를 구축하고, public mainnet·canonical assets·감사·법률 gate 뒤 vetted launch, interface fee, protocol fee, memecoin 순으로 단계화하는 것이 현재 근거에 부합한다.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;causal&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_301&quot;,
+    &quot;src_309&quot;,
+    &quot;src_313&quot;,
+    &quot;src_314&quot;,
+    &quot;src_320&quot;,
+    &quot;src_327&quot;,
+    &quot;src_354&quot;,
+    &quot;src_363&quot;
+  ],
+  &quot;counter_search&quot;: &quot;fee-first·permissionless-first 성공 가설을 Uniswap, Aerodrome, Base, Pump 반증 자료와 비교했으며 incentive·법률·사용자 손실 변수를 포함했다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>035</span>Record 35</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_335&quot;,
+  &quot;text&quot;: &quot;Meme launch should be last because volume can rise while graduation quality, market integrity, and user outcomes remain weak.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;causal&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_350&quot;,
+    &quot;src_354&quot;,
+    &quot;src_355&quot;,
+    &quot;src_363&quot;
+  ],
+  &quot;counter_search&quot;: &quot;High platform revenue was checked against launch graduation evidence, coordinated-wallet research, and the facts-specific regulatory boundary.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>036</span>Record 36</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_336&quot;,
+  &quot;text&quot;: &quot;UPAY3D7F&quot;,
+  &quot;proposition&quot;: &quot;GIWA data-subscription willingness to pay and sustainable price points are not established by current public evidence.&quot;,
+  &quot;risk&quot;: &quot;normal&quot;,
+  &quot;claim_type&quot;: &quot;financial&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_306&quot;,
+    &quot;src_315&quot;
+  ],
+  &quot;counter_search&quot;: &quot;Provider availability and fee taxonomies do not establish GIWA customer demand or price elasticity.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: true,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>037</span>Record 37</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_337&quot;,
+  &quot;text&quot;: &quot;URHC8K2Q&quot;,
+  &quot;proposition&quot;: &quot;Robinhood Chain has already demonstrated durable ninety-day product-market fit after public launch.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;causal&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_331&quot;,
+    &quot;src_334&quot;,
+    &quot;src_336&quot;,
+    &quot;src_368&quot;
+  ],
+  &quot;counter_search&quot;: &quot;Only roughly two months of public-mainnet observations were available; early composition, adapter revisions, and unknown gas-sponsorship funding prevent a ninety-day durability conclusion.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: true,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>038</span>Record 38</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_338&quot;,
+  &quot;text&quot;: &quot;UZOR6M4V&quot;,
+  &quot;proposition&quot;: &quot;Zora has one universal creator-coin fee split across every chain and pair type.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;numeric&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_342&quot;,
+    &quot;src_343&quot;,
+    &quot;src_349&quot;
+  ],
+  &quot;counter_search&quot;: &quot;Official help pages distinguish custom pairs, other coin types, interface charges, and product revisions.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: true,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>039</span>Record 39</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_339&quot;,
+  &quot;text&quot;: &quot;UFLA9P5X&quot;,
+  &quot;proposition&quot;: &quot;Flaunch dashboard protocol revenue is fully reconciled with the official zero-percent protocol share.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;financial&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_358&quot;,
+    &quot;src_361&quot;
+  ],
+  &quot;counter_search&quot;: &quot;The cached independent dashboard classification conflicts with the current official fee waterfall and requires event-level reconciliation.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: true,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>040</span>Record 40</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_340&quot;,
+  &quot;text&quot;: &quot;UGIW7C2N&quot;,
+  &quot;proposition&quot;: &quot;GIWA public mainnet launch date and production node hardware requirements are confirmed.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;descriptive&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_301&quot;,
+    &quot;src_303&quot;
+  ],
+  &quot;counter_search&quot;: &quot;Official network and node documents still describe mainnet as upcoming and publish only Sepolia hardware guidance.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: true,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>041</span>Record 41</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_341&quot;,
+  &quot;text&quot;: &quot;RDEX4H8J&quot;,
+  &quot;proposition&quot;: &quot;Gross DEX volume is launchpad operator revenue.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;financial&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_311&quot;,
+    &quot;src_315&quot;
+  ],
+  &quot;counter_search&quot;: &quot;Official fee recipients and independent metric definitions split LP, protocol, holder, interface and incentives.&quot;,
+  &quot;counter_refuted&quot;: true,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>042</span>Record 42</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_342&quot;,
+  &quot;text&quot;: &quot;RPUM5L7B&quot;,
+  &quot;proposition&quot;: &quot;Every Pump.fun token launch successfully graduates to an AMM.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;causal&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_350&quot;,
+    &quot;src_354&quot;,
+    &quot;src_371&quot;
+  ],
+  &quot;counter_search&quot;: &quot;A large-sample preprint reports only a small fast-window graduation lower bound and treats graduation merely as a success proxy.&quot;,
+  &quot;counter_refuted&quot;: true,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>043</span>Record 43</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_343&quot;,
+  &quot;text&quot;: &quot;RLPC2T9W&quot;,
+  &quot;proposition&quot;: &quot;All LP fees belong to the launchpad operator.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;financial&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_311&quot;,
+    &quot;src_313&quot;,
+    &quot;src_315&quot;
+  ],
+  &quot;counter_search&quot;: &quot;Official fee schedules allocate LP or voter revenue independently of the interface or launchpad operator.&quot;,
+  &quot;counter_refuted&quot;: true,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>044</span>Record 44</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_344&quot;,
+  &quot;text&quot;: &quot;RRWA6F3S&quot;,
+  &quot;proposition&quot;: &quot;Robinhood Chain early DEX activity was primarily tokenized-stock trading.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;causal&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_331&quot;,
+    &quot;src_336&quot;
+  ],
+  &quot;counter_search&quot;: &quot;Independent launch-period composition reporting found memecoin and stablecoin activity dominated the early flow.&quot;,
+  &quot;counter_refuted&quot;: true,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details></div></article>
+    </main>
+    <footer>
+      <span>research_only=true</span>
+      <span>strategy_consumption_allowed=false</span>
+      <span>order_input=false</span>
+    </footer>
+  </body>
+</html>

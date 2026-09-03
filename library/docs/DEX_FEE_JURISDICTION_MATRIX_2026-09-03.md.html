@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex,nofollow,noarchive" />
+    <meta name="theme-color" content="#090c0e" />
+    <title>GIWA DEX Fee Jurisdiction Matrix · GIWA Control Room</title>
+    <link rel="stylesheet" href="../../assets/document.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#document">본문으로 바로가기</a>
+    <header class="document-header">
+      <a class="brand" href="../../index.html#research" aria-label="GIWA 대시보드로 돌아가기">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span><strong>GIWA</strong><small>CONTROL ROOM</small></span>
+      </a>
+      <nav aria-label="문서 동작">
+        <a href="../../index.html#research">← 대시보드</a>
+        <a href="https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/docs/DEX_FEE_JURISDICTION_MATRIX_2026-09-03.md" target="_blank" rel="noopener noreferrer">Private GitHub ↗</a>
+      </nav>
+    </header>
+    <main id="document" class="document-shell">
+      <div class="document-meta">
+        <span>REPORT</span>
+        <span>SHA256 da0c836da0b3</span>
+      </div>
+      <h1>GIWA DEX Fee Jurisdiction Matrix</h1>
+      <p class="source-path">docs/DEX_FEE_JURISDICTION_MATRIX_2026-09-03.md</p>
+      <article class="markdown-body"><h1 id="giwa-dex-fee-jurisdiction-matrix">GIWA DEX Fee Jurisdiction Matrix</h1>
+<p>기준일: <strong>2026-09-03 KST</strong><br>
+상태: <strong>research only / no revenue activation</strong></p>
+<h2 id="decision">Decision</h2>
+<p><strong>오스트리아는 확정 1위가 아니라 EU pre-clearance의 첫 후보</strong>입니다. 호주는 창업자가 실제
+운영하는 국가일 때 AUSTRAC·ASIC·세무를 모두 예산화해 선택하고, 독일은 시장·인력 실익이
+평균 약 30%의 결합 법인부담을 상쇄할 때 오스트리아와 병행 비교합니다. 미국은 custody,
+order routing, settlement, leverage, PFOF와 revenue token을 제거한 제한형 self-custodial UI만
+주별 검토 뒤 후순위로 엽니다.</p>
+<h2 id="country-snapshot">Country snapshot</h2>
+<table>
+<thead>
+<tr>
+<th>국가</th>
+<th>현재 핵심선</th>
+<th>세무 headline</th>
+<th>판단</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Austria</td>
+<td>FMA/MiCA, 기존 transition 종료, 인가 후 EU passport</td>
+<td>법인세 23%, seat/place of management</td>
+<td>EU 법률·세무 실사 1번 타자</td>
+</tr>
+<tr>
+<td>Australia</td>
+<td>2026 AML상 crypto↔crypto exchange·arranging도 VASP 가능; ASIC 병행</td>
+<td>25% 적격/30% 기타, central management and control</td>
+<td>실제 운영거점일 때 조건부</td>
+</tr>
+<tr>
+<td>Germany</td>
+<td>BaFin/MiCA, 기존 transition 종료</td>
+<td>법인세·연대부가세·지방 trade tax 평균 약 30%</td>
+<td>시장 실익이 비용보다 클 때</td>
+</tr>
+<tr>
+<td>United States</td>
+<td>SEC 직원견해는 §15 한정·비구속; FinCEN/CFTC/OFAC/주법 별도</td>
+<td>연방 C-corp 21% + 주세·분배</td>
+<td>제한 UI의 후순위 시장</td>
+</tr>
+</tbody>
+</table>
+<h2 id="revenue-ladder">Revenue ladder</h2>
+<ol>
+<li>거래량·route·자산선택과 무관한 fixed B2B development/security/data fee</li>
+<li>현지 의견과 회계정책 뒤 분리된 team own-capital LP</li>
+<li>필요한 등록·인가 뒤 neutral interface 또는 protocol fee</li>
+<li>managed third-party vault와 fee-share/transfer-tax/buyback token은 제외</li>
+</ol>
+<h2 id="hard-stops">Hard stops</h2>
+<ul>
+<li>actor, order-flow, admin-key와 fee-recipient diagram 없는 공식 UI</li>
+<li>오스트리아·독일에서 무인가 EU-facing router 또는 특정 venue rebate</li>
+<li>호주에서 AUSTRAC 46A/50A/50B/50C·ASIC 금융상품 분석 없는 fee UI</li>
+<li>미국에서 custody, order taking/routing, execution, leverage 또는 전국 무차단 공개</li>
+<li>법인 등기지만 바꾸고 실제 경영·key·계약·인력을 다른 국가에 두는 구조</li>
+<li>2027 호주 DAF 또는 미국 계류 법안을 현행 safe harbour로 사용하는 구조</li>
+</ul>
+<h2 id="before-any-revenue">Before any revenue</h2>
+<ul>
+<li>창업자 개인 세무거주와 실제 high-level decision 장소</li>
+<li>법인별 contract/UI/router/LP/treasury 역할</li>
+<li>quote → calldata → signature → broadcast sequence</li>
+<li>token/LP right별 금융상품 분류</li>
+<li>국가별 registration/licence·sanctions·geoblock 의견</li>
+<li>invoice, payer/customer, local-currency FMV와 fee-wallet ledger</li>
+</ul>
+<p>전체 법령·감독자료 78개, 반증검색과 기계검증 결과는
+<a href="../RESEARCH/GIWA_dex_fee_jurisdictions_2026_20260903_144748/outputs/01_full_report/01_report.ko.md.html">strict full report</a>에 있다.</p>
+<p>이 문서는 법률·세무·이민·투자 자문이 아니다. 실제 체류·법인·기능 사실을 넣은 현지
+서면의견 전에는 배포·수익수취·LP·토큰발행을 하지 않는다.</p></article>
+    </main>
+    <footer>
+      <span>research_only=true</span>
+      <span>strategy_consumption_allowed=false</span>
+      <span>order_input=false</span>
+    </footer>
+  </body>
+</html>

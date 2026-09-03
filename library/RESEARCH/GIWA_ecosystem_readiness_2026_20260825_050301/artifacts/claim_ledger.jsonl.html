@@ -1,0 +1,842 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex,nofollow,noarchive" />
+    <meta name="theme-color" content="#090c0e" />
+    <title>claim_ledger.jsonl · GIWA Control Room</title>
+    <link rel="stylesheet" href="../../../../assets/document.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#document">본문으로 바로가기</a>
+    <header class="document-header">
+      <a class="brand" href="../../../../index.html#research" aria-label="GIWA 대시보드로 돌아가기">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span><strong>GIWA</strong><small>CONTROL ROOM</small></span>
+      </a>
+      <nav aria-label="문서 동작">
+        <a href="../../../../index.html#research">← 대시보드</a>
+        <a href="https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/RESEARCH/GIWA_ecosystem_readiness_2026_20260825_050301/artifacts/claim_ledger.jsonl" target="_blank" rel="noopener noreferrer">Private GitHub ↗</a>
+      </nav>
+    </header>
+    <main id="document" class="document-shell">
+      <div class="document-meta">
+        <span>EVIDENCE LEDGER</span>
+        <span>SHA256 872690f1eb94</span>
+      </div>
+      <h1>claim_ledger.jsonl</h1>
+      <p class="source-path">RESEARCH/GIWA_ecosystem_readiness_2026_20260825_050301/artifacts/claim_ledger.jsonl</p>
+      <article class="structured-body"><div class="record-list"><details class="record" open><summary><span>001</span>Record 1</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_001&quot;,
+  &quot;text&quot;: &quot;2026-08-25 현재 일반 개발자가 공식적으로 연결할 수 있는 GIWA 네트워크는 GIWA Sepolia 테스트넷이며, 공개 메인넷과 GIWA Wallet은 아직 개발 중이다.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;descriptive&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_001&quot;,
+    &quot;src_002&quot;,
+    &quot;src_043&quot;
+  ],
+  &quot;counter_search&quot;: &quot;공개 메인넷 출시, RPC, 익스플로러 및 mainnet 설정을 공식 문서, 공식 GitHub, Optimism 파트너 발표에서 역검색했으나 현재 공개 메인넷 근거는 찾지 못했다. GASOK의 private mainnet 단계는 공개 메인넷과 구분했다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>002</span>Record 2</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_002&quot;,
+  &quot;text&quot;: &quot;GIWA Sepolia는 OP Stack 기반 EVM-equivalent L2이고 체인 ID는 91342이며 약 1초 블록을 생성하는 살아 있는 테스트넷이다.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;numeric&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_003&quot;,
+    &quot;src_004&quot;,
+    &quot;src_010&quot;,
+    &quot;src_041&quot;
+  ],
+  &quot;counter_search&quot;: &quot;잘못된 체인 ID, 중단된 체인, 다른 블록 시간 가능성을 공식 메타데이터와 두 읽기 전용 엔드포인트에서 대조했다. RPC와 익스플로러 모두 최신 블록을 제공했고 체인 ID가 일치했다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>003</span>Record 3</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_003&quot;,
+  &quot;text&quot;: &quot;GIWA Sepolia에는 2026-07-06 Karst Upgrade 19가 적용되었고 현재 공식 노드 경로는 op-reth와 kona-client이며 op-geth는 지원 대상이 아니다.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;descriptive&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_002&quot;,
+    &quot;src_003&quot;,
+    &quot;src_005&quot;,
+    &quot;src_006&quot;,
+    &quot;src_038&quot;
+  ],
+  &quot;counter_search&quot;: &quot;공식 공지의 예정 일정이 실제 실행되지 않았을 가능성을 chain-operations 실행 아티팩트와 현재 RPC clientVersion으로 반증 검색했다. 둘 다 Karst 이후 op-reth 경로와 일치했다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>004</span>Record 4</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_004&quot;,
+  &quot;text&quot;: &quot;GIWA Sepolia에서는 표준 Solidity와 Foundry 또는 Hardhat으로 ERC-20 토큰 컨트랙트를 개발, 테스트, 배포, 검증할 수 있다.&quot;,
+  &quot;risk&quot;: &quot;normal&quot;,
+  &quot;claim_type&quot;: &quot;descriptive&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_004&quot;,
+    &quot;src_008&quot;,
+    &quot;src_028&quot;
+  ],
+  &quot;counter_search&quot;: &quot;공식 토큰 발행 가이드가 문서 예시에만 머무는지 확인하기 위해 Blockscout의 제3자 검증 ERC-20 및 launchpad 배포를 대조했다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>005</span>Record 5</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_005&quot;,
+  &quot;text&quot;: &quot;GIWA Sepolia에는 GIWA가 운영하지 않는 제3자 토큰 런치패드와 AMM 스택이 실제 배포되어 있으며 Joseon과 Notus의 핵심 컨트랙트는 Blockscout에서 소스 검증되어 있다.&quot;,
+  &quot;risk&quot;: &quot;normal&quot;,
+  &quot;claim_type&quot;: &quot;descriptive&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_004&quot;,
+    &quot;src_025&quot;,
+    &quot;src_028&quot;
+  ],
+  &quot;counter_search&quot;: &quot;프런트엔드 주장만 존재하거나 주소에 코드가 없을 가능성을 explorer API와 표준 RPC eth_getCode로 확인했다. 해당 주소의 코드와 source-verification 상태가 확인되었다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>006</span>Record 6</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_006&quot;,
+  &quot;text&quot;: &quot;Joseon.fun의 2026-07-28 스택은 테스트넷에서 소스 검증되었지만 외부 감사를 받지 않았고 관리자 키가 단일 지갑이며 해당 스택의 실전 graduation 증거도 아직 없다.&quot;,
+  &quot;risk&quot;: &quot;normal&quot;,
+  &quot;claim_type&quot;: &quot;descriptive&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_004&quot;,
+    &quot;src_025&quot;,
+    &quot;src_026&quot;,
+    &quot;src_027&quot;
+  ],
+  &quot;counter_search&quot;: &quot;감사 보고서, 멀티시그 전환, 현재 스택 graduation 증거를 제품 문서와 explorer에서 찾았으나 공개 근거가 없었고 운영자가 이를 known gap으로 명시했다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>007</span>Record 7</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_007&quot;,
+  &quot;text&quot;: &quot;Notus는 GIWA Sepolia에 검증된 bonding-curve launchpad를 배포했지만 GIWA용 DEX migrator, 실지갑 E2E, 메인넷 permission 정책, 법률 검토와 라이선스 결정이 완료되지 않았다.&quot;,
+  &quot;risk&quot;: &quot;normal&quot;,
+  &quot;claim_type&quot;: &quot;descriptive&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_004&quot;,
+    &quot;src_028&quot;
+  ],
+  &quot;counter_search&quot;: &quot;README의 완료표시를 explorer와 대조하고 저장소 metadata, TODO, license 필드를 확인했다. 배포와 소스 검증은 확인되었으나 열거된 준비 항목은 미완료였다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>008</span>Record 8</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_008&quot;,
+  &quot;text&quot;: &quot;Dojang은 EAS 기반의 공식 GIWA 신뢰 계층으로 테스트넷 컨트랙트, 스키마, 공개 소스와 배포 주소용 TypeScript 패키지가 제공된다.&quot;,
+  &quot;risk&quot;: &quot;normal&quot;,
+  &quot;claim_type&quot;: &quot;descriptive&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_003&quot;,
+    &quot;src_012&quot;,
+    &quot;src_013&quot;,
+    &quot;src_014&quot;,
+    &quot;src_015&quot;
+  ],
+  &quot;counter_search&quot;: &quot;문서만 있고 코드나 배포가 없는지 확인하기 위해 공식 GitHub, npm registry, RPC bytecode를 대조했으며 모두 존재했다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>009</span>Record 9</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_009&quot;,
+  &quot;text&quot;: &quot;Upbit Web3 Names는 ENS 기반 username.up.id이며 Verified Address에 종속되고 양도할 수 없는 지갑별 단일 이름으로 설계되어 있다.&quot;,
+  &quot;risk&quot;: &quot;normal&quot;,
+  &quot;claim_type&quot;: &quot;descriptive&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_016&quot;,
+    &quot;src_030&quot;
+  ],
+  &quot;counter_search&quot;: &quot;일반 ENS 이름처럼 자유 양도되거나 KYC 자체를 증명한다는 해석을 역검색했다. 공식 문서는 SBT와 Verified Address 종속성을 명시하고, 독립 구현은 이를 identity hint로만 취급한다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>010</span>Record 10</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_010&quot;,
+  &quot;text&quot;: &quot;Pyth는 GIWA Sepolia에서 0x2880ab155794e7179c9ee2e38200202908c17b43 컨트랙트로 사용할 수 있고 해당 주소에는 현재 바이트코드가 존재한다.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;numeric&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_003&quot;,
+    &quot;src_017&quot;,
+    &quot;src_018&quot;
+  ],
+  &quot;counter_search&quot;: &quot;주소 변경 또는 문서 불일치 가능성을 GIWA와 Pyth의 현재 문서 및 실시간 eth_getCode로 대조했고 세 근거가 같은 주소를 지지했다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>011</span>Record 11</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_011&quot;,
+  &quot;text&quot;: &quot;RedStone은 GIWA Sepolia에서 push 및 pull oracle 통합 경로를 제공한다고 GIWA와 RedStone 양측이 문서화하고 있다.&quot;,
+  &quot;risk&quot;: &quot;normal&quot;,
+  &quot;claim_type&quot;: &quot;descriptive&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_017&quot;,
+    &quot;src_019&quot;
+  ],
+  &quot;counter_search&quot;: &quot;GIWA 문서의 제3자 정보 경고를 반영해 RedStone 자체 발표와 대조했다. 메인넷 지원이나 감사 수준까지 확장하는 근거는 찾지 못했다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>012</span>Record 12</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_012&quot;,
+  &quot;text&quot;: &quot;Nodit은 GIWA가 현재 공식 문서에 열거한 GIWA Sepolia 노드 및 데이터 API 제공자이고 Nodit 측 문서에도 같은 테스트넷 지원이 있다.&quot;,
+  &quot;risk&quot;: &quot;normal&quot;,
+  &quot;claim_type&quot;: &quot;descriptive&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_021&quot;,
+    &quot;src_022&quot;
+  ],
+  &quot;counter_search&quot;: &quot;GIWA 쪽 단방향 목록이 오래되었을 가능성을 Nodit 최신 개발자 문서에서 확인했고 GIWA Sepolia 항목이 유지되고 있었다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>013</span>Record 13</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_013&quot;,
+  &quot;text&quot;: &quot;GIWA Sepolia에는 공식 OP Stack 표준 브리지 및 메시징 컨트랙트가 배포되어 있고 공식 문서는 Superbridge 기반 테스트넷 UI를 안내한다.&quot;,
+  &quot;risk&quot;: &quot;normal&quot;,
+  &quot;claim_type&quot;: &quot;descriptive&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_003&quot;,
+    &quot;src_009&quot;,
+    &quot;src_023&quot;
+  ],
+  &quot;counter_search&quot;: &quot;문서 주소가 비어 있거나 메인넷 전용일 가능성을 eth_getCode로 대조했으며 L2StandardBridge와 L2CrossDomainMessenger에 코드가 존재했다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>014</span>Record 14</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_014&quot;,
+  &quot;text&quot;: &quot;GASOK의 2026년 공개 로드맵은 6~7월 테스트넷 MVP, 8~9월 제품화와 private mainnet 배포, 10월 데모데이 순서이므로 현재는 공개 메인넷 운영보다 출시 준비 단계로 보는 것이 타당하다.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;descriptive&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_001&quot;,
+    &quot;src_024&quot;,
+    &quot;src_031&quot;,
+    &quot;src_043&quot;
+  ],
+  &quot;counter_search&quot;: &quot;이미 공개 메인넷이 열렸거나 private mainnet이 곧바로 public launch를 뜻하는지 역검색했다. 현재 공식 연결 문서는 mainnet under development이고 파트너 발표도 mainnet planned로만 표현한다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>015</span>Record 15</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_015&quot;,
+  &quot;text&quot;: &quot;GIWA Sepolia는 경제적 가치가 없는 테스트 환경이며 리셋, 롤백, 중단 또는 종료 가능성이 있어 실제 자산과 운영 의존성을 두면 안 된다.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;legal&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_007&quot;,
+    &quot;src_026&quot;,
+    &quot;src_028&quot;
+  ],
+  &quot;counter_search&quot;: &quot;지속 운영 보장, 경제적 가치, 프로덕션 SLA 또는 실자산 허용 근거를 공식 약관과 주요 제3자 프로젝트 문서에서 찾았으나 반대 근거만 확인되었다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>016</span>Record 16</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_016&quot;,
+  &quot;text&quot;: &quot;GIWA의 공식 계획은 별도 네이티브 GIWA 토큰을 만들지 않고 ETH를 가스 자산으로 사용하는 것이며, 독립 프로젝트의 $GIWA 표시는 공식 토큰 근거가 아니다.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;descriptive&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_041&quot;,
+    &quot;src_042&quot;,
+    &quot;src_045&quot;
+  ],
+  &quot;counter_search&quot;: &quot;공식 토큰 발행, 토크노믹스, 컨트랙트 주소 또는 에어드롭 공지를 역검색했다. 공식 FAQ와 체인 메타데이터는 ETH를 지지하고, $GIWA 홍보 사이트는 스스로 비제휴라고 명시한다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>017</span>Record 17</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_017&quot;,
+  &quot;text&quot;: &quot;GASOK 선발, 지원금 또는 지갑 탑재 기회는 Upbit의 디지털 자산 거래지원 여부를 의미하지 않는다.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;legal&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_007&quot;,
+    &quot;src_024&quot;
+  ],
+  &quot;counter_search&quot;: &quot;GASOK 혜택이 상장 약속이나 거래소 연계를 뜻하는지 공식 안내와 테스트넷 약관에서 대조했다. 두 자료 모두 그러한 보장을 부정한다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>018</span>Record 18</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_018&quot;,
+  &quot;text&quot;: &quot;현재 GIWA 노드를 준비할 때 스냅샷 문서의 Geth 경로는 사용하지 말고 최신 공식 node 저장소의 op-reth 경로를 따라야 한다.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;descriptive&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_002&quot;,
+    &quot;src_038&quot;,
+    &quot;src_039&quot;
+  ],
+  &quot;counter_search&quot;: &quot;스냅샷 페이지의 Geth 항목이 여전히 유효한지 최신 공지와 node README를 대조했다. 두 최신 근거는 Karst 이후 op-geth가 canonical chain을 따를 수 없다고 명시한다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>019</span>Record 19</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_019&quot;,
+  &quot;text&quot;: &quot;GIWA는 현재 단일 시퀀서, Self-Managed 운영 모델과 permissioned fault proof를 사용하므로 앱의 안전 설계는 unsafe, safe, finalized 상태와 운영자 권한을 명시적으로 구분해야 한다.&quot;,
+  &quot;risk&quot;: &quot;normal&quot;,
+  &quot;claim_type&quot;: &quot;descriptive&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_005&quot;,
+    &quot;src_006&quot;,
+    &quot;src_010&quot;,
+    &quot;src_043&quot;
+  ],
+  &quot;counter_search&quot;: &quot;permissionless fault proof나 다중 시퀀서가 현재 적용되었다는 근거를 공식 자료에서 찾았으나 현재 문서는 permissioned 및 sequencer 모델을 명시한다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>020</span>Record 20</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_020&quot;,
+  &quot;text&quot;: &quot;GIWA Sepolia는 Safe, Multicall3, deterministic deployers, Permit2, ERC-4337 EntryPoints, EAS와 OP Stack bridge primitives를 제공하며 주요 주소에는 실제 코드가 있다.&quot;,
+  &quot;risk&quot;: &quot;normal&quot;,
+  &quot;claim_type&quot;: &quot;descriptive&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_003&quot;,
+    &quot;src_009&quot;
+  ],
+  &quot;counter_search&quot;: &quot;주소 표만 있고 배포가 없을 가능성을 대표 시스템 컨트랙트와 EntryPoint의 eth_getCode로 확인했다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>021</span>Record 21</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_021&quot;,
+  &quot;text&quot;: &quot;공식 standard 및 Flashblocks RPC는 개발용 rate-limited endpoint이므로 지속 수집이나 서비스 준비에는 자체 op-reth 노드 또는 외부 제공자를 전제로 해야 한다.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;descriptive&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_001&quot;,
+    &quot;src_002&quot;,
+    &quot;src_003&quot;,
+    &quot;src_011&quot;,
+    &quot;src_021&quot;
+  ],
+  &quot;counter_search&quot;: &quot;공개 RPC에 production SLA나 무제한 사용 보장이 있는지 확인했으나 공식 문서는 반복해서 개발 전용과 rate limit을 명시한다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>022</span>Record 22</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_022&quot;,
+  &quot;text&quot;: &quot;GiwaIntent는 Dojang과 up.id를 실제 앱 설계에 결합한 공개 GIWA Sepolia 예시이며 두 핵심 컨트랙트가 Blockscout에서 검증되어 있다.&quot;,
+  &quot;risk&quot;: &quot;normal&quot;,
+  &quot;claim_type&quot;: &quot;descriptive&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_004&quot;,
+    &quot;src_030&quot;
+  ],
+  &quot;counter_search&quot;: &quot;저장소 주장만 있고 배포나 검증이 없을 가능성을 두 컨트랙트의 explorer API로 대조해 fully verified 상태를 확인했다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>023</span>Record 23</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_023&quot;,
+  &quot;text&quot;: &quot;giwa-dex.vercel.app은 GIWA Sepolia에서 한 개의 ETH-INDSR 페어만 다루는 제3자 데모이며 연결된 AMM과 토큰 소스는 Blockscout에서 검증되지 않아 재사용 기준을 충족하지 못한다.&quot;,
+  &quot;risk&quot;: &quot;normal&quot;,
+  &quot;claim_type&quot;: &quot;descriptive&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_004&quot;,
+    &quot;src_029&quot;
+  ],
+  &quot;counter_search&quot;: &quot;범용 factory, 다중 pair, 검증 소스 또는 최근 유지보수 근거를 저장소와 explorer에서 확인했으나 찾지 못했고, 고정 주소와 미검증 상태만 확인되었다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>024</span>Record 24</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;unr_001&quot;,
+  &quot;text&quot;: &quot;HYPX01A&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;descriptive&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_001&quot;,
+    &quot;src_024&quot;,
+    &quot;src_043&quot;
+  ],
+  &quot;counter_search&quot;: &quot;공식 public-mainnet 날짜가 확정됐다는 가설을 연결 문서, GASOK 일정, Optimism 발표에서 확인했지만 private mainnet, planned, under development 표현만 있었다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: true,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>025</span>Record 25</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;unr_002&quot;,
+  &quot;text&quot;: &quot;HYPX02B&quot;,
+  &quot;risk&quot;: &quot;normal&quot;,
+  &quot;claim_type&quot;: &quot;descriptive&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_046&quot;
+  ],
+  &quot;counter_search&quot;: &quot;GIWA가 현재 공식 DEX 또는 token launchpad를 운영한다는 가설을 문서 인덱스와 공개 저장소에서 검색했지만 제품 페이지를 찾지 못했다. 부재 증거이므로 단정하지 않는다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>026</span>Record 26</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;unr_003&quot;,
+  &quot;text&quot;: &quot;HYPX03C&quot;,
+  &quot;risk&quot;: &quot;normal&quot;,
+  &quot;claim_type&quot;: &quot;descriptive&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_033&quot;,
+    &quot;src_034&quot;,
+    &quot;src_035&quot;
+  ],
+  &quot;counter_search&quot;: &quot;Toolkit, Upbit Oracle, generic cross-chain이 현재 usable API 또는 contract를 제공한다는 가설을 각 페이지에서 확인했으나 제목 외 구현 세부, 버전, 주소, API가 없었다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>027</span>Record 27</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;unr_004&quot;,
+  &quot;text&quot;: &quot;HYPX04D&quot;,
+  &quot;risk&quot;: &quot;normal&quot;,
+  &quot;claim_type&quot;: &quot;descriptive&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_036&quot;,
+    &quot;src_037&quot;
+  ],
+  &quot;counter_search&quot;: &quot;Security Council과 public bug bounty의 운영 세부가 완성됐다는 가설을 공식 보안 페이지에서 확인했지만 구성원, 임계값, 권한, 범위, 보상, 보고 절차가 없었다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>028</span>Record 28</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;unr_005&quot;,
+  &quot;text&quot;: &quot;HYPX05E&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;numeric&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_024&quot;,
+    &quot;src_032&quot;
+  ],
+  &quot;counter_search&quot;: &quot;공식 GASOK selected-team roster와 applicant count가 완전하다는 가설을 확인했지만 공식 페이지에는 명단·수치가 없고 커뮤니티 디렉터리는 내부 불일치가 있었다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: true,
+  &quot;primary_source&quot;: false
+}</code></pre></details><details class="record"><summary><span>029</span>Record 29</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;unr_006&quot;,
+  &quot;text&quot;: &quot;HYPX06F&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;descriptive&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_001&quot;,
+    &quot;src_017&quot;,
+    &quot;src_024&quot;,
+    &quot;src_031&quot;
+  ],
+  &quot;counter_search&quot;: &quot;mainnet liquidity venue, canonical stablecoin, production oracle 주소가 확정됐다는 가설을 검색했지만 대부분 testnet 또는 future/private-mainnet 표현이고 주소 세트를 찾지 못했다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: true,
+  &quot;primary_source&quot;: false
+}</code></pre></details><details class="record"><summary><span>030</span>Record 30</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;unr_007&quot;,
+  &quot;text&quot;: &quot;HYPX07G&quot;,
+  &quot;risk&quot;: &quot;normal&quot;,
+  &quot;claim_type&quot;: &quot;descriptive&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_020&quot;
+  ],
+  &quot;counter_search&quot;: &quot;Chainlink Data Streams가 GIWA 공식 oracle matrix에 포함된다는 가설을 확인했으나 제공자 changelog와 GIWA 현재 문서 범위가 달라 추가 확인이 필요하다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>031</span>Record 31</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;ref_001&quot;,
+  &quot;text&quot;: &quot;REJX01A&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;descriptive&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_041&quot;,
+    &quot;src_042&quot;,
+    &quot;src_045&quot;
+  ],
+  &quot;counter_search&quot;: &quot;공식 native GIWA token 선매수가 필요하다는 가설은 FAQ가 자체 토큰 계획을 부정하고 ETH를 native asset으로 명시해 반박됐다. 반대 사이트도 비제휴를 표시한다.&quot;,
+  &quot;counter_refuted&quot;: true,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>032</span>Record 32</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;ref_002&quot;,
+  &quot;text&quot;: &quot;REJX02B&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;legal&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_007&quot;,
+    &quot;src_024&quot;
+  ],
+  &quot;counter_search&quot;: &quot;GASOK 참여·지원이 Upbit listing을 보장한다는 가설은 공식 안내와 테스트넷 약관이 거래지원과 무관하다고 명시해 반박됐다.&quot;,
+  &quot;counter_refuted&quot;: true,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>033</span>Record 33</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;ref_003&quot;,
+  &quot;text&quot;: &quot;REJX03C&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;causal&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_004&quot;,
+    &quot;src_044&quot;
+  ],
+  &quot;counter_search&quot;: &quot;큰 transaction counter가 같은 수의 사람과 경제 채택을 증명한다는 가설은 자동화·테스트 활동과 unique-user, value, retention 방법론 부재로 반박됐다.&quot;,
+  &quot;counter_refuted&quot;: true,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>034</span>Record 34</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;ref_004&quot;,
+  &quot;text&quot;: &quot;REJX04D&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;descriptive&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_002&quot;,
+    &quot;src_038&quot;,
+    &quot;src_039&quot;
+  ],
+  &quot;counter_search&quot;: &quot;현재 Karst에서 op-geth가 지원된다는 가설은 최신 sunset 공지와 node README의 지원 종료·비호환 문구로 반박됐다.&quot;,
+  &quot;counter_refuted&quot;: true,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>035</span>Record 35</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_024&quot;,
+  &quot;text&quot;: &quot;Pump.fun형 플랫폼의 핵심은 토큰 생성, virtual constant-product bonding curve의 즉시 매매, 완료 조건, 실제 자산을 가진 canonical AMM으로의 단방향 graduation이며 EVM에서는 이를 factory, curve, migrator, AMM으로 분리 구현할 수 있다.&quot;,
+  &quot;risk&quot;: &quot;normal&quot;,
+  &quot;claim_type&quot;: &quot;descriptive&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_047&quot;,
+    &quot;src_048&quot;,
+    &quot;src_049&quot;,
+    &quot;src_010&quot;,
+    &quot;src_025&quot;,
+    &quot;src_028&quot;
+  ],
+  &quot;counter_search&quot;: &quot;단순 ERC-20 factory만으로 Pump.fun 기능이 완성되는지 역검색했다. 공식 Pump 문서와 GIWA 외부 구현 모두 pricing curve, 매매, 완료 상태, migrator, AMM과 fee/admin surface가 별도 필요함을 보였다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>036</span>Record 36</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_025&quot;,
+  &quot;text&quot;: &quot;HYPX25Y&quot;,
+  &quot;risk&quot;: &quot;normal&quot;,
+  &quot;claim_type&quot;: &quot;numeric&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_055&quot;,
+    &quot;src_056&quot;
+  ],
+  &quot;counter_search&quot;: &quot;한 Pump.fun 사전논문의 2025-09 표본은 생성 655,770개 중 4,338개가 protocol-defined graduation했다고 보고하지만, 같은 arxiv.org 출처군의 다른 연구는 별도 시기·질문을 다룬다. 독립 재현이 없어 정확한 비율은 본문 합성에서 제외한다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>037</span>Record 37</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_026&quot;,
+  &quot;text&quot;: &quot;한국 이용자를 대상으로 토큰 매매·교환 또는 그 중개·알선을 영업으로 제공하는 플랫폼은 가상자산사업자 범위에 들어갈 상당한 가능성이 있어, 비수탁 프런트엔드나 스마트컨트랙트라는 이유만으로 신고·ISMS·AML 검토를 생략할 수 없다.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;legal&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_050&quot;,
+    &quot;src_051&quot;,
+    &quot;src_052&quot;
+  ],
+  &quot;counter_search&quot;: &quot;탈중앙화 또는 비수탁이면 자동 면제된다는 공식 근거를 찾았으나 확보하지 못했다. 법률은 기능 중심 행위 유형을 열거하고 당국은 한국 대상 해외 사업자에도 신고 의무가 적용된다고 설명한다. 정확한 적용은 서비스 구조별 법률 의견이 필요하다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>038</span>Record 38</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_027&quot;,
+  &quot;text&quot;: &quot;GIWA에는 1초 EVM 테스트넷, 빠른 preconfirmation, 표준 컨트랙트, Dojang과 up.id, 실제 제3자 curve·AMM 배포가 있어 신뢰 표식을 붙인 Pump.fun형 testnet prototype에는 조건부 적합하지만 공개 mainnet, 공식 wallet, canonical liquidity와 운영 보안이 없어 실자산 onboarding에는 아직 부적합하다.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;causal&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_001&quot;,
+    &quot;src_003&quot;,
+    &quot;src_009&quot;,
+    &quot;src_011&quot;,
+    &quot;src_012&quot;,
+    &quot;src_016&quot;,
+    &quot;src_024&quot;,
+    &quot;src_025&quot;,
+    &quot;src_026&quot;,
+    &quot;src_028&quot;,
+    &quot;src_033&quot;,
+    &quot;src_034&quot;,
+    &quot;src_035&quot;,
+    &quot;src_036&quot;,
+    &quot;src_037&quot;,
+    &quot;src_043&quot;,
+    &quot;src_046&quot;
+  ],
+  &quot;counter_search&quot;: &quot;처리속도만으로 launch readiness가 충족되는지 검토했지만 wallet, public mainnet, graduation venue, liquidity, governance/security documentation과 legal operation이 별도 blocker임을 확인했다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>039</span>Record 39</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_028&quot;,
+  &quot;text&quot;: &quot;2026-08-25 05:43 KST .fun registry RDAP 실측에서 gazua.fun은 등록 상태였고 gaboja.fun, tteoksang.fun, buljang.fun, ssonda.fun, dalryeo.fun, ollaga.fun은 등록 가능 응답을 받았다.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;numeric&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_054&quot;,
+    &quot;src_072&quot;
+  ],
+  &quot;counter_search&quot;: &quot;DNS 부재만 보지 않고 authoritative registry RDAP과 별도의 public RDAP bootstrap 경로에서 각 후보를 재확인했다. 가용성은 즉시 변하며 가격, premium/reserved 여부, 상표권과 실제 결제 성공을 보장하지 않는다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>040</span>Record 40</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_029&quot;,
+  &quot;text&quot;: &quot;Pump.fun형 플랫폼은 스마트컨트랙트 외에도 토큰 이름·이미지·링크·댓글·라이브 콘텐츠의 사칭, 불법·유해물과 신고 처리를 다루는 상시 moderation 운영이 필요하다.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;causal&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_053&quot;,
+    &quot;src_055&quot;
+  ],
+  &quot;counter_search&quot;: &quot;온체인 코드만 운영하면 된다는 가정을 공식 Pump 운영 공지와 launch churn 연구로 역검색했다. 공식 공지는 하루 수백 개 stream 삭제를 언급해 별도 운영면을 확인시킨다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>041</span>Record 41</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;unr_008&quot;,
+  &quot;text&quot;: &quot;HYPX08H&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;legal&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_050&quot;,
+    &quot;src_051&quot;,
+    &quot;src_052&quot;
+  ],
+  &quot;counter_search&quot;: &quot;정확한 arrangement에 binding classification이 있다는 가설을 검토했지만 컨트랙트, 운영주체, 수수료, 한국 대상성, custody 및 UI에 대한 개별 법률 의견은 없다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: true,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>042</span>Record 42</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;unr_009&quot;,
+  &quot;text&quot;: &quot;HYPX09I&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;predictive&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_024&quot;,
+    &quot;src_043&quot;,
+    &quot;src_044&quot;,
+    &quot;src_055&quot;
+  ],
+  &quot;counter_search&quot;: &quot;연말 수요가 확실히 폭발한다는 가설을 검토했다. productization, private-mainnet, Demo Day는 촉매지만 public-mainnet 날짜·wallet·liquidity와 실제 사용자가 없어 확정할 수 없다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: true,
+  &quot;primary_source&quot;: false
+}</code></pre></details><details class="record"><summary><span>043</span>Record 43</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;unr_010&quot;,
+  &quot;text&quot;: &quot;HYPX10J&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;legal&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_054&quot;
+  ],
+  &quot;counter_search&quot;: &quot;모든 naming encumbrance가 해소됐다는 가설을 검토했지만 RDAP은 도메인 객체만 확인한다. 상표, 법인·서비스명, SNS handle, premium price와 checkout은 별도다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>044</span>Record 44</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;ref_005&quot;,
+  &quot;text&quot;: &quot;REJX05E&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;causal&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_001&quot;,
+    &quot;src_007&quot;,
+    &quot;src_024&quot;,
+    &quot;src_026&quot;,
+    &quot;src_027&quot;,
+    &quot;src_050&quot;,
+    &quot;src_051&quot;
+  ],
+  &quot;counter_search&quot;: &quot;단일 기술 속성이 commercial readiness에 충분하다는 가설은 wallet, public mainnet, liquidity, audit, governance, moderation, compliance와 operations를 대조해 반박됐다.&quot;,
+  &quot;counter_refuted&quot;: true,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>045</span>Record 45</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;ref_006&quot;,
+  &quot;text&quot;: &quot;REJX06F&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;legal&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_054&quot;
+  ],
+  &quot;counter_search&quot;: &quot;registry vacancy가 exclusive naming rights를 준다는 가설은 available 응답이 상표, 부정경쟁, 서비스명, SNS 계정이나 결제 성공을 보장하지 않아 반박됐다.&quot;,
+  &quot;counter_refuted&quot;: true,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>046</span>Record 46</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_030&quot;,
+  &quot;text&quot;: &quot;X 직접 페이지는 비로그인 연구 수집에서 제한되었고 공개 미러도 동적·불완전하므로, 이번 반응 연구는 계정 국적이 아니라 한국어·영어·중국어·일본어 공개 담론의 목적표집이며 조회수·팔로워·좋아요를 채택 지표로 사용하지 않는다.&quot;,
+  &quot;risk&quot;: &quot;normal&quot;,
+  &quot;claim_type&quot;: &quot;descriptive&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_057&quot;,
+    &quot;src_058&quot;,
+    &quot;src_069&quot;,
+    &quot;src_070&quot;
+  ],
+  &quot;counter_search&quot;: &quot;X 타임라인 전체와 안정된 국가별 표본을 확보할 수 있는지 직접 URL, 검색 인덱스와 미러를 재확인했지만 접근 제한·동적 카운터·작성자 위치 부재가 남았다. 따라서 대표 여론이나 국가별 비율을 산출하지 않았다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>047</span>Record 47</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_031&quot;,
+  &quot;text&quot;: &quot;표집한 한국어권 공개 담론은 업비트의 국내 유통력과 한국 빌더 생태계를 GIWA의 잠재 레버리지로 보면서도, 실제 지갑 채택과 명확한 체인 정체성·킬러앱이 아직 증명되지 않았다는 경계도 함께 제기한다.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;causal&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_024&quot;,
+    &quot;src_061&quot;,
+    &quot;src_062&quot;,
+    &quot;src_071&quot;
+  ],
+  &quot;counter_search&quot;: &quot;한국 담론이 일방적 낙관인지 확인하기 위해 공식 프로그램, 산업 기사와 비판적 장문 의견을 함께 읽었다. 프로그램·기관 파트너십 기대와 기존 Web3 wallet 채택 부진·정체성 미확정이 동시에 확인됐다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>048</span>Record 48</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_032&quot;,
+  &quot;text&quot;: &quot;표집한 영어권 공개 담론은 공식·주류 보도에서 OP Stack 기업 인프라와 글로벌 개발자 확장을 강조하는 반면, X 인접 재유통층에서는 testnet interaction과 미확정 airdrop 선점 언어가 두드러져 두 층을 분리해 해석해야 한다.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;causal&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_043&quot;,
+    &quot;src_044&quot;,
+    &quot;src_057&quot;,
+    &quot;src_059&quot;,
+    &quot;src_060&quot;,
+    &quot;src_070&quot;
+  ],
+  &quot;counter_search&quot;: &quot;영어권 보도가 모두 airdrop 중심인지, 모두 enterprise 중심인지 양방향으로 검색했다. Optimism·CoinDesk는 infrastructure를, social index는 early-user tasks를 강조해 단일 정서로 합칠 수 없었다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>049</span>Record 49</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_033&quot;,
+  &quot;text&quot;: &quot;표집한 중국어권 자료는 GIWA를 faucet·bridge·UP.ID 같은 상호작용 과제로 빠르게 유통하는 층과, 무자체토큰 L2·스테이블코인·거래소 인프라 전략으로 분석하는 층으로 나뉘며 실제 중국 사용자 채택을 측정한 근거는 아니다.&quot;,
+  &quot;risk&quot;: &quot;normal&quot;,
+  &quot;claim_type&quot;: &quot;descriptive&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_063&quot;,
+    &quot;src_064&quot;,
+    &quot;src_070&quot;
+  ],
+  &quot;counter_search&quot;: &quot;중국어 자료가 단순 farming만 다루는지 전략 분석도 있는지 대조했다. 두 유형이 모두 존재하지만 작성자 소재지와 중국 본토 사용자 수는 검증되지 않았다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: false
+}</code></pre></details><details class="record"><summary><span>050</span>Record 50</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_034&quot;,
+  &quot;text&quot;: &quot;표집한 일본어권 자료는 대규모 열광보다 테스트넷 사용법, 전용 지갑, 자체 토큰 부재와 현재 기능 제한을 강조하는 실용적·신중한 성격이 강하고, 현지화 기사도 일본 채택보다 GIWA의 해외 홍보 활동을 보도한다.&quot;,
+  &quot;risk&quot;: &quot;normal&quot;,
+  &quot;claim_type&quot;: &quot;descriptive&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_065&quot;,
+    &quot;src_066&quot;,
+    &quot;src_067&quot;,
+    &quot;src_068&quot;
+  ],
+  &quot;counter_search&quot;: &quot;일본어권에서 대규모 가격·토큰 기대 담론이 별도로 존재하는지 검색했으나 확보한 표본은 기술 가이드·안전 경고·글로벌 행사 보도 중심이었다. 표본 희소성을 결론에 명시했다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: false
+}</code></pre></details><details class="record"><summary><span>051</span>Record 51</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_035&quot;,
+  &quot;text&quot;: &quot;2026년 10월 KBW Demo Day와 8~9월 GASOK 제품화·private-mainnet 일정, GIWA Wallet 계획과 글로벌 파트너 홍보는 연말 관심 창을 만들 수 있는 촉매지만, 공개 메인넷·지갑 출시·유동성·반복 사용자 지표가 없으므로 열기를 기정사실화할 근거는 아니다.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;causal&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_001&quot;,
+    &quot;src_024&quot;,
+    &quot;src_043&quot;,
+    &quot;src_044&quot;,
+    &quot;src_059&quot;,
+    &quot;src_061&quot;
+  ],
+  &quot;counter_search&quot;: &quot;연말 촉매와 실패 조건을 모두 검색했다. 공식 일정과 글로벌 행사는 확인되지만 public mainnet 날짜, wallet launch, canonical liquidity와 cohort retention은 확인되지 않아 조건부 시나리오로 제한했다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>052</span>Record 52</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_036&quot;,
+  &quot;text&quot;: &quot;한국 시장 맥락에서는 밈코인·NFT처럼 반복 거래를 유발하는 소비자 앱이 Web3 지갑 활성화에 필요하다는 산업 기대가 존재해 GABOJA의 제품 적합성은 있지만, 이는 수요 검증이 아니라 가설이므로 wallet funnel·유동성·재방문으로 시험해야 한다.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;causal&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_025&quot;,
+    &quot;src_028&quot;,
+    &quot;src_061&quot;,
+    &quot;src_062&quot;
+  ],
+  &quot;counter_search&quot;: &quot;밈코인만 있으면 wallet adoption이 자동 발생하는지 기존 지갑 채택 부진, 제3자 testnet 구현과 전략 의견을 대조했다. 산업 기대는 확인되지만 실제 GIWA 수요 자료는 없어 실험 가설로 한정했다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>053</span>Record 53</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_037&quot;,
+  &quot;text&quot;: &quot;여러 언어권의 early-user 콘텐츠에서 미확정 airdrop 기대가 반복되지만 GIWA 공식 FAQ는 자체 native token 계획이 없다고 밝히므로, GABOJA는 보상·상장·GIWA 공식성 암시를 금지하고 공식 링크·testnet 배지를 전면에 둬야 한다.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;causal&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_045&quot;,
+    &quot;src_063&quot;,
+    &quot;src_066&quot;,
+    &quot;src_068&quot;,
+    &quot;src_070&quot;
+  ],
+  &quot;counter_search&quot;: &quot;공식 airdrop 또는 native token 보상이 발표됐는지 공식 FAQ와 GASOK, 각 언어권 가이드를 대조했으나 확인되지 않았다. 가이드는 early-user 가능성을 말하면서도 no-token 또는 미확정을 함께 표시한다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>054</span>Record 54</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;unr_011&quot;,
+  &quot;text&quot;: &quot;HYPX11K&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;numeric&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_069&quot;
+  ],
+  &quot;counter_search&quot;: &quot;미국·중국·한국·일본의 정확한 X 긍정률과 engagement total을 산출한다는 가설을 검토했지만 전체 firehose, 위치 검증, 중복·봇 제거와 안정된 engagement snapshot이 없어 계산하지 않았다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: false
+}</code></pre></details><details class="record"><summary><span>055</span>Record 55</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;ref_007&quot;,
+  &quot;text&quot;: &quot;REJX07G&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;causal&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_057&quot;,
+    &quot;src_063&quot;,
+    &quot;src_065&quot;,
+    &quot;src_069&quot;
+  ],
+  &quot;counter_search&quot;: &quot;게시 언어가 작성자의 국적·거주지와 국가 여론을 증명한다는 가설은 X 위치 부재, 번역·재유통·글로벌 계정과 표본 선택 편향 때문에 반박됐다.&quot;,
+  &quot;counter_refuted&quot;: true,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details><details class="record"><summary><span>056</span>Record 56</summary><pre><code>{
+  &quot;claim_id&quot;: &quot;clm_038&quot;,
+  &quot;text&quot;: &quot;Pump.fun 초기 구매 지갑 cohort 연구와 공개 재현 데이터는 반복 조기구매 집단이 존재할 수 있음을 보이지만, 단순 비교의 겉보기 성과가 placebo 검사를 견디지 못했으므로 초기 지갑·거래량만으로 인과적 품질이나 성공을 표시하면 안 된다.&quot;,
+  &quot;risk&quot;: &quot;high&quot;,
+  &quot;claim_type&quot;: &quot;causal&quot;,
+  &quot;source_ids&quot;: [
+    &quot;src_056&quot;,
+    &quot;src_073&quot;
+  ],
+  &quot;counter_search&quot;: &quot;cohort 존재가 launch 성공을 직접 높인다는 강한 해석을 논문과 공개 robustness artifact에서 역검색했다. 저자는 activity-matched placebo가 더 큰 효과를 보인 결과를 들어 단순 인과해석을 부정한다.&quot;,
+  &quot;counter_refuted&quot;: false,
+  &quot;conflicting&quot;: false,
+  &quot;primary_source&quot;: true
+}</code></pre></details></div></article>
+    </main>
+    <footer>
+      <span>research_only=true</span>
+      <span>strategy_consumption_allowed=false</span>
+      <span>order_input=false</span>
+    </footer>
+  </body>
+</html>

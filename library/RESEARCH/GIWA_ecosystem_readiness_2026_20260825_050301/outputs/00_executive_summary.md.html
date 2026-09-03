@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex,nofollow,noarchive" />
+    <meta name="theme-color" content="#090c0e" />
+    <title>GIWA 생태계·토큰/DEX 준비성 — 요약 · GIWA Control Room</title>
+    <link rel="stylesheet" href="../../../../assets/document.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#document">본문으로 바로가기</a>
+    <header class="document-header">
+      <a class="brand" href="../../../../index.html#research" aria-label="GIWA 대시보드로 돌아가기">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span><strong>GIWA</strong><small>CONTROL ROOM</small></span>
+      </a>
+      <nav aria-label="문서 동작">
+        <a href="../../../../index.html#research">← 대시보드</a>
+        <a href="https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/RESEARCH/GIWA_ecosystem_readiness_2026_20260825_050301/outputs/00_executive_summary.md" target="_blank" rel="noopener noreferrer">Private GitHub ↗</a>
+      </nav>
+    </header>
+    <main id="document" class="document-shell">
+      <div class="document-meta">
+        <span>REPORT</span>
+        <span>SHA256 75d7bb99c749</span>
+      </div>
+      <h1>GIWA 생태계·토큰/DEX 준비성 — 요약</h1>
+      <p class="source-path">RESEARCH/GIWA_ecosystem_readiness_2026_20260825_050301/outputs/00_executive_summary.md</p>
+      <article class="markdown-body"><h1 id="giwa-dex">GIWA 생태계·토큰/DEX 준비성 — 요약</h1>
+<p><strong>판정: 지금 할 수 있는 것은 GIWA Sepolia에서의 개발·검증 준비까지다.</strong> 표준 ERC-20을
+만들고 검증하는 경로는 공식 문서에 있고, 제3자 런치패드와 AMM도 실제 테스트넷에
+배포되어 있어 기술적 가능성은 확인된다. 그러나 2026-08-25 현재 일반 개발자에게 공개된
+네트워크는 GIWA Sepolia이며, 공개 메인넷과 GIWA Wallet은 개발 중이다. 공식 GIWA
+DEX/런치패드는 확인되지 않았다. (GIWA, n.d., “GIWA 체인에 연결하기”; src_001;
+GIWA, n.d., “토큰 컨트랙트 발행하기”; src_008; GIWA, 2026-07-13, “GIWA Node”; src_002)</p>
+<table>
+<thead>
+<tr>
+<th>질문</th>
+<th>현재 판정</th>
+<th>근거와 제한</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>밈코인/ERC-20을 만들 수 있는가</td>
+<td><strong>테스트넷: 가능</strong></td>
+<td>공식 Foundry/Hardhat 발행·검증 절차가 있다. 경제적 가치 없는 테스트 자산으로만 취급해야 한다. (src_007, src_008)</td>
+</tr>
+<tr>
+<td>기존 런치패드에서 만들 수 있는가</td>
+<td><strong>테스트넷: 제3자 경로 존재</strong></td>
+<td>Joseon.fun과 Notus가 배포되어 있으나 공식 GIWA 제품이 아니며 감사·키·E2E·라이선스 공백이 있다. (src_004, src_025, src_026, src_028)</td>
+</tr>
+<tr>
+<td>자체 DEX를 만들 수 있는가</td>
+<td><strong>기술적으로 가능, 운영은 미승인</strong></td>
+<td>EVM/OP Stack과 표준 인프라는 있고 외부 AMM 배포도 관찰된다. 공식 DEX나 메인넷 유동성 근거는 없다. (src_004, src_009, src_010, src_046)</td>
+</tr>
+<tr>
+<td>지금 메인넷 토큰/DEX를 출시할 수 있는가</td>
+<td><strong>아니오 / 차단</strong></td>
+<td>공개 메인넷, 생산 RPC·브리지·오라클·거버넌스·보안 운영 근거가 미완성이다. (src_001, src_024, src_033, src_034, src_035, src_036, src_037)</td>
+</tr>
+<tr>
+<td>Upbit 상장을 기대해도 되는가</td>
+<td><strong>아니오</strong></td>
+<td>GASOK는 지원과 거래지원 여부가 무관하다고 명시한다. GIWA는 별도 네이티브 토큰 계획도 없다고 설명한다. (src_024, src_045)</td>
+</tr>
+<tr>
+<td>Pump.fun형 플랫폼을 준비할 수 있는가</td>
+<td><strong>테스트넷 prototype: 권장</strong></td>
+<td>token factory → virtual curve → atomic graduation → canonical AMM 구조는 EVM으로 구현 가능하다. 단, 기존 GIWA 외부 구현은 운영 기반으로 쓰기 부족하다. (src_025, src_028, src_047, src_048)</td>
+</tr>
+<tr>
+<td>솔라나처럼 밈코인을 대규모 온보딩해도 되는가</td>
+<td><strong>실자산: 아직 아님</strong></td>
+<td>wallet·public mainnet·졸업 DEX·유동성·보안 운영·한국 규제 조건이 미달이다. Dojang/up.id를 붙인 제한적 testnet launch lab이 먼저다. (src_001, src_012, src_016, src_050, src_051)</td>
+</tr>
+</tbody>
+</table>
+<p>따라서 새 저장소에는 읽기 전용 RPC 프로브, 근거가 붙은 생태계 인벤토리, 토큰·AMM
+사양과 메인넷 진입 게이트만 준비했다. 배포 코드, Solidity 구현, signer, 개인키, 거래,
+유동성 공급, faucet 자동화, 원격 저장소는 의도적으로 두지 않았다.</p>
+<p>제품 방향은 단순 Pump.fun 복제보다 <strong>trust-first launch lab</strong>이 낫다. 표준 bytecode, creator
+attestation, Verified Code, 투명한 reserve/권한, 콘텐츠 moderation을 앞세워 Joseon/Notus와
+차별화한다. 공식 Pump 구조는 virtual constant-product curve가 완료되면 실제 유동성을
+canonical AMM으로 옮기는 2단계다. (Pump.fun, 2026-07-15, protocol docs; src_047,
+src_048) [검증 원장: clm_024, clm_027, clm_029]</p>
+<h2 id="_1">지역 반응과 연말 가설</h2>
+<p>X 직접 페이지는 비로그인 조사에서 제한됐고 공개 미러도 불완전했다. 따라서 아래는 국적별
+여론이나 engagement 통계가 아니라 언어별 공개 담론 표본이다. X likes·views·followers는
+채택 지표로 사용하지 않았다. (src_057, src_058, src_069, src_070) [검증 원장: clm_030]</p>
+<table>
+<thead>
+<tr>
+<th>표본</th>
+<th>관찰된 기대</th>
+<th>중요한 반대 신호</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>한국어</td>
+<td>업비트 유통력, 한국 빌더, wallet·밈코인 소비자 앱</td>
+<td>기존 Web3 wallet 채택 부진, 명확한 킬러앱 미증명</td>
+</tr>
+<tr>
+<td>영어/미국 매체</td>
+<td>OP Stack enterprise, 글로벌 개발자·파트너</td>
+<td>social 재유통층의 미확정 airdrop 선점 언어</td>
+</tr>
+<tr>
+<td>중국어</td>
+<td>faucet·bridge·UP.ID task의 빠른 확산</td>
+<td>본토 사용자 채택 아님, no-native-token과 충돌 가능</td>
+</tr>
+<tr>
+<td>일본어</td>
+<td>전용 지갑·testnet 사용·contract verification</td>
+<td>현재 기능 제한과 native token 부재를 신중하게 강조</td>
+</tr>
+</tbody>
+</table>
+<p>근거: 한국어 <code>src_024, src_061, src_062, src_071</code>; 영어 <code>src_043, src_044, src_059,
+src_070</code>; 중국어 <code>src_063, src_064</code>; 일본어 <code>src_065–src_068</code> [검증 원장:
+clm_031–clm_034].</p>
+<p>2026년 8~9월 GASOK 제품화·private-mainnet 단계와 10월 KBW Demo Day, wallet 계획은
+연말 관심 창을 만들 수 있다. 다만 public mainnet, 공개 wallet, canonical DEX·quote
+asset·유동성과 30일 잔존 사용자가 확인될 때만 <strong>Bull</strong>로 승격한다. 현재 기본안은
+“builder 관심은 상승하지만 mass liquidity launch는 보류”다. (src_001, src_024,
+src_043, src_044, src_059, src_061) [검증 원장: clm_035]</p>
+<p>브랜드 1순위는 <strong>가보자 / <code>gaboja.fun</code></strong>이다. <code>gazua.fun</code>은 이미 등록되어 있었고,
+<code>gaboja.fun</code>을 포함한 6개 후보는 2026-08-25 05:43 KST registry RDAP에서 등록 가능
+응답을 받았고 public RDAP bootstrap 경로에서도 재확인했다. 구매·예약은 하지 않았고
+상표 clearance도 별도다. (Radix RDAP/Codex, 2026-08-25; src_054; RDAP.org/Codex;
+src_072) [검증 원장: clm_028]</p>
+<p><strong>Confidence:</strong> 네트워크·클라이언트·테스트넷 배포 가능성은 높음, 생태계 완전성과 언어별
+narrative 존재는 중간, 메인넷 일정·공식 DEX·생산 유동성·국가별 X 여론 크기는 판단 보류.
+공식 문서·GitHub와 2026-08-25 읽기 전용 RPC/Blockscout를 교차 검증했지만, 테스트넷은
+예고 없이 변경·리셋·종료될 수 있다.
+(Dunamu, n.d., “GIWA 테스트넷 이용약관”; src_007)</p>
+<p>한국 이용자를 대상으로 매매·교환 또는 중개·알선을 영업으로 제공하는 순간 가상자산사업자
+신고 등 규제 검토가 핵심 선행조건이다. 정확한 서비스 구조에 대한 서면 법률 의견 전에는
+실자산·수수료·한국 대상 공개 운영을 하지 않는 것이 안전하다. (대한민국, 가상자산이용자
+보호법 제2조; src_050; 금융위원회·FIU, 2026-06-24; src_051) [검증 원장: clm_026]</p></article>
+    </main>
+    <footer>
+      <span>research_only=true</span>
+      <span>strategy_consumption_allowed=false</span>
+      <span>order_input=false</span>
+    </footer>
+  </body>
+</html>
