@@ -4,265 +4,221 @@
     {
       "path": "CONSTITUTION.md",
       "url": "./library/CONSTITUTION.md.html",
-      "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/CONSTITUTION.md",
       "sha256": "3fececbbb6d2adc46e5665d51335116846cb9889f07b75e1ee315b5a94b63a40"
     },
     {
       "path": "RESEARCH/GIWA_dex_fee_jurisdictions_2026_20260903_144748/artifacts/claim_ledger.jsonl",
       "url": "./library/RESEARCH/GIWA_dex_fee_jurisdictions_2026_20260903_144748/artifacts/claim_ledger.jsonl.html",
-      "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/RESEARCH/GIWA_dex_fee_jurisdictions_2026_20260903_144748/artifacts/claim_ledger.jsonl",
       "sha256": "2d199d5c6e2cdfdcb564589fffa009ec77e4dfa372d45acb90b3369747b95d73"
     },
     {
       "path": "RESEARCH/GIWA_dex_fee_jurisdictions_2026_20260903_144748/outputs/00_executive_summary.md",
       "url": "./library/RESEARCH/GIWA_dex_fee_jurisdictions_2026_20260903_144748/outputs/00_executive_summary.md.html",
-      "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/RESEARCH/GIWA_dex_fee_jurisdictions_2026_20260903_144748/outputs/00_executive_summary.md",
       "sha256": "335598a956f1731369afd746e68f7d1b77897ce98c0d6c3c522fa3e5a993dffe"
     },
     {
       "path": "RESEARCH/GIWA_dex_fee_jurisdictions_2026_20260903_144748/outputs/01_full_report/01_report.ko.md",
       "url": "./library/RESEARCH/GIWA_dex_fee_jurisdictions_2026_20260903_144748/outputs/01_full_report/01_report.ko.md.html",
-      "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/RESEARCH/GIWA_dex_fee_jurisdictions_2026_20260903_144748/outputs/01_full_report/01_report.ko.md",
       "sha256": "f8dd3da45d96137701d2dcf759e13d26eb4f5d613651e10020090332732bf0ea"
     },
     {
       "path": "RESEARCH/GIWA_dex_fee_jurisdictions_2026_20260903_144748/sources/sources.jsonl",
       "url": "./library/RESEARCH/GIWA_dex_fee_jurisdictions_2026_20260903_144748/sources/sources.jsonl.html",
-      "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/RESEARCH/GIWA_dex_fee_jurisdictions_2026_20260903_144748/sources/sources.jsonl",
       "sha256": "4391c5c2da95ecbbfa1c524943048f7a81169dc2d79569e3c73b01eea56cc6a8"
     },
     {
       "path": "RESEARCH/GIWA_ecosystem_fee_projects_2026_20260903_124749/artifacts/claim_ledger.jsonl",
       "url": "./library/RESEARCH/GIWA_ecosystem_fee_projects_2026_20260903_124749/artifacts/claim_ledger.jsonl.html",
-      "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/RESEARCH/GIWA_ecosystem_fee_projects_2026_20260903_124749/artifacts/claim_ledger.jsonl",
       "sha256": "0a27e13a803abf4cd9dc5a696c0096c92c21cd27b66b7a36fbe78a3f7874560a"
     },
     {
       "path": "RESEARCH/GIWA_ecosystem_fee_projects_2026_20260903_124749/outputs/00_executive_summary.md",
       "url": "./library/RESEARCH/GIWA_ecosystem_fee_projects_2026_20260903_124749/outputs/00_executive_summary.md.html",
-      "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/RESEARCH/GIWA_ecosystem_fee_projects_2026_20260903_124749/outputs/00_executive_summary.md",
       "sha256": "fc59eac715c4389da863f47f9604bf1e9164c92b431ad99caaf96bc13672f835"
     },
     {
       "path": "RESEARCH/GIWA_ecosystem_fee_projects_2026_20260903_124749/outputs/01_full_report/01_report.ko.md",
       "url": "./library/RESEARCH/GIWA_ecosystem_fee_projects_2026_20260903_124749/outputs/01_full_report/01_report.ko.md.html",
-      "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/RESEARCH/GIWA_ecosystem_fee_projects_2026_20260903_124749/outputs/01_full_report/01_report.ko.md",
       "sha256": "eddb3aea17f1609a9198304188c11e6fcecf709d755c320d40e9242856bad363"
     },
     {
       "path": "RESEARCH/GIWA_ecosystem_fee_projects_2026_20260903_124749/sources/sources.jsonl",
       "url": "./library/RESEARCH/GIWA_ecosystem_fee_projects_2026_20260903_124749/sources/sources.jsonl.html",
-      "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/RESEARCH/GIWA_ecosystem_fee_projects_2026_20260903_124749/sources/sources.jsonl",
       "sha256": "eeddabff581b7d63421d2d941b77567cc4de7f8af31be62ee775c4eb49c1bfe6"
     },
     {
       "path": "RESEARCH/GIWA_ecosystem_readiness_2026_20260825_050301/artifacts/claim_ledger.jsonl",
       "url": "./library/RESEARCH/GIWA_ecosystem_readiness_2026_20260825_050301/artifacts/claim_ledger.jsonl.html",
-      "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/RESEARCH/GIWA_ecosystem_readiness_2026_20260825_050301/artifacts/claim_ledger.jsonl",
       "sha256": "872690f1eb9465d89ca16417154f1ff607fe6a09458385c7488dd9d80dba77b1"
     },
     {
       "path": "RESEARCH/GIWA_ecosystem_readiness_2026_20260825_050301/outputs/00_executive_summary.md",
       "url": "./library/RESEARCH/GIWA_ecosystem_readiness_2026_20260825_050301/outputs/00_executive_summary.md.html",
-      "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/RESEARCH/GIWA_ecosystem_readiness_2026_20260825_050301/outputs/00_executive_summary.md",
       "sha256": "75d7bb99c74956602509ff1761fbd4e48e4cd417d4b85a3ec6434d19e043ce50"
     },
     {
       "path": "RESEARCH/GIWA_ecosystem_readiness_2026_20260825_050301/outputs/01_full_report/01_report.ko.md",
       "url": "./library/RESEARCH/GIWA_ecosystem_readiness_2026_20260825_050301/outputs/01_full_report/01_report.ko.md.html",
-      "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/RESEARCH/GIWA_ecosystem_readiness_2026_20260825_050301/outputs/01_full_report/01_report.ko.md",
       "sha256": "706300501b54c6010f6c67c5e88ee3556131dbadf2d09b8f0479c7b16961239c"
     },
     {
       "path": "RESEARCH/GIWA_ecosystem_readiness_2026_20260825_050301/sources/sources.jsonl",
       "url": "./library/RESEARCH/GIWA_ecosystem_readiness_2026_20260825_050301/sources/sources.jsonl.html",
-      "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/RESEARCH/GIWA_ecosystem_readiness_2026_20260825_050301/sources/sources.jsonl",
       "sha256": "5afd876e1d320d4aac198c5cbba5615fffa013f80374c3e2f96ec5025224f63a"
     },
     {
       "path": "RESEARCH/GIWA_revenue_models_chain_launch_benchmarks_2026_20260903_175751/artifacts/claim_ledger.jsonl",
       "url": "./library/RESEARCH/GIWA_revenue_models_chain_launch_benchmarks_2026_20260903_175751/artifacts/claim_ledger.jsonl.html",
-      "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/RESEARCH/GIWA_revenue_models_chain_launch_benchmarks_2026_20260903_175751/artifacts/claim_ledger.jsonl",
       "sha256": "c00f1e6e27a3b8a968bd52cc46d9623530fe5931f91f61b5673c821c4756dd45"
     },
     {
       "path": "RESEARCH/GIWA_revenue_models_chain_launch_benchmarks_2026_20260903_175751/outputs/00_executive_summary.md",
       "url": "./library/RESEARCH/GIWA_revenue_models_chain_launch_benchmarks_2026_20260903_175751/outputs/00_executive_summary.md.html",
-      "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/RESEARCH/GIWA_revenue_models_chain_launch_benchmarks_2026_20260903_175751/outputs/00_executive_summary.md",
       "sha256": "bca24a9bb5d5ffa16ab60b97b63e8b5121818f938538d2cf507bc0537b9eacd7"
     },
     {
       "path": "RESEARCH/GIWA_revenue_models_chain_launch_benchmarks_2026_20260903_175751/outputs/01_full_report/01_report.ko.md",
       "url": "./library/RESEARCH/GIWA_revenue_models_chain_launch_benchmarks_2026_20260903_175751/outputs/01_full_report/01_report.ko.md.html",
-      "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/RESEARCH/GIWA_revenue_models_chain_launch_benchmarks_2026_20260903_175751/outputs/01_full_report/01_report.ko.md",
       "sha256": "afd83df173060d6869a41060429f2f5408f26e5f9041f418b7377a05a581f83c"
     },
     {
       "path": "RESEARCH/GIWA_revenue_models_chain_launch_benchmarks_2026_20260903_175751/sources/sources.jsonl",
       "url": "./library/RESEARCH/GIWA_revenue_models_chain_launch_benchmarks_2026_20260903_175751/sources/sources.jsonl.html",
-      "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/RESEARCH/GIWA_revenue_models_chain_launch_benchmarks_2026_20260903_175751/sources/sources.jsonl",
       "sha256": "1bf2e233cd5d5af17e4de958c4e40917050ef5acf5a6d1b8bed72abb9463620d"
     },
     {
       "path": "RESEARCH/GIWA_simple_open_dex_volume_2026_20260903_132946/artifacts/claim_ledger.jsonl",
       "url": "./library/RESEARCH/GIWA_simple_open_dex_volume_2026_20260903_132946/artifacts/claim_ledger.jsonl.html",
-      "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/RESEARCH/GIWA_simple_open_dex_volume_2026_20260903_132946/artifacts/claim_ledger.jsonl",
       "sha256": "951fae36406a55a03f29e2c18dc4fe4238c69af98b7fc15f0c43679ed72f454e"
     },
     {
       "path": "RESEARCH/GIWA_simple_open_dex_volume_2026_20260903_132946/outputs/00_executive_summary.md",
       "url": "./library/RESEARCH/GIWA_simple_open_dex_volume_2026_20260903_132946/outputs/00_executive_summary.md.html",
-      "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/RESEARCH/GIWA_simple_open_dex_volume_2026_20260903_132946/outputs/00_executive_summary.md",
       "sha256": "a994cdebf5c7719464ed075f13ad55c6d456da30f4fd3e2850277463dbdbcf1f"
     },
     {
       "path": "RESEARCH/GIWA_simple_open_dex_volume_2026_20260903_132946/outputs/01_full_report/01_report.ko.md",
       "url": "./library/RESEARCH/GIWA_simple_open_dex_volume_2026_20260903_132946/outputs/01_full_report/01_report.ko.md.html",
-      "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/RESEARCH/GIWA_simple_open_dex_volume_2026_20260903_132946/outputs/01_full_report/01_report.ko.md",
       "sha256": "adbe10be383ee9a8f57ec4f76f0f3df021a3772c9e125bdfa6b0b6e4dd8aba16"
     },
     {
       "path": "RESEARCH/GIWA_simple_open_dex_volume_2026_20260903_132946/outputs/04_appendices/bibliography.md",
       "url": "./library/RESEARCH/GIWA_simple_open_dex_volume_2026_20260903_132946/outputs/04_appendices/bibliography.md.html",
-      "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/RESEARCH/GIWA_simple_open_dex_volume_2026_20260903_132946/outputs/04_appendices/bibliography.md",
       "sha256": "5ec75955f3b88079832557562b2de283c3b05bd4a71775cac3e353b2e9e587ac"
     },
     {
       "path": "RESEARCH/GIWA_simple_open_dex_volume_2026_20260903_132946/sources/sources.jsonl",
       "url": "./library/RESEARCH/GIWA_simple_open_dex_volume_2026_20260903_132946/sources/sources.jsonl.html",
-      "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/RESEARCH/GIWA_simple_open_dex_volume_2026_20260903_132946/sources/sources.jsonl",
       "sha256": "25e37b07e43ea00001be9016c8c7747d604bd27676d0388e2617f38a861699c5"
     },
     {
       "path": "contracts/specs/DEX.md",
       "url": "./library/contracts/specs/DEX.md.html",
-      "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/contracts/specs/DEX.md",
       "sha256": "d5de4038338fa97d31cce80dce1745b954f458c329ddf6a42c0d6a235b715b36"
     },
     {
       "path": "contracts/specs/TOKEN.md",
       "url": "./library/contracts/specs/TOKEN.md.html",
-      "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/contracts/specs/TOKEN.md",
       "sha256": "dddaeb58ff5053d51413ee05056c5ba5c14ee35304fe90e3e04c7bf732c70bca"
     },
     {
       "path": "dashboard/assets/app.css",
       "url": "./library/dashboard/assets/app.css.html",
-      "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/dashboard/assets/app.css",
-      "sha256": "ad9c6b3fead8d82c6303c882575c81ae52fb16d057b2b94f0eec916c7f117ba9"
+      "sha256": "b16d28154a9ec65abcfe8bc0e6c6f3f9756bae01afba68d1e712e7012e56d308"
     },
     {
       "path": "dashboard/assets/app.js",
       "url": "./library/dashboard/assets/app.js.html",
-      "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/dashboard/assets/app.js",
-      "sha256": "07b7327e1850ded657c50bb6668df0ac6d1e4009efd20d6e952ddbbb92acbae2"
+      "sha256": "85acc2cf266b1a5724e3023aa98ccda28d0e7fea953732d74a56d730d9bf4e14"
     },
     {
       "path": "dashboard/index.html",
       "url": "./library/dashboard/index.html.html",
-      "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/dashboard/index.html",
-      "sha256": "b053ad08a7421cba821bf7e3f9e2a84aab041a7fa5441fa50b5086b985206521"
+      "sha256": "42c0a0f5c2b91905bdb81f18fba496a97df76d65c7d677cdd41d9dc83fff7f4c"
     },
     {
       "path": "data/ecosystem.json",
       "url": "./library/data/ecosystem.json.html",
-      "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/data/ecosystem.json",
       "sha256": "9c8ce414667d2833f0aa4f04a8df72d6693cf938fc5e6e09c2fc4b6a332e9a67"
     },
     {
       "path": "docs/BOUNDARIES.md",
       "url": "./library/docs/BOUNDARIES.md.html",
-      "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/docs/BOUNDARIES.md",
       "sha256": "6d00379a9e5889fdf6c02ec440f28be7eea061d5881fe9722e557c9c6ecaaeb5"
     },
     {
       "path": "docs/DECISION_MEMO.md",
       "url": "./library/docs/DECISION_MEMO.md.html",
-      "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/docs/DECISION_MEMO.md",
       "sha256": "d4a379b8de386e87c3ce0d8f3fed513a3a2a95986f57cb4c3ea9feaf827551df"
     },
     {
       "path": "docs/DEX_FEE_JURISDICTION_MATRIX_2026-09-03.md",
       "url": "./library/docs/DEX_FEE_JURISDICTION_MATRIX_2026-09-03.md.html",
-      "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/docs/DEX_FEE_JURISDICTION_MATRIX_2026-09-03.md",
       "sha256": "da0c836da0b3568f61d09dbe1356100d78a4c5dc672ce0c809e53c0de98b16c7"
     },
     {
       "path": "docs/FEE_PROJECT_PROPOSAL_2026-09-03.md",
       "url": "./library/docs/FEE_PROJECT_PROPOSAL_2026-09-03.md.html",
-      "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/docs/FEE_PROJECT_PROPOSAL_2026-09-03.md",
       "sha256": "aa21a9862200f0e8f78c32a1af88a7f1df284cc0829d0a2be00324c161ae976e"
     },
     {
       "path": "docs/MAINNET_GATES.md",
       "url": "./library/docs/MAINNET_GATES.md.html",
-      "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/docs/MAINNET_GATES.md",
       "sha256": "3ae3400c2de0084296c64b2723bbcbb82e63042a94bf1093f66026359e36b02a"
     },
     {
       "path": "docs/PUMP_PLATFORM.md",
       "url": "./library/docs/PUMP_PLATFORM.md.html",
-      "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/docs/PUMP_PLATFORM.md",
       "sha256": "ada9bdf1a2508943fed596ec306fc9bca234af44a54956d97f0dbe3f205dbe62"
     },
     {
       "path": "docs/ROADMAP.md",
       "url": "./library/docs/ROADMAP.md.html",
-      "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/docs/ROADMAP.md",
       "sha256": "a15d7da4917a13e3e352552ad20cd91552b93efa4503c580799c5e03eb4d67b2"
     },
     {
       "path": "docs/SIMPLE_DEX_VOLUME_STRATEGY_2026-09-03.md",
       "url": "./library/docs/SIMPLE_DEX_VOLUME_STRATEGY_2026-09-03.md.html",
-      "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/docs/SIMPLE_DEX_VOLUME_STRATEGY_2026-09-03.md",
       "sha256": "2f9b1ee115bf0c8587463eb89f7646be31ae6fa45a721b3c995a275eeafe667c"
     },
     {
       "path": "schemas/ecosystem.schema.json",
       "url": "./library/schemas/ecosystem.schema.json.html",
-      "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/schemas/ecosystem.schema.json",
       "sha256": "bd0fc958a7534a73a5cae0a77a52dd7e472fdb3f03178757198dab9d13384c57"
     },
     {
       "path": "scripts/build_dashboard_catalog.py",
       "url": "./library/scripts/build_dashboard_catalog.py.html",
-      "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/scripts/build_dashboard_catalog.py",
-      "sha256": "ad6b31468940cde6f8ac7876ea5cc65282862ce4392df2c0fba55ec9ec702568"
+      "sha256": "a1efdb4159fd854db10d9b2a71a219dc8bd7df59c339b54aaed613abe4b6b4a4"
     },
     {
       "path": "src/giwa_lab/constants.py",
       "url": "./library/src/giwa_lab/constants.py.html",
-      "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/src/giwa_lab/constants.py",
       "sha256": "0850328a608e9f2959d6a3f64bfd1635b0b029ebf9b27c662e4404f5040413ca"
     },
     {
       "path": "src/giwa_lab/inventory.py",
       "url": "./library/src/giwa_lab/inventory.py.html",
-      "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/src/giwa_lab/inventory.py",
       "sha256": "fbdce4c0ff0ca2bf77281db7997b93f385563cc59532bc1debbcda7b58e780bd"
     },
     {
       "path": "src/giwa_lab/probe.py",
       "url": "./library/src/giwa_lab/probe.py.html",
-      "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/src/giwa_lab/probe.py",
       "sha256": "a5c93137cd37a1b173e9bb8c248a098a9ee5b71ee9b2279493cca689095617fb"
     },
     {
       "path": "src/giwa_lab/rpc.py",
       "url": "./library/src/giwa_lab/rpc.py.html",
-      "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/src/giwa_lab/rpc.py",
       "sha256": "a7b24363e7e20ac24131d8670a6c77dfe29eb8cbc297e07b61dd0ddf05d29693"
     },
     {
       "path": "tests/test_inventory.py",
       "url": "./library/tests/test_inventory.py.html",
-      "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/tests/test_inventory.py",
       "sha256": "39c1d111d709e3fed71e459aad3c3e1641332239484f2e19a3939a9d8833e235"
     },
     {
       "path": "tests/test_rpc.py",
       "url": "./library/tests/test_rpc.py.html",
-      "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/tests/test_rpc.py",
       "sha256": "5bf70336ce7068dd77b893a35baae810f9493e81cc63f055cb1a1bc69842f2f3"
     }
   ]

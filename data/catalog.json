@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "catalog_revision": "ec60bc6fdf79",
+  "catalog_revision": "9bfb23cbea4b",
   "as_of": "2026-09-03",
   "project": {
     "title": "GIWA Launchpad Control Room",
@@ -10,7 +10,6 @@
     "decision": "지금은 GIWA Sepolia 근거·Pool Passport·인덱서 데이터층을 만들고, public mainnet과 canonical quote asset 확인 전 거래 실행은 열지 않는다.",
     "product_hypothesis": "data-first pool intelligence → conditional venue",
     "fee_policy": "fee switch off",
-    "repo_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad",
     "default_branch": "main",
     "content_ref": "main"
   },
@@ -1380,28 +1379,24 @@
           "path": "RESEARCH/GIWA_revenue_models_chain_launch_benchmarks_2026_20260903_175751/outputs/00_executive_summary.md",
           "label": "요약",
           "url": "./library/RESEARCH/GIWA_revenue_models_chain_launch_benchmarks_2026_20260903_175751/outputs/00_executive_summary.md.html",
-          "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/RESEARCH/GIWA_revenue_models_chain_launch_benchmarks_2026_20260903_175751/outputs/00_executive_summary.md",
           "exists": true
         },
         {
           "path": "RESEARCH/GIWA_revenue_models_chain_launch_benchmarks_2026_20260903_175751/outputs/01_full_report/01_report.ko.md",
           "label": "전체 보고서",
           "url": "./library/RESEARCH/GIWA_revenue_models_chain_launch_benchmarks_2026_20260903_175751/outputs/01_full_report/01_report.ko.md.html",
-          "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/RESEARCH/GIWA_revenue_models_chain_launch_benchmarks_2026_20260903_175751/outputs/01_full_report/01_report.ko.md",
           "exists": true
         },
         {
           "path": "RESEARCH/GIWA_revenue_models_chain_launch_benchmarks_2026_20260903_175751/sources/sources.jsonl",
           "label": "출처",
           "url": "./library/RESEARCH/GIWA_revenue_models_chain_launch_benchmarks_2026_20260903_175751/sources/sources.jsonl.html",
-          "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/RESEARCH/GIWA_revenue_models_chain_launch_benchmarks_2026_20260903_175751/sources/sources.jsonl",
           "exists": true
         },
         {
           "path": "RESEARCH/GIWA_revenue_models_chain_launch_benchmarks_2026_20260903_175751/artifacts/claim_ledger.jsonl",
           "label": "주장 원장",
           "url": "./library/RESEARCH/GIWA_revenue_models_chain_launch_benchmarks_2026_20260903_175751/artifacts/claim_ledger.jsonl.html",
-          "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/RESEARCH/GIWA_revenue_models_chain_launch_benchmarks_2026_20260903_175751/artifacts/claim_ledger.jsonl",
           "exists": true
         }
       ]
@@ -1425,28 +1420,24 @@
           "path": "RESEARCH/GIWA_dex_fee_jurisdictions_2026_20260903_144748/outputs/00_executive_summary.md",
           "label": "요약",
           "url": "./library/RESEARCH/GIWA_dex_fee_jurisdictions_2026_20260903_144748/outputs/00_executive_summary.md.html",
-          "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/RESEARCH/GIWA_dex_fee_jurisdictions_2026_20260903_144748/outputs/00_executive_summary.md",
           "exists": true
         },
         {
           "path": "RESEARCH/GIWA_dex_fee_jurisdictions_2026_20260903_144748/outputs/01_full_report/01_report.ko.md",
           "label": "전체 보고서",
           "url": "./library/RESEARCH/GIWA_dex_fee_jurisdictions_2026_20260903_144748/outputs/01_full_report/01_report.ko.md.html",
-          "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/RESEARCH/GIWA_dex_fee_jurisdictions_2026_20260903_144748/outputs/01_full_report/01_report.ko.md",
           "exists": true
         },
         {
           "path": "RESEARCH/GIWA_dex_fee_jurisdictions_2026_20260903_144748/sources/sources.jsonl",
           "label": "출처",
           "url": "./library/RESEARCH/GIWA_dex_fee_jurisdictions_2026_20260903_144748/sources/sources.jsonl.html",
-          "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/RESEARCH/GIWA_dex_fee_jurisdictions_2026_20260903_144748/sources/sources.jsonl",
           "exists": true
         },
         {
           "path": "RESEARCH/GIWA_dex_fee_jurisdictions_2026_20260903_144748/artifacts/claim_ledger.jsonl",
           "label": "주장 원장",
           "url": "./library/RESEARCH/GIWA_dex_fee_jurisdictions_2026_20260903_144748/artifacts/claim_ledger.jsonl.html",
-          "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/RESEARCH/GIWA_dex_fee_jurisdictions_2026_20260903_144748/artifacts/claim_ledger.jsonl",
           "exists": true
         }
       ]
@@ -1470,28 +1461,24 @@
           "path": "RESEARCH/GIWA_simple_open_dex_volume_2026_20260903_132946/outputs/00_executive_summary.md",
           "label": "요약",
           "url": "./library/RESEARCH/GIWA_simple_open_dex_volume_2026_20260903_132946/outputs/00_executive_summary.md.html",
-          "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/RESEARCH/GIWA_simple_open_dex_volume_2026_20260903_132946/outputs/00_executive_summary.md",
           "exists": true
         },
         {
           "path": "RESEARCH/GIWA_simple_open_dex_volume_2026_20260903_132946/outputs/01_full_report/01_report.ko.md",
           "label": "전체 보고서",
           "url": "./library/RESEARCH/GIWA_simple_open_dex_volume_2026_20260903_132946/outputs/01_full_report/01_report.ko.md.html",
-          "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/RESEARCH/GIWA_simple_open_dex_volume_2026_20260903_132946/outputs/01_full_report/01_report.ko.md",
           "exists": true
         },
         {
           "path": "RESEARCH/GIWA_simple_open_dex_volume_2026_20260903_132946/sources/sources.jsonl",
           "label": "출처",
           "url": "./library/RESEARCH/GIWA_simple_open_dex_volume_2026_20260903_132946/sources/sources.jsonl.html",
-          "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/RESEARCH/GIWA_simple_open_dex_volume_2026_20260903_132946/sources/sources.jsonl",
           "exists": true
         },
         {
           "path": "RESEARCH/GIWA_simple_open_dex_volume_2026_20260903_132946/artifacts/claim_ledger.jsonl",
           "label": "주장 원장",
           "url": "./library/RESEARCH/GIWA_simple_open_dex_volume_2026_20260903_132946/artifacts/claim_ledger.jsonl.html",
-          "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/RESEARCH/GIWA_simple_open_dex_volume_2026_20260903_132946/artifacts/claim_ledger.jsonl",
           "exists": true
         }
       ]
@@ -1515,28 +1502,24 @@
           "path": "RESEARCH/GIWA_ecosystem_fee_projects_2026_20260903_124749/outputs/00_executive_summary.md",
           "label": "요약",
           "url": "./library/RESEARCH/GIWA_ecosystem_fee_projects_2026_20260903_124749/outputs/00_executive_summary.md.html",
-          "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/RESEARCH/GIWA_ecosystem_fee_projects_2026_20260903_124749/outputs/00_executive_summary.md",
           "exists": true
         },
         {
           "path": "RESEARCH/GIWA_ecosystem_fee_projects_2026_20260903_124749/outputs/01_full_report/01_report.ko.md",
           "label": "전체 보고서",
           "url": "./library/RESEARCH/GIWA_ecosystem_fee_projects_2026_20260903_124749/outputs/01_full_report/01_report.ko.md.html",
-          "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/RESEARCH/GIWA_ecosystem_fee_projects_2026_20260903_124749/outputs/01_full_report/01_report.ko.md",
           "exists": true
         },
         {
           "path": "RESEARCH/GIWA_ecosystem_fee_projects_2026_20260903_124749/sources/sources.jsonl",
           "label": "출처",
           "url": "./library/RESEARCH/GIWA_ecosystem_fee_projects_2026_20260903_124749/sources/sources.jsonl.html",
-          "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/RESEARCH/GIWA_ecosystem_fee_projects_2026_20260903_124749/sources/sources.jsonl",
           "exists": true
         },
         {
           "path": "RESEARCH/GIWA_ecosystem_fee_projects_2026_20260903_124749/artifacts/claim_ledger.jsonl",
           "label": "주장 원장",
           "url": "./library/RESEARCH/GIWA_ecosystem_fee_projects_2026_20260903_124749/artifacts/claim_ledger.jsonl.html",
-          "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/RESEARCH/GIWA_ecosystem_fee_projects_2026_20260903_124749/artifacts/claim_ledger.jsonl",
           "exists": true
         }
       ]
@@ -1560,28 +1543,24 @@
           "path": "RESEARCH/GIWA_ecosystem_readiness_2026_20260825_050301/outputs/00_executive_summary.md",
           "label": "요약",
           "url": "./library/RESEARCH/GIWA_ecosystem_readiness_2026_20260825_050301/outputs/00_executive_summary.md.html",
-          "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/RESEARCH/GIWA_ecosystem_readiness_2026_20260825_050301/outputs/00_executive_summary.md",
           "exists": true
         },
         {
           "path": "RESEARCH/GIWA_ecosystem_readiness_2026_20260825_050301/outputs/01_full_report/01_report.ko.md",
           "label": "전체 보고서",
           "url": "./library/RESEARCH/GIWA_ecosystem_readiness_2026_20260825_050301/outputs/01_full_report/01_report.ko.md.html",
-          "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/RESEARCH/GIWA_ecosystem_readiness_2026_20260825_050301/outputs/01_full_report/01_report.ko.md",
           "exists": true
         },
         {
           "path": "RESEARCH/GIWA_ecosystem_readiness_2026_20260825_050301/sources/sources.jsonl",
           "label": "출처",
           "url": "./library/RESEARCH/GIWA_ecosystem_readiness_2026_20260825_050301/sources/sources.jsonl.html",
-          "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/RESEARCH/GIWA_ecosystem_readiness_2026_20260825_050301/sources/sources.jsonl",
           "exists": true
         },
         {
           "path": "RESEARCH/GIWA_ecosystem_readiness_2026_20260825_050301/artifacts/claim_ledger.jsonl",
           "label": "주장 원장",
           "url": "./library/RESEARCH/GIWA_ecosystem_readiness_2026_20260825_050301/artifacts/claim_ledger.jsonl.html",
-          "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/RESEARCH/GIWA_ecosystem_readiness_2026_20260825_050301/artifacts/claim_ledger.jsonl",
           "exists": true
         }
       ]
@@ -1600,28 +1579,24 @@
           "path": "data/ecosystem.json",
           "label": "ecosystem.json",
           "url": "./library/data/ecosystem.json.html",
-          "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/data/ecosystem.json",
           "exists": true
         },
         {
           "path": "schemas/ecosystem.schema.json",
           "label": "ecosystem.schema.json",
           "url": "./library/schemas/ecosystem.schema.json.html",
-          "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/schemas/ecosystem.schema.json",
           "exists": true
         },
         {
           "path": "src/giwa_lab/inventory.py",
           "label": "inventory.py",
           "url": "./library/src/giwa_lab/inventory.py.html",
-          "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/src/giwa_lab/inventory.py",
           "exists": true
         },
         {
           "path": "tests/test_inventory.py",
           "label": "test_inventory.py",
           "url": "./library/tests/test_inventory.py.html",
-          "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/tests/test_inventory.py",
           "exists": true
         }
       ]
@@ -1638,28 +1613,24 @@
           "path": "src/giwa_lab/constants.py",
           "label": "constants.py",
           "url": "./library/src/giwa_lab/constants.py.html",
-          "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/src/giwa_lab/constants.py",
           "exists": true
         },
         {
           "path": "src/giwa_lab/rpc.py",
           "label": "rpc.py",
           "url": "./library/src/giwa_lab/rpc.py.html",
-          "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/src/giwa_lab/rpc.py",
           "exists": true
         },
         {
           "path": "src/giwa_lab/probe.py",
           "label": "probe.py",
           "url": "./library/src/giwa_lab/probe.py.html",
-          "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/src/giwa_lab/probe.py",
           "exists": true
         },
         {
           "path": "tests/test_rpc.py",
           "label": "test_rpc.py",
           "url": "./library/tests/test_rpc.py.html",
-          "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/tests/test_rpc.py",
           "exists": true
         }
       ]
@@ -1676,7 +1647,6 @@
           "path": "docs/MAINNET_GATES.md",
           "label": "MAINNET_GATES.md",
           "url": "./library/docs/MAINNET_GATES.md.html",
-          "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/docs/MAINNET_GATES.md",
           "exists": true
         }
       ]
@@ -1693,14 +1663,12 @@
           "path": "src/giwa_lab/rpc.py",
           "label": "rpc.py",
           "url": "./library/src/giwa_lab/rpc.py.html",
-          "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/src/giwa_lab/rpc.py",
           "exists": true
         },
         {
           "path": "contracts/specs/DEX.md",
           "label": "DEX.md",
           "url": "./library/contracts/specs/DEX.md.html",
-          "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/contracts/specs/DEX.md",
           "exists": true
         }
       ]
@@ -1717,14 +1685,12 @@
           "path": "contracts/specs/DEX.md",
           "label": "DEX.md",
           "url": "./library/contracts/specs/DEX.md.html",
-          "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/contracts/specs/DEX.md",
           "exists": true
         },
         {
           "path": "data/ecosystem.json",
           "label": "ecosystem.json",
           "url": "./library/data/ecosystem.json.html",
-          "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/data/ecosystem.json",
           "exists": true
         }
       ]
@@ -1741,28 +1707,24 @@
           "path": "dashboard/index.html",
           "label": "index.html",
           "url": "./library/dashboard/index.html.html",
-          "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/dashboard/index.html",
           "exists": true
         },
         {
           "path": "dashboard/assets/app.css",
           "label": "app.css",
           "url": "./library/dashboard/assets/app.css.html",
-          "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/dashboard/assets/app.css",
           "exists": true
         },
         {
           "path": "dashboard/assets/app.js",
           "label": "app.js",
           "url": "./library/dashboard/assets/app.js.html",
-          "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/dashboard/assets/app.js",
           "exists": true
         },
         {
           "path": "scripts/build_dashboard_catalog.py",
           "label": "build_dashboard_catalog.py",
           "url": "./library/scripts/build_dashboard_catalog.py.html",
-          "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/scripts/build_dashboard_catalog.py",
           "exists": true
         }
       ]
@@ -1779,7 +1741,6 @@
           "path": "contracts/specs/TOKEN.md",
           "label": "TOKEN.md",
           "url": "./library/contracts/specs/TOKEN.md.html",
-          "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/contracts/specs/TOKEN.md",
           "exists": true
         }
       ]
@@ -1796,14 +1757,12 @@
           "path": "contracts/specs/DEX.md",
           "label": "DEX.md",
           "url": "./library/contracts/specs/DEX.md.html",
-          "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/contracts/specs/DEX.md",
           "exists": true
         },
         {
           "path": "docs/SIMPLE_DEX_VOLUME_STRATEGY_2026-09-03.md",
           "label": "SIMPLE_DEX_VOLUME_STRATEGY_2026-09-03.md",
           "url": "./library/docs/SIMPLE_DEX_VOLUME_STRATEGY_2026-09-03.md.html",
-          "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/docs/SIMPLE_DEX_VOLUME_STRATEGY_2026-09-03.md",
           "exists": true
         }
       ]
@@ -1820,14 +1779,12 @@
           "path": "docs/BOUNDARIES.md",
           "label": "BOUNDARIES.md",
           "url": "./library/docs/BOUNDARIES.md.html",
-          "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/docs/BOUNDARIES.md",
           "exists": true
         },
         {
           "path": "docs/ROADMAP.md",
           "label": "ROADMAP.md",
           "url": "./library/docs/ROADMAP.md.html",
-          "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/docs/ROADMAP.md",
           "exists": true
         }
       ]
@@ -1844,7 +1801,6 @@
           "path": "docs/MAINNET_GATES.md",
           "label": "MAINNET_GATES.md",
           "url": "./library/docs/MAINNET_GATES.md.html",
-          "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/docs/MAINNET_GATES.md",
           "exists": true
         }
       ]
@@ -1859,21 +1815,18 @@
           "path": "docs/DECISION_MEMO.md",
           "label": "DECISION_MEMO.md",
           "url": "./library/docs/DECISION_MEMO.md.html",
-          "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/docs/DECISION_MEMO.md",
           "exists": true
         },
         {
           "path": "docs/FEE_PROJECT_PROPOSAL_2026-09-03.md",
           "label": "FEE_PROJECT_PROPOSAL_2026-09-03.md",
           "url": "./library/docs/FEE_PROJECT_PROPOSAL_2026-09-03.md.html",
-          "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/docs/FEE_PROJECT_PROPOSAL_2026-09-03.md",
           "exists": true
         },
         {
           "path": "docs/SIMPLE_DEX_VOLUME_STRATEGY_2026-09-03.md",
           "label": "SIMPLE_DEX_VOLUME_STRATEGY_2026-09-03.md",
           "url": "./library/docs/SIMPLE_DEX_VOLUME_STRATEGY_2026-09-03.md.html",
-          "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/docs/SIMPLE_DEX_VOLUME_STRATEGY_2026-09-03.md",
           "exists": true
         }
       ]
@@ -1886,28 +1839,24 @@
           "path": "CONSTITUTION.md",
           "label": "CONSTITUTION.md",
           "url": "./library/CONSTITUTION.md.html",
-          "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/CONSTITUTION.md",
           "exists": true
         },
         {
           "path": "docs/BOUNDARIES.md",
           "label": "BOUNDARIES.md",
           "url": "./library/docs/BOUNDARIES.md.html",
-          "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/docs/BOUNDARIES.md",
           "exists": true
         },
         {
           "path": "docs/MAINNET_GATES.md",
           "label": "MAINNET_GATES.md",
           "url": "./library/docs/MAINNET_GATES.md.html",
-          "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/docs/MAINNET_GATES.md",
           "exists": true
         },
         {
           "path": "docs/ROADMAP.md",
           "label": "ROADMAP.md",
           "url": "./library/docs/ROADMAP.md.html",
-          "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/docs/ROADMAP.md",
           "exists": true
         }
       ]
@@ -1920,21 +1869,18 @@
           "path": "docs/PUMP_PLATFORM.md",
           "label": "PUMP_PLATFORM.md",
           "url": "./library/docs/PUMP_PLATFORM.md.html",
-          "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/docs/PUMP_PLATFORM.md",
           "exists": true
         },
         {
           "path": "contracts/specs/TOKEN.md",
           "label": "TOKEN.md",
           "url": "./library/contracts/specs/TOKEN.md.html",
-          "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/contracts/specs/TOKEN.md",
           "exists": true
         },
         {
           "path": "contracts/specs/DEX.md",
           "label": "DEX.md",
           "url": "./library/contracts/specs/DEX.md.html",
-          "source_url": "https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/contracts/specs/DEX.md",
           "exists": true
         }
       ]

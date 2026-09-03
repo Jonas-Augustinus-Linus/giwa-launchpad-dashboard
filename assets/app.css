@@ -163,6 +163,16 @@ svg { fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round
 .text-link span { color: var(--lime); }
 .text-link:hover { color: var(--text); }
 
+body[data-page] .main-content > .section { display: none; }
+body[data-page="overview"] #overview,
+body[data-page="research"] #ecosystem,
+body[data-page="research"] #research,
+body[data-page="node"] #nodes,
+body[data-page="swap-pool"] #pools,
+body[data-page="revenue"] #revenue,
+body[data-page="development"] #workbench,
+body[data-page="development"] #gates { display: block; }
+
 .section { padding: 74px clamp(28px, 4.2vw, 72px); border-bottom: 1px solid var(--line-soft); }
 .overview-section { padding-top: 48px; }
 .decision-console {
@@ -267,7 +277,9 @@ svg { fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round
 .resource-card-top i { display: inline-block; width: 6px; height: 6px; margin-right: 5px; border-radius: 50%; background: var(--jade); }
 .resource-card h4 { margin: 19px 0 6px; font-size: 14px; }
 .resource-card p { margin: 0; color: var(--muted); font-size: 11px; }
-.resource-card .external-arrow { position: absolute; top: 17px; right: 17px; color: #5e6c73; font-size: 16px; }
+.resource-card .evidence-link { width: fit-content; margin-top: auto; padding-top: 13px; color: #8d9a9f; font: 9px/1 var(--font-mono); }
+.resource-card .evidence-link:hover { color: var(--lime); }
+#pools .pool-section { margin-top: 0; }
 
 .quality-caution { color: var(--yellow); }
 .quality-caution i { background: var(--yellow); }

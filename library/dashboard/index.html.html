@@ -11,19 +11,18 @@
   <body>
     <a class="skip-link" href="#document">본문으로 바로가기</a>
     <header class="document-header">
-      <a class="brand" href="../../index.html#research" aria-label="GIWA 대시보드로 돌아가기">
+      <a class="brand" href="../../development.html" aria-label="GIWA 대시보드로 돌아가기">
         <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
         <span><strong>GIWA</strong><small>CONTROL ROOM</small></span>
       </a>
       <nav aria-label="문서 동작">
-        <a href="../../index.html#research">← 대시보드</a>
-        <a href="https://github.com/Jonas-Augustinus-Linus/giwa-launchpad/blob/main/dashboard/index.html" target="_blank" rel="noopener noreferrer">Private GitHub ↗</a>
+        <a href="../../development.html">← 대시보드</a>
       </nav>
     </header>
     <main id="document" class="document-shell">
       <div class="document-meta">
         <span>SOURCE CODE</span>
-        <span>SHA256 b053ad08a742</span>
+        <span>SHA256 42c0a0f5c2b9</span>
       </div>
       <h1>index.html</h1>
       <p class="source-path">dashboard/index.html</p>
@@ -56,12 +55,12 @@
 <span class="code-line"><i>27</i><code>    &lt;link rel=&quot;stylesheet&quot; href=&quot;./assets/app.css&quot; /&gt;</code></span>
 <span class="code-line"><i>28</i><code>    &lt;script src=&quot;./assets/app.js&quot; defer&gt;&lt;/script&gt;</code></span>
 <span class="code-line"><i>29</i><code>  &lt;/head&gt;</code></span>
-<span class="code-line"><i>30</i><code>  &lt;body&gt;</code></span>
+<span class="code-line"><i>30</i><code>  &lt;body data-page=&quot;overview&quot;&gt;</code></span>
 <span class="code-line"><i>31</i><code>    &lt;a class=&quot;skip-link&quot; href=&quot;#main&quot;&gt;본문으로 바로가기&lt;/a&gt;</code></span>
 <span class="code-line"><i>32</i><code></code></span>
 <span class="code-line"><i>33</i><code>    &lt;div class=&quot;app-shell&quot;&gt;</code></span>
 <span class="code-line"><i>34</i><code>      &lt;aside class=&quot;sidebar&quot; aria-label=&quot;대시보드 탐색&quot;&gt;</code></span>
-<span class="code-line"><i>35</i><code>        &lt;a class=&quot;brand&quot; href=&quot;#overview&quot; aria-label=&quot;GIWA Control Room 홈&quot;&gt;</code></span>
+<span class="code-line"><i>35</i><code>        &lt;a class=&quot;brand&quot; href=&quot;./index.html&quot; aria-label=&quot;GIWA Control Room 홈&quot;&gt;</code></span>
 <span class="code-line"><i>36</i><code>          &lt;span class=&quot;brand-mark&quot; aria-hidden=&quot;true&quot;&gt;&lt;i&gt;&lt;/i&gt;&lt;i&gt;&lt;/i&gt;&lt;i&gt;&lt;/i&gt;&lt;/span&gt;</code></span>
 <span class="code-line"><i>37</i><code>          &lt;span&gt;</code></span>
 <span class="code-line"><i>38</i><code>            &lt;strong&gt;GIWA&lt;/strong&gt;</code></span>
@@ -70,395 +69,403 @@
 <span class="code-line"><i>41</i><code>        &lt;/a&gt;</code></span>
 <span class="code-line"><i>42</i><code></code></span>
 <span class="code-line"><i>43</i><code>        &lt;nav class=&quot;sidebar-nav&quot; aria-label=&quot;주요 섹션&quot;&gt;</code></span>
-<span class="code-line"><i>44</i><code>          &lt;a class=&quot;nav-link is-active&quot; href=&quot;#overview&quot;&gt;&lt;span&gt;01&lt;/span&gt; 상황판&lt;/a&gt;</code></span>
-<span class="code-line"><i>45</i><code>          &lt;a class=&quot;nav-link&quot; href=&quot;#ecosystem&quot;&gt;&lt;span&gt;02&lt;/span&gt; 생태계&lt;/a&gt;</code></span>
-<span class="code-line"><i>46</i><code>          &lt;a class=&quot;nav-link&quot; href=&quot;#infrastructure&quot;&gt;&lt;span&gt;03&lt;/span&gt; 노드·풀&lt;/a&gt;</code></span>
-<span class="code-line"><i>47</i><code>          &lt;a class=&quot;nav-link&quot; href=&quot;#revenue&quot;&gt;&lt;span&gt;04&lt;/span&gt; 수익 설계&lt;/a&gt;</code></span>
-<span class="code-line"><i>48</i><code>          &lt;a class=&quot;nav-link&quot; href=&quot;#workbench&quot;&gt;&lt;span&gt;05&lt;/span&gt; 개발 보드&lt;/a&gt;</code></span>
-<span class="code-line"><i>49</i><code>          &lt;a class=&quot;nav-link&quot; href=&quot;#research&quot;&gt;&lt;span&gt;06&lt;/span&gt; 리서치&lt;/a&gt;</code></span>
-<span class="code-line"><i>50</i><code>          &lt;a class=&quot;nav-link&quot; href=&quot;#gates&quot;&gt;&lt;span&gt;07&lt;/span&gt; 출시 게이트&lt;/a&gt;</code></span>
-<span class="code-line"><i>51</i><code>        &lt;/nav&gt;</code></span>
-<span class="code-line"><i>52</i><code></code></span>
-<span class="code-line"><i>53</i><code>        &lt;div class=&quot;sidebar-foot&quot;&gt;</code></span>
-<span class="code-line"><i>54</i><code>          &lt;div class=&quot;scope-lock&quot;&gt;</code></span>
-<span class="code-line"><i>55</i><code>            &lt;span class=&quot;pulse-dot&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;</code></span>
-<span class="code-line"><i>56</i><code>            &lt;div&gt;</code></span>
-<span class="code-line"><i>57</i><code>              &lt;small&gt;NETWORK SCOPE&lt;/small&gt;</code></span>
-<span class="code-line"><i>58</i><code>              &lt;strong&gt;GIWA Sepolia only&lt;/strong&gt;</code></span>
-<span class="code-line"><i>59</i><code>            &lt;/div&gt;</code></span>
-<span class="code-line"><i>60</i><code>          &lt;/div&gt;</code></span>
-<span class="code-line"><i>61</i><code>          &lt;p&gt;Research-only · No execution&lt;/p&gt;</code></span>
-<span class="code-line"><i>62</i><code>        &lt;/div&gt;</code></span>
-<span class="code-line"><i>63</i><code>      &lt;/aside&gt;</code></span>
-<span class="code-line"><i>64</i><code></code></span>
-<span class="code-line"><i>65</i><code>      &lt;main id=&quot;main&quot; class=&quot;main-content&quot;&gt;</code></span>
-<span class="code-line"><i>66</i><code>        &lt;header class=&quot;topbar&quot;&gt;</code></span>
-<span class="code-line"><i>67</i><code>          &lt;div&gt;</code></span>
-<span class="code-line"><i>68</i><code>            &lt;p class=&quot;eyebrow&quot;&gt;INTERNAL RESEARCH OPERATIONS&lt;/p&gt;</code></span>
-<span class="code-line"><i>69</i><code>            &lt;h1&gt;Launchpad control room&lt;/h1&gt;</code></span>
-<span class="code-line"><i>70</i><code>          &lt;/div&gt;</code></span>
-<span class="code-line"><i>71</i><code>          &lt;div class=&quot;topbar-actions&quot;&gt;</code></span>
-<span class="code-line"><i>72</i><code>            &lt;button class=&quot;icon-button&quot; id=&quot;copy-probe&quot; type=&quot;button&quot; aria-label=&quot;읽기 전용 프로브 명령 복사&quot; title=&quot;프로브 명령 복사&quot;&gt;</code></span>
-<span class="code-line"><i>73</i><code>              &lt;svg aria-hidden=&quot;true&quot; viewBox=&quot;0 0 24 24&quot;&gt;&lt;path d=&quot;M8 8h11v11H8z&quot;/&gt;&lt;path d=&quot;M5 16H4V5h11v1&quot;/&gt;&lt;/svg&gt;</code></span>
-<span class="code-line"><i>74</i><code>            &lt;/button&gt;</code></span>
-<span class="code-line"><i>75</i><code>            &lt;a class=&quot;button button-secondary&quot; id=&quot;repo-link&quot; href=&quot;https://github.com/Jonas-Augustinus-Linus/giwa-launchpad&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;</code></span>
-<span class="code-line"><i>76</i><code>              Private GitHub</code></span>
-<span class="code-line"><i>77</i><code>              &lt;svg aria-hidden=&quot;true&quot; viewBox=&quot;0 0 24 24&quot;&gt;&lt;path d=&quot;M7 17 17 7M8 7h9v9&quot;/&gt;&lt;/svg&gt;</code></span>
-<span class="code-line"><i>78</i><code>            &lt;/a&gt;</code></span>
-<span class="code-line"><i>79</i><code>          &lt;/div&gt;</code></span>
-<span class="code-line"><i>80</i><code>        &lt;/header&gt;</code></span>
-<span class="code-line"><i>81</i><code></code></span>
-<span class="code-line"><i>82</i><code>        &lt;section id=&quot;overview&quot; class=&quot;section overview-section&quot; aria-labelledby=&quot;overview-title&quot;&gt;</code></span>
-<span class="code-line"><i>83</i><code>          &lt;div class=&quot;decision-console&quot;&gt;</code></span>
-<span class="code-line"><i>84</i><code>            &lt;div class=&quot;decision-copy&quot;&gt;</code></span>
-<span class="code-line"><i>85</i><code>              &lt;div class=&quot;section-kicker&quot;&gt;&lt;span&gt;NOW&lt;/span&gt; CURRENT DECISION&lt;/div&gt;</code></span>
-<span class="code-line"><i>86</i><code>              &lt;h2 id=&quot;overview-title&quot;&gt;근거는 쌓고, 실행 권한은 잠근다.&lt;/h2&gt;</code></span>
-<span class="code-line"><i>87</i><code>              &lt;p id=&quot;project-decision&quot;&gt;</code></span>
-<span class="code-line"><i>88</i><code>                Public mainnet과 canonical quote asset이 확인될 때까지 research/testnet 상태를 유지한다.</code></span>
-<span class="code-line"><i>89</i><code>              &lt;/p&gt;</code></span>
-<span class="code-line"><i>90</i><code>              &lt;div class=&quot;decision-tags&quot; aria-label=&quot;현재 제품 방향&quot;&gt;</code></span>
-<span class="code-line"><i>91</i><code>                &lt;span id=&quot;product-hypothesis&quot;&gt;v3-compatible venue&lt;/span&gt;</code></span>
-<span class="code-line"><i>92</i><code>                &lt;span id=&quot;fee-policy&quot;&gt;fee switch off&lt;/span&gt;</code></span>
-<span class="code-line"><i>93</i><code>                &lt;span&gt;no signer&lt;/span&gt;</code></span>
+<span class="code-line"><i>44</i><code>          &lt;a class=&quot;nav-link&quot; data-page-link=&quot;overview&quot; href=&quot;./index.html&quot;&gt;&lt;span&gt;01&lt;/span&gt; 상황판&lt;/a&gt;</code></span>
+<span class="code-line"><i>45</i><code>          &lt;a class=&quot;nav-link&quot; data-page-link=&quot;research&quot; href=&quot;./research.html&quot;&gt;&lt;span&gt;02&lt;/span&gt; 리서치·생태계&lt;/a&gt;</code></span>
+<span class="code-line"><i>46</i><code>          &lt;a class=&quot;nav-link&quot; data-page-link=&quot;node&quot; href=&quot;./node.html&quot;&gt;&lt;span&gt;03&lt;/span&gt; 노드&lt;/a&gt;</code></span>
+<span class="code-line"><i>47</i><code>          &lt;a class=&quot;nav-link&quot; data-page-link=&quot;swap-pool&quot; href=&quot;./swap-pool.html&quot;&gt;&lt;span&gt;04&lt;/span&gt; 스왑풀&lt;/a&gt;</code></span>
+<span class="code-line"><i>48</i><code>          &lt;a class=&quot;nav-link&quot; data-page-link=&quot;revenue&quot; href=&quot;./revenue.html&quot;&gt;&lt;span&gt;05&lt;/span&gt; 수익모델&lt;/a&gt;</code></span>
+<span class="code-line"><i>49</i><code>          &lt;a class=&quot;nav-link&quot; data-page-link=&quot;development&quot; href=&quot;./development.html&quot;&gt;&lt;span&gt;06&lt;/span&gt; 개발상태&lt;/a&gt;</code></span>
+<span class="code-line"><i>50</i><code>        &lt;/nav&gt;</code></span>
+<span class="code-line"><i>51</i><code></code></span>
+<span class="code-line"><i>52</i><code>        &lt;div class=&quot;sidebar-foot&quot;&gt;</code></span>
+<span class="code-line"><i>53</i><code>          &lt;div class=&quot;scope-lock&quot;&gt;</code></span>
+<span class="code-line"><i>54</i><code>            &lt;span class=&quot;pulse-dot&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;</code></span>
+<span class="code-line"><i>55</i><code>            &lt;div&gt;</code></span>
+<span class="code-line"><i>56</i><code>              &lt;small&gt;NETWORK SCOPE&lt;/small&gt;</code></span>
+<span class="code-line"><i>57</i><code>              &lt;strong&gt;GIWA Sepolia only&lt;/strong&gt;</code></span>
+<span class="code-line"><i>58</i><code>            &lt;/div&gt;</code></span>
+<span class="code-line"><i>59</i><code>          &lt;/div&gt;</code></span>
+<span class="code-line"><i>60</i><code>          &lt;p&gt;Research-only · No execution&lt;/p&gt;</code></span>
+<span class="code-line"><i>61</i><code>        &lt;/div&gt;</code></span>
+<span class="code-line"><i>62</i><code>      &lt;/aside&gt;</code></span>
+<span class="code-line"><i>63</i><code></code></span>
+<span class="code-line"><i>64</i><code>      &lt;main id=&quot;main&quot; class=&quot;main-content&quot;&gt;</code></span>
+<span class="code-line"><i>65</i><code>        &lt;header class=&quot;topbar&quot;&gt;</code></span>
+<span class="code-line"><i>66</i><code>          &lt;div&gt;</code></span>
+<span class="code-line"><i>67</i><code>            &lt;p class=&quot;eyebrow&quot;&gt;INTERNAL RESEARCH OPERATIONS&lt;/p&gt;</code></span>
+<span class="code-line"><i>68</i><code>            &lt;h1&gt;Launchpad control room&lt;/h1&gt;</code></span>
+<span class="code-line"><i>69</i><code>          &lt;/div&gt;</code></span>
+<span class="code-line"><i>70</i><code>          &lt;div class=&quot;topbar-actions&quot;&gt;</code></span>
+<span class="code-line"><i>71</i><code>            &lt;button class=&quot;icon-button&quot; id=&quot;copy-probe&quot; type=&quot;button&quot; aria-label=&quot;읽기 전용 프로브 명령 복사&quot; title=&quot;프로브 명령 복사&quot;&gt;</code></span>
+<span class="code-line"><i>72</i><code>              &lt;svg aria-hidden=&quot;true&quot; viewBox=&quot;0 0 24 24&quot;&gt;&lt;path d=&quot;M8 8h11v11H8z&quot;/&gt;&lt;path d=&quot;M5 16H4V5h11v1&quot;/&gt;&lt;/svg&gt;</code></span>
+<span class="code-line"><i>73</i><code>            &lt;/button&gt;</code></span>
+<span class="code-line"><i>74</i><code>            &lt;span class=&quot;status-pill status-live&quot;&gt;&lt;i&gt;&lt;/i&gt; PUBLIC READ-ONLY&lt;/span&gt;</code></span>
+<span class="code-line"><i>75</i><code>          &lt;/div&gt;</code></span>
+<span class="code-line"><i>76</i><code>        &lt;/header&gt;</code></span>
+<span class="code-line"><i>77</i><code></code></span>
+<span class="code-line"><i>78</i><code>        &lt;section id=&quot;overview&quot; class=&quot;section overview-section&quot; aria-labelledby=&quot;overview-title&quot;&gt;</code></span>
+<span class="code-line"><i>79</i><code>          &lt;div class=&quot;decision-console&quot;&gt;</code></span>
+<span class="code-line"><i>80</i><code>            &lt;div class=&quot;decision-copy&quot;&gt;</code></span>
+<span class="code-line"><i>81</i><code>              &lt;div class=&quot;section-kicker&quot;&gt;&lt;span&gt;NOW&lt;/span&gt; CURRENT DECISION&lt;/div&gt;</code></span>
+<span class="code-line"><i>82</i><code>              &lt;h2 id=&quot;overview-title&quot;&gt;근거는 쌓고, 실행 권한은 잠근다.&lt;/h2&gt;</code></span>
+<span class="code-line"><i>83</i><code>              &lt;p id=&quot;project-decision&quot;&gt;</code></span>
+<span class="code-line"><i>84</i><code>                Public mainnet과 canonical quote asset이 확인될 때까지 research/testnet 상태를 유지한다.</code></span>
+<span class="code-line"><i>85</i><code>              &lt;/p&gt;</code></span>
+<span class="code-line"><i>86</i><code>              &lt;div class=&quot;decision-tags&quot; aria-label=&quot;현재 제품 방향&quot;&gt;</code></span>
+<span class="code-line"><i>87</i><code>                &lt;span id=&quot;product-hypothesis&quot;&gt;v3-compatible venue&lt;/span&gt;</code></span>
+<span class="code-line"><i>88</i><code>                &lt;span id=&quot;fee-policy&quot;&gt;fee switch off&lt;/span&gt;</code></span>
+<span class="code-line"><i>89</i><code>                &lt;span&gt;no signer&lt;/span&gt;</code></span>
+<span class="code-line"><i>90</i><code>              &lt;/div&gt;</code></span>
+<span class="code-line"><i>91</i><code>              &lt;div class=&quot;decision-actions&quot;&gt;</code></span>
+<span class="code-line"><i>92</i><code>                &lt;a class=&quot;button button-primary&quot; href=&quot;./development.html&quot;&gt;개발 준비도 보기&lt;/a&gt;</code></span>
+<span class="code-line"><i>93</i><code>                &lt;a class=&quot;text-link&quot; href=&quot;./research.html&quot;&gt;최신 근거 열기 &lt;span aria-hidden=&quot;true&quot;&gt;↘&lt;/span&gt;&lt;/a&gt;</code></span>
 <span class="code-line"><i>94</i><code>              &lt;/div&gt;</code></span>
-<span class="code-line"><i>95</i><code>              &lt;div class=&quot;decision-actions&quot;&gt;</code></span>
-<span class="code-line"><i>96</i><code>                &lt;a class=&quot;button button-primary&quot; href=&quot;#workbench&quot;&gt;개발 준비도 보기&lt;/a&gt;</code></span>
-<span class="code-line"><i>97</i><code>                &lt;a class=&quot;text-link&quot; href=&quot;#research&quot;&gt;최신 근거 열기 &lt;span aria-hidden=&quot;true&quot;&gt;↘&lt;/span&gt;&lt;/a&gt;</code></span>
-<span class="code-line"><i>98</i><code>              &lt;/div&gt;</code></span>
-<span class="code-line"><i>99</i><code>            &lt;/div&gt;</code></span>
-<span class="code-line"><i>100</i><code></code></span>
-<span class="code-line"><i>101</i><code>            &lt;div class=&quot;network-console&quot; aria-label=&quot;GIWA Sepolia 최근 관찰 상태&quot;&gt;</code></span>
-<span class="code-line"><i>102</i><code>              &lt;div class=&quot;console-head&quot;&gt;</code></span>
-<span class="code-line"><i>103</i><code>                &lt;span&gt;NETWORK PULSE&lt;/span&gt;</code></span>
-<span class="code-line"><i>104</i><code>                &lt;span class=&quot;status-pill status-live&quot;&gt;&lt;i&gt;&lt;/i&gt; READ-ONLY SNAPSHOT&lt;/span&gt;</code></span>
-<span class="code-line"><i>105</i><code>              &lt;/div&gt;</code></span>
-<span class="code-line"><i>106</i><code>              &lt;dl&gt;</code></span>
+<span class="code-line"><i>95</i><code>            &lt;/div&gt;</code></span>
+<span class="code-line"><i>96</i><code></code></span>
+<span class="code-line"><i>97</i><code>            &lt;div class=&quot;network-console&quot; aria-label=&quot;GIWA Sepolia 최근 관찰 상태&quot;&gt;</code></span>
+<span class="code-line"><i>98</i><code>              &lt;div class=&quot;console-head&quot;&gt;</code></span>
+<span class="code-line"><i>99</i><code>                &lt;span&gt;NETWORK PULSE&lt;/span&gt;</code></span>
+<span class="code-line"><i>100</i><code>                &lt;span class=&quot;status-pill status-live&quot;&gt;&lt;i&gt;&lt;/i&gt; READ-ONLY SNAPSHOT&lt;/span&gt;</code></span>
+<span class="code-line"><i>101</i><code>              &lt;/div&gt;</code></span>
+<span class="code-line"><i>102</i><code>              &lt;dl&gt;</code></span>
+<span class="code-line"><i>103</i><code>                &lt;div&gt;</code></span>
+<span class="code-line"><i>104</i><code>                  &lt;dt&gt;Chain ID&lt;/dt&gt;</code></span>
+<span class="code-line"><i>105</i><code>                  &lt;dd id=&quot;network-chain-id&quot;&gt;91,342&lt;/dd&gt;</code></span>
+<span class="code-line"><i>106</i><code>                &lt;/div&gt;</code></span>
 <span class="code-line"><i>107</i><code>                &lt;div&gt;</code></span>
-<span class="code-line"><i>108</i><code>                  &lt;dt&gt;Chain ID&lt;/dt&gt;</code></span>
-<span class="code-line"><i>109</i><code>                  &lt;dd id=&quot;network-chain-id&quot;&gt;91,342&lt;/dd&gt;</code></span>
+<span class="code-line"><i>108</i><code>                  &lt;dt&gt;Observed block&lt;/dt&gt;</code></span>
+<span class="code-line"><i>109</i><code>                  &lt;dd id=&quot;network-block&quot;&gt;—&lt;/dd&gt;</code></span>
 <span class="code-line"><i>110</i><code>                &lt;/div&gt;</code></span>
 <span class="code-line"><i>111</i><code>                &lt;div&gt;</code></span>
-<span class="code-line"><i>112</i><code>                  &lt;dt&gt;Observed block&lt;/dt&gt;</code></span>
-<span class="code-line"><i>113</i><code>                  &lt;dd id=&quot;network-block&quot;&gt;—&lt;/dd&gt;</code></span>
+<span class="code-line"><i>112</i><code>                  &lt;dt&gt;Client&lt;/dt&gt;</code></span>
+<span class="code-line"><i>113</i><code>                  &lt;dd id=&quot;network-client&quot;&gt;—&lt;/dd&gt;</code></span>
 <span class="code-line"><i>114</i><code>                &lt;/div&gt;</code></span>
 <span class="code-line"><i>115</i><code>                &lt;div&gt;</code></span>
-<span class="code-line"><i>116</i><code>                  &lt;dt&gt;Client&lt;/dt&gt;</code></span>
-<span class="code-line"><i>117</i><code>                  &lt;dd id=&quot;network-client&quot;&gt;—&lt;/dd&gt;</code></span>
+<span class="code-line"><i>116</i><code>                  &lt;dt&gt;Observed&lt;/dt&gt;</code></span>
+<span class="code-line"><i>117</i><code>                  &lt;dd id=&quot;network-observed&quot;&gt;—&lt;/dd&gt;</code></span>
 <span class="code-line"><i>118</i><code>                &lt;/div&gt;</code></span>
-<span class="code-line"><i>119</i><code>                &lt;div&gt;</code></span>
-<span class="code-line"><i>120</i><code>                  &lt;dt&gt;Observed&lt;/dt&gt;</code></span>
-<span class="code-line"><i>121</i><code>                  &lt;dd id=&quot;network-observed&quot;&gt;—&lt;/dd&gt;</code></span>
-<span class="code-line"><i>122</i><code>                &lt;/div&gt;</code></span>
-<span class="code-line"><i>123</i><code>              &lt;/dl&gt;</code></span>
-<span class="code-line"><i>124</i><code>              &lt;p class=&quot;console-warning&quot;&gt;관찰값은 테스트넷 응답일 뿐 채택·가치·유동성 지표가 아닙니다.&lt;/p&gt;</code></span>
-<span class="code-line"><i>125</i><code>            &lt;/div&gt;</code></span>
-<span class="code-line"><i>126</i><code>          &lt;/div&gt;</code></span>
-<span class="code-line"><i>127</i><code></code></span>
-<span class="code-line"><i>128</i><code>          &lt;div class=&quot;metric-grid&quot; aria-label=&quot;저장소 요약 지표&quot;&gt;</code></span>
-<span class="code-line"><i>129</i><code>            &lt;article class=&quot;metric-card metric-accent&quot;&gt;</code></span>
-<span class="code-line"><i>130</i><code>              &lt;span&gt;REGISTERED SOURCES&lt;/span&gt;</code></span>
-<span class="code-line"><i>131</i><code>              &lt;strong id=&quot;metric-sources&quot;&gt;—&lt;/strong&gt;</code></span>
-<span class="code-line"><i>132</i><code>              &lt;small id=&quot;metric-research&quot;&gt;&lt;i class=&quot;signal-up&quot;&gt;&lt;/i&gt; strict research sessions&lt;/small&gt;</code></span>
-<span class="code-line"><i>133</i><code>            &lt;/article&gt;</code></span>
-<span class="code-line"><i>134</i><code>            &lt;article class=&quot;metric-card&quot;&gt;</code></span>
-<span class="code-line"><i>135</i><code>              &lt;span&gt;VERIFIED CLAIMS&lt;/span&gt;</code></span>
-<span class="code-line"><i>136</i><code>              &lt;strong id=&quot;metric-verified&quot;&gt;—&lt;/strong&gt;</code></span>
-<span class="code-line"><i>137</i><code>              &lt;small id=&quot;metric-open-claims&quot;&gt;미해결 주장 집계 중&lt;/small&gt;</code></span>
-<span class="code-line"><i>138</i><code>            &lt;/article&gt;</code></span>
-<span class="code-line"><i>139</i><code>            &lt;article class=&quot;metric-card&quot;&gt;</code></span>
-<span class="code-line"><i>140</i><code>              &lt;span&gt;ECOSYSTEM MAP&lt;/span&gt;</code></span>
-<span class="code-line"><i>141</i><code>              &lt;strong id=&quot;metric-ecosystem&quot;&gt;—&lt;/strong&gt;</code></span>
-<span class="code-line"><i>142</i><code>              &lt;small id=&quot;metric-official&quot;&gt;공식성 분류 집계 중&lt;/small&gt;</code></span>
-<span class="code-line"><i>143</i><code>            &lt;/article&gt;</code></span>
-<span class="code-line"><i>144</i><code>            &lt;article class=&quot;metric-card&quot;&gt;</code></span>
-<span class="code-line"><i>145</i><code>              &lt;span&gt;BUILD TRACKS&lt;/span&gt;</code></span>
-<span class="code-line"><i>146</i><code>              &lt;strong id=&quot;metric-build&quot;&gt;—&lt;/strong&gt;</code></span>
-<span class="code-line"><i>147</i><code>              &lt;small&gt;implemented / total&lt;/small&gt;</code></span>
-<span class="code-line"><i>148</i><code>            &lt;/article&gt;</code></span>
-<span class="code-line"><i>149</i><code>          &lt;/div&gt;</code></span>
-<span class="code-line"><i>150</i><code></code></span>
-<span class="code-line"><i>151</i><code>          &lt;div class=&quot;attention-strip&quot; role=&quot;note&quot;&gt;</code></span>
-<span class="code-line"><i>152</i><code>            &lt;strong&gt;판단 기준&lt;/strong&gt;</code></span>
-<span class="code-line"><i>153</i><code>            &lt;p id=&quot;safety-notice&quot;&gt;테스트넷 활동과 코드 존재는 사용자, 채택, 유동성, 가치 또는 출시 준비의 증거가 아닙니다.&lt;/p&gt;</code></span>
-<span class="code-line"><i>154</i><code>            &lt;a href=&quot;#gates&quot;&gt;차단 조건 확인&lt;/a&gt;</code></span>
-<span class="code-line"><i>155</i><code>          &lt;/div&gt;</code></span>
-<span class="code-line"><i>156</i><code>        &lt;/section&gt;</code></span>
-<span class="code-line"><i>157</i><code></code></span>
-<span class="code-line"><i>158</i><code>        &lt;section id=&quot;ecosystem&quot; class=&quot;section&quot; aria-labelledby=&quot;ecosystem-title&quot;&gt;</code></span>
-<span class="code-line"><i>159</i><code>          &lt;div class=&quot;section-heading&quot;&gt;</code></span>
-<span class="code-line"><i>160</i><code>            &lt;div&gt;</code></span>
-<span class="code-line"><i>161</i><code>              &lt;div class=&quot;section-kicker&quot;&gt;&lt;span&gt;MAP&lt;/span&gt; ECOSYSTEM INTELLIGENCE&lt;/div&gt;</code></span>
-<span class="code-line"><i>162</i><code>              &lt;h2 id=&quot;ecosystem-title&quot;&gt;무엇이 실제로 있고, 코드까지 있는가&lt;/h2&gt;</code></span>
-<span class="code-line"><i>163</i><code>              &lt;p&gt;공식·제공사 발표·제3자 실험을 섞지 않고, 근거와 코드 상태를 나란히 봅니다.&lt;/p&gt;</code></span>
-<span class="code-line"><i>164</i><code>            &lt;/div&gt;</code></span>
-<span class="code-line"><i>165</i><code>            &lt;a class=&quot;text-link&quot; href=&quot;#official-resources&quot;&gt;공식 원본만 보기 &lt;span aria-hidden=&quot;true&quot;&gt;↘&lt;/span&gt;&lt;/a&gt;</code></span>
-<span class="code-line"><i>166</i><code>          &lt;/div&gt;</code></span>
-<span class="code-line"><i>167</i><code></code></span>
-<span class="code-line"><i>168</i><code>          &lt;div class=&quot;toolbar&quot; aria-label=&quot;생태계 필터&quot;&gt;</code></span>
-<span class="code-line"><i>169</i><code>            &lt;label class=&quot;search-field&quot;&gt;</code></span>
-<span class="code-line"><i>170</i><code>              &lt;svg aria-hidden=&quot;true&quot; viewBox=&quot;0 0 24 24&quot;&gt;&lt;circle cx=&quot;11&quot; cy=&quot;11&quot; r=&quot;6&quot;/&gt;&lt;path d=&quot;m16 16 4 4&quot;/&gt;&lt;/svg&gt;</code></span>
-<span class="code-line"><i>171</i><code>              &lt;span class=&quot;sr-only&quot;&gt;생태계 검색&lt;/span&gt;</code></span>
-<span class="code-line"><i>172</i><code>              &lt;input id=&quot;ecosystem-search&quot; type=&quot;search&quot; placeholder=&quot;프로젝트, 상태, 카테고리 검색&quot; autocomplete=&quot;off&quot; /&gt;</code></span>
-<span class="code-line"><i>173</i><code>              &lt;kbd&gt;⌘ K&lt;/kbd&gt;</code></span>
-<span class="code-line"><i>174</i><code>            &lt;/label&gt;</code></span>
-<span class="code-line"><i>175</i><code>            &lt;div class=&quot;filter-group&quot; role=&quot;group&quot; aria-label=&quot;공식성 필터&quot;&gt;</code></span>
-<span class="code-line"><i>176</i><code>              &lt;button class=&quot;filter-chip is-active&quot; type=&quot;button&quot; data-filter=&quot;all&quot;&gt;전체&lt;/button&gt;</code></span>
-<span class="code-line"><i>177</i><code>              &lt;button class=&quot;filter-chip&quot; type=&quot;button&quot; data-filter=&quot;official&quot;&gt;Official&lt;/button&gt;</code></span>
-<span class="code-line"><i>178</i><code>              &lt;button class=&quot;filter-chip&quot; type=&quot;button&quot; data-filter=&quot;provider_reported&quot;&gt;Provider&lt;/button&gt;</code></span>
-<span class="code-line"><i>179</i><code>              &lt;button class=&quot;filter-chip&quot; type=&quot;button&quot; data-filter=&quot;third_party&quot;&gt;Third-party&lt;/button&gt;</code></span>
-<span class="code-line"><i>180</i><code>            &lt;/div&gt;</code></span>
-<span class="code-line"><i>181</i><code>          &lt;/div&gt;</code></span>
-<span class="code-line"><i>182</i><code></code></span>
-<span class="code-line"><i>183</i><code>          &lt;div class=&quot;table-frame&quot;&gt;</code></span>
-<span class="code-line"><i>184</i><code>            &lt;table class=&quot;data-table&quot;&gt;</code></span>
-<span class="code-line"><i>185</i><code>              &lt;thead&gt;</code></span>
-<span class="code-line"><i>186</i><code>                &lt;tr&gt;</code></span>
-<span class="code-line"><i>187</i><code>                  &lt;th scope=&quot;col&quot;&gt;프로젝트 / 구성요소&lt;/th&gt;</code></span>
-<span class="code-line"><i>188</i><code>                  &lt;th scope=&quot;col&quot;&gt;분류&lt;/th&gt;</code></span>
-<span class="code-line"><i>189</i><code>                  &lt;th scope=&quot;col&quot;&gt;관찰 상태&lt;/th&gt;</code></span>
-<span class="code-line"><i>190</i><code>                  &lt;th scope=&quot;col&quot;&gt;코드 상태&lt;/th&gt;</code></span>
-<span class="code-line"><i>191</i><code>                  &lt;th scope=&quot;col&quot;&gt;근거&lt;/th&gt;</code></span>
-<span class="code-line"><i>192</i><code>                  &lt;th scope=&quot;col&quot;&gt;&lt;span class=&quot;sr-only&quot;&gt;상세 보기&lt;/span&gt;&lt;/th&gt;</code></span>
-<span class="code-line"><i>193</i><code>                &lt;/tr&gt;</code></span>
-<span class="code-line"><i>194</i><code>              &lt;/thead&gt;</code></span>
-<span class="code-line"><i>195</i><code>              &lt;tbody id=&quot;ecosystem-rows&quot;&gt;</code></span>
-<span class="code-line"><i>196</i><code>                &lt;tr class=&quot;loading-row&quot;&gt;&lt;td colspan=&quot;6&quot;&gt;생태계 인벤토리를 불러오는 중…&lt;/td&gt;&lt;/tr&gt;</code></span>
-<span class="code-line"><i>197</i><code>              &lt;/tbody&gt;</code></span>
-<span class="code-line"><i>198</i><code>            &lt;/table&gt;</code></span>
-<span class="code-line"><i>199</i><code>            &lt;div class=&quot;empty-state&quot; id=&quot;ecosystem-empty&quot; hidden&gt;</code></span>
-<span class="code-line"><i>200</i><code>              &lt;strong&gt;일치하는 항목이 없습니다.&lt;/strong&gt;</code></span>
-<span class="code-line"><i>201</i><code>              &lt;p&gt;검색어를 줄이거나 다른 분류를 선택해 보세요.&lt;/p&gt;</code></span>
-<span class="code-line"><i>202</i><code>            &lt;/div&gt;</code></span>
-<span class="code-line"><i>203</i><code>          &lt;/div&gt;</code></span>
-<span class="code-line"><i>204</i><code>          &lt;p class=&quot;result-count&quot; id=&quot;ecosystem-count&quot; aria-live=&quot;polite&quot;&gt;&lt;/p&gt;</code></span>
-<span class="code-line"><i>205</i><code></code></span>
-<span class="code-line"><i>206</i><code>          &lt;div id=&quot;official-resources&quot; class=&quot;subsection&quot;&gt;</code></span>
-<span class="code-line"><i>207</i><code>            &lt;div class=&quot;subsection-heading&quot;&gt;</code></span>
-<span class="code-line"><i>208</i><code>              &lt;div&gt;</code></span>
-<span class="code-line"><i>209</i><code>                &lt;p class=&quot;mini-label&quot;&gt;OFFICIAL SOURCE DECK&lt;/p&gt;</code></span>
-<span class="code-line"><i>210</i><code>                &lt;h3&gt;바로 여는 공식 문서와 코드&lt;/h3&gt;</code></span>
-<span class="code-line"><i>211</i><code>              &lt;/div&gt;</code></span>
-<span class="code-line"><i>212</i><code>              &lt;span id=&quot;official-check-date&quot;&gt;Checked —&lt;/span&gt;</code></span>
-<span class="code-line"><i>213</i><code>            &lt;/div&gt;</code></span>
-<span class="code-line"><i>214</i><code>            &lt;div class=&quot;resource-grid&quot; id=&quot;official-resource-grid&quot;&gt;</code></span>
-<span class="code-line"><i>215</i><code>              &lt;div class=&quot;skeleton-card&quot;&gt;&lt;/div&gt;&lt;div class=&quot;skeleton-card&quot;&gt;&lt;/div&gt;&lt;div class=&quot;skeleton-card&quot;&gt;&lt;/div&gt;</code></span>
-<span class="code-line"><i>216</i><code>            &lt;/div&gt;</code></span>
-<span class="code-line"><i>217</i><code>          &lt;/div&gt;</code></span>
-<span class="code-line"><i>218</i><code>        &lt;/section&gt;</code></span>
-<span class="code-line"><i>219</i><code></code></span>
-<span class="code-line"><i>220</i><code>        &lt;section id=&quot;infrastructure&quot; class=&quot;section&quot; aria-labelledby=&quot;infrastructure-title&quot;&gt;</code></span>
-<span class="code-line"><i>221</i><code>          &lt;div class=&quot;section-heading&quot;&gt;</code></span>
-<span class="code-line"><i>222</i><code>            &lt;div&gt;</code></span>
-<span class="code-line"><i>223</i><code>              &lt;div class=&quot;section-kicker&quot;&gt;&lt;span&gt;RUN&lt;/span&gt; NODE &amp;amp; POOL BLUEPRINT&lt;/div&gt;</code></span>
-<span class="code-line"><i>224</i><code>              &lt;h2 id=&quot;infrastructure-title&quot;&gt;노드는 원장, 인덱서는 제품 속도&lt;/h2&gt;</code></span>
-<span class="code-line"><i>225</i><code>              &lt;p&gt;공식 노드 사양과 빠른 온체인 데이터 경로, V3형 풀을 만들 때 필요한 계층을 한 번에 봅니다.&lt;/p&gt;</code></span>
-<span class="code-line"><i>226</i><code>            &lt;/div&gt;</code></span>
-<span class="code-line"><i>227</i><code>            &lt;span class=&quot;quality-badge quality-caution&quot;&gt;&lt;i&gt;&lt;/i&gt; Sepolia evidence only&lt;/span&gt;</code></span>
-<span class="code-line"><i>228</i><code>          &lt;/div&gt;</code></span>
-<span class="code-line"><i>229</i><code></code></span>
-<span class="code-line"><i>230</i><code>          &lt;div class=&quot;infra-verdict&quot;&gt;</code></span>
-<span class="code-line"><i>231</i><code>            &lt;div&gt;</code></span>
-<span class="code-line"><i>232</i><code>              &lt;p class=&quot;mini-label&quot;&gt;ANSWER&lt;/p&gt;</code></span>
-<span class="code-line"><i>233</i><code>              &lt;h3 id=&quot;infra-headline&quot;&gt;노드 정보를 불러오는 중…&lt;/h3&gt;</code></span>
-<span class="code-line"><i>234</i><code>            &lt;/div&gt;</code></span>
-<span class="code-line"><i>235</i><code>            &lt;span class=&quot;status-pill status-limited&quot;&gt;NO MAINNET CONFIG&lt;/span&gt;</code></span>
-<span class="code-line"><i>236</i><code>          &lt;/div&gt;</code></span>
-<span class="code-line"><i>237</i><code></code></span>
-<span class="code-line"><i>238</i><code>          &lt;div class=&quot;infra-grid&quot;&gt;</code></span>
-<span class="code-line"><i>239</i><code>            &lt;article class=&quot;infra-card&quot;&gt;</code></span>
-<span class="code-line"><i>240</i><code>              &lt;div class=&quot;card-title-row&quot;&gt;&lt;div&gt;&lt;p class=&quot;mini-label&quot;&gt;NODE PROFILE&lt;/p&gt;&lt;h3&gt;운영 사양표&lt;/h3&gt;&lt;/div&gt;&lt;span&gt;official + unknowns&lt;/span&gt;&lt;/div&gt;</code></span>
-<span class="code-line"><i>241</i><code>              &lt;dl class=&quot;spec-list&quot; id=&quot;node-profile&quot;&gt;&lt;div&gt;&lt;dt&gt;Loading&lt;/dt&gt;&lt;dd&gt;—&lt;/dd&gt;&lt;/div&gt;&lt;/dl&gt;</code></span>
-<span class="code-line"><i>242</i><code>              &lt;div class=&quot;source-row&quot; id=&quot;infra-links&quot;&gt;&lt;/div&gt;</code></span>
-<span class="code-line"><i>243</i><code>            &lt;/article&gt;</code></span>
-<span class="code-line"><i>244</i><code></code></span>
-<span class="code-line"><i>245</i><code>            &lt;article class=&quot;infra-card topology-card&quot;&gt;</code></span>
-<span class="code-line"><i>246</i><code>              &lt;div class=&quot;card-title-row&quot;&gt;&lt;div&gt;&lt;p class=&quot;mini-label&quot;&gt;DATA PATH&lt;/p&gt;&lt;h3&gt;빠른 조회 토폴로지&lt;/h3&gt;&lt;/div&gt;&lt;span&gt;recommended inference&lt;/span&gt;&lt;/div&gt;</code></span>
-<span class="code-line"><i>247</i><code>              &lt;ol class=&quot;topology-flow&quot; id=&quot;node-topology&quot;&gt;&lt;li&gt;데이터 경로를 불러오는 중…&lt;/li&gt;&lt;/ol&gt;</code></span>
-<span class="code-line"><i>248</i><code>              &lt;p class=&quot;card-note&quot;&gt;Flashblocks와 unsafe head는 미리보기입니다. 금액·수수료·정산 화면은 safe/finalized 상태로 반드시 재조정해야 합니다.&lt;/p&gt;</code></span>
-<span class="code-line"><i>249</i><code>            &lt;/article&gt;</code></span>
-<span class="code-line"><i>250</i><code>          &lt;/div&gt;</code></span>
-<span class="code-line"><i>251</i><code></code></span>
-<span class="code-line"><i>252</i><code>          &lt;div class=&quot;pool-section&quot;&gt;</code></span>
-<span class="code-line"><i>253</i><code>            &lt;div class=&quot;subsection-heading&quot;&gt;</code></span>
-<span class="code-line"><i>254</i><code>              &lt;div&gt;</code></span>
-<span class="code-line"><i>255</i><code>                &lt;p class=&quot;mini-label&quot;&gt;SWAP POOL&lt;/p&gt;</code></span>
-<span class="code-line"><i>256</i><code>                &lt;h3 id=&quot;pool-headline&quot;&gt;스왑풀 구조를 불러오는 중…&lt;/h3&gt;</code></span>
-<span class="code-line"><i>257</i><code>              &lt;/div&gt;</code></span>
-<span class="code-line"><i>258</i><code>            &lt;/div&gt;</code></span>
-<span class="code-line"><i>259</i><code>            &lt;div class=&quot;attention-strip pool-notice&quot; role=&quot;note&quot;&gt;</code></span>
-<span class="code-line"><i>260</i><code>              &lt;strong&gt;관찰 경계&lt;/strong&gt;</code></span>
-<span class="code-line"><i>261</i><code>              &lt;p id=&quot;pool-notice&quot;&gt;제3자 테스트넷 코드는 공식·감사·출시 준비를 의미하지 않습니다.&lt;/p&gt;</code></span>
-<span class="code-line"><i>262</i><code>              &lt;span&gt;read-only&lt;/span&gt;</code></span>
-<span class="code-line"><i>263</i><code>            &lt;/div&gt;</code></span>
-<span class="code-line"><i>264</i><code>            &lt;div class=&quot;table-frame&quot;&gt;</code></span>
-<span class="code-line"><i>265</i><code>              &lt;table class=&quot;data-table blueprint-table&quot;&gt;</code></span>
-<span class="code-line"><i>266</i><code>                &lt;thead&gt;&lt;tr&gt;&lt;th scope=&quot;col&quot;&gt;구성요소&lt;/th&gt;&lt;th scope=&quot;col&quot;&gt;층&lt;/th&gt;&lt;th scope=&quot;col&quot;&gt;역할&lt;/th&gt;&lt;th scope=&quot;col&quot;&gt;외부 근거&lt;/th&gt;&lt;th scope=&quot;col&quot;&gt;로컬 코드&lt;/th&gt;&lt;th scope=&quot;col&quot;&gt;다음 게이트&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;</code></span>
-<span class="code-line"><i>267</i><code>                &lt;tbody id=&quot;pool-components&quot;&gt;&lt;tr class=&quot;loading-row&quot;&gt;&lt;td colspan=&quot;6&quot;&gt;풀 구조를 불러오는 중…&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;</code></span>
-<span class="code-line"><i>268</i><code>              &lt;/table&gt;</code></span>
-<span class="code-line"><i>269</i><code>            &lt;/div&gt;</code></span>
-<span class="code-line"><i>270</i><code>            &lt;div class=&quot;flow-grid&quot; id=&quot;pool-flows&quot;&gt;&lt;/div&gt;</code></span>
-<span class="code-line"><i>271</i><code>          &lt;/div&gt;</code></span>
-<span class="code-line"><i>272</i><code>        &lt;/section&gt;</code></span>
-<span class="code-line"><i>273</i><code></code></span>
-<span class="code-line"><i>274</i><code>        &lt;section id=&quot;revenue&quot; class=&quot;section&quot; aria-labelledby=&quot;revenue-title&quot;&gt;</code></span>
-<span class="code-line"><i>275</i><code>          &lt;div class=&quot;section-heading&quot;&gt;</code></span>
-<span class="code-line"><i>276</i><code>            &lt;div&gt;</code></span>
-<span class="code-line"><i>277</i><code>              &lt;div class=&quot;section-kicker&quot;&gt;&lt;span&gt;EARN&lt;/span&gt; REVENUE DESIGN LAB&lt;/div&gt;</code></span>
-<span class="code-line"><i>278</i><code>              &lt;h2 id=&quot;revenue-title&quot;&gt;수익은 거래량이 아니라 귀속 구조로 본다&lt;/h2&gt;</code></span>
-<span class="code-line"><i>279</i><code>              &lt;p&gt;LP 수수료·프로토콜 수수료·NFT 발행·밈코인·데이터 구독을 서로 다른 원장으로 분리합니다.&lt;/p&gt;</code></span>
-<span class="code-line"><i>280</i><code>            &lt;/div&gt;</code></span>
-<span class="code-line"><i>281</i><code>            &lt;span class=&quot;quality-badge&quot;&gt;&lt;i&gt;&lt;/i&gt; Insane Research QA&lt;/span&gt;</code></span>
-<span class="code-line"><i>282</i><code>          &lt;/div&gt;</code></span>
-<span class="code-line"><i>283</i><code></code></span>
-<span class="code-line"><i>284</i><code>          &lt;div class=&quot;revenue-thesis&quot; id=&quot;revenue-thesis&quot;&gt;</code></span>
-<span class="code-line"><i>285</i><code>            &lt;div&gt;&lt;p class=&quot;mini-label&quot;&gt;RECOMMENDATION&lt;/p&gt;&lt;h3&gt;리서치 결과를 불러오는 중…&lt;/h3&gt;&lt;/div&gt;</code></span>
-<span class="code-line"><i>286</i><code>          &lt;/div&gt;</code></span>
-<span class="code-line"><i>287</i><code></code></span>
-<span class="code-line"><i>288</i><code>          &lt;div class=&quot;revenue-model-grid&quot; id=&quot;revenue-models&quot;&gt;</code></span>
-<span class="code-line"><i>289</i><code>            &lt;div class=&quot;skeleton-card&quot;&gt;&lt;/div&gt;&lt;div class=&quot;skeleton-card&quot;&gt;&lt;/div&gt;&lt;div class=&quot;skeleton-card&quot;&gt;&lt;/div&gt;</code></span>
+<span class="code-line"><i>119</i><code>              &lt;/dl&gt;</code></span>
+<span class="code-line"><i>120</i><code>              &lt;p class=&quot;console-warning&quot;&gt;관찰값은 테스트넷 응답일 뿐 채택·가치·유동성 지표가 아닙니다.&lt;/p&gt;</code></span>
+<span class="code-line"><i>121</i><code>            &lt;/div&gt;</code></span>
+<span class="code-line"><i>122</i><code>          &lt;/div&gt;</code></span>
+<span class="code-line"><i>123</i><code></code></span>
+<span class="code-line"><i>124</i><code>          &lt;div class=&quot;metric-grid&quot; aria-label=&quot;저장소 요약 지표&quot;&gt;</code></span>
+<span class="code-line"><i>125</i><code>            &lt;article class=&quot;metric-card metric-accent&quot;&gt;</code></span>
+<span class="code-line"><i>126</i><code>              &lt;span&gt;REGISTERED SOURCES&lt;/span&gt;</code></span>
+<span class="code-line"><i>127</i><code>              &lt;strong id=&quot;metric-sources&quot;&gt;—&lt;/strong&gt;</code></span>
+<span class="code-line"><i>128</i><code>              &lt;small id=&quot;metric-research&quot;&gt;&lt;i class=&quot;signal-up&quot;&gt;&lt;/i&gt; strict research sessions&lt;/small&gt;</code></span>
+<span class="code-line"><i>129</i><code>            &lt;/article&gt;</code></span>
+<span class="code-line"><i>130</i><code>            &lt;article class=&quot;metric-card&quot;&gt;</code></span>
+<span class="code-line"><i>131</i><code>              &lt;span&gt;VERIFIED CLAIMS&lt;/span&gt;</code></span>
+<span class="code-line"><i>132</i><code>              &lt;strong id=&quot;metric-verified&quot;&gt;—&lt;/strong&gt;</code></span>
+<span class="code-line"><i>133</i><code>              &lt;small id=&quot;metric-open-claims&quot;&gt;미해결 주장 집계 중&lt;/small&gt;</code></span>
+<span class="code-line"><i>134</i><code>            &lt;/article&gt;</code></span>
+<span class="code-line"><i>135</i><code>            &lt;article class=&quot;metric-card&quot;&gt;</code></span>
+<span class="code-line"><i>136</i><code>              &lt;span&gt;ECOSYSTEM MAP&lt;/span&gt;</code></span>
+<span class="code-line"><i>137</i><code>              &lt;strong id=&quot;metric-ecosystem&quot;&gt;—&lt;/strong&gt;</code></span>
+<span class="code-line"><i>138</i><code>              &lt;small id=&quot;metric-official&quot;&gt;공식성 분류 집계 중&lt;/small&gt;</code></span>
+<span class="code-line"><i>139</i><code>            &lt;/article&gt;</code></span>
+<span class="code-line"><i>140</i><code>            &lt;article class=&quot;metric-card&quot;&gt;</code></span>
+<span class="code-line"><i>141</i><code>              &lt;span&gt;BUILD TRACKS&lt;/span&gt;</code></span>
+<span class="code-line"><i>142</i><code>              &lt;strong id=&quot;metric-build&quot;&gt;—&lt;/strong&gt;</code></span>
+<span class="code-line"><i>143</i><code>              &lt;small&gt;implemented / total&lt;/small&gt;</code></span>
+<span class="code-line"><i>144</i><code>            &lt;/article&gt;</code></span>
+<span class="code-line"><i>145</i><code>          &lt;/div&gt;</code></span>
+<span class="code-line"><i>146</i><code></code></span>
+<span class="code-line"><i>147</i><code>          &lt;div class=&quot;attention-strip&quot; role=&quot;note&quot;&gt;</code></span>
+<span class="code-line"><i>148</i><code>            &lt;strong&gt;판단 기준&lt;/strong&gt;</code></span>
+<span class="code-line"><i>149</i><code>            &lt;p id=&quot;safety-notice&quot;&gt;테스트넷 활동과 코드 존재는 사용자, 채택, 유동성, 가치 또는 출시 준비의 증거가 아닙니다.&lt;/p&gt;</code></span>
+<span class="code-line"><i>150</i><code>            &lt;a href=&quot;./development.html#gates&quot;&gt;차단 조건 확인&lt;/a&gt;</code></span>
+<span class="code-line"><i>151</i><code>          &lt;/div&gt;</code></span>
+<span class="code-line"><i>152</i><code>        &lt;/section&gt;</code></span>
+<span class="code-line"><i>153</i><code></code></span>
+<span class="code-line"><i>154</i><code>        &lt;section id=&quot;ecosystem&quot; class=&quot;section&quot; aria-labelledby=&quot;ecosystem-title&quot;&gt;</code></span>
+<span class="code-line"><i>155</i><code>          &lt;div class=&quot;section-heading&quot;&gt;</code></span>
+<span class="code-line"><i>156</i><code>            &lt;div&gt;</code></span>
+<span class="code-line"><i>157</i><code>              &lt;div class=&quot;section-kicker&quot;&gt;&lt;span&gt;MAP&lt;/span&gt; ECOSYSTEM INTELLIGENCE&lt;/div&gt;</code></span>
+<span class="code-line"><i>158</i><code>              &lt;h2 id=&quot;ecosystem-title&quot;&gt;무엇이 실제로 있고, 코드까지 있는가&lt;/h2&gt;</code></span>
+<span class="code-line"><i>159</i><code>              &lt;p&gt;공식·제공사 발표·제3자 실험을 섞지 않고, 근거와 코드 상태를 나란히 봅니다.&lt;/p&gt;</code></span>
+<span class="code-line"><i>160</i><code>            &lt;/div&gt;</code></span>
+<span class="code-line"><i>161</i><code>            &lt;a class=&quot;text-link&quot; href=&quot;#official-resources&quot;&gt;공식 원본만 보기 &lt;span aria-hidden=&quot;true&quot;&gt;↘&lt;/span&gt;&lt;/a&gt;</code></span>
+<span class="code-line"><i>162</i><code>          &lt;/div&gt;</code></span>
+<span class="code-line"><i>163</i><code></code></span>
+<span class="code-line"><i>164</i><code>          &lt;div class=&quot;toolbar&quot; aria-label=&quot;생태계 필터&quot;&gt;</code></span>
+<span class="code-line"><i>165</i><code>            &lt;label class=&quot;search-field&quot;&gt;</code></span>
+<span class="code-line"><i>166</i><code>              &lt;svg aria-hidden=&quot;true&quot; viewBox=&quot;0 0 24 24&quot;&gt;&lt;circle cx=&quot;11&quot; cy=&quot;11&quot; r=&quot;6&quot;/&gt;&lt;path d=&quot;m16 16 4 4&quot;/&gt;&lt;/svg&gt;</code></span>
+<span class="code-line"><i>167</i><code>              &lt;span class=&quot;sr-only&quot;&gt;생태계 검색&lt;/span&gt;</code></span>
+<span class="code-line"><i>168</i><code>              &lt;input id=&quot;ecosystem-search&quot; type=&quot;search&quot; placeholder=&quot;프로젝트, 상태, 카테고리 검색&quot; autocomplete=&quot;off&quot; /&gt;</code></span>
+<span class="code-line"><i>169</i><code>              &lt;kbd&gt;⌘ K&lt;/kbd&gt;</code></span>
+<span class="code-line"><i>170</i><code>            &lt;/label&gt;</code></span>
+<span class="code-line"><i>171</i><code>            &lt;div class=&quot;filter-group&quot; role=&quot;group&quot; aria-label=&quot;공식성 필터&quot;&gt;</code></span>
+<span class="code-line"><i>172</i><code>              &lt;button class=&quot;filter-chip is-active&quot; type=&quot;button&quot; data-filter=&quot;all&quot;&gt;전체&lt;/button&gt;</code></span>
+<span class="code-line"><i>173</i><code>              &lt;button class=&quot;filter-chip&quot; type=&quot;button&quot; data-filter=&quot;official&quot;&gt;Official&lt;/button&gt;</code></span>
+<span class="code-line"><i>174</i><code>              &lt;button class=&quot;filter-chip&quot; type=&quot;button&quot; data-filter=&quot;provider_reported&quot;&gt;Provider&lt;/button&gt;</code></span>
+<span class="code-line"><i>175</i><code>              &lt;button class=&quot;filter-chip&quot; type=&quot;button&quot; data-filter=&quot;third_party&quot;&gt;Third-party&lt;/button&gt;</code></span>
+<span class="code-line"><i>176</i><code>            &lt;/div&gt;</code></span>
+<span class="code-line"><i>177</i><code>          &lt;/div&gt;</code></span>
+<span class="code-line"><i>178</i><code></code></span>
+<span class="code-line"><i>179</i><code>          &lt;div class=&quot;table-frame&quot;&gt;</code></span>
+<span class="code-line"><i>180</i><code>            &lt;table class=&quot;data-table&quot;&gt;</code></span>
+<span class="code-line"><i>181</i><code>              &lt;thead&gt;</code></span>
+<span class="code-line"><i>182</i><code>                &lt;tr&gt;</code></span>
+<span class="code-line"><i>183</i><code>                  &lt;th scope=&quot;col&quot;&gt;프로젝트 / 구성요소&lt;/th&gt;</code></span>
+<span class="code-line"><i>184</i><code>                  &lt;th scope=&quot;col&quot;&gt;분류&lt;/th&gt;</code></span>
+<span class="code-line"><i>185</i><code>                  &lt;th scope=&quot;col&quot;&gt;관찰 상태&lt;/th&gt;</code></span>
+<span class="code-line"><i>186</i><code>                  &lt;th scope=&quot;col&quot;&gt;코드 상태&lt;/th&gt;</code></span>
+<span class="code-line"><i>187</i><code>                  &lt;th scope=&quot;col&quot;&gt;근거&lt;/th&gt;</code></span>
+<span class="code-line"><i>188</i><code>                  &lt;th scope=&quot;col&quot;&gt;&lt;span class=&quot;sr-only&quot;&gt;상세 보기&lt;/span&gt;&lt;/th&gt;</code></span>
+<span class="code-line"><i>189</i><code>                &lt;/tr&gt;</code></span>
+<span class="code-line"><i>190</i><code>              &lt;/thead&gt;</code></span>
+<span class="code-line"><i>191</i><code>              &lt;tbody id=&quot;ecosystem-rows&quot;&gt;</code></span>
+<span class="code-line"><i>192</i><code>                &lt;tr class=&quot;loading-row&quot;&gt;&lt;td colspan=&quot;6&quot;&gt;생태계 인벤토리를 불러오는 중…&lt;/td&gt;&lt;/tr&gt;</code></span>
+<span class="code-line"><i>193</i><code>              &lt;/tbody&gt;</code></span>
+<span class="code-line"><i>194</i><code>            &lt;/table&gt;</code></span>
+<span class="code-line"><i>195</i><code>            &lt;div class=&quot;empty-state&quot; id=&quot;ecosystem-empty&quot; hidden&gt;</code></span>
+<span class="code-line"><i>196</i><code>              &lt;strong&gt;일치하는 항목이 없습니다.&lt;/strong&gt;</code></span>
+<span class="code-line"><i>197</i><code>              &lt;p&gt;검색어를 줄이거나 다른 분류를 선택해 보세요.&lt;/p&gt;</code></span>
+<span class="code-line"><i>198</i><code>            &lt;/div&gt;</code></span>
+<span class="code-line"><i>199</i><code>          &lt;/div&gt;</code></span>
+<span class="code-line"><i>200</i><code>          &lt;p class=&quot;result-count&quot; id=&quot;ecosystem-count&quot; aria-live=&quot;polite&quot;&gt;&lt;/p&gt;</code></span>
+<span class="code-line"><i>201</i><code></code></span>
+<span class="code-line"><i>202</i><code>          &lt;div id=&quot;official-resources&quot; class=&quot;subsection&quot;&gt;</code></span>
+<span class="code-line"><i>203</i><code>            &lt;div class=&quot;subsection-heading&quot;&gt;</code></span>
+<span class="code-line"><i>204</i><code>              &lt;div&gt;</code></span>
+<span class="code-line"><i>205</i><code>                &lt;p class=&quot;mini-label&quot;&gt;OFFICIAL SOURCE DECK&lt;/p&gt;</code></span>
+<span class="code-line"><i>206</i><code>                &lt;h3&gt;바로 여는 공식 문서와 코드&lt;/h3&gt;</code></span>
+<span class="code-line"><i>207</i><code>              &lt;/div&gt;</code></span>
+<span class="code-line"><i>208</i><code>              &lt;span id=&quot;official-check-date&quot;&gt;Checked —&lt;/span&gt;</code></span>
+<span class="code-line"><i>209</i><code>            &lt;/div&gt;</code></span>
+<span class="code-line"><i>210</i><code>            &lt;div class=&quot;resource-grid&quot; id=&quot;official-resource-grid&quot;&gt;</code></span>
+<span class="code-line"><i>211</i><code>              &lt;div class=&quot;skeleton-card&quot;&gt;&lt;/div&gt;&lt;div class=&quot;skeleton-card&quot;&gt;&lt;/div&gt;&lt;div class=&quot;skeleton-card&quot;&gt;&lt;/div&gt;</code></span>
+<span class="code-line"><i>212</i><code>            &lt;/div&gt;</code></span>
+<span class="code-line"><i>213</i><code>          &lt;/div&gt;</code></span>
+<span class="code-line"><i>214</i><code>        &lt;/section&gt;</code></span>
+<span class="code-line"><i>215</i><code></code></span>
+<span class="code-line"><i>216</i><code>        &lt;section id=&quot;nodes&quot; class=&quot;section&quot; aria-labelledby=&quot;nodes-title&quot;&gt;</code></span>
+<span class="code-line"><i>217</i><code>          &lt;div class=&quot;section-heading&quot;&gt;</code></span>
+<span class="code-line"><i>218</i><code>            &lt;div&gt;</code></span>
+<span class="code-line"><i>219</i><code>              &lt;div class=&quot;section-kicker&quot;&gt;&lt;span&gt;RUN&lt;/span&gt; NODE &amp;amp; INDEXER PROFILE&lt;/div&gt;</code></span>
+<span class="code-line"><i>220</i><code>              &lt;h2 id=&quot;nodes-title&quot;&gt;노드는 원장, 인덱서는 제품 속도&lt;/h2&gt;</code></span>
+<span class="code-line"><i>221</i><code>              &lt;p&gt;공식 노드 사양과 빠른 온체인 데이터 경로를 한 페이지에서 봅니다.&lt;/p&gt;</code></span>
+<span class="code-line"><i>222</i><code>            &lt;/div&gt;</code></span>
+<span class="code-line"><i>223</i><code>            &lt;span class=&quot;quality-badge quality-caution&quot;&gt;&lt;i&gt;&lt;/i&gt; Sepolia evidence only&lt;/span&gt;</code></span>
+<span class="code-line"><i>224</i><code>          &lt;/div&gt;</code></span>
+<span class="code-line"><i>225</i><code></code></span>
+<span class="code-line"><i>226</i><code>          &lt;div class=&quot;infra-verdict&quot;&gt;</code></span>
+<span class="code-line"><i>227</i><code>            &lt;div&gt;</code></span>
+<span class="code-line"><i>228</i><code>              &lt;p class=&quot;mini-label&quot;&gt;ANSWER&lt;/p&gt;</code></span>
+<span class="code-line"><i>229</i><code>              &lt;h3 id=&quot;infra-headline&quot;&gt;노드 정보를 불러오는 중…&lt;/h3&gt;</code></span>
+<span class="code-line"><i>230</i><code>            &lt;/div&gt;</code></span>
+<span class="code-line"><i>231</i><code>            &lt;span class=&quot;status-pill status-limited&quot;&gt;NO MAINNET CONFIG&lt;/span&gt;</code></span>
+<span class="code-line"><i>232</i><code>          &lt;/div&gt;</code></span>
+<span class="code-line"><i>233</i><code></code></span>
+<span class="code-line"><i>234</i><code>          &lt;div class=&quot;infra-grid&quot;&gt;</code></span>
+<span class="code-line"><i>235</i><code>            &lt;article class=&quot;infra-card&quot;&gt;</code></span>
+<span class="code-line"><i>236</i><code>              &lt;div class=&quot;card-title-row&quot;&gt;&lt;div&gt;&lt;p class=&quot;mini-label&quot;&gt;NODE PROFILE&lt;/p&gt;&lt;h3&gt;운영 사양표&lt;/h3&gt;&lt;/div&gt;&lt;span&gt;official + unknowns&lt;/span&gt;&lt;/div&gt;</code></span>
+<span class="code-line"><i>237</i><code>              &lt;dl class=&quot;spec-list&quot; id=&quot;node-profile&quot;&gt;&lt;div&gt;&lt;dt&gt;Loading&lt;/dt&gt;&lt;dd&gt;—&lt;/dd&gt;&lt;/div&gt;&lt;/dl&gt;</code></span>
+<span class="code-line"><i>238</i><code>              &lt;div class=&quot;source-row&quot; id=&quot;infra-links&quot;&gt;&lt;/div&gt;</code></span>
+<span class="code-line"><i>239</i><code>            &lt;/article&gt;</code></span>
+<span class="code-line"><i>240</i><code></code></span>
+<span class="code-line"><i>241</i><code>            &lt;article class=&quot;infra-card topology-card&quot;&gt;</code></span>
+<span class="code-line"><i>242</i><code>              &lt;div class=&quot;card-title-row&quot;&gt;&lt;div&gt;&lt;p class=&quot;mini-label&quot;&gt;DATA PATH&lt;/p&gt;&lt;h3&gt;빠른 조회 토폴로지&lt;/h3&gt;&lt;/div&gt;&lt;span&gt;recommended inference&lt;/span&gt;&lt;/div&gt;</code></span>
+<span class="code-line"><i>243</i><code>              &lt;ol class=&quot;topology-flow&quot; id=&quot;node-topology&quot;&gt;&lt;li&gt;데이터 경로를 불러오는 중…&lt;/li&gt;&lt;/ol&gt;</code></span>
+<span class="code-line"><i>244</i><code>              &lt;p class=&quot;card-note&quot;&gt;Flashblocks와 unsafe head는 미리보기입니다. 금액·수수료·정산 화면은 safe/finalized 상태로 반드시 재조정해야 합니다.&lt;/p&gt;</code></span>
+<span class="code-line"><i>245</i><code>            &lt;/article&gt;</code></span>
+<span class="code-line"><i>246</i><code>          &lt;/div&gt;</code></span>
+<span class="code-line"><i>247</i><code></code></span>
+<span class="code-line"><i>248</i><code>        &lt;/section&gt;</code></span>
+<span class="code-line"><i>249</i><code></code></span>
+<span class="code-line"><i>250</i><code>        &lt;section id=&quot;pools&quot; class=&quot;section&quot; aria-labelledby=&quot;pools-title&quot;&gt;</code></span>
+<span class="code-line"><i>251</i><code>          &lt;div class=&quot;section-heading&quot;&gt;</code></span>
+<span class="code-line"><i>252</i><code>            &lt;div&gt;</code></span>
+<span class="code-line"><i>253</i><code>              &lt;div class=&quot;section-kicker&quot;&gt;&lt;span&gt;POOL&lt;/span&gt; SWAP POOL BLUEPRINT&lt;/div&gt;</code></span>
+<span class="code-line"><i>254</i><code>              &lt;h2 id=&quot;pools-title&quot;&gt;스왑풀은 core·periphery·data·ops로 나눈다&lt;/h2&gt;</code></span>
+<span class="code-line"><i>255</i><code>              &lt;p&gt;V3형 풀을 만들 때 필요한 계층, 현재 코드 상태와 다음 게이트를 한 페이지에서 봅니다.&lt;/p&gt;</code></span>
+<span class="code-line"><i>256</i><code>            &lt;/div&gt;</code></span>
+<span class="code-line"><i>257</i><code>            &lt;span class=&quot;quality-badge quality-caution&quot;&gt;&lt;i&gt;&lt;/i&gt; Design only · no deployment&lt;/span&gt;</code></span>
+<span class="code-line"><i>258</i><code>          &lt;/div&gt;</code></span>
+<span class="code-line"><i>259</i><code></code></span>
+<span class="code-line"><i>260</i><code>          &lt;div class=&quot;pool-section&quot;&gt;</code></span>
+<span class="code-line"><i>261</i><code>            &lt;div class=&quot;subsection-heading&quot;&gt;</code></span>
+<span class="code-line"><i>262</i><code>              &lt;div&gt;</code></span>
+<span class="code-line"><i>263</i><code>                &lt;p class=&quot;mini-label&quot;&gt;SWAP POOL&lt;/p&gt;</code></span>
+<span class="code-line"><i>264</i><code>                &lt;h3 id=&quot;pool-headline&quot;&gt;스왑풀 구조를 불러오는 중…&lt;/h3&gt;</code></span>
+<span class="code-line"><i>265</i><code>              &lt;/div&gt;</code></span>
+<span class="code-line"><i>266</i><code>            &lt;/div&gt;</code></span>
+<span class="code-line"><i>267</i><code>            &lt;div class=&quot;attention-strip pool-notice&quot; role=&quot;note&quot;&gt;</code></span>
+<span class="code-line"><i>268</i><code>              &lt;strong&gt;관찰 경계&lt;/strong&gt;</code></span>
+<span class="code-line"><i>269</i><code>              &lt;p id=&quot;pool-notice&quot;&gt;제3자 테스트넷 코드는 공식·감사·출시 준비를 의미하지 않습니다.&lt;/p&gt;</code></span>
+<span class="code-line"><i>270</i><code>              &lt;span&gt;read-only&lt;/span&gt;</code></span>
+<span class="code-line"><i>271</i><code>            &lt;/div&gt;</code></span>
+<span class="code-line"><i>272</i><code>            &lt;div class=&quot;table-frame&quot;&gt;</code></span>
+<span class="code-line"><i>273</i><code>              &lt;table class=&quot;data-table blueprint-table&quot;&gt;</code></span>
+<span class="code-line"><i>274</i><code>                &lt;thead&gt;&lt;tr&gt;&lt;th scope=&quot;col&quot;&gt;구성요소&lt;/th&gt;&lt;th scope=&quot;col&quot;&gt;층&lt;/th&gt;&lt;th scope=&quot;col&quot;&gt;역할&lt;/th&gt;&lt;th scope=&quot;col&quot;&gt;외부 근거&lt;/th&gt;&lt;th scope=&quot;col&quot;&gt;로컬 코드&lt;/th&gt;&lt;th scope=&quot;col&quot;&gt;다음 게이트&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;</code></span>
+<span class="code-line"><i>275</i><code>                &lt;tbody id=&quot;pool-components&quot;&gt;&lt;tr class=&quot;loading-row&quot;&gt;&lt;td colspan=&quot;6&quot;&gt;풀 구조를 불러오는 중…&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;</code></span>
+<span class="code-line"><i>276</i><code>              &lt;/table&gt;</code></span>
+<span class="code-line"><i>277</i><code>            &lt;/div&gt;</code></span>
+<span class="code-line"><i>278</i><code>            &lt;div class=&quot;flow-grid&quot; id=&quot;pool-flows&quot;&gt;&lt;/div&gt;</code></span>
+<span class="code-line"><i>279</i><code>          &lt;/div&gt;</code></span>
+<span class="code-line"><i>280</i><code>        &lt;/section&gt;</code></span>
+<span class="code-line"><i>281</i><code></code></span>
+<span class="code-line"><i>282</i><code>        &lt;section id=&quot;revenue&quot; class=&quot;section&quot; aria-labelledby=&quot;revenue-title&quot;&gt;</code></span>
+<span class="code-line"><i>283</i><code>          &lt;div class=&quot;section-heading&quot;&gt;</code></span>
+<span class="code-line"><i>284</i><code>            &lt;div&gt;</code></span>
+<span class="code-line"><i>285</i><code>              &lt;div class=&quot;section-kicker&quot;&gt;&lt;span&gt;EARN&lt;/span&gt; REVENUE DESIGN LAB&lt;/div&gt;</code></span>
+<span class="code-line"><i>286</i><code>              &lt;h2 id=&quot;revenue-title&quot;&gt;수익은 거래량이 아니라 귀속 구조로 본다&lt;/h2&gt;</code></span>
+<span class="code-line"><i>287</i><code>              &lt;p&gt;LP 수수료·프로토콜 수수료·NFT 발행·밈코인·데이터 구독을 서로 다른 원장으로 분리합니다.&lt;/p&gt;</code></span>
+<span class="code-line"><i>288</i><code>            &lt;/div&gt;</code></span>
+<span class="code-line"><i>289</i><code>            &lt;span class=&quot;quality-badge&quot;&gt;&lt;i&gt;&lt;/i&gt; Insane Research QA&lt;/span&gt;</code></span>
 <span class="code-line"><i>290</i><code>          &lt;/div&gt;</code></span>
 <span class="code-line"><i>291</i><code></code></span>
-<span class="code-line"><i>292</i><code>          &lt;div class=&quot;economics-lab&quot;&gt;</code></span>
-<span class="code-line"><i>293</i><code>            &lt;div class=&quot;calculator-panel&quot;&gt;</code></span>
-<span class="code-line"><i>294</i><code>              &lt;div class=&quot;card-title-row&quot;&gt;&lt;div&gt;&lt;p class=&quot;mini-label&quot;&gt;UNIT ECONOMICS&lt;/p&gt;&lt;h3&gt;수수료 귀속 계산기&lt;/h3&gt;&lt;/div&gt;&lt;span&gt;illustrative only&lt;/span&gt;&lt;/div&gt;</code></span>
-<span class="code-line"><i>295</i><code>              &lt;p class=&quot;calculator-help&quot;&gt;월 거래·민팅 GMV에 총 수수료와 선택한 수취인 몫을 적용합니다. 수취인이 운영사·LP·creator·holder 중 누구인지는 프리셋마다 다르며, 아래 값은 예측도 권고도 아닙니다.&lt;/p&gt;</code></span>
-<span class="code-line"><i>296</i><code>              &lt;div class=&quot;preset-row&quot; id=&quot;calculator-presets&quot;&gt;&lt;/div&gt;</code></span>
-<span class="code-line"><i>297</i><code>              &lt;div class=&quot;calculator-inputs&quot;&gt;</code></span>
-<span class="code-line"><i>298</i><code>                &lt;label&gt;&lt;span&gt;월 과금 기준액 (USD)&lt;/span&gt;&lt;input id=&quot;calc-volume&quot; type=&quot;number&quot; min=&quot;0&quot; step=&quot;1000&quot; value=&quot;1000000&quot; inputmode=&quot;decimal&quot; /&gt;&lt;/label&gt;</code></span>
-<span class="code-line"><i>299</i><code>                &lt;label&gt;&lt;span&gt;총 수수료 (bps)&lt;/span&gt;&lt;input id=&quot;calc-fee&quot; type=&quot;number&quot; min=&quot;0&quot; max=&quot;10000&quot; step=&quot;0.1&quot; value=&quot;30&quot; inputmode=&quot;decimal&quot; /&gt;&lt;/label&gt;</code></span>
-<span class="code-line"><i>300</i><code>                &lt;label&gt;&lt;span&gt;선택 수취인 귀속 (%)&lt;/span&gt;&lt;input id=&quot;calc-share&quot; type=&quot;number&quot; min=&quot;0&quot; max=&quot;100&quot; step=&quot;0.1&quot; value=&quot;16.7&quot; inputmode=&quot;decimal&quot; /&gt;&lt;/label&gt;</code></span>
-<span class="code-line"><i>301</i><code>                &lt;label&gt;&lt;span&gt;월 직접비 (USD)&lt;/span&gt;&lt;input id=&quot;calc-cost&quot; type=&quot;number&quot; min=&quot;0&quot; step=&quot;100&quot; value=&quot;5000&quot; inputmode=&quot;decimal&quot; /&gt;&lt;/label&gt;</code></span>
-<span class="code-line"><i>302</i><code>              &lt;/div&gt;</code></span>
-<span class="code-line"><i>303</i><code>              &lt;div class=&quot;calculator-results&quot;&gt;</code></span>
-<span class="code-line"><i>304</i><code>                &lt;div&gt;&lt;span&gt;사용자 총수수료&lt;/span&gt;&lt;strong id=&quot;calc-gross&quot;&gt;—&lt;/strong&gt;&lt;/div&gt;</code></span>
-<span class="code-line"><i>305</i><code>                &lt;div&gt;&lt;span id=&quot;calc-recipient-label&quot;&gt;선택 수취인 총액&lt;/span&gt;&lt;strong id=&quot;calc-recipient&quot;&gt;—&lt;/strong&gt;&lt;/div&gt;</code></span>
-<span class="code-line"><i>306</i><code>                &lt;div&gt;&lt;span&gt;가정 직접비 차감&lt;/span&gt;&lt;strong id=&quot;calc-net&quot;&gt;—&lt;/strong&gt;&lt;/div&gt;</code></span>
-<span class="code-line"><i>307</i><code>                &lt;div&gt;&lt;span&gt;손익분기 기준액&lt;/span&gt;&lt;strong id=&quot;calc-break-even&quot;&gt;—&lt;/strong&gt;&lt;/div&gt;</code></span>
-<span class="code-line"><i>308</i><code>              &lt;/div&gt;</code></span>
-<span class="code-line"><i>309</i><code>            &lt;/div&gt;</code></span>
-<span class="code-line"><i>310</i><code></code></span>
-<span class="code-line"><i>311</i><code>            &lt;div class=&quot;sequence-panel&quot;&gt;</code></span>
-<span class="code-line"><i>312</i><code>              &lt;div class=&quot;card-title-row&quot;&gt;&lt;div&gt;&lt;p class=&quot;mini-label&quot;&gt;ORDER OF OPERATIONS&lt;/p&gt;&lt;h3&gt;권장 순서&lt;/h3&gt;&lt;/div&gt;&lt;span&gt;gated&lt;/span&gt;&lt;/div&gt;</code></span>
-<span class="code-line"><i>313</i><code>              &lt;ol class=&quot;sequence-list&quot; id=&quot;revenue-sequence&quot;&gt;&lt;li&gt;순서를 불러오는 중…&lt;/li&gt;&lt;/ol&gt;</code></span>
-<span class="code-line"><i>314</i><code>            &lt;/div&gt;</code></span>
-<span class="code-line"><i>315</i><code>          &lt;/div&gt;</code></span>
-<span class="code-line"><i>316</i><code></code></span>
-<span class="code-line"><i>317</i><code>          &lt;div class=&quot;case-study-block&quot;&gt;</code></span>
-<span class="code-line"><i>318</i><code>            &lt;div class=&quot;subsection-heading&quot;&gt;</code></span>
-<span class="code-line"><i>319</i><code>              &lt;div&gt;&lt;p class=&quot;mini-label&quot;&gt;TRANSFERABLE EVIDENCE&lt;/p&gt;&lt;h3&gt;Ethereum · Base · Solana · Robinhood 사례&lt;/h3&gt;&lt;/div&gt;</code></span>
-<span class="code-line"><i>320</i><code>              &lt;span id=&quot;revenue-as-of&quot;&gt;As of —&lt;/span&gt;</code></span>
-<span class="code-line"><i>321</i><code>            &lt;/div&gt;</code></span>
-<span class="code-line"><i>322</i><code>            &lt;div class=&quot;table-frame&quot;&gt;</code></span>
-<span class="code-line"><i>323</i><code>              &lt;table class=&quot;data-table case-table&quot;&gt;</code></span>
-<span class="code-line"><i>324</i><code>                &lt;thead&gt;&lt;tr&gt;&lt;th scope=&quot;col&quot;&gt;사례&lt;/th&gt;&lt;th scope=&quot;col&quot;&gt;초기 론칭 장치&lt;/th&gt;&lt;th scope=&quot;col&quot;&gt;후속 성장 장치&lt;/th&gt;&lt;th scope=&quot;col&quot;&gt;수익 귀속&lt;/th&gt;&lt;th scope=&quot;col&quot;&gt;성공 근거 / 경계&lt;/th&gt;&lt;th scope=&quot;col&quot;&gt;원문&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;</code></span>
-<span class="code-line"><i>325</i><code>                &lt;tbody id=&quot;case-studies&quot;&gt;&lt;tr class=&quot;loading-row&quot;&gt;&lt;td colspan=&quot;6&quot;&gt;사례를 불러오는 중…&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;</code></span>
-<span class="code-line"><i>326</i><code>              &lt;/table&gt;</code></span>
-<span class="code-line"><i>327</i><code>            &lt;/div&gt;</code></span>
-<span class="code-line"><i>328</i><code>          &lt;/div&gt;</code></span>
-<span class="code-line"><i>329</i><code>        &lt;/section&gt;</code></span>
-<span class="code-line"><i>330</i><code></code></span>
-<span class="code-line"><i>331</i><code>        &lt;section id=&quot;workbench&quot; class=&quot;section&quot; aria-labelledby=&quot;workbench-title&quot;&gt;</code></span>
-<span class="code-line"><i>332</i><code>          &lt;div class=&quot;section-heading&quot;&gt;</code></span>
-<span class="code-line"><i>333</i><code>            &lt;div&gt;</code></span>
-<span class="code-line"><i>334</i><code>              &lt;div class=&quot;section-kicker&quot;&gt;&lt;span&gt;BUILD&lt;/span&gt; DEVELOPMENT WORKBENCH&lt;/div&gt;</code></span>
-<span class="code-line"><i>335</i><code>              &lt;h2 id=&quot;workbench-title&quot;&gt;다음 커밋을 어디서 시작할지&lt;/h2&gt;</code></span>
-<span class="code-line"><i>336</i><code>              &lt;p&gt;구현된 코드, 사양만 있는 영역, 명시적으로 잠긴 실행 경로를 한 보드에서 구분합니다.&lt;/p&gt;</code></span>
-<span class="code-line"><i>337</i><code>            &lt;/div&gt;</code></span>
-<span class="code-line"><i>338</i><code>            &lt;button class=&quot;button button-secondary&quot; id=&quot;copy-checks&quot; type=&quot;button&quot;&gt;검증 명령 복사&lt;/button&gt;</code></span>
-<span class="code-line"><i>339</i><code>          &lt;/div&gt;</code></span>
-<span class="code-line"><i>340</i><code></code></span>
-<span class="code-line"><i>341</i><code>          &lt;div class=&quot;build-board&quot; id=&quot;build-board&quot; aria-live=&quot;polite&quot;&gt;</code></span>
-<span class="code-line"><i>342</i><code>            &lt;div class=&quot;skeleton-wide&quot;&gt;&lt;/div&gt;</code></span>
-<span class="code-line"><i>343</i><code>          &lt;/div&gt;</code></span>
-<span class="code-line"><i>344</i><code></code></span>
-<span class="code-line"><i>345</i><code>          &lt;div class=&quot;developer-jump&quot;&gt;</code></span>
-<span class="code-line"><i>346</i><code>            &lt;div&gt;</code></span>
-<span class="code-line"><i>347</i><code>              &lt;p class=&quot;mini-label&quot;&gt;QUICK START&lt;/p&gt;</code></span>
-<span class="code-line"><i>348</i><code>              &lt;h3&gt;읽고 → 검증하고 → 작은 로컬 프로토타입으로&lt;/h3&gt;</code></span>
-<span class="code-line"><i>349</i><code>              &lt;p&gt;현재 저장소에는 signer·broadcast·deployment 경로가 없습니다. 개발은 Phase 1 local-only 경계에서 시작합니다.&lt;/p&gt;</code></span>
-<span class="code-line"><i>350</i><code>            &lt;/div&gt;</code></span>
-<span class="code-line"><i>351</i><code>            &lt;ol&gt;</code></span>
-<span class="code-line"><i>352</i><code>              &lt;li&gt;&lt;span&gt;01&lt;/span&gt;&lt;div&gt;&lt;strong&gt;Decision memo&lt;/strong&gt;&lt;small&gt;제품 가설과 중단선을 먼저 확인&lt;/small&gt;&lt;/div&gt;&lt;/li&gt;</code></span>
-<span class="code-line"><i>353</i><code>              &lt;li&gt;&lt;span&gt;02&lt;/span&gt;&lt;div&gt;&lt;strong&gt;Contract specs&lt;/strong&gt;&lt;small&gt;구현 전에 invariant와 권한 모델 확정&lt;/small&gt;&lt;/div&gt;&lt;/li&gt;</code></span>
-<span class="code-line"><i>354</i><code>              &lt;li&gt;&lt;span&gt;03&lt;/span&gt;&lt;div&gt;&lt;strong&gt;Local tests&lt;/strong&gt;&lt;small&gt;체인 연결 없는 결정론적 테스트부터&lt;/small&gt;&lt;/div&gt;&lt;/li&gt;</code></span>
-<span class="code-line"><i>355</i><code>            &lt;/ol&gt;</code></span>
-<span class="code-line"><i>356</i><code>          &lt;/div&gt;</code></span>
-<span class="code-line"><i>357</i><code>        &lt;/section&gt;</code></span>
-<span class="code-line"><i>358</i><code></code></span>
-<span class="code-line"><i>359</i><code>        &lt;section id=&quot;research&quot; class=&quot;section&quot; aria-labelledby=&quot;research-title&quot;&gt;</code></span>
-<span class="code-line"><i>360</i><code>          &lt;div class=&quot;section-heading&quot;&gt;</code></span>
-<span class="code-line"><i>361</i><code>            &lt;div&gt;</code></span>
-<span class="code-line"><i>362</i><code>              &lt;div class=&quot;section-kicker&quot;&gt;&lt;span&gt;READ&lt;/span&gt; RESEARCH LIBRARY&lt;/div&gt;</code></span>
-<span class="code-line"><i>363</i><code>              &lt;h2 id=&quot;research-title&quot;&gt;결론부터 원문 근거까지&lt;/h2&gt;</code></span>
-<span class="code-line"><i>364</i><code>              &lt;p&gt;요약, 전체 보고서, 출처 레지스트리, 주장 원장을 한 묶음으로 엽니다.&lt;/p&gt;</code></span>
-<span class="code-line"><i>365</i><code>            &lt;/div&gt;</code></span>
-<span class="code-line"><i>366</i><code>            &lt;span class=&quot;quality-badge&quot;&gt;&lt;i&gt;&lt;/i&gt; Citation QA tracked&lt;/span&gt;</code></span>
-<span class="code-line"><i>367</i><code>          &lt;/div&gt;</code></span>
-<span class="code-line"><i>368</i><code>          &lt;div class=&quot;research-grid&quot; id=&quot;research-grid&quot;&gt;</code></span>
-<span class="code-line"><i>369</i><code>            &lt;div class=&quot;skeleton-card&quot;&gt;&lt;/div&gt;&lt;div class=&quot;skeleton-card&quot;&gt;&lt;/div&gt;</code></span>
-<span class="code-line"><i>370</i><code>          &lt;/div&gt;</code></span>
-<span class="code-line"><i>371</i><code></code></span>
-<span class="code-line"><i>372</i><code>          &lt;div class=&quot;document-shelf&quot;&gt;</code></span>
-<span class="code-line"><i>373</i><code>            &lt;div class=&quot;subsection-heading&quot;&gt;</code></span>
-<span class="code-line"><i>374</i><code>              &lt;div&gt;</code></span>
-<span class="code-line"><i>375</i><code>                &lt;p class=&quot;mini-label&quot;&gt;REPOSITORY INDEX&lt;/p&gt;</code></span>
-<span class="code-line"><i>376</i><code>                &lt;h3&gt;용도별 문서 바로가기&lt;/h3&gt;</code></span>
-<span class="code-line"><i>377</i><code>              &lt;/div&gt;</code></span>
-<span class="code-line"><i>378</i><code>            &lt;/div&gt;</code></span>
-<span class="code-line"><i>379</i><code>            &lt;div class=&quot;document-groups&quot; id=&quot;document-groups&quot;&gt;&lt;/div&gt;</code></span>
-<span class="code-line"><i>380</i><code>          &lt;/div&gt;</code></span>
-<span class="code-line"><i>381</i><code>        &lt;/section&gt;</code></span>
-<span class="code-line"><i>382</i><code></code></span>
-<span class="code-line"><i>383</i><code>        &lt;section id=&quot;gates&quot; class=&quot;section gate-section&quot; aria-labelledby=&quot;gates-title&quot;&gt;</code></span>
-<span class="code-line"><i>384</i><code>          &lt;div class=&quot;section-heading&quot;&gt;</code></span>
-<span class="code-line"><i>385</i><code>            &lt;div&gt;</code></span>
-<span class="code-line"><i>386</i><code>              &lt;div class=&quot;section-kicker&quot;&gt;&lt;span&gt;STOP&lt;/span&gt; PUBLIC MAINNET GATES&lt;/div&gt;</code></span>
-<span class="code-line"><i>387</i><code>              &lt;h2 id=&quot;gates-title&quot;&gt;모든 게이트는 기본값이 UNKNOWN / blocked&lt;/h2&gt;</code></span>
-<span class="code-line"><i>388</i><code>              &lt;p&gt;private mainnet 접근이나 accelerator milestone은 public launch 근거를 대체하지 않습니다.&lt;/p&gt;</code></span>
-<span class="code-line"><i>389</i><code>            &lt;/div&gt;</code></span>
-<span class="code-line"><i>390</i><code>            &lt;div class=&quot;gate-score&quot;&gt;&lt;strong id=&quot;gate-score&quot;&gt;0 / 0&lt;/strong&gt;&lt;span&gt;cleared&lt;/span&gt;&lt;/div&gt;</code></span>
-<span class="code-line"><i>391</i><code>          &lt;/div&gt;</code></span>
-<span class="code-line"><i>392</i><code>          &lt;ol class=&quot;gate-list&quot; id=&quot;gate-list&quot;&gt;</code></span>
-<span class="code-line"><i>393</i><code>            &lt;li class=&quot;loading-row&quot;&gt;게이트를 불러오는 중…&lt;/li&gt;</code></span>
-<span class="code-line"><i>394</i><code>          &lt;/ol&gt;</code></span>
-<span class="code-line"><i>395</i><code>          &lt;div class=&quot;final-lock&quot;&gt;</code></span>
-<span class="code-line"><i>396</i><code>            &lt;span class=&quot;lock-icon&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;</code></span>
-<span class="code-line"><i>397</i><code>            &lt;div&gt;</code></span>
-<span class="code-line"><i>398</i><code>              &lt;strong&gt;Human authority required&lt;/strong&gt;</code></span>
-<span class="code-line"><i>399</i><code>              &lt;p&gt;정확한 revision, chain, address, parameter, role, funding과 launch window를 지정한 별도 승인이 마지막 조건입니다.&lt;/p&gt;</code></span>
-<span class="code-line"><i>400</i><code>            &lt;/div&gt;</code></span>
-<span class="code-line"><i>401</i><code>          &lt;/div&gt;</code></span>
-<span class="code-line"><i>402</i><code>        &lt;/section&gt;</code></span>
-<span class="code-line"><i>403</i><code></code></span>
-<span class="code-line"><i>404</i><code>        &lt;footer class=&quot;footer&quot;&gt;</code></span>
-<span class="code-line"><i>405</i><code>          &lt;div&gt;</code></span>
-<span class="code-line"><i>406</i><code>            &lt;strong&gt;GIWA Launchpad Control Room&lt;/strong&gt;</code></span>
-<span class="code-line"><i>407</i><code>            &lt;span id=&quot;catalog-revision&quot;&gt;Catalog —&lt;/span&gt;</code></span>
-<span class="code-line"><i>408</i><code>          &lt;/div&gt;</code></span>
-<span class="code-line"><i>409</i><code>          &lt;p&gt;Research only · GIWA Sepolia only · No execution authority&lt;/p&gt;</code></span>
-<span class="code-line"><i>410</i><code>        &lt;/footer&gt;</code></span>
-<span class="code-line"><i>411</i><code>      &lt;/main&gt;</code></span>
-<span class="code-line"><i>412</i><code>    &lt;/div&gt;</code></span>
-<span class="code-line"><i>413</i><code></code></span>
-<span class="code-line"><i>414</i><code>    &lt;aside class=&quot;detail-drawer&quot; id=&quot;detail-drawer&quot; aria-labelledby=&quot;drawer-title&quot; aria-hidden=&quot;true&quot;&gt;</code></span>
-<span class="code-line"><i>415</i><code>      &lt;button class=&quot;drawer-backdrop&quot; type=&quot;button&quot; data-close-drawer aria-label=&quot;상세 패널 닫기&quot;&gt;&lt;/button&gt;</code></span>
-<span class="code-line"><i>416</i><code>      &lt;div class=&quot;drawer-panel&quot; role=&quot;dialog&quot; aria-modal=&quot;true&quot;&gt;</code></span>
-<span class="code-line"><i>417</i><code>        &lt;div class=&quot;drawer-head&quot;&gt;</code></span>
-<span class="code-line"><i>418</i><code>          &lt;span class=&quot;mini-label&quot;&gt;ECOSYSTEM RECORD&lt;/span&gt;</code></span>
-<span class="code-line"><i>419</i><code>          &lt;button class=&quot;icon-button&quot; type=&quot;button&quot; data-close-drawer aria-label=&quot;상세 패널 닫기&quot;&gt;</code></span>
-<span class="code-line"><i>420</i><code>            &lt;svg aria-hidden=&quot;true&quot; viewBox=&quot;0 0 24 24&quot;&gt;&lt;path d=&quot;m6 6 12 12M18 6 6 18&quot;/&gt;&lt;/svg&gt;</code></span>
-<span class="code-line"><i>421</i><code>          &lt;/button&gt;</code></span>
-<span class="code-line"><i>422</i><code>        &lt;/div&gt;</code></span>
-<span class="code-line"><i>423</i><code>        &lt;div id=&quot;drawer-content&quot;&gt;&lt;/div&gt;</code></span>
-<span class="code-line"><i>424</i><code>      &lt;/div&gt;</code></span>
-<span class="code-line"><i>425</i><code>    &lt;/aside&gt;</code></span>
-<span class="code-line"><i>426</i><code></code></span>
-<span class="code-line"><i>427</i><code>    &lt;div class=&quot;toast&quot; id=&quot;toast&quot; role=&quot;status&quot; aria-live=&quot;polite&quot;&gt;&lt;/div&gt;</code></span>
-<span class="code-line"><i>428</i><code>    &lt;noscript&gt;</code></span>
-<span class="code-line"><i>429</i><code>      &lt;div class=&quot;noscript&quot;&gt;이 대시보드는 로컬 JSON 인벤토리를 표시하기 위해 JavaScript가 필요합니다.&lt;/div&gt;</code></span>
-<span class="code-line"><i>430</i><code>    &lt;/noscript&gt;</code></span>
-<span class="code-line"><i>431</i><code>  &lt;/body&gt;</code></span>
-<span class="code-line"><i>432</i><code>&lt;/html&gt;</code></span></pre></article>
+<span class="code-line"><i>292</i><code>          &lt;div class=&quot;revenue-thesis&quot; id=&quot;revenue-thesis&quot;&gt;</code></span>
+<span class="code-line"><i>293</i><code>            &lt;div&gt;&lt;p class=&quot;mini-label&quot;&gt;RECOMMENDATION&lt;/p&gt;&lt;h3&gt;리서치 결과를 불러오는 중…&lt;/h3&gt;&lt;/div&gt;</code></span>
+<span class="code-line"><i>294</i><code>          &lt;/div&gt;</code></span>
+<span class="code-line"><i>295</i><code></code></span>
+<span class="code-line"><i>296</i><code>          &lt;div class=&quot;revenue-model-grid&quot; id=&quot;revenue-models&quot;&gt;</code></span>
+<span class="code-line"><i>297</i><code>            &lt;div class=&quot;skeleton-card&quot;&gt;&lt;/div&gt;&lt;div class=&quot;skeleton-card&quot;&gt;&lt;/div&gt;&lt;div class=&quot;skeleton-card&quot;&gt;&lt;/div&gt;</code></span>
+<span class="code-line"><i>298</i><code>          &lt;/div&gt;</code></span>
+<span class="code-line"><i>299</i><code></code></span>
+<span class="code-line"><i>300</i><code>          &lt;div class=&quot;economics-lab&quot;&gt;</code></span>
+<span class="code-line"><i>301</i><code>            &lt;div class=&quot;calculator-panel&quot;&gt;</code></span>
+<span class="code-line"><i>302</i><code>              &lt;div class=&quot;card-title-row&quot;&gt;&lt;div&gt;&lt;p class=&quot;mini-label&quot;&gt;UNIT ECONOMICS&lt;/p&gt;&lt;h3&gt;수수료 귀속 계산기&lt;/h3&gt;&lt;/div&gt;&lt;span&gt;illustrative only&lt;/span&gt;&lt;/div&gt;</code></span>
+<span class="code-line"><i>303</i><code>              &lt;p class=&quot;calculator-help&quot;&gt;월 거래·민팅 GMV에 총 수수료와 선택한 수취인 몫을 적용합니다. 수취인이 운영사·LP·creator·holder 중 누구인지는 프리셋마다 다르며, 아래 값은 예측도 권고도 아닙니다.&lt;/p&gt;</code></span>
+<span class="code-line"><i>304</i><code>              &lt;div class=&quot;preset-row&quot; id=&quot;calculator-presets&quot;&gt;&lt;/div&gt;</code></span>
+<span class="code-line"><i>305</i><code>              &lt;div class=&quot;calculator-inputs&quot;&gt;</code></span>
+<span class="code-line"><i>306</i><code>                &lt;label&gt;&lt;span&gt;월 과금 기준액 (USD)&lt;/span&gt;&lt;input id=&quot;calc-volume&quot; type=&quot;number&quot; min=&quot;0&quot; step=&quot;1000&quot; value=&quot;1000000&quot; inputmode=&quot;decimal&quot; /&gt;&lt;/label&gt;</code></span>
+<span class="code-line"><i>307</i><code>                &lt;label&gt;&lt;span&gt;총 수수료 (bps)&lt;/span&gt;&lt;input id=&quot;calc-fee&quot; type=&quot;number&quot; min=&quot;0&quot; max=&quot;10000&quot; step=&quot;0.1&quot; value=&quot;30&quot; inputmode=&quot;decimal&quot; /&gt;&lt;/label&gt;</code></span>
+<span class="code-line"><i>308</i><code>                &lt;label&gt;&lt;span&gt;선택 수취인 귀속 (%)&lt;/span&gt;&lt;input id=&quot;calc-share&quot; type=&quot;number&quot; min=&quot;0&quot; max=&quot;100&quot; step=&quot;0.1&quot; value=&quot;16.7&quot; inputmode=&quot;decimal&quot; /&gt;&lt;/label&gt;</code></span>
+<span class="code-line"><i>309</i><code>                &lt;label&gt;&lt;span&gt;월 직접비 (USD)&lt;/span&gt;&lt;input id=&quot;calc-cost&quot; type=&quot;number&quot; min=&quot;0&quot; step=&quot;100&quot; value=&quot;5000&quot; inputmode=&quot;decimal&quot; /&gt;&lt;/label&gt;</code></span>
+<span class="code-line"><i>310</i><code>              &lt;/div&gt;</code></span>
+<span class="code-line"><i>311</i><code>              &lt;div class=&quot;calculator-results&quot;&gt;</code></span>
+<span class="code-line"><i>312</i><code>                &lt;div&gt;&lt;span&gt;사용자 총수수료&lt;/span&gt;&lt;strong id=&quot;calc-gross&quot;&gt;—&lt;/strong&gt;&lt;/div&gt;</code></span>
+<span class="code-line"><i>313</i><code>                &lt;div&gt;&lt;span id=&quot;calc-recipient-label&quot;&gt;선택 수취인 총액&lt;/span&gt;&lt;strong id=&quot;calc-recipient&quot;&gt;—&lt;/strong&gt;&lt;/div&gt;</code></span>
+<span class="code-line"><i>314</i><code>                &lt;div&gt;&lt;span&gt;가정 직접비 차감&lt;/span&gt;&lt;strong id=&quot;calc-net&quot;&gt;—&lt;/strong&gt;&lt;/div&gt;</code></span>
+<span class="code-line"><i>315</i><code>                &lt;div&gt;&lt;span&gt;손익분기 기준액&lt;/span&gt;&lt;strong id=&quot;calc-break-even&quot;&gt;—&lt;/strong&gt;&lt;/div&gt;</code></span>
+<span class="code-line"><i>316</i><code>              &lt;/div&gt;</code></span>
+<span class="code-line"><i>317</i><code>            &lt;/div&gt;</code></span>
+<span class="code-line"><i>318</i><code></code></span>
+<span class="code-line"><i>319</i><code>            &lt;div class=&quot;sequence-panel&quot;&gt;</code></span>
+<span class="code-line"><i>320</i><code>              &lt;div class=&quot;card-title-row&quot;&gt;&lt;div&gt;&lt;p class=&quot;mini-label&quot;&gt;ORDER OF OPERATIONS&lt;/p&gt;&lt;h3&gt;권장 순서&lt;/h3&gt;&lt;/div&gt;&lt;span&gt;gated&lt;/span&gt;&lt;/div&gt;</code></span>
+<span class="code-line"><i>321</i><code>              &lt;ol class=&quot;sequence-list&quot; id=&quot;revenue-sequence&quot;&gt;&lt;li&gt;순서를 불러오는 중…&lt;/li&gt;&lt;/ol&gt;</code></span>
+<span class="code-line"><i>322</i><code>            &lt;/div&gt;</code></span>
+<span class="code-line"><i>323</i><code>          &lt;/div&gt;</code></span>
+<span class="code-line"><i>324</i><code></code></span>
+<span class="code-line"><i>325</i><code>          &lt;div class=&quot;case-study-block&quot;&gt;</code></span>
+<span class="code-line"><i>326</i><code>            &lt;div class=&quot;subsection-heading&quot;&gt;</code></span>
+<span class="code-line"><i>327</i><code>              &lt;div&gt;&lt;p class=&quot;mini-label&quot;&gt;TRANSFERABLE EVIDENCE&lt;/p&gt;&lt;h3&gt;Ethereum · Base · Solana · Robinhood 사례&lt;/h3&gt;&lt;/div&gt;</code></span>
+<span class="code-line"><i>328</i><code>              &lt;span id=&quot;revenue-as-of&quot;&gt;As of —&lt;/span&gt;</code></span>
+<span class="code-line"><i>329</i><code>            &lt;/div&gt;</code></span>
+<span class="code-line"><i>330</i><code>            &lt;div class=&quot;table-frame&quot;&gt;</code></span>
+<span class="code-line"><i>331</i><code>              &lt;table class=&quot;data-table case-table&quot;&gt;</code></span>
+<span class="code-line"><i>332</i><code>                &lt;thead&gt;&lt;tr&gt;&lt;th scope=&quot;col&quot;&gt;사례&lt;/th&gt;&lt;th scope=&quot;col&quot;&gt;초기 론칭 장치&lt;/th&gt;&lt;th scope=&quot;col&quot;&gt;후속 성장 장치&lt;/th&gt;&lt;th scope=&quot;col&quot;&gt;수익 귀속&lt;/th&gt;&lt;th scope=&quot;col&quot;&gt;성공 근거 / 경계&lt;/th&gt;&lt;th scope=&quot;col&quot;&gt;원문&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;</code></span>
+<span class="code-line"><i>333</i><code>                &lt;tbody id=&quot;case-studies&quot;&gt;&lt;tr class=&quot;loading-row&quot;&gt;&lt;td colspan=&quot;6&quot;&gt;사례를 불러오는 중…&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;</code></span>
+<span class="code-line"><i>334</i><code>              &lt;/table&gt;</code></span>
+<span class="code-line"><i>335</i><code>            &lt;/div&gt;</code></span>
+<span class="code-line"><i>336</i><code>          &lt;/div&gt;</code></span>
+<span class="code-line"><i>337</i><code>        &lt;/section&gt;</code></span>
+<span class="code-line"><i>338</i><code></code></span>
+<span class="code-line"><i>339</i><code>        &lt;section id=&quot;workbench&quot; class=&quot;section&quot; aria-labelledby=&quot;workbench-title&quot;&gt;</code></span>
+<span class="code-line"><i>340</i><code>          &lt;div class=&quot;section-heading&quot;&gt;</code></span>
+<span class="code-line"><i>341</i><code>            &lt;div&gt;</code></span>
+<span class="code-line"><i>342</i><code>              &lt;div class=&quot;section-kicker&quot;&gt;&lt;span&gt;BUILD&lt;/span&gt; DEVELOPMENT WORKBENCH&lt;/div&gt;</code></span>
+<span class="code-line"><i>343</i><code>              &lt;h2 id=&quot;workbench-title&quot;&gt;다음 커밋을 어디서 시작할지&lt;/h2&gt;</code></span>
+<span class="code-line"><i>344</i><code>              &lt;p&gt;구현된 코드, 사양만 있는 영역, 명시적으로 잠긴 실행 경로를 한 보드에서 구분합니다.&lt;/p&gt;</code></span>
+<span class="code-line"><i>345</i><code>            &lt;/div&gt;</code></span>
+<span class="code-line"><i>346</i><code>            &lt;button class=&quot;button button-secondary&quot; id=&quot;copy-checks&quot; type=&quot;button&quot;&gt;검증 명령 복사&lt;/button&gt;</code></span>
+<span class="code-line"><i>347</i><code>          &lt;/div&gt;</code></span>
+<span class="code-line"><i>348</i><code></code></span>
+<span class="code-line"><i>349</i><code>          &lt;div class=&quot;build-board&quot; id=&quot;build-board&quot; aria-live=&quot;polite&quot;&gt;</code></span>
+<span class="code-line"><i>350</i><code>            &lt;div class=&quot;skeleton-wide&quot;&gt;&lt;/div&gt;</code></span>
+<span class="code-line"><i>351</i><code>          &lt;/div&gt;</code></span>
+<span class="code-line"><i>352</i><code></code></span>
+<span class="code-line"><i>353</i><code>          &lt;div class=&quot;developer-jump&quot;&gt;</code></span>
+<span class="code-line"><i>354</i><code>            &lt;div&gt;</code></span>
+<span class="code-line"><i>355</i><code>              &lt;p class=&quot;mini-label&quot;&gt;QUICK START&lt;/p&gt;</code></span>
+<span class="code-line"><i>356</i><code>              &lt;h3&gt;읽고 → 검증하고 → 작은 로컬 프로토타입으로&lt;/h3&gt;</code></span>
+<span class="code-line"><i>357</i><code>              &lt;p&gt;현재 저장소에는 signer·broadcast·deployment 경로가 없습니다. 개발은 Phase 1 local-only 경계에서 시작합니다.&lt;/p&gt;</code></span>
+<span class="code-line"><i>358</i><code>            &lt;/div&gt;</code></span>
+<span class="code-line"><i>359</i><code>            &lt;ol&gt;</code></span>
+<span class="code-line"><i>360</i><code>              &lt;li&gt;&lt;span&gt;01&lt;/span&gt;&lt;div&gt;&lt;strong&gt;Decision memo&lt;/strong&gt;&lt;small&gt;제품 가설과 중단선을 먼저 확인&lt;/small&gt;&lt;/div&gt;&lt;/li&gt;</code></span>
+<span class="code-line"><i>361</i><code>              &lt;li&gt;&lt;span&gt;02&lt;/span&gt;&lt;div&gt;&lt;strong&gt;Contract specs&lt;/strong&gt;&lt;small&gt;구현 전에 invariant와 권한 모델 확정&lt;/small&gt;&lt;/div&gt;&lt;/li&gt;</code></span>
+<span class="code-line"><i>362</i><code>              &lt;li&gt;&lt;span&gt;03&lt;/span&gt;&lt;div&gt;&lt;strong&gt;Local tests&lt;/strong&gt;&lt;small&gt;체인 연결 없는 결정론적 테스트부터&lt;/small&gt;&lt;/div&gt;&lt;/li&gt;</code></span>
+<span class="code-line"><i>363</i><code>            &lt;/ol&gt;</code></span>
+<span class="code-line"><i>364</i><code>          &lt;/div&gt;</code></span>
+<span class="code-line"><i>365</i><code>        &lt;/section&gt;</code></span>
+<span class="code-line"><i>366</i><code></code></span>
+<span class="code-line"><i>367</i><code>        &lt;section id=&quot;research&quot; class=&quot;section&quot; aria-labelledby=&quot;research-title&quot;&gt;</code></span>
+<span class="code-line"><i>368</i><code>          &lt;div class=&quot;section-heading&quot;&gt;</code></span>
+<span class="code-line"><i>369</i><code>            &lt;div&gt;</code></span>
+<span class="code-line"><i>370</i><code>              &lt;div class=&quot;section-kicker&quot;&gt;&lt;span&gt;READ&lt;/span&gt; RESEARCH LIBRARY&lt;/div&gt;</code></span>
+<span class="code-line"><i>371</i><code>              &lt;h2 id=&quot;research-title&quot;&gt;결론부터 원문 근거까지&lt;/h2&gt;</code></span>
+<span class="code-line"><i>372</i><code>              &lt;p&gt;요약, 전체 보고서, 출처 레지스트리, 주장 원장을 한 묶음으로 엽니다.&lt;/p&gt;</code></span>
+<span class="code-line"><i>373</i><code>            &lt;/div&gt;</code></span>
+<span class="code-line"><i>374</i><code>            &lt;span class=&quot;quality-badge&quot;&gt;&lt;i&gt;&lt;/i&gt; Citation QA tracked&lt;/span&gt;</code></span>
+<span class="code-line"><i>375</i><code>          &lt;/div&gt;</code></span>
+<span class="code-line"><i>376</i><code>          &lt;div class=&quot;research-grid&quot; id=&quot;research-grid&quot;&gt;</code></span>
+<span class="code-line"><i>377</i><code>            &lt;div class=&quot;skeleton-card&quot;&gt;&lt;/div&gt;&lt;div class=&quot;skeleton-card&quot;&gt;&lt;/div&gt;</code></span>
+<span class="code-line"><i>378</i><code>          &lt;/div&gt;</code></span>
+<span class="code-line"><i>379</i><code></code></span>
+<span class="code-line"><i>380</i><code>          &lt;div class=&quot;document-shelf&quot;&gt;</code></span>
+<span class="code-line"><i>381</i><code>            &lt;div class=&quot;subsection-heading&quot;&gt;</code></span>
+<span class="code-line"><i>382</i><code>              &lt;div&gt;</code></span>
+<span class="code-line"><i>383</i><code>                &lt;p class=&quot;mini-label&quot;&gt;REPOSITORY INDEX&lt;/p&gt;</code></span>
+<span class="code-line"><i>384</i><code>                &lt;h3&gt;용도별 문서 바로가기&lt;/h3&gt;</code></span>
+<span class="code-line"><i>385</i><code>              &lt;/div&gt;</code></span>
+<span class="code-line"><i>386</i><code>            &lt;/div&gt;</code></span>
+<span class="code-line"><i>387</i><code>            &lt;div class=&quot;document-groups&quot; id=&quot;document-groups&quot;&gt;&lt;/div&gt;</code></span>
+<span class="code-line"><i>388</i><code>          &lt;/div&gt;</code></span>
+<span class="code-line"><i>389</i><code>        &lt;/section&gt;</code></span>
+<span class="code-line"><i>390</i><code></code></span>
+<span class="code-line"><i>391</i><code>        &lt;section id=&quot;gates&quot; class=&quot;section gate-section&quot; aria-labelledby=&quot;gates-title&quot;&gt;</code></span>
+<span class="code-line"><i>392</i><code>          &lt;div class=&quot;section-heading&quot;&gt;</code></span>
+<span class="code-line"><i>393</i><code>            &lt;div&gt;</code></span>
+<span class="code-line"><i>394</i><code>              &lt;div class=&quot;section-kicker&quot;&gt;&lt;span&gt;STOP&lt;/span&gt; PUBLIC MAINNET GATES&lt;/div&gt;</code></span>
+<span class="code-line"><i>395</i><code>              &lt;h2 id=&quot;gates-title&quot;&gt;모든 게이트는 기본값이 UNKNOWN / blocked&lt;/h2&gt;</code></span>
+<span class="code-line"><i>396</i><code>              &lt;p&gt;private mainnet 접근이나 accelerator milestone은 public launch 근거를 대체하지 않습니다.&lt;/p&gt;</code></span>
+<span class="code-line"><i>397</i><code>            &lt;/div&gt;</code></span>
+<span class="code-line"><i>398</i><code>            &lt;div class=&quot;gate-score&quot;&gt;&lt;strong id=&quot;gate-score&quot;&gt;0 / 0&lt;/strong&gt;&lt;span&gt;cleared&lt;/span&gt;&lt;/div&gt;</code></span>
+<span class="code-line"><i>399</i><code>          &lt;/div&gt;</code></span>
+<span class="code-line"><i>400</i><code>          &lt;ol class=&quot;gate-list&quot; id=&quot;gate-list&quot;&gt;</code></span>
+<span class="code-line"><i>401</i><code>            &lt;li class=&quot;loading-row&quot;&gt;게이트를 불러오는 중…&lt;/li&gt;</code></span>
+<span class="code-line"><i>402</i><code>          &lt;/ol&gt;</code></span>
+<span class="code-line"><i>403</i><code>          &lt;div class=&quot;final-lock&quot;&gt;</code></span>
+<span class="code-line"><i>404</i><code>            &lt;span class=&quot;lock-icon&quot; aria-hidden=&quot;true&quot;&gt;&lt;/span&gt;</code></span>
+<span class="code-line"><i>405</i><code>            &lt;div&gt;</code></span>
+<span class="code-line"><i>406</i><code>              &lt;strong&gt;Human authority required&lt;/strong&gt;</code></span>
+<span class="code-line"><i>407</i><code>              &lt;p&gt;정확한 revision, chain, address, parameter, role, funding과 launch window를 지정한 별도 승인이 마지막 조건입니다.&lt;/p&gt;</code></span>
+<span class="code-line"><i>408</i><code>            &lt;/div&gt;</code></span>
+<span class="code-line"><i>409</i><code>          &lt;/div&gt;</code></span>
+<span class="code-line"><i>410</i><code>        &lt;/section&gt;</code></span>
+<span class="code-line"><i>411</i><code></code></span>
+<span class="code-line"><i>412</i><code>        &lt;footer class=&quot;footer&quot;&gt;</code></span>
+<span class="code-line"><i>413</i><code>          &lt;div&gt;</code></span>
+<span class="code-line"><i>414</i><code>            &lt;strong&gt;GIWA Launchpad Control Room&lt;/strong&gt;</code></span>
+<span class="code-line"><i>415</i><code>            &lt;span id=&quot;catalog-revision&quot;&gt;Catalog —&lt;/span&gt;</code></span>
+<span class="code-line"><i>416</i><code>          &lt;/div&gt;</code></span>
+<span class="code-line"><i>417</i><code>          &lt;p&gt;Research only · GIWA Sepolia only · No execution authority&lt;/p&gt;</code></span>
+<span class="code-line"><i>418</i><code>        &lt;/footer&gt;</code></span>
+<span class="code-line"><i>419</i><code>      &lt;/main&gt;</code></span>
+<span class="code-line"><i>420</i><code>    &lt;/div&gt;</code></span>
+<span class="code-line"><i>421</i><code></code></span>
+<span class="code-line"><i>422</i><code>    &lt;aside class=&quot;detail-drawer&quot; id=&quot;detail-drawer&quot; aria-labelledby=&quot;drawer-title&quot; aria-hidden=&quot;true&quot;&gt;</code></span>
+<span class="code-line"><i>423</i><code>      &lt;button class=&quot;drawer-backdrop&quot; type=&quot;button&quot; data-close-drawer aria-label=&quot;상세 패널 닫기&quot;&gt;&lt;/button&gt;</code></span>
+<span class="code-line"><i>424</i><code>      &lt;div class=&quot;drawer-panel&quot; role=&quot;dialog&quot; aria-modal=&quot;true&quot;&gt;</code></span>
+<span class="code-line"><i>425</i><code>        &lt;div class=&quot;drawer-head&quot;&gt;</code></span>
+<span class="code-line"><i>426</i><code>          &lt;span class=&quot;mini-label&quot;&gt;ECOSYSTEM RECORD&lt;/span&gt;</code></span>
+<span class="code-line"><i>427</i><code>          &lt;button class=&quot;icon-button&quot; type=&quot;button&quot; data-close-drawer aria-label=&quot;상세 패널 닫기&quot;&gt;</code></span>
+<span class="code-line"><i>428</i><code>            &lt;svg aria-hidden=&quot;true&quot; viewBox=&quot;0 0 24 24&quot;&gt;&lt;path d=&quot;m6 6 12 12M18 6 6 18&quot;/&gt;&lt;/svg&gt;</code></span>
+<span class="code-line"><i>429</i><code>          &lt;/button&gt;</code></span>
+<span class="code-line"><i>430</i><code>        &lt;/div&gt;</code></span>
+<span class="code-line"><i>431</i><code>        &lt;div id=&quot;drawer-content&quot;&gt;&lt;/div&gt;</code></span>
+<span class="code-line"><i>432</i><code>      &lt;/div&gt;</code></span>
+<span class="code-line"><i>433</i><code>    &lt;/aside&gt;</code></span>
+<span class="code-line"><i>434</i><code></code></span>
+<span class="code-line"><i>435</i><code>    &lt;div class=&quot;toast&quot; id=&quot;toast&quot; role=&quot;status&quot; aria-live=&quot;polite&quot;&gt;&lt;/div&gt;</code></span>
+<span class="code-line"><i>436</i><code>    &lt;noscript&gt;</code></span>
+<span class="code-line"><i>437</i><code>      &lt;div class=&quot;noscript&quot;&gt;이 대시보드는 로컬 JSON 인벤토리를 표시하기 위해 JavaScript가 필요합니다.&lt;/div&gt;</code></span>
+<span class="code-line"><i>438</i><code>    &lt;/noscript&gt;</code></span>
+<span class="code-line"><i>439</i><code>  &lt;/body&gt;</code></span>
+<span class="code-line"><i>440</i><code>&lt;/html&gt;</code></span></pre></article>
     </main>
     <footer>
       <span>research_only=true</span>

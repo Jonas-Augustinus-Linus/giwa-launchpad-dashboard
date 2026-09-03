@@ -136,8 +136,6 @@ async function copyText(text, confirmation) {
 
 function renderOverview(catalog) {
   const { project, metrics, safety, network_observation: observation } = catalog;
-  $("#repo-link").href = normalizeSafeUrl(project.repo_url);
-  $("#repo-link").title = "비공개 저장소 · GitHub 권한 필요";
   $("#project-decision").textContent = project.decision;
   $("#product-hypothesis").textContent = project.product_hypothesis;
   $("#fee-policy").textContent = project.fee_policy;
@@ -240,12 +238,12 @@ function renderOfficialResources(catalog) {
   $("#official-resource-grid").innerHTML = catalog.official_resources.map((resource) => {
     const [, codeLabel] = codePresentation(resource.code_state);
     return `
-      <a class="resource-card" href="${safeHref(resource.url)}" target="_blank" rel="noopener noreferrer">
+      <article class="resource-card">
         <div class="resource-card-top"><span><i></i>${escapeHtml(resource.type.replaceAll("_", " "))}</span><span>${escapeHtml(codeLabel)}</span></div>
         <h4>${escapeHtml(resource.name)}</h4>
         <p>${escapeHtml(resource.note)}</p>
-        <span class="external-arrow" aria-hidden="true">↗</span>
-      </a>`;
+        <a class="evidence-link" href="${safeHref(resource.url)}" target="_blank" rel="noopener noreferrer">외부 원문 근거 ↗</a>
+      </article>`;
   }).join("");
 }
 
@@ -370,7 +368,7 @@ function renderBuildTracks(catalog) {
   const icon = { implemented: "✓", spec_only: "◇", blocked: "×" };
   $("#build-board").innerHTML = catalog.build_tracks.map((track) => {
     const files = track.files.map((file) => `
-      <a class="file-link ${file.exists ? "" : "is-missing"}" href="${safeHref(file.url)}" target="_blank" rel="noopener noreferrer" title="${escapeHtml(file.path)}">
+      <a class="file-link ${file.exists ? "" : "is-missing"}" href="${safeHref(file.url)}" title="${escapeHtml(file.path)}">
         <span>${escapeHtml(file.label)}</span><b aria-hidden="true">↗</b>
       </a>`).join("");
     return `
@@ -388,7 +386,7 @@ function renderBuildTracks(catalog) {
 
 function renderResearch(catalog) {
   $("#research-grid").innerHTML = catalog.research.map((session) => {
-    const links = session.links.filter((link) => link.exists).map((link) => `<a href="${safeHref(link.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(link.label)} ↗</a>`).join("");
+    const links = session.links.filter((link) => link.exists).map((link) => `<a href="${safeHref(link.url)}">${escapeHtml(link.label)} →</a>`).join("");
     const verdict = session.verdict || "NOT_EVALUATED";
     const verdictState = verdict === "PASS" ? "pass" : verdict === "FAIL" ? "fail" : "pending";
     return `
@@ -406,7 +404,7 @@ function renderResearch(catalog) {
   }).join("");
 
   $("#document-groups").innerHTML = catalog.document_groups.map((group) => {
-    const files = group.files.map((file) => `<li><a href="${safeHref(file.url)}" target="_blank" rel="noopener noreferrer"><span>${escapeHtml(file.label)}</span><span aria-hidden="true">↗</span></a></li>`).join("");
+    const files = group.files.map((file) => `<li><a href="${safeHref(file.url)}"><span>${escapeHtml(file.label)}</span><span aria-hidden="true">→</span></a></li>`).join("");
     return `<article class="document-group"><h4>${escapeHtml(group.name)}</h4><p>${escapeHtml(group.description)}</p><ul>${files}</ul></article>`;
   }).join("");
 }
@@ -459,19 +457,23 @@ function bindInteractions() {
     if (event.key === "Escape") closeDrawer();
     if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
       event.preventDefault();
+      if (document.body.dataset.page !== "research") {
+        window.location.assign("./research.html#ecosystem");
+        return;
+      }
       $("#ecosystem-search").focus();
       $("#ecosystem").scrollIntoView({ behavior: "smooth", block: "start" });
     }
   });
 
-  const sections = $$("main section[id]");
   const navLinks = $$(".nav-link");
-  const observer = new IntersectionObserver((entries) => {
-    const visible = entries.filter((entry) => entry.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-    if (!visible) return;
-    navLinks.forEach((link) => link.classList.toggle("is-active", link.getAttribute("href") === `#${visible.target.id}`));
-  }, { rootMargin: "-18% 0px -70%", threshold: [0, .2, .5] });
-  sections.forEach((section) => observer.observe(section));
+  const currentPage = document.body.dataset.page || "overview";
+  navLinks.forEach((link) => {
+    const active = link.dataset.pageLink === currentPage;
+    link.classList.toggle("is-active", active);
+    if (active) link.setAttribute("aria-current", "page");
+    else link.removeAttribute("aria-current");
+  });
 }
 
 async function init() {
