@@ -22,11 +22,18 @@
     <main id="document" class="document-shell">
       <div class="document-meta">
         <span>REPORT</span>
-        <span>SHA256 dddaeb58ff50</span>
+        <span>SHA256 e99a2ecc2f66</span>
       </div>
       <h1>Token specification candidate</h1>
       <p class="source-path">contracts/specs/TOKEN.md</p>
       <article class="markdown-body"><h1 id="token-specification-candidate">Token specification candidate</h1>
+<blockquote>
+<p><strong>2026-09-04 variant note:</strong> for the locker launcher (see <code>docs/FEE_CAPTURE_DECISION_2026-09-04.md</code>) the constructor mint goes
+to the <code>LaunchFactory</code>, which forwards 100 % of supply into locked single-sided positions in the same transaction; name/symbol
+live in storage so every launched token has the <strong>same runtime bytecode hash</strong>; the end-of-transaction invariant is
+<code>balanceOf(creator) == balanceOf(factory) == 0</code> unless a declared, cliffed <code>CreatorVault</code> allocation exists. Everything below
+(no tax, no roles, no proxy, no mint, chain guard, reproducible build, negative tests) still applies.</p>
+</blockquote>
 <p>Purpose: a transparent, valueless GIWA Sepolia demonstration asset for testing protocol plumbing.
 It is not a sale, investment, meme-coin promotion, governance promise, or exchange-listing signal.</p>
 <h2 id="proposed-minimal-behavior">Proposed minimal behavior</h2>

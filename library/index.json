@@ -67,6 +67,41 @@
       "sha256": "5afd876e1d320d4aac198c5cbba5615fffa013f80374c3e2f96ec5025224f63a"
     },
     {
+      "path": "RESEARCH/GIWA_fee_capture_product_decision_2026_20260904_143036/README.md",
+      "url": "./library/RESEARCH/GIWA_fee_capture_product_decision_2026_20260904_143036/README.md.html",
+      "sha256": "cdbef0820ece2b0000fff112e3b193298a5f39227c37576391edf8176c823dce"
+    },
+    {
+      "path": "RESEARCH/GIWA_fee_capture_product_decision_2026_20260904_143036/artifacts/claim_ledger.jsonl",
+      "url": "./library/RESEARCH/GIWA_fee_capture_product_decision_2026_20260904_143036/artifacts/claim_ledger.jsonl.html",
+      "sha256": "17d342ccc0c4e51364b4ec390f063bd98c2336081f08ce163170e0aa93972ff9"
+    },
+    {
+      "path": "RESEARCH/GIWA_fee_capture_product_decision_2026_20260904_143036/outputs/00_executive_summary.md",
+      "url": "./library/RESEARCH/GIWA_fee_capture_product_decision_2026_20260904_143036/outputs/00_executive_summary.md.html",
+      "sha256": "6e31d1224a37df92f627c429481bbf4bbae0b2d7607df2e1221230e926d6bbd2"
+    },
+    {
+      "path": "RESEARCH/GIWA_fee_capture_product_decision_2026_20260904_143036/outputs/01_full_report/01_report.ko.md",
+      "url": "./library/RESEARCH/GIWA_fee_capture_product_decision_2026_20260904_143036/outputs/01_full_report/01_report.ko.md.html",
+      "sha256": "df5e80d899f78e5079f4f62594c75f5ab7b25e486fd4278cab2c3d87dcb6ec27"
+    },
+    {
+      "path": "RESEARCH/GIWA_fee_capture_product_decision_2026_20260904_143036/outputs/04_appendices/bibliography.md",
+      "url": "./library/RESEARCH/GIWA_fee_capture_product_decision_2026_20260904_143036/outputs/04_appendices/bibliography.md.html",
+      "sha256": "0212d609276066becf9d10894be3ee4a14cfd22cb998256385ee460e01862ea0"
+    },
+    {
+      "path": "RESEARCH/GIWA_fee_capture_product_decision_2026_20260904_143036/outputs/04_appendices/methodology.md",
+      "url": "./library/RESEARCH/GIWA_fee_capture_product_decision_2026_20260904_143036/outputs/04_appendices/methodology.md.html",
+      "sha256": "4b1f87af210ba5b217abfec6bd5edb279ec83f5b211044b3841ef9d39469bd6c"
+    },
+    {
+      "path": "RESEARCH/GIWA_fee_capture_product_decision_2026_20260904_143036/sources/sources.jsonl",
+      "url": "./library/RESEARCH/GIWA_fee_capture_product_decision_2026_20260904_143036/sources/sources.jsonl.html",
+      "sha256": "6f91dec59f9dd4d852ace8fd6b37315355a2cea0717df181987435e2b3c0d6a0"
+    },
+    {
       "path": "RESEARCH/GIWA_revenue_models_chain_launch_benchmarks_2026_20260903_175751/artifacts/claim_ledger.jsonl",
       "url": "./library/RESEARCH/GIWA_revenue_models_chain_launch_benchmarks_2026_20260903_175751/artifacts/claim_ledger.jsonl.html",
       "sha256": "c00f1e6e27a3b8a968bd52cc46d9623530fe5931f91f61b5673c821c4756dd45"
@@ -119,7 +154,7 @@
     {
       "path": "contracts/specs/TOKEN.md",
       "url": "./library/contracts/specs/TOKEN.md.html",
-      "sha256": "dddaeb58ff5053d51413ee05056c5ba5c14ee35304fe90e3e04c7bf732c70bca"
+      "sha256": "e99a2ecc2f6646329a24a2344ea3a9f8e48635ad5a5e1e19c8a9b1db4540efa7"
     },
     {
       "path": "dashboard/assets/app.css",
@@ -139,7 +174,7 @@
     {
       "path": "data/ecosystem.json",
       "url": "./library/data/ecosystem.json.html",
-      "sha256": "9c8ce414667d2833f0aa4f04a8df72d6693cf938fc5e6e09c2fc4b6a332e9a67"
+      "sha256": "b9fe1867008aa00b0432c91ea30a0565c89670b9196770bfe9a48c4ba11bfbcf"
     },
     {
       "path": "docs/BOUNDARIES.md",
@@ -149,7 +184,7 @@
     {
       "path": "docs/DECISION_MEMO.md",
       "url": "./library/docs/DECISION_MEMO.md.html",
-      "sha256": "d4a379b8de386e87c3ce0d8f3fed513a3a2a95986f57cb4c3ea9feaf827551df"
+      "sha256": "c6b775f99cd84cf6ab10a5ac28e36028bf26725aa4d170ebc13c11ef250f7500"
     },
     {
       "path": "docs/DEX_FEE_JURISDICTION_MATRIX_2026-09-03.md",
@@ -157,19 +192,24 @@
       "sha256": "da0c836da0b3568f61d09dbe1356100d78a4c5dc672ce0c809e53c0de98b16c7"
     },
     {
+      "path": "docs/FEE_CAPTURE_DECISION_2026-09-04.md",
+      "url": "./library/docs/FEE_CAPTURE_DECISION_2026-09-04.md.html",
+      "sha256": "42690fd2197e0a9f15cb78eeddc97133d9db7d6ebebdf9b3cfb70ba064bd3999"
+    },
+    {
       "path": "docs/FEE_PROJECT_PROPOSAL_2026-09-03.md",
       "url": "./library/docs/FEE_PROJECT_PROPOSAL_2026-09-03.md.html",
-      "sha256": "aa21a9862200f0e8f78c32a1af88a7f1df284cc0829d0a2be00324c161ae976e"
+      "sha256": "e22fb26436d13cbe84cc8e60a4836c15a6b66e9ea84efd1583a72000379e5f65"
     },
     {
       "path": "docs/MAINNET_GATES.md",
       "url": "./library/docs/MAINNET_GATES.md.html",
-      "sha256": "3ae3400c2de0084296c64b2723bbcbb82e63042a94bf1093f66026359e36b02a"
+      "sha256": "b6b52bc5e115b579a5e5ffd1c8331e726b4f8ac09f8af33437db6939b85aad2f"
     },
     {
       "path": "docs/PUMP_PLATFORM.md",
       "url": "./library/docs/PUMP_PLATFORM.md.html",
-      "sha256": "ada9bdf1a2508943fed596ec306fc9bca234af44a54956d97f0dbe3f205dbe62"
+      "sha256": "e873844ba1011abb2e5eeb5b4b97002411acd2ee146cabacf973a6651d2191c4"
     },
     {
       "path": "docs/ROADMAP.md",
@@ -179,7 +219,7 @@
     {
       "path": "docs/SIMPLE_DEX_VOLUME_STRATEGY_2026-09-03.md",
       "url": "./library/docs/SIMPLE_DEX_VOLUME_STRATEGY_2026-09-03.md.html",
-      "sha256": "2f9b1ee115bf0c8587463eb89f7646be31ae6fa45a721b3c995a275eeafe667c"
+      "sha256": "e89bfe90aa0c691bfa90421239f335bd194ecc4606f9a21b5fd79f3e54b02c22"
     },
     {
       "path": "schemas/ecosystem.schema.json",
@@ -189,7 +229,7 @@
     {
       "path": "scripts/build_dashboard_catalog.py",
       "url": "./library/scripts/build_dashboard_catalog.py.html",
-      "sha256": "a1efdb4159fd854db10d9b2a71a219dc8bd7df59c339b54aaed613abe4b6b4a4"
+      "sha256": "1154c03394f0bea82dfc196aa3737e502c2238fc7655f119de53b0f27f22d11e"
     },
     {
       "path": "src/giwa_lab/constants.py",

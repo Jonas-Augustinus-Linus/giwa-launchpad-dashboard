@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex,nofollow,noarchive" />
+    <meta name="theme-color" content="#090c0e" />
+    <title>GIWA fee-capture 제품 결정 리서치 (2026-09-04) · GIWA Control Room</title>
+    <link rel="stylesheet" href="../../../assets/document.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#document">본문으로 바로가기</a>
+    <header class="document-header">
+      <a class="brand" href="../../../research.html" aria-label="GIWA 대시보드로 돌아가기">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span><strong>GIWA</strong><small>CONTROL ROOM</small></span>
+      </a>
+      <nav aria-label="문서 동작">
+        <a href="../../../research.html">← 대시보드</a>
+      </nav>
+    </header>
+    <main id="document" class="document-shell">
+      <div class="document-meta">
+        <span>REPORT</span>
+        <span>SHA256 cdbef0820ece</span>
+      </div>
+      <h1>GIWA fee-capture 제품 결정 리서치 (2026-09-04)</h1>
+      <p class="source-path">RESEARCH/GIWA_fee_capture_product_decision_2026_20260904_143036/README.md</p>
+      <article class="markdown-body"><h1 id="giwa-fee-capture-2026-09-04">GIWA fee-capture 제품 결정 리서치 (2026-09-04)</h1>
+<p>기준일: <strong>2026-09-04 KST</strong>
+상태: <strong>COMPLETED / research only / no signing / no deployment / no token / no LP</strong></p>
+<p>오너 방향(2026-09-04) — "GIWA 메인넷 초기 유동성이 클 것이므로 토큰은 런칭하되 매집·매도나 워시트레이딩이 아니라
+거래 수수료·거래 편의 수수료를 받는 플랫폼(단순 스왑 / GIWA용 텔레그램 트레이딩 봇 / pump.fun처럼 가벼운 런치패드)을
+만든다. 법에 저촉되는 것은 하지 않는다" — 를 검증하고 제품 결정을 내린 세션이다.</p>
+<h2 id="_1">먼저 읽을 것</h2>
+<ul>
+<li><a href="outputs/00_executive_summary.md.html">결정 요약</a></li>
+<li><a href="outputs/01_full_report/01_report.ko.md.html">전체 보고서</a></li>
+<li><a href="../../docs/FEE_CAPTURE_DECISION_2026-09-04.md.html">상위 결정 메모</a></li>
+<li><a href="outputs/04_appendices/bibliography.md.html">출처 목록</a> · <a href="outputs/04_appendices/methodology.md.html">방법론과 한계</a></li>
+</ul>
+<h2 id="_2">한 문장 결론</h2>
+<p><strong>지금 합법적으로 우리 것인 수수료는 고정 B2B 요금뿐이고, 메인넷 이후 열 수 있는 유일한 변동 수수료는 런처의 정액 생성
+수수료(법령해석·서면의견 조건부)다. 네 제품이 60–70 %를 공유하는 실행 엔진을 한 번 만들고, 불변·무권한 v3 풀 계층과
+락커 런처를 Sepolia에 fee = 0으로 올려 두며, 텔레그램 봇·per-trade 수수료·자기자본 LP는 각 관측 신호 전에는 열지 않는다.</strong></p>
+<h2 id="_3">구성</h2>
+<pre><code class="language-text">artifacts/agent_results/research/   리서치 렌즈 8편 + 갭 보완 5편 (2026-09-04, URL·관측일 포함)
+artifacts/agent_results/design/     설계안 D1–D4, 심사 J_legal/J_revenue/J_engineering, 종합안 SYNTHESIS.ko.md
+artifacts/agent_results/verify/     핵심 주장 12건 × 2 렌즈(1차 출처 재확인 / 반증 탐색) 검증 메모
+artifacts/claim_ledger.jsonl        핵심 주장 원장 (counter_search 필드에 반증 결과)
+artifacts/ecosystem_address_correction_2026-09-04.json  data/ecosystem.json 주소 교정 관측(eth_getCode)
+sources/sources.jsonl               출처 레지스트리
+outputs/                            결정 요약 · 전체 보고서 · 부록 · 검증 결과 JSON
+</code></pre>
+<h2 id="_4">연구 경계</h2>
+<p>이 세션은 코드, UI, 배포 스크립트, 서명, 거래, 유동성 공급, 토큰 발행, 수수료 활성화, 법령해석 제출을 포함하지 않는다.
+모든 수치와 live 상태는 2026-09-04 point-in-time 관측이다. 법률·세무·투자 자문이 아니다.</p></article>
+    </main>
+    <footer>
+      <span>research_only=true</span>
+      <span>strategy_consumption_allowed=false</span>
+      <span>order_input=false</span>
+    </footer>
+  </body>
+</html>

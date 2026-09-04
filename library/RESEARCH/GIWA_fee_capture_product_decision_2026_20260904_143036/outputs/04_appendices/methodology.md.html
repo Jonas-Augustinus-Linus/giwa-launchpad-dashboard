@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex,nofollow,noarchive" />
+    <meta name="theme-color" content="#090c0e" />
+    <title>방법론과 한계 · GIWA Control Room</title>
+    <link rel="stylesheet" href="../../../../../assets/document.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#document">본문으로 바로가기</a>
+    <header class="document-header">
+      <a class="brand" href="../../../../../research.html" aria-label="GIWA 대시보드로 돌아가기">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span><strong>GIWA</strong><small>CONTROL ROOM</small></span>
+      </a>
+      <nav aria-label="문서 동작">
+        <a href="../../../../../research.html">← 대시보드</a>
+      </nav>
+    </header>
+    <main id="document" class="document-shell">
+      <div class="document-meta">
+        <span>REPORT</span>
+        <span>SHA256 4b1f87af210b</span>
+      </div>
+      <h1>방법론과 한계</h1>
+      <p class="source-path">RESEARCH/GIWA_fee_capture_product_decision_2026_20260904_143036/outputs/04_appendices/methodology.md</p>
+      <article class="markdown-body"><h1 id="_1">방법론과 한계</h1>
+<h2 id="_2">절차</h2>
+<ol>
+<li><strong>리서치 스윕(7 렌즈 병렬):</strong> 텔레그램 트레이딩 봇 / 런치패드 fee 모델 / 단순 스왑 fee 포획 기술·라이선스 / 한국·글로벌 법률 /
+   GIWA 메인넷 시점·유동성 전제 / GIWA 생태계 경쟁자·공식 인프라 / Das Kapital 재사용·헌법 적합성. 각 렌즈는 1차 출처(law.go.kr,
+   fsc.go.kr, better.fsc.go.kr, docs.giwa.io, GitHub, DefiLlama, Upbit 공지·상태 API, 프로젝트 문서)를 직접 열고 URL과 관측일을 기록했다.</li>
+<li><strong>완결성 비평 + 갭 보완(5):</strong> 렌즈 간 모순 8건을 기록하고, 한국 DeFi 운영자 선례, 금융위 법령해석·비조치의견서 제도와 2단계
+   법안 원문, 4개 제품의 단위 경제, X·텔레그램·한국 커뮤니티 스캔, 온체인·프로바이더 검증(EIP-7702, 번들러, Flashblocks drop rate)을
+   추가 조사했다.</li>
+<li><strong>설계 패널:</strong> 서로 다른 각도의 설계 4안을 독립 작성하고, 법률·수익·엔지니어링 세 심사자가 각각 7개 기준(0–10)으로 채점했다.
+   종합안은 심사 교차관찰과 graft 항목을 반영해 단계별 계획을 작성했다.</li>
+<li><strong>반증 검증:</strong> 종합안이 기대는 핵심 주장 12건에 대해 "1차 출처 재확인"과 "반증 탐색" 두 렌즈가 각각 독립적으로 반박을 시도했다.
+   결과는 <code>artifacts/claim_ledger.jsonl</code>의 <code>counter_search</code>와 <code>outputs/*_claims.json</code>에 반영했다.</li>
+</ol>
+<h2 id="_3">한계</h2>
+<ul>
+<li>모든 live 관측(RPC, Blockscout, DefiLlama, Upbit 상태 API, 앱스토어)은 2026-09-04 시점 스냅샷이다.</li>
+<li>법령해석 사례·판례 요지는 1차 출처를 열어 확인했지만, law.go.kr가 JS 셸을 반환한 일부 조문은 국가법령정보센터 영문본·로펌 재수록·
+  FIU 사례집 재진술로 교차 확인했다(해당 항목은 <code>sources.jsonl</code>의 등급으로 표시).</li>
+<li>수익 수치는 gap_unit 메모의 가정(체인 거래량 시나리오, venue 점유율, 런치/일, B2B 단가)을 그대로 옮긴 것이며 시장 검증이 아니다.
+  B2B 가격 인터뷰는 아직 실행되지 않았다.</li>
+<li>한국 법인의 ETH→KRW 환전 경로, ETH 표시 수수료의 VAT/법인세, ISMS 실제 비용, 서면 법률의견 가격은 미확인이다.</li>
+<li>이 세션은 법률·세무·투자 자문이 아니며, 어떤 배포·서명·유동성·수수료 활성화·법령해석 제출도 수행하지 않았다.</li>
+</ul></article>
+    </main>
+    <footer>
+      <span>research_only=true</span>
+      <span>strategy_consumption_allowed=false</span>
+      <span>order_input=false</span>
+    </footer>
+  </body>
+</html>

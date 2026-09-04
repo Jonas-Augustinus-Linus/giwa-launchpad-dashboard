@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex,nofollow,noarchive" />
+    <meta name="theme-color" content="#090c0e" />
+    <title>GIWA fee-capture 제품 결정 — 요약 · GIWA Control Room</title>
+    <link rel="stylesheet" href="../../../../assets/document.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#document">본문으로 바로가기</a>
+    <header class="document-header">
+      <a class="brand" href="../../../../research.html" aria-label="GIWA 대시보드로 돌아가기">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span><strong>GIWA</strong><small>CONTROL ROOM</small></span>
+      </a>
+      <nav aria-label="문서 동작">
+        <a href="../../../../research.html">← 대시보드</a>
+      </nav>
+    </header>
+    <main id="document" class="document-shell">
+      <div class="document-meta">
+        <span>REPORT</span>
+        <span>SHA256 6e31d1224a37</span>
+      </div>
+      <h1>GIWA fee-capture 제품 결정 — 요약</h1>
+      <p class="source-path">RESEARCH/GIWA_fee_capture_product_decision_2026_20260904_143036/outputs/00_executive_summary.md</p>
+      <article class="markdown-body"><h1 id="giwa-fee-capture">GIWA fee-capture 제품 결정 — 요약</h1>
+<p>기준일: <strong>2026-09-04 KST</strong>
+상태: <code>research_only=true</code>, <code>strategy_consumption_allowed=false</code>, <code>order_input=false</code></p>
+<h2 id="_1">한 문장 결론</h2>
+<p><strong>지금 합법적으로 우리 것인 수수료는 고정 B2B 요금(S1)뿐이고, 메인넷 이후 열 수 있는 유일한 변동 수수료는 런처의 정액 생성
+수수료(S3, 법령해석·서면의견 조건부)다. 네 제품이 60–70 %를 공유하는 실행 엔진을 한 번 만들고, 불변·무권한 v3 풀 계층과 락커
+런처를 Sepolia에 fee = 0으로 올려 두며, 텔레그램 봇·per-trade 수수료·자기자본 LP는 각 관측 신호 전에는 열지 않는다.</strong> [src_581] [src_582] [src_503]</p>
+<h2 id="4">오너 전제 4개의 판정</h2>
+<table>
+<thead>
+<tr>
+<th>전제</th>
+<th>판정</th>
+<th>핵심 근거</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>초반 유동성이 엄청날 것</td>
+<td>명제 그대로는 반박, 조건부로만 참</td>
+<td>Upbit 출금 API·공지 5,787건에 GIWA rail 없음 [src_517] [src_519]; Wallet 앱스토어 부재 [src_521] [src_522]; public mainnet artefact 0 [src_523] [src_524] [src_527]; rail·지갑·stablecoin이 있어도 인센티브 없이는 X Layer·Ink급(day-30 TVL 한 자릿수 $M) [src_533] [src_534] [src_536] [src_532]</td>
+</tr>
+<tr>
+<td>수수료 사업이 핵심</td>
+<td>합법적으로 우리 것은 고정 요금뿐</td>
+<td>FSC "신고 28개사 외 내국인 대상 취급업자는 모두 불법" [src_501] [src_502]; 2024도10710·2024도12420의 기준(불특정 다수 편익+대가+반복) [src_504] [src_505]; 2026.8 신고매뉴얼 "편의·수단·환경 제공도 해당할 여지" [src_503]; 수수료 형태를 기준으로 삼은 회신 0건, 무료도 단독 면제 아님 [src_509] [src_510] [src_507] [src_508]</td>
+</tr>
+<tr>
+<td>텔레그램 봇도 좋아 보인다</td>
+<td>HOLD (무료 tier만; 유료는 Filing A 조건부; per-trade는 S5 후)</td>
+<td>수요 실재(GMGN Korea 1,736명 등) [src_569] [src_571] [src_573]; 그러나 출시된 봇은 모두 운영자 키 보유형 [src_593] [src_570]; Telegram·리퍼럴은 FSC가 지목한 채널 [src_501]</td>
+</tr>
+<tr>
+<td>pump.fun처럼 가볍게</td>
+<td>GO-with-conditions (Sepolia fee=0 지금, 생성 수수료 ON은 Gate L1)</td>
+<td>Clanker v3.1 MIT 락커 패턴·v3 GPL [src_550] [src_556]; 감사 $25–125k 밴드 [src_547] [src_548] [src_546] [src_549]; 생성 수수료 선례 약함(Bags 온체인 0, Pons 0.0005 ETH, Joseon 0.77런치/일) [src_541] [src_542] [src_543]</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_2">세 아이디어</h2>
+<ul>
+<li><strong>① 단순 스왑 + 수수료:</strong> 수수료 사업 NO-GO(인터페이스·라우터·프로토콜 fee 영구 부재), 인프라로는 GO — v3 core를 런처의 풀
+  계층으로 배포하고 factory owner를 포기(setOwner에 zero guard 없음; 단 deploy-v3의 ProxyAdmin 단계는 renounce로 대체) [src_556] [src_557] [src_559].
+  자기자본 LP(S2)는 canonical stablecoin + Filing C 후 HOLD.</li>
+<li><strong>② 텔레그램 봇:</strong> 무료 alert·simulation tier만; 유료 구독은 Filing A(엔진·user-signed tool) 비부정 + 서면의견 후; per-trade는
+  특금법 §7 신고 수리 후 — 수리 전 per-trade 단계는 §7③3의 5년 결격 사유가 될 수 있다 [src_513] [src_514] [src_516].</li>
+<li><strong>③ 런치패드:</strong> 락커 런처(단일 bytecode 토큰, end-of-tx creator 잔고 0, withdraw 경로 없는 LpLocker)를 Sepolia에 fee = 0으로;
+  휴면 protocol-share 스위치와 fixed-price 게이트는 두지 않는다. 생성 수수료는 Filing B + 서면의견 + public mainnet + 법인
+  ETH→KRW 경로(현재 신설 법인은 원화 출금·매도 불가 [src_562] [src_564]) 확정 후에만.</li>
+</ul>
+<h2 id="_3">숫자</h2>
+<ul>
+<li>합법 라인 base 합계 ≈ <strong>$10–19k/월</strong>(세전, 법적 이진 전): B2B $4.4k, 생성 수수료 $1.5–7.5k, 구독 $0–5k, LP $1–6k [src_538] [src_539] [src_543].</li>
+<li>메인넷 신호 전 확정 매몰 ≈ $2–2.5k(법인 법정비용·서버 설치·3개월 인프라) + 서면의견 placeholder $20k [src_551] [src_552] [src_553].</li>
+<li>신호 후: 감사 $25–125k + 준비금 $250k(자기자본).</li>
+</ul>
+<h2 id="2026-09-04">오너 후속 결정(2026-09-04 저녁)</h2>
+<p>법인을 설립하지 않고 FIU 신고·법령해석 경로를 추진하지 않는다. 주체 없는 탈중앙 배포(불변 컨트랙트, 관리자 키 없음, 호스팅 없는
+공개 UI)로 가며, 수수료 파라미터는 배포 전 확정 후 불변이다. 아래 '다음 세 행동'의 필링·법인 항목은 이 결정으로 폐기되고 리서치
+기록으로만 남는다. 상세는 <code>docs/FEE_CAPTURE_DECISION_2026-09-04.md</code> §0.1.</p>
+<h2 id="_4">다음 세 행동(세션 당시 권고; 필링·법인 항목은 폐기)</h2>
+<ol>
+<li>actor/flow/fee 다이어그램 확정 → <strong>Filing A</strong> 제출(무료) + FIU 사전협의 메일 [src_511] [src_512].</li>
+<li>주식회사 설립, 별도 repo·unit·user·<code>.env</code>·봇 토큰으로 분리(Das Kapital은 관찰만) [src_583] [src_594].</li>
+<li>B2B 가격 인터뷰 3건 → 그 뒤에만 실행 계층 코드; 그 사이 읽기 계층과 Sepolia fee = 0 런처.</li>
+</ol>
+<p>전체 근거·교정 내역은 <a href="01_full_report/01_report.ko.md.html">전체 보고서</a>, 상위 결정은 <code>docs/FEE_CAPTURE_DECISION_2026-09-04.md</code>.</p></article>
+    </main>
+    <footer>
+      <span>research_only=true</span>
+      <span>strategy_consumption_allowed=false</span>
+      <span>order_input=false</span>
+    </footer>
+  </body>
+</html>

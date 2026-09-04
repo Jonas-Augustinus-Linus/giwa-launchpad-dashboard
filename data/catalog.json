@@ -1,15 +1,15 @@
 {
   "schema_version": 1,
-  "catalog_revision": "9bfb23cbea4b",
-  "as_of": "2026-09-03",
+  "catalog_revision": "baa2314d08b8",
+  "as_of": "2026-09-04",
   "project": {
     "title": "GIWA Launchpad Control Room",
     "subtitle": "근거에서 코드까지, 한 화면에서 확인하는 내부 리서치·개발 대시보드",
     "network": "GIWA Sepolia",
     "mode": "research_only",
-    "decision": "지금은 GIWA Sepolia 근거·Pool Passport·인덱서 데이터층을 만들고, public mainnet과 canonical quote asset 확인 전 거래 실행은 열지 않는다.",
-    "product_hypothesis": "data-first pool intelligence → conditional venue",
-    "fee_policy": "fee switch off",
+    "decision": "주체 없는 탈중앙 배포로 간다(오너 결정 2026-09-04): 법인 설립·FIU 신고·법령해석 경로는 추진하지 않는다. 공유 엔진 읽기 계층(자체 노드·two-lane 인덱서·venue registry·Pool Passport)을 공개 데이터로 먼저 만들고, 불변·owner-포기 v3 풀 계층과 관리자 키 없는 락커 런처를 Sepolia에 fee=0으로 올린다. 수수료 파라미터는 배포 전 오너가 확정하고 배포 후 누구도 바꿀 수 없다. 메인넷 배포는 artefact 신호 후 동일 바이트코드로만.",
+    "product_hypothesis": "shared read layer + Pool Passport → immutable pool layer → operator-less locker launcher (no entity, no admin key)",
+    "fee_policy": "no interface/router/protocol fee switch; v3 factory owner renounced; launcher fee parameters immutable at deploy (0 on Sepolia); no admin key, pause, upgrade or treasury role; legal/FIU gates recorded as research only (owner decision 2026-09-04)",
     "default_branch": "main",
     "content_ref": "main"
   },
@@ -17,6 +17,7 @@
     "public_pages": true,
     "indexing": "discouraged_not_access_control",
     "research_session_allowlist": [
+      "GIWA_fee_capture_product_decision_2026_20260904_143036",
       "GIWA_revenue_models_chain_launch_benchmarks_2026_20260903_175751",
       "GIWA_dex_fee_jurisdictions_2026_20260903_144748",
       "GIWA_simple_open_dex_volume_2026_20260903_132946",
@@ -31,18 +32,18 @@
     "notice": "테스트넷 활동과 코드 존재는 사용자, 채택, 유동성, 가치 또는 출시 준비의 증거가 아닙니다."
   },
   "metrics": {
-    "ecosystem_entries": 12,
+    "ecosystem_entries": 16,
     "official_entries": 5,
     "provider_entries": 3,
-    "third_party_entries": 4,
+    "third_party_entries": 8,
     "catalogued_addresses": 13,
-    "research_sessions": 5,
-    "registered_sources": 324,
-    "verified_claims": 177,
-    "unresolved_claims": 29,
-    "refuted_claims": 20,
-    "implemented_tracks": 3,
-    "total_tracks": 10
+    "research_sessions": 6,
+    "registered_sources": 420,
+    "verified_claims": 204,
+    "unresolved_claims": 33,
+    "refuted_claims": 25,
+    "implemented_tracks": 4,
+    "total_tracks": 13
   },
   "network_observation": {
     "observed_at": "2026-09-03T03:53:09.216084+00:00",
@@ -278,7 +279,7 @@
         "src_015"
       ],
       "contracts": [
-        "0xd507dE5663924143F26Cc088F6A65463224F17B9"
+        "0xd5077b67dcb56caC8b270C7788FC3E6ee03F17B9"
       ],
       "research_only": true,
       "strategy_consumption_allowed": false,
@@ -475,13 +476,13 @@
         "src_027"
       ],
       "contracts": [
-        "0x33fFfDB279d6F76d8d193611c6D0052977E4463F",
-        "0x9AB1c29A97dF458721C773c11492C9F0daE18784",
-        "0xcD4B98d07cf70dD8506352414326B91d8E805d3D",
-        "0x4D34f918780D426BbB24a83E160072764e355c59",
-        "0xC225fB9073bFB3B2b31B4d04F201F0A4669237aA",
-        "0x2141c3b0EAe5375dD5aAD739280A56c2c3433fE6",
-        "0x323b78A9A3DfeEe9B7A32D22AdF0E2b4B65e0B11"
+        "0x33fFaC709Ec1D3Ec8bC8d0655914Aa7DCd7b463F",
+        "0x9AB150A7e487FbdC1094077C8A18898297118784",
+        "0xcD4B6582C6964Fae3dF4254cAED959789cFD5d3D",
+        "0x4D3401d27B45d49117ba9DF99F4315512C715c59",
+        "0xC225aE54E77C254DEb4a928aE439Afe30E4637aA",
+        "0x2141630cf59bC2e04bd4A0864B86b84C21023fE6",
+        "0x323bbaAfff0518Ca107A73BA9870A426fA550B11"
       ],
       "research_only": true,
       "strategy_consumption_allowed": false,
@@ -515,7 +516,7 @@
         "src_028"
       ],
       "contracts": [
-        "0x8E1aCa5bfCb05a1e62682C1e4B40B33D2B48BeFD"
+        "0x8E1a1308E3b176528Ee9278d7a531F185F9fBeFD"
       ],
       "research_only": true,
       "strategy_consumption_allowed": false,
@@ -579,9 +580,9 @@
         "src_029"
       ],
       "contracts": [
-        "0xAD153D22bb9a0F28D214b7A1B30F76003F01bE74",
+        "0xAD153c844CcAC3D2ea991170624200e54730bE74",
         "0x89B38c7414EC86Eb2cB003c6362cf010B562FF1e",
-        "0xE10aD46777a3835042533976554c941750a01682"
+        "0xE10aec8F99C0645eb2429Fa33390514Afa7E1682"
       ],
       "research_only": true,
       "strategy_consumption_allowed": false,
@@ -596,6 +597,114 @@
       ],
       "source_count": 2,
       "contract_count": 3
+    },
+    {
+      "id": "giwater",
+      "name": "GIWATER",
+      "category": "concentrated_liquidity_dex",
+      "officiality": "third_party",
+      "status": "experimental_testnet_deployed",
+      "network": "GIWA Sepolia",
+      "summary": "Third-party Infinity-style concentrated-liquidity DEX (universalRouter/clPoolManager) with pool tiers 0.01/0.05/0.3 % and an on-chain protocol fee share of about 33 %; the most active swap router observed on 2026-09-04.",
+      "limitations": [
+        "Not an official GIWA product.",
+        "Contract source unverified; audit pending; contracts \"TBA at TGE\".",
+        "Fee split observed from the app bundle and on-chain config, not from a published schedule.",
+        "Testnet volume on mock assets is not adoption or liquidity."
+      ],
+      "source_ids": [
+        "src_585",
+        "src_577"
+      ],
+      "research_only": true,
+      "strategy_consumption_allowed": false,
+      "order_input": false,
+      "code_state": "unknown",
+      "address_state": "not_applicable",
+      "links": [],
+      "source_count": 2,
+      "contract_count": 0
+    },
+    {
+      "id": "osige",
+      "name": "Osige",
+      "category": "concentrated_liquidity_dex",
+      "officiality": "third_party",
+      "status": "experimental_testnet_deployed",
+      "network": "GIWA Sepolia",
+      "summary": "Third-party concentrated-liquidity DEX with hooks (up.id fee discount), copy-an-LP-range feature and an on-chain protocolFeeSplitRatio of 330000 (33 % of the LP fee).",
+      "limitations": [
+        "Not an official GIWA product.",
+        "Recent router transactions came from a single EOA; the public API indexer stopped on 2026-08-26.",
+        "Copy trading copies an LP range and does not execute on the user’s behalf.",
+        "No mainnet claim; no audit reported."
+      ],
+      "source_ids": [
+        "src_586",
+        "src_596"
+      ],
+      "research_only": true,
+      "strategy_consumption_allowed": false,
+      "order_input": false,
+      "code_state": "unknown",
+      "address_state": "not_applicable",
+      "links": [],
+      "source_count": 2,
+      "contract_count": 0
+    },
+    {
+      "id": "ammora",
+      "name": "Ammora",
+      "category": "modular_launch_and_amm_stack",
+      "officiality": "third_party",
+      "status": "experimental_testnet_deployed",
+      "network": "GIWA Sepolia",
+      "summary": "Third-party modular stack (launch curve, liquidity modules, fee sharing) with a verified v4 manifest and an on-chain protocol fee policy of 20 % of trading fees, 10 % of pool-creation fees and 0.2 % on migration, plus a 20 % referrer share paid to an EOA treasury.",
+      "limitations": [
+        "Not an official GIWA product.",
+        "Usage negligible (13 launches, 12 aggregated swaps as of 2026-09-04).",
+        "Contract repository private; addresses come from the npm SDK.",
+        "No audit or mainnet plan published."
+      ],
+      "source_ids": [
+        "src_587",
+        "src_596"
+      ],
+      "research_only": true,
+      "strategy_consumption_allowed": false,
+      "order_input": false,
+      "code_state": "unknown",
+      "address_state": "not_applicable",
+      "links": [],
+      "source_count": 2,
+      "contract_count": 0
+    },
+    {
+      "id": "naru",
+      "name": "Naru / 나루",
+      "category": "krw_quoted_terminal_and_launchpad",
+      "officiality": "third_party",
+      "status": "experimental_testnet_deployed",
+      "network": "GIWA Sepolia",
+      "summary": "Third-party KRW-quoted trading terminal for Upbit users with a Dojang-attestation-gated launchpad and a V2-style AMM fork whose feeTo was removed (0.3 % entirely to LPs).",
+      "limitations": [
+        "Not an official GIWA product and not affiliated with Upbit.",
+        "Runs its own seed bot on testnet; mock trades are not demand.",
+        "Protocol fee policy for mainnet undecided.",
+        "Entity not stated."
+      ],
+      "source_ids": [
+        "src_588",
+        "src_577"
+      ],
+      "research_only": true,
+      "strategy_consumption_allowed": false,
+      "order_input": false,
+      "code_state": "unknown",
+      "address_state": "not_applicable",
+      "links": [],
+      "source_count": 2,
+      "contract_count": 0
     }
   ],
   "infrastructure": {
@@ -1361,6 +1470,47 @@
   },
   "research": [
     {
+      "id": "GIWA_fee_capture_product_decision_2026_20260904_143036",
+      "title": "Fee-capture product decision (2026-09-04)",
+      "description": "스왑·텔레그램 봇·런치패드 fee 사업을 리서치 13편·설계 4안·심사 3편·반증 검증으로 판정",
+      "topic": "GIWA에서 합법적으로 거래 수수료를 포획하는 제품(단순 스왑·텔레그램 봇·런치패드·B2B 엔진)의 판정과 단계별 계획",
+      "status": "COMPLETED",
+      "updated_at": "2026-09-04T23:00:00+09:00",
+      "verdict": "PASS",
+      "source_count": 96,
+      "claim_count": 36,
+      "verified_count": 27,
+      "unresolved_count": 4,
+      "refuted_count": 5,
+      "citation_rate": 1.0,
+      "links": [
+        {
+          "path": "RESEARCH/GIWA_fee_capture_product_decision_2026_20260904_143036/outputs/00_executive_summary.md",
+          "label": "요약",
+          "url": "./library/RESEARCH/GIWA_fee_capture_product_decision_2026_20260904_143036/outputs/00_executive_summary.md.html",
+          "exists": true
+        },
+        {
+          "path": "RESEARCH/GIWA_fee_capture_product_decision_2026_20260904_143036/outputs/01_full_report/01_report.ko.md",
+          "label": "전체 보고서",
+          "url": "./library/RESEARCH/GIWA_fee_capture_product_decision_2026_20260904_143036/outputs/01_full_report/01_report.ko.md.html",
+          "exists": true
+        },
+        {
+          "path": "RESEARCH/GIWA_fee_capture_product_decision_2026_20260904_143036/sources/sources.jsonl",
+          "label": "출처",
+          "url": "./library/RESEARCH/GIWA_fee_capture_product_decision_2026_20260904_143036/sources/sources.jsonl.html",
+          "exists": true
+        },
+        {
+          "path": "RESEARCH/GIWA_fee_capture_product_decision_2026_20260904_143036/artifacts/claim_ledger.jsonl",
+          "label": "주장 원장",
+          "url": "./library/RESEARCH/GIWA_fee_capture_product_decision_2026_20260904_143036/artifacts/claim_ledger.jsonl.html",
+          "exists": true
+        }
+      ]
+    },
+    {
       "id": "GIWA_revenue_models_chain_launch_benchmarks_2026_20260903_175751",
       "title": "Revenue models & launch benchmarks",
       "description": "DEX·NFT·밈코인·데이터 수익을 Ethereum·Base·Solana·Robinhood 사례와 비교",
@@ -1567,6 +1717,84 @@
     }
   ],
   "build_tracks": [
+    {
+      "id": "locker-launcher",
+      "name": "Flat-fee locker launcher (fee = 0 on Sepolia)",
+      "status": "spec_only",
+      "progress": 5,
+      "summary": "Clanker v3.1형 LpLocker(withdraw 경로 부재 negative test)·단일 bytecode 토큰·end-of-tx creator 잔고 0; 휴면 protocol-share 스위치와 LaunchGate 제외",
+      "next": "P0: Sepolia creationFee=0 배포 후보; 메인넷 수수료 파라미터는 배포 전 오너 확정 후 불변",
+      "files": [
+        {
+          "path": "docs/FEE_CAPTURE_DECISION_2026-09-04.md",
+          "label": "FEE_CAPTURE_DECISION_2026-09-04.md",
+          "url": "./library/docs/FEE_CAPTURE_DECISION_2026-09-04.md.html",
+          "exists": true
+        },
+        {
+          "path": "docs/PUMP_PLATFORM.md",
+          "label": "PUMP_PLATFORM.md",
+          "url": "./library/docs/PUMP_PLATFORM.md.html",
+          "exists": true
+        },
+        {
+          "path": "contracts/specs/TOKEN.md",
+          "label": "TOKEN.md",
+          "url": "./library/contracts/specs/TOKEN.md.html",
+          "exists": true
+        }
+      ]
+    },
+    {
+      "id": "shared-engine",
+      "name": "Shared execution engine (read layer first)",
+      "status": "spec_only",
+      "progress": 5,
+      "summary": "자체 op-reth·two-lane 인덱서·venue registry·Pool Passport·quote/pre-sim/validator·signer-as-code — 네 제품이 60–70 % 공유",
+      "next": "P0 읽기 계층(노드·인덱서·registry·Passport ≥6)을 공개 데이터로; 실행 계층은 별도 승인",
+      "files": [
+        {
+          "path": "docs/FEE_CAPTURE_DECISION_2026-09-04.md",
+          "label": "FEE_CAPTURE_DECISION_2026-09-04.md",
+          "url": "./library/docs/FEE_CAPTURE_DECISION_2026-09-04.md.html",
+          "exists": true
+        },
+        {
+          "path": "docs/FEE_PROJECT_PROPOSAL_2026-09-03.md",
+          "label": "FEE_PROJECT_PROPOSAL_2026-09-03.md",
+          "url": "./library/docs/FEE_PROJECT_PROPOSAL_2026-09-03.md.html",
+          "exists": true
+        }
+      ]
+    },
+    {
+      "id": "fee-capture-decision",
+      "name": "Fee-capture decision (2026-09-04)",
+      "status": "implemented",
+      "progress": 100,
+      "summary": "오너 방향(수수료 사업)을 리서치 13편·설계 4안·심사 3편·반증 검증 12건으로 판정. 후속 결정(같은 날): 법인·FIU·법령해석 경로 없이 주체 없는 탈중앙 배포",
+      "next": "G1: Sepolia reference build(불변 v3 풀 계층 + 락커 런처 fee=0) 승인",
+      "files": [
+        {
+          "path": "docs/FEE_CAPTURE_DECISION_2026-09-04.md",
+          "label": "FEE_CAPTURE_DECISION_2026-09-04.md",
+          "url": "./library/docs/FEE_CAPTURE_DECISION_2026-09-04.md.html",
+          "exists": true
+        },
+        {
+          "path": "RESEARCH/GIWA_fee_capture_product_decision_2026_20260904_143036/outputs/00_executive_summary.md",
+          "label": "00_executive_summary.md",
+          "url": "./library/RESEARCH/GIWA_fee_capture_product_decision_2026_20260904_143036/outputs/00_executive_summary.md.html",
+          "exists": true
+        },
+        {
+          "path": "RESEARCH/GIWA_fee_capture_product_decision_2026_20260904_143036/outputs/01_full_report/01_report.ko.md",
+          "label": "01_report.ko.md",
+          "url": "./library/RESEARCH/GIWA_fee_capture_product_decision_2026_20260904_143036/outputs/01_full_report/01_report.ko.md.html",
+          "exists": true
+        }
+      ]
+    },
     {
       "id": "evidence-inventory",
       "name": "Evidence inventory",
@@ -1809,8 +2037,14 @@
   "document_groups": [
     {
       "name": "결정 메모",
-      "description": "무엇을 만들지와 언제 멈출지를 빠르게 판단",
+      "description": "무엇을 만들지와 언제 멈출지를 빠르게 판단 — 2026-09-04 fee-capture 결정이 상위",
       "files": [
+        {
+          "path": "docs/FEE_CAPTURE_DECISION_2026-09-04.md",
+          "label": "FEE_CAPTURE_DECISION_2026-09-04.md",
+          "url": "./library/docs/FEE_CAPTURE_DECISION_2026-09-04.md.html",
+          "exists": true
+        },
         {
           "path": "docs/DECISION_MEMO.md",
           "label": "DECISION_MEMO.md",
@@ -1924,6 +2158,16 @@
     },
     {
       "id": "gate-8",
+      "state": "blocked",
+      "text": "Legal gates (2026-09-04): Filing A (금융위 법령해석 on the fixed-fee engine / user-signed tool) read with counsel before any paid consumer tier; Filing B (flat creation fee + creator LP-fee stream) non-adverse plus a paid written opinion plus closed research on 법인 ETH→KRW conversion and VAT before the creation fee is switched on (Gate L1); Filing C (immutable zero-fee AMM + own-capital LP) only after a canonical stablecoin exists; no per-trade fee of any kind before a 특금법 §7 VASP 신고 수리."
+    },
+    {
+      "id": "gate-9",
+      "state": "blocked",
+      "text": "No dormant fee switch: the v3 factory owner is renounced in the deployment ceremony; the launcher carries no protocol-share activation path; any future per-trade economics require a new deployment under a registered entity."
+    },
+    {
+      "id": "gate-10",
       "state": "blocked",
       "text": "A named human explicitly approves the exact revision, chain, addresses, parameters, roles, funding, liquidity limits, and launch window."
     }

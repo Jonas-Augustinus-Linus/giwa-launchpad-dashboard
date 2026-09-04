@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex,nofollow,noarchive" />
+    <meta name="theme-color" content="#090c0e" />
+    <title>GIWA fee-capture 제품 결정 — 전체 보고서 · GIWA Control Room</title>
+    <link rel="stylesheet" href="../../../../../assets/document.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#document">본문으로 바로가기</a>
+    <header class="document-header">
+      <a class="brand" href="../../../../../research.html" aria-label="GIWA 대시보드로 돌아가기">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span><strong>GIWA</strong><small>CONTROL ROOM</small></span>
+      </a>
+      <nav aria-label="문서 동작">
+        <a href="../../../../../research.html">← 대시보드</a>
+      </nav>
+    </header>
+    <main id="document" class="document-shell">
+      <div class="document-meta">
+        <span>REPORT</span>
+        <span>SHA256 df5e80d899f7</span>
+      </div>
+      <h1>GIWA fee-capture 제품 결정 — 전체 보고서</h1>
+      <p class="source-path">RESEARCH/GIWA_fee_capture_product_decision_2026_20260904_143036/outputs/01_full_report/01_report.ko.md</p>
+      <article class="markdown-body"><h1 id="giwa-fee-capture">GIWA fee-capture 제품 결정 — 전체 보고서</h1>
+<p>기준일: <strong>2026-09-04 KST</strong> · 모드: strict / research only · 언어: ko</p>
+<h2 id="0">0. 목차</h2>
+<ol>
+<li>질문과 방법</li>
+<li>한국 법률 경계 — 어느 수수료가 우리 것인가</li>
+<li>시장 전제 — 메인넷 시점과 초기 유동성</li>
+<li>세 아이디어의 사실관계(스왑·봇·런치패드)</li>
+<li>결정과 단계별 계획</li>
+<li>비용·수익</li>
+<li>반증 검증 결과와 교정</li>
+<li>저장소 변경(주소 교정 포함)</li>
+<li>신뢰도·미확정·반박된 가정</li>
+</ol>
+<h2 id="1">1. 질문과 방법</h2>
+<p>오너의 2026-09-04 방향 — GIWA 메인넷에서 거래 수수료 또는 거래 편의 수수료를 합법적으로 받는 플랫폼(단순 스왑 / 텔레그램 트레이딩
+봇 / 가벼운 런치패드) — 을 검증했다. 절차는 리서치 렌즈 7편 + 갭 보완 5편 → 설계 4안 → 법률·수익·엔지니어링 심사 → 종합안 →
+핵심 주장 12건 × 2렌즈 반증 검증이다(부록 methodology). 이 보고서는 검증 후 교정을 반영한 판본이며, 기존 저장소의 2026-09-03
+fee ladder [src_581]와 최소 DEX 전략 [src_582]을 배경으로 삼는다.</p>
+<h2 id="2">2. 한국 법률 경계 — 어느 수수료가 우리 것인가</h2>
+<h3 id="21">2.1 규제당국의 공식 입장</h3>
+<p>금융위·FIU는 2026-06-24 보도자료에서 "특금법에 따라 FIU에 신고된 가상자산사업자 28개사를 제외하고는, 내국인을 대상으로 영업하는
+가상자산 취급업자는 모두 불법"이라고 밝히고 리퍼럴 홍보자의 형사처벌 가능성을 명시했으며, 2026-08-13에도 28개사를 재확인했다
+[src_501] [src_502]. 2026-08-06 조선비즈 기사에서 금융위 관계자는 같은 원칙을 반복했고, DEX(DragonSwap)를 특정한 적용은
+변호사의 의견이었다 [src_506].</p>
+<h3 id="22">2.2 판례와 매뉴얼</h3>
+<p>대법원 2024도10710(2024-12-12)은 전주의 원화를 회사 계좌로 받아 해외 거래소에서 매수·이전하고 송금액의 0.3~0.5 %를 받은
+수탁형 대행 차익거래를 VASP로 판단했고, 2024도12420(2025-09-11)이 같은 기준을 재확인했다 [src_504] [src_505]. 판단
+기준은 "불특정 다수의 편익 + 대가 + 계속·반복"이며, 두 판결 모두 비수탁 소프트웨어를 다루지 않았다. 비수탁 라우터·봇은 판례의
+사실관계가 아니라 이 기준과 2026-08-20 시행 기준 FIU·금감원 신고매뉴얼에 의해 포섭된다: 매뉴얼은 "편의나 관련 수단·환경 등을
+제공하는 행위도 그 실질에 따라 해당할 여지"가 있다고 하고, 제외 예시는 단순히 장만 제공하는 경우와 조언·기술 제공뿐이며,
+당국과의 사전 협의를 권고한다 [src_503] [src_513].</p>
+<h3 id="23">2.3 법령해석 회신의 패턴</h3>
+<p>공개된 금융위 법령해석(가상자산 40건)과 FIU 사례집에는 수수료 형태(정액 대 거래비례)를 판단 기준으로 삼은 회신이 없다. 비수탁
+자동매매 프로그램(#3912)은 수수료가 없는 사실관계에서도 "중개·알선·대행 여지" 회신을 받았고, 무료 교환 지원(#4053)도 "중개·알선
+가능성" 회신을 받았다. 가상자산사업자 아님 회신은 조회(#4053①), 비수탁 키 관리(#3828, #5003), 발행(#4286)처럼 <strong>기능</strong>으로
+정의된다 [src_510] [src_509] [src_508] [src_507]. 따라서 "정액이면 다르다"는 우리가 만든 구분이고, "무료"조차
+단독 면제 사유가 아니다.</p>
+<h3 id="24">2.4 법령해석 제도</h3>
+<p>운영규칙(금융위 고시 제2024-15호)상 법령해석 요청은 무료이고 특별한 사유가 없는 한 30일(+30일 1회, 자료제출·의견청취 기간
+제외) 내 회신하며 10일 내 공개된다. 법령해석에는 구속력 조항이 없고 비조치의견서만 금감원장을 구속하며, §10①8은 정책방향 미확정
+시 반려를 허용한다 [src_511] [src_512]. 특금법 범위 질의는 FIU 기획행정실이 회신해 왔으므로 [src_510] 포털
+요청과 FIU 사전협의 메일은 같은 기관에 닿는다. 2022–2024년 접수 건이 2026년에 회신된 기록이 있어 "90일 내 무회신"을 정상
+상태로 계획한다.</p>
+<h3 id="25-5">2.5 대주주 결격 — 영구가 아니라 5년</h3>
+<p>특금법 §7③3(2026-08-20)은 특금법 등 위반으로 벌금 이상의 형이 확정된 후 5년이 지나지 않은 대표자·임원·대주주를 이유로 FIU가
+신고 수리를 거부할 수 있게 하고(재량, 서면 이유 통지), 시행령 §10조의12①은 양벌규정 처벌과 경미한 위반을 제외하며, 감독규정
+§27⑩은 수사·조사가 계류 중이면 심사를 중단하고 6개월마다 재결정하도록 한다. FSC 발표도 "일정기간" 제한이라고 표현했다
+[src_513] [src_514] [src_515] [src_516] [src_501]. 따라서 미신고 per-trade 단계는 S5를 영구히 닫지는 않지만 유죄 확정 시 약
+5년 지연시키고 수사만으로도 동결시킨다 — "수리 전 per-trade 없음" 규칙은 그대로 유지한다.</p>
+<h3 id="26">2.6 법인의 원화와 세무</h3>
+<p>2025-06-01부터 원화 매도용 실명계좌는 5년 이상 외감 비영리법인과 등록 거래소에만 허용되고, 상장법인·전문투자자 등록법인 파일럿은
+2단계 입법과 연계돼 미발표이며 일반 법인은 "중장기"다. 2026-07 말 법인 계정 6,590개 중 KYC 완료 711개·활성 29개이고, 신설 일반
+법인은 KYC 후 코인마켓 거래만 가능하며 원화 입출금·원화 매도는 불가하다 [src_562] [src_563] [src_564] [src_565].
+부가가치세법에는 가상자산 조문이 없고 가상자산 매도 자체는 부가세 대상이 아니라는 2021년 해석이 있으며, 법인세는 총평균법으로
+평가한다; ETH로 대가를 받는 서비스와 LP 수익의 부가세 취급에는 공식 해석이 없다 [src_566] [src_567] [src_568]. 설계
+결과: 생성 수수료는 ETH 온체인 외에 KRW 인보이스형 대안을 두고, 헤지 계정은 법인 원화 계정을 전제하지 않는다.</p>
+<h2 id="3">3. 시장 전제 — 메인넷 시점과 초기 유동성</h2>
+<h3 id="31-artefact-0">3.1 artefact 0건</h3>
+<p>ethereum-lists의 chain 9134는 RPC 없는 "incubating" 상태로 2025-09-29 이후 변경이 없고, 공식 문서는 "GIWA 메인넷은 현재 개발
+중"이며, rpc.giwa.io·explorer.giwa.io는 DNS 레코드가 없고, giwa-io/node와 chain-operations는 Sepolia 설정만 담고 있으며, OP
+superchain-registry와 DefiLlama에 GIWA가 없고, QuickNode는 "메인넷 미출시"라고 명시한다 [src_523] [src_524] [src_525] [src_526] [src_527] [src_528] [src_529].
+GIWA Wallet은 두 앱스토어에 없다 [src_521] [src_522].</p>
+<h3 id="32-upbit-rail">3.2 Upbit rail 없음</h3>
+<p>Upbit 출금수수료 상태 API 399행·non-null net_type 119개에 GIWA가 없고, ETH 출금은 Ethereum L1 한 경로(0.007 ETH)뿐이며, 공지
+5,787건 전수(싱가포르·인도네시아·태국 아카이브 포함)에 GIWA 네트워크 추가 공지가 없고, 헬프센터 검색은 0건이다
+[src_517] [src_518] [src_519] [src_520]. Upbit가 네트워크를 추가할 때의 선례(USDT-Kaia 2025-08-27 등)는 공지
+형식으로 관측 가능하다.</p>
+<h3 id="33-railstablecoin">3.3 rail·지갑·stablecoin은 필요조건이지 충분조건이 아니다</h3>
+<p>Base의 day-30 TVL $364M(30일 누적 DEX $0.95B)은 47 %가 AERO 인센티브를 받는 Aerodrome이었고, Cronos day-30 $1.12B는 day-1
+Crypto.com rail에 $100M 펀드와 VVS 이미션이 더해진 결과다. 반면 OKX X Layer는 day-1 거래소·지갑 통합과 200개 dApp에도 day-30
+TVL $6.7M·30일 누적 DEX $2.2M, Kraken Ink는 $1.8M, opBNB는 day-30 $1.8M이고 Binance가 d56에 입출금을 연 뒤에도 d90 $3.4M에
+머물렀다 [src_530] [src_531] [src_532] [src_537] [src_533] [src_534] [src_535] [src_536]. 따라서 GIWA
+의 조건부 base는 (a) rail·Wallet·stablecoin만 있으면 day-30 TVL $10–60M·DEX $1–5M/일, (b) 인센티브 AMM/렌딩 또는 상장·프로모션
+자산이 더해져야 Base 2023급이다. 메인넷 시점 자체는 판단치로만 둔다(§9).</p>
+<h2 id="4">4. 세 아이디어의 사실관계</h2>
+<h3 id="41">4.1 단순 스왑</h3>
+<p>Uniswap v3 core는 GPL-2.0-or-later, v4-core는 BUSL(2027-06-15), Clanker v3.1은 MIT이며 Uniswap Labs는 인터페이스 수수료를 0으로
+낮췄다 [src_556] [src_592] [src_550] [src_591]. UniswapV3Factory.setOwner는 msg.sender == owner만 검사하고
+zero-address guard가 없어 setOwner(0x0) 이후 enableFeeAmount·setFeeProtocol·collectProtocol이 영구히 불가능해진다. 다만 기본
+deploy-v3는 NFT descriptor용 ProxyAdmin을 배포하고 마지막에 ProxyAdmin.transferOwnership(owner)를 호출하므로 owner가 0x0이면
+revert한다 — ceremony에 ProxyAdmin.renounceOwnership()을 넣거나 non-proxy descriptor를 써야 하고 V3Migrator·V3Staker는 배포하지
+않는다 [src_556] [src_557] [src_559]. 휴면 fee 스위치는 저장소 자체 분석에서 🔴이고 [src_582] EU MiCA 리뷰
+consultation과 MFSA 토론문서도 관리자 키 통제를 중앙화 지표로 열거한다(채택된 법은 아님) [src_560] [src_561].
+GIWA Sepolia에는 GIWATER·Joseon.fun·GIWA MARKETS·Ammora·Osige·Naru 등 스왑·런치패드가 이미 6개 이상 라이브이므로 일곱 번째 일반
+스왑은 차별점이 없다 [src_585] [src_586] [src_587] [src_588] [src_544].</p>
+<h3 id="42">4.2 텔레그램 봇</h3>
+<p>수요는 실재한다: GMGN Korea 텔레그램 1,736명, trojankorea.com 리퍼럴 랜딩, BonkBot "국내 누적 거래량 50만 SOL"; GMGN은 거래당
+1 %를 받고 최근 30일 수수료는 Robinhood Chain $18.6M·BSC $11.4M·Solana $4.7M·Base $1.3M이다 [src_569] [src_570] [src_571] [src_572] [src_573].
+Base는 봇 수수료가 없는 곳이 아니라 작은 곳이다(누적 ≈ $28.4M, 최근 30일 ≈ $1.4M) [src_574]. 출시된 봇 중 진짜 비수탁
+per-trade 봇은 없고(Maestro ToS의 개인키 접근, Trojan 시드 서버 보관, GMGN 키 내보내기 금지), 주요 사고는 승인 보유 라우터와
+텔레그램 신원 기반 출금에서 났다 [src_593]. GIWA에는 봇이 0개다 [src_575]. EIP-7702는 GIWA Sepolia에서 활성이지만
+사용 0건이고 호스티드 4337 번들러는 없으며 Flashblocks 30분 표본에서 누락은 0건이었다 [src_590] [src_589] [src_596].</p>
+<h3 id="43">4.3 런치패드</h3>
+<p>생성 수수료 선례는 약하다: Bags-on-Robinhood 문서는 기본값 0.02 ETH를 말하지만 온체인 creationFee()는 0이고 2026-08 이후 create
+호출 300건 모두 value 0이었으며, Pons는 0.0005 ETH만 받고, Joseon.fun은 GIWA Sepolia에서 36.6일간 28런치(0.77/일)를 생성비 0으로
+처리했다 [src_540] [src_541] [src_542] [src_543] [src_544]. 감사 시장가는 contest 기준 nSLOC당 $6–34(Monetrix
+$22k/3,452, GTE $103k/5,260, Ekubo $183.5k/5,437)이고 Clanker v3.1은 1주짜리 0xMacro 리뷰로 출시됐다 [src_545] [src_547] [src_548] [src_546] [src_549].</p>
+<h2 id="5">5. 결정과 단계별 계획</h2>
+<p>결정 [src_581] [src_582] [src_503] [src_510]: S1 고정 B2B(Passport·API·엔진 라이선스)만 지금 켠다. 공유 엔진(자체 op-reth, two-lane
+인덱서, venue registry, Pool Passport, quote·pre-sim·validator, signer-as-code)을 먼저 만들고, 불변 v3 풀 계층(owner·ProxyAdmin
+포기, full verification)과 락커 런처(단일 bytecode 토큰, end-of-tx creator 잔고 0, withdraw 경로 없는 LpLocker, CreatorVault
+cliff; 휴면 protocol-share 스위치와 fixed-price 게이트 없음)를 Sepolia에 fee = 0으로 올린다. 정액 생성 수수료는 Filing B
+비부정 + 서면의견 + public mainnet + 법인 ETH→KRW 경로 확정 후(Gate L1), 자기자본 LP는 canonical stablecoin + Filing C 후, per-trade
+수수료는 특금법 §7 신고 수리 후에만 연다. 텔레그램 봇은 무료 alert·simulation tier만 엔진 데모로 허용하고 유료 구독은 Filing A
+조건부다. 필링 순서는 A(엔진·user-signed tool) → B(런처) → C(AMM/LP) 단독 제출이며 FIU 사전협의 메일을 같은 주에 보낸다.
+Das Kapital은 헌법·아키텍처 불변식상 이 제품을 안에 둘 수 없으므로 franzlwelt처럼 별도 서비스로 분리하고 research lane으로만
+관찰한다 [src_583] [src_584] [src_594].</p>
+<table>
+<thead>
+<tr>
+<th>단계</th>
+<th>창</th>
+<th>켜는 수익</th>
+<th>게이트</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>P0</td>
+<td>지금 → KBW(9/29–10/1)</td>
+<td>S1</td>
+<td>G0 다이어그램·Filing A·법인·예산</td>
+</tr>
+<tr>
+<td>P1</td>
+<td>KBW 후 → 메인넷 artefact</td>
+<td>S1</td>
+<td>G1 Sepolia build; G2 Filing A 판독·Filing B 가부</td>
+</tr>
+<tr>
+<td>P2</td>
+<td>artefact + KBW 비부정 + Filing A 비부정</td>
+<td>—</td>
+<td>G3 감사·준비금 지출</td>
+</tr>
+<tr>
+<td>P3</td>
+<td>public mainnet</td>
+<td>—</td>
+<td>G4 MAINNET_GATES 그대로</td>
+</tr>
+<tr>
+<td>P4</td>
+<td>Filing B 비부정 + 의견 + 출금 경로</td>
+<td>S3 생성 수수료</td>
+<td>G-L1</td>
+</tr>
+<tr>
+<td>P5</td>
+<td>canonical stablecoin</td>
+<td>S2 LP</td>
+<td>G5 트랜치·손실 한도</td>
+</tr>
+<tr>
+<td>P6</td>
+<td>60일 관측 거래량 + rail/Wallet</td>
+<td>S5 per-trade</td>
+<td>G-B1/B2/B3</td>
+</tr>
+</tbody>
+</table>
+<h3 id="51">5.1 오너 후속 결정</h3>
+<p>같은 날 저녁 오너는 법인을 설립하지 않고 FIU 신고·법령해석 경로를 추진하지 않기로 했다. 프로젝트는 주체 없는 탈중앙 배포(불변
+컨트랙트, 관리자 키·pause·fee switch 없음, 호스팅 없는 공개 UI)로 가며 수수료 파라미터는 배포 전 확정 후 불변이다. 위 결정 문단의
+Filing A/B/C·S1 법인 인보이스·S5 항목은 폐기되고, 이 보고서의 법률 절(§2)은 리서치 기록으로 보존된다.</p>
+<h2 id="6">6. 비용·수익</h2>
+<p>인프라: OVH RISE-1 $64/월(+$64), QuickNode Build $49·Accelerate $249, GIWA 노드 최소 4코어/8GB/500GB [src_551] [src_552] [src_553];
+프로바이더는 Sepolia만 제공한다 [src_529]. 법인 법정 설립비 ≈ ₩440,000, 유지비(세무기장·신고) 연 수백만 원대. 메인넷 신호
+전 확정 매몰은 ≈ $2–2.5k + 서면의견 placeholder $20k이고, 신호 후 감사 $25–125k + 준비금 $250k(자기자본)이다; GASOK 그랜트와 EF
+감사 보조가 상쇄 후보다 [src_555].</p>
+<p>합법 라인의 base 매출 합계는 월 ≈ $10–19k(세전, 법적 이진 전): B2B ≈ $4.4k(3 × ₩2M 가정), 생성 수수료 ≈ $1.5–7.5k(1–5런치/일 ×
+0.02 ETH ≈ $50), 봇 구독 $0–5k(출처 없는 대용치), LP $1–6k gross [src_538] [src_539] [src_543] [src_540]. per-trade를
+받지 않으므로 비한국 거래 비율을 곱하지 않지만 각 라인에 법적 이진(Filing A/B/C 회신)과 메인넷 확률이 곱해지며, 기대값은 월 한
+자릿수 $k다. S5는 base에서 인력 최소치 때문에 적자(월 ≈ −$5.2k)이고 bull에서만 흑자다.</p>
+<h2 id="7">7. 반증 검증 결과와 교정</h2>
+<table>
+<thead>
+<tr>
+<th>주장</th>
+<th>판정</th>
+<th>교정</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>KR-facing per-trade 수수료 = 유죄 사실관계</td>
+<td>교정 후 유지</td>
+<td>판례는 수탁형 대행; 비수탁 S/W는 기준·매뉴얼로 포섭 [src_504] [src_503]</td>
+</tr>
+<tr>
+<td>수수료 형태는 기준 아님</td>
+<td>교정 후 유지</td>
+<td>무료도 단독 면제 아님; 면제는 기능으로 정의 [src_509] [src_508]</td>
+</tr>
+<tr>
+<td>법령해석 무료·30일·공개·비구속</td>
+<td>교정 후 유지</td>
+<td>회신 지연 사례; FIU 기획행정실이 회신 [src_511] [src_510]</td>
+</tr>
+<tr>
+<td>Upbit GIWA rail 없음</td>
+<td>유지</td>
+<td>net_type 119 [src_517]</td>
+</tr>
+<tr>
+<td>public mainnet artefact 0</td>
+<td>유지</td>
+<td>superchain-registry에도 없음 [src_527]</td>
+</tr>
+<tr>
+<td>rail+Wallet+stable → Base급</td>
+<td><strong>약화</strong></td>
+<td>필요조건일 뿐; trio-only base는 TVL $10–60M [src_533] [src_534] [src_536]</td>
+</tr>
+<tr>
+<td>합법 base ≈ $25–30k</td>
+<td><strong>약화</strong></td>
+<td>≈ $10–19k; 생성 수수료 선례 약함 [src_541] [src_542] [src_543]</td>
+</tr>
+<tr>
+<td>감사 $100–200k + v3 $40k</td>
+<td><strong>약화</strong></td>
+<td>contest $25–125k; v3 수치 무근거; 법인 유지비 누락 [src_547] [src_549]</td>
+</tr>
+<tr>
+<td>휴면 스위치 = 설정권, factory 포기 비용 0</td>
+<td>교정 후 유지</td>
+<td>deploy-v3 ProxyAdmin 단계 revert → renounce 필요 [src_557] [src_559]</td>
+</tr>
+<tr>
+<td>대주주 영구 결격</td>
+<td><strong>반박</strong></td>
+<td>벌금 이상 확정 후 5년 한시·재량; 수사 시 심사 중단 [src_513] [src_514] [src_516]</td>
+</tr>
+<tr>
+<td>법인 ETH→KRW·VAT 미조사</td>
+<td>교정 후 유지</td>
+<td>신설 법인 원화 출금 불가; 매도 부가세 비과세 해석 [src_564] [src_568]</td>
+</tr>
+<tr>
+<td>Base는 봇 fee base 없음</td>
+<td>교정 후 유지</td>
+<td>Base 봇 수수료 누적 ≈ $28.4M [src_574]</td>
+</tr>
+</tbody>
+</table>
+<h2 id="8">8. 저장소 변경</h2>
+<p>data/ecosystem.json의 Joseon.fun 7개·Notus 1개·fixed-pair 2개·Dojang 1개 주소는 앞 6자리만 남은 손상 주소로 eth_getCode가
+0이었고, Blockscout 이름 검색·검증된 constructor 인자·프로젝트 코드·GIWA Dojang 문서로 복원한 12개 주소는 모두 141–17,490바이트의
+코드를 반환했다 [src_576] [src_577] [src_578] [src_579] [src_580]. GIWATER·Osige·Ammora·Naru 항목을 추가했다
+[src_585] [src_586] [src_587] [src_588]. 대시보드 manifest의 decision·fee_policy·product_hypothesis와 MAINNET_GATES의 법적 게이트,
+PUMP_PLATFORM·TOKEN 사양의 헤더 노트를 갱신했고, 미머지 브랜치 research/kol-giwa-interest(creator-exit 무수수료 doctrine)는
+대체됐다.</p>
+<h2 id="9">9. 신뢰도·미확정·반박된 가정</h2>
+<ul>
+<li><strong>높은 확신:</strong> 한국 규제당국의 공식 입장과 판례 기준, Upbit rail·Wallet·artefact 부재, 라이선스, 온체인 주소 교정, 벤치마크 수치.</li>
+<li><strong>중간 확신:</strong> 합법 라인 매출 밴드(가정 의존), 감사 밴드(contest 기준), 법인 세무 취급(서비스 대가·LP 해석례 없음).</li>
+<li><strong>미확정:</strong> 메인넷 시점 확률(판단치), B2B 지불의사(인터뷰 미실시), 공식 지갑의 네이티브 스왑 계획, 1인 법인 유지비 공식 요율.</li>
+<li><strong>반박된 종합안 가정 4건:</strong> rail·지갑·stablecoin만으로 Base급 유동성; 합법 base $25–30k(10런치/일 × 0.02 ETH); 감사 $100–200k</li>
+<li>v3 $40k; 대주주 영구 결격; 그리고 Base에 봇 수수료가 전무하다는 인용.</li>
+</ul>
+<p>본 세션에서는 배포, 서명, 거래, 유동성 공급, 토큰 발행, 수수료 활성화, 법령해석 제출을 수행하지 않았다.</p></article>
+    </main>
+    <footer>
+      <span>research_only=true</span>
+      <span>strategy_consumption_allowed=false</span>
+      <span>order_input=false</span>
+    </footer>
+  </body>
+</html>

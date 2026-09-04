@@ -22,11 +22,18 @@
     <main id="document" class="document-shell">
       <div class="document-meta">
         <span>REPORT</span>
-        <span>SHA256 ada9bdf1a250</span>
+        <span>SHA256 e873844ba101</span>
       </div>
       <h1>GIWA용 Pump.fun형 플랫폼 청사진</h1>
       <p class="source-path">docs/PUMP_PLATFORM.md</p>
       <article class="markdown-body"><h1 id="giwa-pumpfun">GIWA용 Pump.fun형 플랫폼 청사진</h1>
+<blockquote>
+<p><strong>2026-09-04 업데이트:</strong> 아래 <code>virtual-reserve curve → completion threshold → atomic graduation → canonical AMM</code> 수명주기는
+<strong>Clanker v3.1형 락커 패턴으로 대체</strong>됐다: 창작자는 t0에 토큰 0개, 공급 100 %가 factory에서 곧바로 우리 v3 풀의 단측 포지션으로
+들어가 withdraw 경로가 없는 <code>LpLocker</code>가 소유한다. <code>CurveFactory/CurvePool/GraduationManager</code>는 제거, <code>FeeVault</code>는 <code>LpLocker</code>로,
+휴면 protocol-share 스위치(<code>activateProtocolShare</code>)와 fixed-price <code>LaunchGate</code>는 두지 않는다. 수수료는 정액 생성 수수료뿐이며
+Gate L1 전에는 0이다. 이 문서의 신뢰·moderation·세무·게이트 원칙은 유지된다. 상위 결정: <a href="FEE_CAPTURE_DECISION_2026-09-04.md.html"><code>FEE_CAPTURE_DECISION_2026-09-04.md</code></a>.</p>
+</blockquote>
 <p>가칭 <strong>가보자(GABOJA)</strong>. Pump.fun을 그대로 복제하는 것이 아니라, GIWA의 Dojang과
 up.id를 활용한 <strong>trust-first, testnet-first token launch lab</strong>으로 설계한다.</p>
 <h2 id="_1">현재 판정</h2>
