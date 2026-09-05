@@ -1,14 +1,14 @@
 {
   "schema_version": 1,
-  "catalog_revision": "baa2314d08b8",
-  "as_of": "2026-09-04",
+  "catalog_revision": "98d748525138",
+  "as_of": "2026-09-06",
   "project": {
-    "title": "GIWA Launchpad Control Room",
-    "subtitle": "근거에서 코드까지, 한 화면에서 확인하는 내부 리서치·개발 대시보드",
-    "network": "GIWA Sepolia",
+    "title": "GIWA · Robinhood Launchpad Control Room",
+    "subtitle": "로빈후드 체인 즉시 론칭과 GIWA 메인넷 리허설 — 근거에서 발사대까지 한 화면에서",
+    "network": "GIWA Sepolia · Robinhood Chain (observation)",
     "mode": "research_only",
-    "decision": "주체 없는 탈중앙 배포로 간다(오너 결정 2026-09-04): 법인 설립·FIU 신고·법령해석 경로는 추진하지 않는다. 공유 엔진 읽기 계층(자체 노드·two-lane 인덱서·venue registry·Pool Passport)을 공개 데이터로 먼저 만들고, 불변·owner-포기 v3 풀 계층과 관리자 키 없는 락커 런처를 Sepolia에 fee=0으로 올린다. 수수료 파라미터는 배포 전 오너가 확정하고 배포 후 누구도 바꿀 수 없다. 메인넷 배포는 artefact 신호 후 동일 바이트코드로만.",
-    "product_hypothesis": "shared read layer + Pool Passport → immutable pool layer → operator-less locker launcher (no entity, no admin key)",
+    "decision": "오너 방향(2026-09-06): 로빈후드 체인(라이브 메인넷, DEX ≈ $1.9B/일)에서 Pons V2로 크리에이터 역할로 즉시 론칭하고, GIWA는 메인넷 부재이므로 Joseon.fun Sepolia 리허설과 CreateX 동일 주소 키트로 병행 준비한다(두 체인 모두 ETH 기본통화, 컨트랙트 구조 동일). 법인·FIU·법령해석 경로는 추진하지 않는다(2026-09-04 결정 유지). 공유 엔진 읽기 계층과 불변 풀 계층·락커 런처(fee=0) 준비는 계속한다.",
+    "product_hypothesis": "creator launches on Robinhood (Pons V2) now → GIWA rehearsal kit → operator-less immutable pool layer + locker launcher when GIWA mainnet opens",
     "fee_policy": "no interface/router/protocol fee switch; v3 factory owner renounced; launcher fee parameters immutable at deploy (0 on Sepolia); no admin key, pause, upgrade or treasury role; legal/FIU gates recorded as research only (owner decision 2026-09-04)",
     "default_branch": "main",
     "content_ref": "main"
@@ -31,6 +31,1318 @@
     "order_input": false,
     "notice": "테스트넷 활동과 코드 존재는 사용자, 채택, 유동성, 가치 또는 출시 준비의 증거가 아닙니다."
   },
+  "launch_prep": {
+    "as_of": "2026-09-06",
+    "robinhood": {
+      "chain_id": 4663,
+      "stats": [
+        {
+          "label": "TVL",
+          "value": "$905.07M",
+          "source": "https://api.llama.fi/v2/chains"
+        },
+        {
+          "label": "DEX volume 24h",
+          "value": "$1.89B (+12% d/d)",
+          "source": "https://api.llama.fi/overview/dexs/robinhood-chain"
+        },
+        {
+          "label": "DEX volume 7d",
+          "value": "$10.73B (+105% w/w)",
+          "source": "https://api.llama.fi/overview/dexs/robinhood-chain"
+        },
+        {
+          "label": "DEX volume 30d",
+          "value": "$23.09B (+263% m/m)",
+          "source": "https://api.llama.fi/overview/dexs/robinhood-chain"
+        },
+        {
+          "label": "Chain fees 24h / 7d / 30d",
+          "value": "$24.51M / $112.2M / $182.1M",
+          "source": "https://api.llama.fi/overview/fees/robinhood-chain"
+        },
+        {
+          "label": "Uniswap V4 fees 24h",
+          "value": "$8.82M",
+          "source": "https://api.llama.fi/overview/fees/robinhood-chain"
+        },
+        {
+          "label": "Pons V2 fees 24h / 7d / 30d",
+          "value": "$8.75M / $37.31M / $47.41M",
+          "source": "https://api.llama.fi/summary/fees/pons-v2?dataType=dailyFees"
+        },
+        {
+          "label": "Pons V2 fee ramp",
+          "value": "08-22 $254k -> 09-04 $8.75M (34x)",
+          "source": "https://api.llama.fi/summary/fees/pons-v2?dataType=dailyFees"
+        },
+        {
+          "label": "GMGN fees 24h (RH)",
+          "value": "$2.81M, vol $641.7M",
+          "source": "https://api.llama.fi/overview/dexs/robinhood-chain"
+        },
+        {
+          "label": "o1 Launchpad fees 24h",
+          "value": "$236k",
+          "source": "https://api.llama.fi/overview/fees/robinhood-chain"
+        },
+        {
+          "label": "Pons V2 launches / graduations 24h",
+          "value": "26,711 / 708 (2.65%)",
+          "source": "https://rpc.mainnet.chain.robinhood.com"
+        },
+        {
+          "label": "Pons V2 36.6h",
+          "value": "40,854 launches / 959 grads (2.3%)",
+          "source": "https://rpc.mainnet.chain.robinhood.com"
+        },
+        {
+          "label": "Time to graduation (n=22)",
+          "value": "median 2.0 min, p90 41 min, none >2h",
+          "source": "https://rpc.mainnet.chain.robinhood.com"
+        },
+        {
+          "label": "Bankr pools 24h",
+          "value": "2,315",
+          "source": "https://rpc.mainnet.chain.robinhood.com"
+        },
+        {
+          "label": "Txs 24h / addresses",
+          "value": "13.98M / 19.37M",
+          "source": "https://robinhoodchain.blockscout.com/api/v2/stats"
+        },
+        {
+          "label": "Block time",
+          "value": "0.101 s",
+          "source": "https://robinhoodchain.blockscout.com/api/v2/stats"
+        },
+        {
+          "label": "Gas price",
+          "value": "0.405 gwei (7d range 0.10-5.27)",
+          "source": "https://rpc.mainnet.chain.robinhood.com"
+        },
+        {
+          "label": "ETH price used",
+          "value": "$2,476-2,478",
+          "source": "https://coins.llama.fi/prices/current/coingecko:ethereum"
+        },
+        {
+          "label": "Best weekday / worst",
+          "value": "Fri $984M / Sat $534M",
+          "source": "https://api.llama.fi/overview/dexs/robinhood-chain"
+        },
+        {
+          "label": "Peak hours",
+          "value": "15-22 UTC = 00-07 KST",
+          "source": "https://rpc.mainnet.chain.robinhood.com"
+        },
+        {
+          "label": "Solana DEX 24h (compare)",
+          "value": "$1.88B, 7d -27%",
+          "source": "https://api.llama.fi/overview/dexs/Solana"
+        },
+        {
+          "label": "pump.fun fees 24h (compare)",
+          "value": "$0.93M (7d 0.9x)",
+          "source": "https://api.llama.fi/summary/fees/pump.fun"
+        }
+      ],
+      "funding_paths": [
+        {
+          "label": "Robinhood app -> RH Chain",
+          "detail": "US accounts only (NY excluded); not usable from Korea",
+          "state": "verified"
+        },
+        {
+          "label": "Robinhood Wallet (self-custody)",
+          "detail": "RH Chain built in; Korea app-store availability unknown",
+          "state": "unverified"
+        },
+        {
+          "label": "Relay Arbitrum -> RH",
+          "detail": "0.1 ETH: $0.103 + gas, 1 s",
+          "state": "verified"
+        },
+        {
+          "label": "Relay Ethereum -> RH",
+          "detail": "0.1 ETH: $0.080 + $0.014 gas, 1 s",
+          "state": "verified"
+        },
+        {
+          "label": "Across Arbitrum -> RH",
+          "detail": "0.104% ~ $0.26, 1 s; min 0.000377 ETH",
+          "state": "verified"
+        },
+        {
+          "label": "Across Ethereum -> RH",
+          "detail": "0.101% ~ $0.25, 2 s",
+          "state": "verified"
+        },
+        {
+          "label": "LI.FI / Jumper Arbitrum -> RH",
+          "detail": "$0.62 fixed + ~$0.13, 1 s",
+          "state": "verified"
+        },
+        {
+          "label": "Canonical Arbitrum bridge (L1)",
+          "detail": "deposit ~10 min, withdrawal 7 days",
+          "state": "verified"
+        },
+        {
+          "label": "gas.zip -> 4663",
+          "detail": "inbound on, min 0.015 ETH",
+          "state": "verified"
+        },
+        {
+          "label": "Superbridge /robinhood",
+          "detail": "page live; fee/time not extracted",
+          "state": "unverified"
+        },
+        {
+          "label": "Stargate / Transporter",
+          "detail": "no RH in Stargate metadata; Transporter page only",
+          "state": "unverified"
+        },
+        {
+          "label": "Binance direct",
+          "detail": "no RH network; Arbitrum One 0.00002 ETH",
+          "state": "verified"
+        },
+        {
+          "label": "Coinbase direct",
+          "detail": "no RH network",
+          "state": "verified"
+        },
+        {
+          "label": "Upbit / OKX / Bybit direct",
+          "detail": "auth-gated APIs; unknown",
+          "state": "unverified"
+        },
+        {
+          "label": "Recommended KR path",
+          "detail": "Upbit/Bithumb -> ETH L1 -> Relay/Across -> RH; or Binance/OKX -> Arbitrum -> Relay",
+          "state": "verified"
+        },
+        {
+          "label": "Wallet",
+          "detail": "Rabby native (hood/4663) or MetaMask manual",
+          "state": "verified"
+        }
+      ],
+      "bots_and_tools": [
+        {
+          "name": "GMGN",
+          "detail": "RH tab since 2026-07-03; 1%/trade; $2.81M fees/24h; dominant retail terminal",
+          "url": "https://gmgn.ai"
+        },
+        {
+          "name": "Maestro",
+          "detail": "RH among 12 chains; 1% fee; $95.8k/24h",
+          "url": "https://docs.maestrobots.com/sniper/getting-started"
+        },
+        {
+          "name": "Trojan/Photon/Axiom/BullX/Banana/Sigma/Bloom",
+          "detail": "no RH evidence in docs",
+          "url": "https://docs.axiom.trade"
+        },
+        {
+          "name": "DexScreener",
+          "detail": "slug robinhood; 16/30 latest boosts are RH tokens",
+          "url": "https://dexscreener.com/robinhood"
+        },
+        {
+          "name": "GeckoTerminal",
+          "detail": "network robinhood, 39+ dexes (pons-v2, bankr-robinhood, o1-launchpad-robinhood)",
+          "url": "https://api.geckoterminal.com/api/v2/networks/robinhood/dexes"
+        },
+        {
+          "name": "Blockscout",
+          "detail": "robinhoodchain.blockscout.com / robinscan.io; verified Pons/Bags/o1 ABIs; intermittent 500",
+          "url": "https://robinhoodchain.blockscout.com"
+        },
+        {
+          "name": "hoodscan.co",
+          "detail": "unofficial Discover/Feed/Swaps",
+          "url": "https://hoodscan.co/discover"
+        },
+        {
+          "name": "Pons app",
+          "detail": "Explore/Analytics/Create/Profile (fee claims)",
+          "url": "https://www.ponsfamily.com/launchpad"
+        },
+        {
+          "name": "GMGN Korea TG",
+          "detail": "1,736 members (09-04)",
+          "url": "https://t.me/GMGN_Korea"
+        },
+        {
+          "name": "DexTools",
+          "detail": "Cloudflare-gated; unverified",
+          "url": "https://www.dextools.io"
+        },
+        {
+          "name": "Bubblemaps",
+          "detail": "robinhood chain icon; API support unverified",
+          "url": "https://bubblemaps.io"
+        }
+      ]
+    },
+    "launchpads": [
+      {
+        "name": "Pons V2",
+        "chain": "Robinhood Chain",
+        "supply_split": "1B; 71.43% curve / 28.57% held (20.41% pool + 8.16% locked); team 0",
+        "virtual_liquidity": "phantom 1.68 ETH -> FDV ~$4.2k",
+        "graduation": "4.2 ETH (8,090 USDG / stock pairs)",
+        "lp_at_graduation": "4.2 ETH + 204.08M tokens; FDV ~$51k",
+        "lp_lock": "permanent, PonsV2LaunchLocker 0x2674...4952 (no withdraw)",
+        "pool": "Uniswap v4, hook PonsV2MemeHook 0xE5e7...e044, poolFee 0",
+        "fees": "1% -> creator 70 / protocol 30 (35/35/30 buyback on); creator tax <=10% to creator",
+        "creation_fee": "0.0005 ETH + gas ~0.0015",
+        "dev_buy": "launchAndBuy router atomic; launcher exempt; <=32 exempt wallets",
+        "anti_snipe": "99% -> 0 exp decay, 3 s onchain (5 s docs); tax joins fee split",
+        "activity": "26,711 launches / 708 grads per 24h; $8.75M fees",
+        "verdict": "1st choice",
+        "url": "https://docs.ponsfamily.com/docs/v2"
+      },
+      {
+        "name": "Bankr",
+        "chain": "Robinhood Chain",
+        "supply_split": "100B; 85% v4 pool / 15% creator vest (1y, 30d cliff, optional)",
+        "virtual_liquidity": "single-sided dynamic-fee pool",
+        "graduation": "none",
+        "lp_at_graduation": "0 ETH (buyers)",
+        "lp_lock": "hook-owned; details unverified",
+        "pool": "Uniswap v4, hook 0x4e34...a544, ts 8",
+        "fees": "1.75% -> creator 0.665 / LP 0.285 / Bankr 0.475 / BNKR 0.2375 / Doppler ~0.0875",
+        "creation_fee": "none; wallet >=24h, >=0.002 ETH, 3/day",
+        "dev_buy": "2%/wallet cap 5 min",
+        "anti_snipe": "~10 s fee decay + 2% cap",
+        "activity": "2,315 pools/24h; LIT $718M FDV thin liq",
+        "verdict": "2nd (stock pairs, vest)",
+        "url": "https://docs.bankr.bot/token-launching/overview"
+      },
+      {
+        "name": "o1 Launchpad",
+        "chain": "Robinhood Chain",
+        "supply_split": "1B; 100% single-sided pool; team 0",
+        "virtual_liquidity": "opening FDV ~$4,000",
+        "graduation": "none",
+        "lp_at_graduation": "0 ETH (buyers)",
+        "lp_lock": "removal permanently disabled",
+        "pool": "Uniswap v4, LaunchHook 0x0310...2aCc",
+        "fees": "1% -> creator 50 / platform 30 / referrer 20",
+        "creation_fee": "0.001 ETH",
+        "dev_buy": "toggle off by default; atomic; pays 1% only",
+        "anti_snipe": "99% -> 1% linear 20 s; surcharge to platform",
+        "activity": "337 launches/24h; $236k fees; 194 stock pairs",
+        "verdict": "3rd (stock pairs, referral)",
+        "url": "https://docs.o1.exchange/launchpad/reference/live-configuration.md"
+      },
+      {
+        "name": "Bags",
+        "chain": "Robinhood Chain",
+        "supply_split": "1B; 83% curve / 17% LP; team 0",
+        "virtual_liquidity": "vETH 1.288 / vT 1.044B -> FDV ~$3.1k",
+        "graduation": "5 ETH",
+        "lp_at_graduation": "5 ETH + 170M; FDV ~$73k",
+        "lp_lock": "permanent (docs)",
+        "pool": "Uniswap v4, BagsV4Hook 0x2380...EEcC, ts 60",
+        "fees": "2% -> creator 1% / protocol 1%; <=100 claimers",
+        "creation_fee": "onchain 0 (docs 0.02 ETH)",
+        "dev_buy": "createAndBuy atomic",
+        "anti_snipe": "none",
+        "activity": "24 events/24h; $9k fees; no RH UI",
+        "verdict": "only with own audience",
+        "url": "https://docs.bags.fm/robinhood/overview.md"
+      },
+      {
+        "name": "PAIR",
+        "chain": "Robinhood Chain",
+        "supply_split": "unverified",
+        "virtual_liquidity": "unverified",
+        "graduation": "none",
+        "lp_at_graduation": "0 ETH",
+        "lp_lock": "permanent locker 0xeFcF...a117",
+        "pool": "Uniswap v4, PairV4Hook 0x16d1...2000",
+        "fees": "1% -> creator 70 / protocol 30",
+        "creation_fee": "0.0005 ETH",
+        "dev_buy": "unverified",
+        "anti_snipe": "unverified",
+        "activity": "234 pools/24h; $74k fees",
+        "verdict": "niche",
+        "url": "https://raw.githubusercontent.com/DefiLlama/dimension-adapters/master/fees/pairdotfund.ts"
+      },
+      {
+        "name": "LetsCash",
+        "chain": "Robinhood Chain",
+        "supply_split": "config; tax token",
+        "virtual_liquidity": "unverified",
+        "graduation": "none",
+        "lp_at_graduation": "0 ETH",
+        "lp_lock": "locked v4",
+        "pool": "Uniswap v4, hook 0x75a5...2aec; ETH or USDG",
+        "fees": "tax 1-15% -> creator 50-96.67%",
+        "creation_fee": "unverified",
+        "dev_buy": "unverified",
+        "anti_snipe": "unverified",
+        "activity": "108 launches/24h; $21k fees",
+        "verdict": "tax-token niche",
+        "url": "https://raw.githubusercontent.com/DefiLlama/dimension-adapters/master/dexs/letscash.ts"
+      },
+      {
+        "name": "pools.trade",
+        "chain": "Robinhood Chain",
+        "supply_split": "100% pool (instant) or LBP",
+        "virtual_liquidity": "n/a",
+        "graduation": "LBP mode only",
+        "lp_at_graduation": "0 ETH",
+        "lp_lock": "FeeSplitter / locker permanent",
+        "pool": "Uniswap v4 hookless 0.25%, ts 25",
+        "fees": "0.25%; creator 40% of ETH side -> ~0.05% of vol",
+        "creation_fee": "0",
+        "dev_buy": "unverified",
+        "anti_snipe": "none",
+        "activity": "276 tokens/24h; $47k fees",
+        "verdict": "avoid (economics)",
+        "url": "https://raw.githubusercontent.com/DefiLlama/dimension-adapters/master/fees/pools-trade.ts"
+      },
+      {
+        "name": "Pons V1",
+        "chain": "Robinhood Chain",
+        "supply_split": "1B; 100% single-sided v3",
+        "virtual_liquidity": "not published",
+        "graduation": "4.2 ETH milestone",
+        "lp_at_graduation": "4.2 ETH paired",
+        "lp_lock": "locker 0x736D...7F35",
+        "pool": "Uniswap v3 1%",
+        "fees": "1% -> creator 70 / protocol 30",
+        "creation_fee": "0.0005 ETH",
+        "dev_buy": "block-0 creator only",
+        "anti_snipe": "blocks 1-2: <=5% hold / <=5.5% buy",
+        "activity": "launchEnabled()=false; launches revert",
+        "verdict": "closed",
+        "url": "https://docs.ponsfamily.com/docs"
+      },
+      {
+        "name": "NOXA Fun",
+        "chain": "Robinhood Chain",
+        "supply_split": "100% single-sided v3",
+        "virtual_liquidity": "not published",
+        "graduation": "4.2 ETH milestone",
+        "lp_at_graduation": "4.2 ETH",
+        "lp_lock": "locker forever",
+        "pool": "Uniswap v3 1%",
+        "fees": "100% creator (DefiLlama)",
+        "creation_fee": "0.0005 ETH",
+        "dev_buy": "optional initial buy",
+        "anti_snipe": "maxTx 2%, 366 blocks",
+        "activity": "launchEnabled()=false; 0 launches",
+        "verdict": "closed",
+        "url": "https://docs.noxa.fi/launchpad/chains/"
+      },
+      {
+        "name": "GIWA MARKETS (RH)",
+        "chain": "Robinhood Chain",
+        "supply_split": "curve -> v3; 0.01 ETH commit = first buy",
+        "virtual_liquidity": "unverified",
+        "graduation": "unverified",
+        "lp_at_graduation": "unverified",
+        "lp_lock": "LP no withdraw (claim)",
+        "pool": "Uniswap v3 1%",
+        "fees": "1% -> 80% burn $GIWA / 20% treasury; creator 0",
+        "creation_fee": "0.01 ETH commit",
+        "dev_buy": "commit = first buy",
+        "anti_snipe": "none stated",
+        "activity": "RhPump 19 txs total, silent since 08-19",
+        "verdict": "do not use (brand confusion, 0 creator fee)",
+        "url": "https://giwa.markets/assets/i18n-BUIJQVGU.js"
+      },
+      {
+        "name": "Clanker (RH)",
+        "chain": "Robinhood Chain",
+        "supply_split": "100B; 100% pool (vault optional)",
+        "virtual_liquidity": "start mcap 1.99-9.87 ETH (Base sample)",
+        "graduation": "none",
+        "lp_at_graduation": "0 ETH",
+        "lp_lock": "locker per token",
+        "pool": "Uniswap v4",
+        "fees": "1-3% LP fee, Clanker +20%",
+        "creation_fee": "gas",
+        "dev_buy": "ClankerUniv4EthDevBuy",
+        "anti_snipe": "MEV modules",
+        "activity": "$1.5k fees/24h; RH not in deployed list",
+        "verdict": "ignore",
+        "url": "https://clanker.gitbook.io/documentation/references/deployed-contracts.md"
+      },
+      {
+        "name": "Joseon.fun",
+        "chain": "GIWA Sepolia",
+        "supply_split": "1B; 800M curve / 200M pool; team 0",
+        "virtual_liquidity": "1.2 ETH / 1.0667B -> FDV ~1.125 ETH",
+        "graduation": "~3.67 ETH gross",
+        "lp_at_graduation": "3.6 WETH + 200M; FDV 18 ETH",
+        "lp_lock": "PermanentLiquidityLocker 0x2141...3fE6",
+        "pool": "JoseonSwap V2-fork factory 0x9AB1...8784",
+        "fees": "curve 2% (70/30); swap 0.3% (50/30/20)",
+        "creation_fee": "gas ~0.000005 ETH (testnet)",
+        "dev_buy": "inside creation tx (0.05-2.0 ETH observed)",
+        "anti_snipe": "none; fee-ordered sequencer",
+        "activity": "30 launches, 3 graduated, newest 09-05",
+        "verdict": "rehearsal #1; mainnet redeploy promised",
+        "url": "https://docs.joseon.fun/fees/"
+      },
+      {
+        "name": "GIWA MARKETS (Sepolia)",
+        "chain": "GIWA Sepolia",
+        "supply_split": "1B; 800M curve / 200M pool; team 0",
+        "virtual_liquidity": "unverified",
+        "graduation": "800M sold",
+        "lp_at_graduation": "all curve ETH + 200M; LP burned",
+        "lp_lock": "burned",
+        "pool": "own AMM",
+        "fees": "1% curve; 0.3% post; 70% burn / 30% dev",
+        "creation_fee": "~0.01 ETH incl dev buy",
+        "dev_buy": "same tx",
+        "anti_snipe": "none",
+        "activity": "pump 0x540e...ee43 3,853 txs; latest 09-04",
+        "verdict": "sandbox only",
+        "url": "https://giwa.markets/launch"
+      },
+      {
+        "name": "Ammora",
+        "chain": "GIWA Sepolia",
+        "supply_split": "unverified",
+        "virtual_liquidity": "unverified",
+        "graduation": "unverified",
+        "lp_at_graduation": "unverified",
+        "lp_lock": "unverified",
+        "pool": "unverified",
+        "fees": "no numbers published",
+        "creation_fee": "unverified",
+        "dev_buy": "unverified",
+        "anti_snipe": "unverified",
+        "activity": "writesEnabled true (09-03 manifest)",
+        "verdict": "watch",
+        "url": "https://ammora-protocol.vercel.app/api/product-release"
+      },
+      {
+        "name": "Naru",
+        "chain": "GIWA Sepolia",
+        "supply_split": "identity-gated issuance",
+        "virtual_liquidity": "unverified",
+        "graduation": "n/a",
+        "lp_at_graduation": "unverified",
+        "lp_lock": "unverified",
+        "pool": "V2 fork 0xD51d...0C47",
+        "fees": "0.3% all to LP",
+        "creation_fee": "unverified",
+        "dev_buy": "unverified",
+        "anti_snipe": "unverified",
+        "activity": "dormant since 2026-07-22",
+        "verdict": "not for fast memecoin",
+        "url": "https://naru.market/docs"
+      }
+    ],
+    "norms": [
+      {
+        "platform": "Pons V2",
+        "chain": "Robinhood",
+        "curve_percent": "71.43",
+        "lp_percent": "20.41 (+8.16 locked)",
+        "team_percent": "0",
+        "graduation": "4.2 ETH",
+        "lp_quote_at_graduation": "4.2 ETH ~ $10.4k",
+        "creator_fee": "0.7% of vol (+tax <=10%)",
+        "url": "https://docs.ponsfamily.com/docs/v2"
+      },
+      {
+        "platform": "Bags-RH",
+        "chain": "Robinhood",
+        "curve_percent": "83",
+        "lp_percent": "17",
+        "team_percent": "0",
+        "graduation": "5 ETH",
+        "lp_quote_at_graduation": "5 ETH ~ $12.4k",
+        "creator_fee": "1% of vol",
+        "url": "https://docs.bags.fm/robinhood/overview.md"
+      },
+      {
+        "platform": "o1 Launchpad",
+        "chain": "Robinhood/Base",
+        "curve_percent": "0 (100% pool)",
+        "lp_percent": "100",
+        "team_percent": "0",
+        "graduation": "none",
+        "lp_quote_at_graduation": "0 (buyers)",
+        "creator_fee": "0.5% of vol",
+        "url": "https://docs.o1.exchange/launchpad/trading/liquidity.md"
+      },
+      {
+        "platform": "Bankr",
+        "chain": "Robinhood",
+        "curve_percent": "0 (85% pool)",
+        "lp_percent": "85",
+        "team_percent": "15 vest",
+        "graduation": "none",
+        "lp_quote_at_graduation": "0",
+        "creator_fee": "0.665% of vol",
+        "url": "https://docs.bankr.bot/token-launching/overview"
+      },
+      {
+        "platform": "Pons V1 / NOXA",
+        "chain": "Robinhood",
+        "curve_percent": "0 (100% pool)",
+        "lp_percent": "100",
+        "team_percent": "0",
+        "graduation": "4.2 ETH milestone",
+        "lp_quote_at_graduation": "4.2 ETH",
+        "creator_fee": "70% / 100% of 1%",
+        "url": "https://docs.ponsfamily.com/docs"
+      },
+      {
+        "platform": "pump.fun",
+        "chain": "Solana",
+        "curve_percent": "79.31",
+        "lp_percent": "20.69",
+        "team_percent": "0",
+        "graduation": "~85 SOL",
+        "lp_quote_at_graduation": "85 SOL ~ $8.8k",
+        "creator_fee": "0.30% -> 0.05%",
+        "url": "https://raw.githubusercontent.com/pump-fun/pump-public-docs/main/docs/PUMP_PROGRAM_README.md"
+      },
+      {
+        "platform": "LaunchLab / letsbonk",
+        "chain": "Solana",
+        "curve_percent": "80 (51-80)",
+        "lp_percent": "20",
+        "team_percent": "0 (<=30 vest opt)",
+        "graduation": "85 SOL",
+        "lp_quote_at_graduation": "85 SOL",
+        "creator_fee": "<=0.5%",
+        "url": "https://docs.raydium.io/user-flows/creating-a-launchlab-token.md"
+      },
+      {
+        "platform": "Four.meme",
+        "chain": "BNB",
+        "curve_percent": "~80",
+        "lp_percent": "20",
+        "team_percent": "0",
+        "graduation": "~18 BNB",
+        "lp_quote_at_graduation": "18 BNB ~ $13.9k",
+        "creator_fee": "dynamic",
+        "url": "https://four-meme.gitbook.io/four.meme/guide/how-it-works"
+      },
+      {
+        "platform": "Clanker v4",
+        "chain": "Base",
+        "curve_percent": "0 (100% pool)",
+        "lp_percent": "100",
+        "team_percent": "vault 2-5% (7d) observed",
+        "graduation": "none",
+        "lp_quote_at_graduation": "0",
+        "creator_fee": "80% of 1-3% LP fee",
+        "url": "https://raw.githubusercontent.com/clanker-devco/v4-contracts/main/specs/v4_0_0.md"
+      },
+      {
+        "platform": "Zora creator coin",
+        "chain": "Base",
+        "curve_percent": "0 (50% pool)",
+        "lp_percent": "50",
+        "team_percent": "50 (5y vest)",
+        "graduation": "none",
+        "lp_quote_at_graduation": "0",
+        "creator_fee": "50% of 1%",
+        "url": "https://docs.zora.co/coins"
+      },
+      {
+        "platform": "Flaunch",
+        "chain": "Base",
+        "curve_percent": "1-69 fair launch",
+        "lp_percent": "rest full-range",
+        "team_percent": "premine <= fair launch",
+        "graduation": "none",
+        "lp_quote_at_graduation": "0",
+        "creator_fee": "80% default",
+        "url": "https://docs.flaunch.gg/community/whitepaper.md"
+      },
+      {
+        "platform": "Joseon.fun",
+        "chain": "GIWA Sepolia",
+        "curve_percent": "80",
+        "lp_percent": "20",
+        "team_percent": "0",
+        "graduation": "~3.67 ETH",
+        "lp_quote_at_graduation": "3.6 WETH",
+        "creator_fee": "70% of 2% curve; 0.15% swap",
+        "url": "https://docs.joseon.fun/fees/"
+      },
+      {
+        "platform": "GIWA MARKETS",
+        "chain": "GIWA Sepolia",
+        "curve_percent": "80",
+        "lp_percent": "20",
+        "team_percent": "0",
+        "graduation": "800M sold",
+        "lp_quote_at_graduation": "all curve ETH",
+        "creator_fee": "0",
+        "url": "https://giwa.markets/assets/i18n-BUIJQVGU.js"
+      }
+    ],
+    "recommended_composition": {
+      "supply_split": "1B; 100% to Pons V2 curve (71.43% sellable / 28.57% protocol-fixed LP); team 0%",
+      "dev_buy": "one atomic buy 0.05-0.08 ETH (~2.9-4.5%), launcher wallet = fee recipient, no exempt list",
+      "fee_option": "1% base -> creator 70%; creator tax 0-2%; buyback OFF",
+      "lp_lock": "automatic permanent: 4.2 ETH + 204M tokens -> v4 pool, NFT in PonsV2LaunchLocker",
+      "notes": [
+        "Pair: 1x ETH + 1x USDG or stock-token twin (3 of 5 Pons V2 tokens >$2M this week were non-ETH pairs)",
+        "Fee recipient = cold wallet; change has 3-day timelock",
+        "Tax and buyback are immutable after launch",
+        "41% of graduated tokens set 1-10% tax; 0 of 22 used buyback",
+        "Graduation 2.3-2.65%, median 2 min; without bundles expect organic graduation to be rarer",
+        "Total cost ~0.055-0.085 ETH ($135-210) per attempt",
+        "Pons V2 audits in progress: treat as unaudited"
+      ]
+    },
+    "playbook": [
+      {
+        "phase": "D-3",
+        "steps": [
+          "Buy ETH on Upbit/Bithumb -> own EVM wallet (ETH L1) or Binance/OKX -> Arbitrum One",
+          "Rabby (native RH) or MetaMask manual: 4663 / rpc.mainnet.chain.robinhood.com / ETH / robinhoodchain.blockscout.com",
+          "Test bridge 0.01 ETH Relay Arbitrum->RH (~$0.10, 1 s); then bridge budget; keep 0.05 ETH on Arbitrum",
+          "Alchemy key if scripting (public RPC 429/busy)",
+          "Assets: 512x512 logo, ticker, 1-line desc, X, TG, website (socials struct)"
+        ]
+      },
+      {
+        "phase": "D-1",
+        "steps": [
+          "Fix creator tax (0-2%) and buyback OFF - immutable",
+          "Fee recipient = cold wallet; no exempt-wallet list",
+          "Re-read factory: launchEnabled(), canLaunch(me), launchFee()=0.0005, config0 1.68/4.2",
+          "Re-check Pons audit status (3 in progress)",
+          "Draft posts: X thread EN, TG pin, KR posts (dcinside, fmkorea, GMGN Korea)"
+        ]
+      },
+      {
+        "phase": "D-day",
+        "steps": [
+          "Window Tue-Fri 23:00-07:00 KST (14-22 UTC)",
+          "Pre-warm X/TG 30-60 min; 2-3 CT reposts lined up",
+          "launchAndBuy 0.05-0.08 ETH; value = buy + 0.0005; gas ~0.0015",
+          "Post CA immediately (names not unique)",
+          "Watch first 10 s Buy events; curve progress to 4.2 ETH; call createGraduatedPool(token) if auto step stalls",
+          "After graduation: verify PoolGraduated + locker NFT; pin DexScreener pair; update GMGN socials; boost (price unverified)"
+        ]
+      },
+      {
+        "phase": "D+7",
+        "steps": [
+          "claim() daily ($0.03) to cold recipient; setCreatorFeeRecipient if launched hot",
+          "Keep posting in US-evening window; track holders on Blockscout/GMGN",
+          "Reconcile PoolFeesSwept events vs DexScreener volume",
+          "Respond to CTO proposals (3-day timelock)",
+          "Re-launch cadence: 2.3% graduation -> plan multiple attempts (~0.002 ETH + dev buy each)"
+        ]
+      },
+      {
+        "phase": "LP·안전 체크 (v3/v4 시대 — 'burned'는 v2 신호)",
+        "steps": [
+          "풀 버전·hook: Dexscreener labels(v2/v3/v4); v4면 Initialize의 hooks 주소를 Blockscout 검증 이름으로 확인, getHookPermissions()·오너 set* 함수 유무",
+          "포지션 소유자: v3 NonfungiblePositionManager.ownerOf / v4 PositionManager.ownerOf(tokenId) — 허용: 0x…dead·런치패드 락커·UNCX/Team Finance; 경고: EOA·미검증 컨트랙트",
+          "소유 컨트랙트의 출금 경로: withdrawPosition/unlock/decreaseLiquidity/burn/safeTransferFrom/rescue*/sweep*, 프록시, owner≠0x0; 타임락이면 lockedUntil·extendLock·락 오너 이전 가능 여부를 실제 값으로",
+          "수수료 수취인: Pons hook 크리에이터/프로토콜/바이백 비율, Clanker rewardRecipients, Raydium Fee Key, PumpSwap coin_creator; 배포자≠수취인 EOA는 클러스터 신호",
+          "토큰 컨트랙트: GoPlus is_mintable/is_blacklisted/transfer_pausable/buy·sell_tax/is_proxy/hidden_owner — 로빈후드 v4 토큰은 GoPlus가 빈값이라 Blockscout 소스 직접",
+          "보유 집중도: Bubblemaps Top-10 Adjusted·Bundles·점수; GMGN Top10<30 %, Insiders/Bundlers/Snipers/Dev",
+          "배포자 자금 출처·이력: 첫 입금 tx(CEX/브리지/신규지갑), 과거 런치, GMGN Rug History",
+          "복제 풀: 같은 CA에 여러 풀(NEST v4 30개) — 락된 풀로 라우팅되는지",
+          "iPop 채널(ipop_uniswap_v4·ipop_newpair_1m)은 LP 상태를 표시하지 않음 — 후보 발견용으로만; 실측: 신규 풀 v4 비중 Base 87 %, 로빈후드 92 %"
+        ]
+      }
+    ],
+    "costs": [
+      {
+        "item": "CEX -> Arbitrum One withdrawal (Binance)",
+        "eth": "0.00002",
+        "usd": "$0.05",
+        "note": "Binance network list"
+      },
+      {
+        "item": "Bridge Arbitrum -> RH 0.1 ETH (Relay)",
+        "eth": "~0.00004 + gas",
+        "usd": "~$0.10",
+        "note": "Relay quote, 1 s"
+      },
+      {
+        "item": "Bridge Ethereum -> RH 0.1 ETH (Across/Relay)",
+        "eth": "~0.0001 + L1 gas",
+        "usd": "~$0.25 + L1",
+        "note": "Across/Relay quotes"
+      },
+      {
+        "item": "Pons V2 launchFee",
+        "eth": "0.0005",
+        "usd": "$1.24",
+        "note": "launchFee()"
+      },
+      {
+        "item": "Launch gas (launchToken/launchAndBuy)",
+        "eth": "0.0015-0.0016",
+        "usd": "$3.6-4.0",
+        "note": "Blockscout txs, 3.58-3.99M gas"
+      },
+      {
+        "item": "Dev buy (observed range)",
+        "eth": "0.01-0.40",
+        "usd": "$25-990",
+        "note": "router value fields; recommended 0.05-0.08"
+      },
+      {
+        "item": "Fee claim",
+        "eth": "0.000013",
+        "usd": "$0.03",
+        "note": "escrow txs"
+      },
+      {
+        "item": "Change fee recipient",
+        "eth": "0.00003",
+        "usd": "$0.08",
+        "note": "factory txs"
+      },
+      {
+        "item": "Curve / v4 swap",
+        "eth": "~0.00006-0.00015",
+        "usd": "$0.15-0.37",
+        "note": "estimate, UNVERIFIED"
+      },
+      {
+        "item": "Return lane on Arbitrum",
+        "eth": "0.05",
+        "usd": "$124",
+        "note": "recommendation"
+      },
+      {
+        "item": "DexScreener boost",
+        "eth": "-",
+        "usd": "UNVERIFIED",
+        "note": "not observed"
+      },
+      {
+        "item": "Minimum viable launch",
+        "eth": "~0.06-0.10",
+        "usd": "$150-250",
+        "note": "0.05 dev buy + fees + gas + bridge"
+      },
+      {
+        "item": "Serious attempt",
+        "eth": "~0.5-1.0",
+        "usd": "$1.2k-2.5k",
+        "note": "0.2-0.4 dev buy + boosts + ETH/USDG twin"
+      }
+    ],
+    "giwa_parallel": {
+      "same": [
+        "ETH gas, Solidity >=0.8 cancun, Blockscout verification (same API, solc to 0.8.36)",
+        "Identical addresses with bytecode on both: Permit2, Multicall3, CreateX 0xba5E...a5Ed, Arachnid, EntryPoint v0.6/v0.7, Safe L2",
+        "ERC-20 + CreateX fixed salt => same token address on 4663 and 9134",
+        "Metadata, images, wallet set, Foundry project (only chain_id/rpc/verifier-url differ)",
+        "Launch shape: 1B supply, 100% curve, 0 team, atomic dev buy, permanent lock, creator fee stream"
+      ],
+      "different": [
+        "Chain id 4663 vs 91342 (testnet) / 9134 (mainnet reserved, no RPC)",
+        "WETH 0x0Bd7...AD73 (aeWETH proxy) vs 0x4200...0006 predeploy (Joseon own WETH9 0x323b...0B11)",
+        "DEX: Uniswap V4 + V3 on RH; no Uniswap on GIWA (V4 BUSL to 2027-06-15) -> launchpad-owned AMM",
+        "Locker: Pons V2 0x2674...4952 vs Joseon PermanentLiquidityLocker 0x2141...3fE6",
+        "Bridge: Arbitrum/Relay/Across/gas.zip vs Superbridge only (1-3 min in, ~7 d out); no mainnet bridge yet",
+        "Block time 0.07-0.10 s (FCFS) vs 1.0 s (fee-ordered sequencer, Flashblocks 200 ms)",
+        "Portable pad shape = Pons V1/Joseon (curve -> V2/V3 pool + locker), not Pons V2/Bags (V4 hook)",
+        "First-block tactic: latency on RH, priority fee on GIWA",
+        "block.number = L1 estimate on RH; L2 block on GIWA"
+      ],
+      "rehearsal_steps": [
+        "Wallets: deployer + fee recipient + 2-3 buyers; add 91342 / sepolia-rpc.giwa.io / sepolia-explorer.giwa.io",
+        "Test ETH >=4 (full graduation ~3.67 ETH): bulk on Ethereum Sepolia -> sepolia-bridge.giwa.io (1-3 min) or gas.zip",
+        "joseon.fun create: name/symbol on-chain, image/desc off-chain, fee recipient, initial buy inside creation tx",
+        "Curve buys from buyer wallets (2% fee); log Flashblocks pending (200 ms) vs 1 s inclusion",
+        "Claim creator fees: Portfolio -> claim or claimCreatorFeesFor(address)",
+        "Graduate: sell-out buy triggers same-tx migration 3.6 WETH + 200M via MigrationManagerV3 0x4D34...5c59",
+        "Verify lock: locker lockedPair(token) 0x2207ec87 / lockedLiquidity 0xf3288fe3; pair on JoseonSwapFactoryV4 0x9AB1...8784; swap via router 0xcD4B...5d3D; confirm 0.15% creator accrual",
+        "Optional: GIWA MARKETS Sepolia pad (1B/800M/1%, dev buy same tx) for a second curve shape",
+        "Fallback drill: forge script --verify --verifier blockscout on Sepolia then RH; confirm identical CreateX address; own V2 pair + no-withdraw locker in 15 min"
+      ],
+      "mainnet_signals": [
+        "eip155-9134.json gains rpc/explorer (now rpc: [], incubating)",
+        "giwa-io/chain-operations gets a mainnet dir (now sepolia/ only; node last push 07-13)",
+        "docs.giwa.io contracts page lists L1 mainnet addresses (now 'under development')",
+        "rpc.giwa.io answers eth_chainId 0x23ae (now HTTP 000; explorer/bridge too)",
+        "Superbridge chain picker or bridge.giwa.io live (superbridge.app/giwa 200 is a catch-all SPA, not a signal)",
+        "viem giwa.ts / L2BEAT / DefiLlama chain entry (now 404/404/absent)",
+        "Flashblocks mainnet endpoint (now 'Coming soon')",
+        "GASOK Phase 3 'private mainnet Aug-Sep 2026'; DEMODAY @ KBW Oct; KBW Sep 29 - Oct 1 (Dunamu CEO speaker)",
+        "@GIWA_by_Upbit posts (Sept unverified); Upbit GIWA net_type; GIWA Wallet in app stores",
+        "Joseon /api/health chainId != 91342; giwa.markets chain-*.js non-91342 GIWA entry"
+      ],
+      "launch_kit": [
+        "Metadata frozen as JSON: name, symbol (<=6-8 chars, no GIWA/Upbit/Dunamu strings), 1B/18dec, KO+EN desc, links",
+        "Images 1000/512/256 PNG <=1 MB + banner; IPFS pin + HTTPS mirror",
+        "Socials pre-warmed: X, TG channel+group, 'official CA posted here first' pin, DexScreener/GeckoTerminal assets",
+        "Wallet set (hardware, fresh) funded on Ethereum L1 now: deployer, fee recipient, buyers, ops gas; some ETH on RH too",
+        "Bridge plan: parallel Superbridge deposits when bridge.giwa.io answers; verify eth_chainId 0x23ae + L2 balances first",
+        "Foundry profiles [giwa]/[robinhood], CreateX salt fixed, verified on Sepolia + RH; polling script for signals",
+        "First buy: inside creation tx (Joseon); follow-up buyers with high priority fee; Flashblocks pending confirm; re-size on mainnet params",
+        "Fallback T2 with no pad: CreateX token + V2 pair vs 0x4200...0006 + no-withdraw locker; route via GIWATER/Joseon router",
+        "Instrumentation: Blockscout APIs both chains, DexScreener pair URL (GIWA slug unknown), holder poll, claim commands per pad"
+      ]
+    },
+    "not_doing": [
+      "No wash trading (owner rule; GMGN sniper/insider/first-70 panels catch it)",
+      "No bundles: snipeTaxExemptions list stays empty; launcher = fee recipient only",
+      "No accumulate-and-dump: one disclosed dev buy <=5%; income only from 0.7% fee stream",
+      "No team allocation 10-20% (0% is the norm on every curve pad; kept supply reads as premine)",
+      "No creator tax >2% (10% cap drives buyers/bots away)",
+      "No buyback ON (creator share 70% -> 35%; 0 of 22 graduates use it)",
+      "No Pons V1 / NOXA / pools.trade / GIWA MARKETS / Clanker-RH (closed / 0.05% take / 0% creator + brand risk / undocumented)",
+      "No multi-wallet split buys (insider/bundler detectors)",
+      "No Robinhood-app workaround (US-only; bridge path is cheaper and faster)",
+      "No hand-made v4 pools with EOA-owned LP (reads as rug-able, OTER case)",
+      "No canonical Arbitrum bridge withdrawals (7 days); use Relay/Across return lane",
+      "No legal/registration topics (out of scope by owner instruction)"
+    ],
+    "sources": [
+      {
+        "label": "DefiLlama chains (TVL)",
+        "url": "https://api.llama.fi/v2/chains",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "DefiLlama RH DEX volume",
+        "url": "https://api.llama.fi/overview/dexs/robinhood-chain",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "DefiLlama RH fees",
+        "url": "https://api.llama.fi/overview/fees/robinhood-chain",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "Pons V2 daily fees",
+        "url": "https://api.llama.fi/summary/fees/pons-v2?dataType=dailyFees",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "pump.fun daily fees",
+        "url": "https://api.llama.fi/summary/fees/pump.fun",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "Solana DEX volume",
+        "url": "https://api.llama.fi/overview/dexs/Solana",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "ETH price",
+        "url": "https://coins.llama.fi/prices/current/coingecko:ethereum",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "Blockscout RH stats",
+        "url": "https://robinhoodchain.blockscout.com/api/v2/stats",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "RH RPC",
+        "url": "https://rpc.mainnet.chain.robinhood.com",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "Pons V2 factory",
+        "url": "https://robinhoodchain.blockscout.com/address/0x7eD598BcEf8bd9Edd8C97A195C6d13f40801EC7e",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "Pons V2 hook",
+        "url": "https://robinhoodchain.blockscout.com/api/v2/smart-contracts/0xE5e702641Ea86F4ae6cC3cDaeD2B886f976Be044",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "Pons V2 docs",
+        "url": "https://docs.ponsfamily.com/docs/v2",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "Pons V1 docs",
+        "url": "https://docs.ponsfamily.com/docs",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "Pons app",
+        "url": "https://www.ponsfamily.com/launchpad",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "Pons V2 DefiLlama adapter",
+        "url": "https://raw.githubusercontent.com/DefiLlama/dimension-adapters/master/fees/ponsdotfamily-v2/index.ts",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "Bankr docs",
+        "url": "https://docs.bankr.bot/token-launching/overview",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "GeckoTerminal RH dexes",
+        "url": "https://api.geckoterminal.com/api/v2/networks/robinhood/dexes",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "o1 live configuration",
+        "url": "https://docs.o1.exchange/launchpad/reference/live-configuration.md",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "o1 fees & referrals",
+        "url": "https://docs.o1.exchange/launchpad/trading/fees-referrals.md",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "Bags RH overview",
+        "url": "https://docs.bags.fm/robinhood/overview.md",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "Bags RH curve impl",
+        "url": "https://robinhoodchain.blockscout.com/api/v2/smart-contracts/0x419890a21711c3d3af46b58548376420b9723275",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "NOXA chains",
+        "url": "https://docs.noxa.fi/launchpad/chains/",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "PAIR adapter",
+        "url": "https://raw.githubusercontent.com/DefiLlama/dimension-adapters/master/fees/pairdotfund.ts",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "LetsCash adapter",
+        "url": "https://raw.githubusercontent.com/DefiLlama/dimension-adapters/master/dexs/letscash.ts",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "pools.trade adapter",
+        "url": "https://raw.githubusercontent.com/DefiLlama/dimension-adapters/master/fees/pools-trade.ts",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "Clanker deployed contracts",
+        "url": "https://clanker.gitbook.io/documentation/references/deployed-contracts.md",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "Clanker v4 spec",
+        "url": "https://raw.githubusercontent.com/clanker-devco/v4-contracts/main/specs/v4_0_0.md",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "pump.fun program docs",
+        "url": "https://raw.githubusercontent.com/pump-fun/pump-public-docs/main/docs/PUMP_PROGRAM_README.md",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "Raydium LaunchLab",
+        "url": "https://docs.raydium.io/user-flows/creating-a-launchlab-token.md",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "Four.meme",
+        "url": "https://four-meme.gitbook.io/four.meme/guide/how-it-works",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "Zora coins",
+        "url": "https://docs.zora.co/coins",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "Flaunch whitepaper",
+        "url": "https://docs.flaunch.gg/community/whitepaper.md",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "GMGN security checks",
+        "url": "https://docs.gmgn.ai/index/ca-security-checks.md",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "GMGN fees",
+        "url": "https://docs.gmgn.ai/index/gmgn-fees-settings",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "GMGN adapter",
+        "url": "https://raw.githubusercontent.com/DefiLlama/dimension-adapters/master/fees/gmgnai.ts",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "Maestro chains",
+        "url": "https://docs.maestrobots.com/sniper/getting-started",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "DexScreener search",
+        "url": "https://api.dexscreener.com/latest/dex/search?q=robinhood",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "DexScreener boosts",
+        "url": "https://api.dexscreener.com/token-boosts/latest/v1",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "Robinhood chain docs",
+        "url": "https://docs.robinhood.com/chain",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "Robinhood bridging",
+        "url": "https://docs.robinhood.com/chain/bridging",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "Robinhood add network",
+        "url": "https://docs.robinhood.com/chain/add-network-to-wallet",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "Robinhood crypto transfers",
+        "url": "https://robinhood.com/us/en/support/articles/crypto-transfers/",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "Robinhood Wallet",
+        "url": "https://robinhood.com/us/en/support/articles/robinhood-wallet/",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "Relay quote",
+        "url": "https://api.relay.link/quote",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "Across fees",
+        "url": "https://app.across.to/api/suggested-fees",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "LI.FI quote",
+        "url": "https://li.quest/v1/quote",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "Superbridge robinhood",
+        "url": "https://superbridge.app/robinhood",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "Stargate metadata",
+        "url": "https://mainnet.stargate-api.com/v1/metadata?version=v2",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "gas.zip chains",
+        "url": "https://backend.gas.zip/v2/chains",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "Binance networks",
+        "url": "https://www.binance.com/bapi/capital/v2/public/capital/getNetworkCoinAll",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "Coinbase ETH",
+        "url": "https://api.exchange.coinbase.com/currencies/ETH",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "Rabby chain list",
+        "url": "https://api.rabby.io/v1/chain/list",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "chainid.network",
+        "url": "https://chainid.network/chains.json",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "Uniswap v4 deployments",
+        "url": "https://developers.uniswap.org/docs/protocols/v4/deployments",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "Pons TG",
+        "url": "https://t.me/s/ponsfamily",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "GMGN Korea TG",
+        "url": "https://t.me/GMGN_Korea",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "hoodscan",
+        "url": "https://hoodscan.co/discover",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "Naver blog (RH memecoin trend)",
+        "url": "https://m.blog.naver.com/englandkim77/224397838354",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "GIWA Sepolia RPC",
+        "url": "https://sepolia-rpc.giwa.io",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "GIWA Sepolia explorer",
+        "url": "https://sepolia-explorer.giwa.io",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "GIWA docs FAQ",
+        "url": "https://docs.giwa.io/giwa-chain/en/introduction/faq.md",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "GIWA docs contracts",
+        "url": "https://docs.giwa.io/giwa-chain/en/network-information/contracts.md",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "GIWA bridging",
+        "url": "https://docs.giwa.io/get-started/bridging/eth.md",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "GIWA faucets",
+        "url": "https://docs.giwa.io/get-started/faucets.md",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "eip155-9134",
+        "url": "https://raw.githubusercontent.com/ethereum-lists/chains/master/_data/chains/eip155-9134.json",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "giwa-io repos",
+        "url": "https://api.github.com/orgs/giwa-io/repos",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "GASOK",
+        "url": "https://giwa.io/gasok",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "KBW",
+        "url": "https://koreablockchainweek.com/",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "Joseon health",
+        "url": "https://api.joseon.fun/api/health",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "Joseon launches",
+        "url": "https://api.joseon.fun/api/launches",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "Joseon fees",
+        "url": "https://docs.joseon.fun/fees/",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "Joseon contracts",
+        "url": "https://docs.joseon.fun/contracts/",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "GIWA MARKETS bundle (config)",
+        "url": "https://giwa.markets/assets/index-tFmx5n0z.js",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "GIWA MARKETS bundle (i18n)",
+        "url": "https://giwa.markets/assets/i18n-BUIJQVGU.js",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "RhPump on Blockscout",
+        "url": "https://robinhoodchain.blockscout.com/api/v2/addresses/0xbdf4bfa5a81f44ed6b933b120a609b77f4354c11",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "$GIWA pair DexScreener",
+        "url": "https://api.dexscreener.com/latest/dex/pairs/robinhood/0x28f26FB95Ef30218E0090d0776A5cDF65BA44E73",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "giwalaunch TG",
+        "url": "https://t.me/s/giwalaunch",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "Ammora release",
+        "url": "https://ammora-protocol.vercel.app/api/product-release",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "Naru docs",
+        "url": "https://naru.market/docs",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "GIWATER roadmap",
+        "url": "https://docs.giwater.finance/1-introduction/3-roadmap",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "Uniswap v4 hooks",
+        "url": "https://developers.uniswap.org/docs/protocols/v4/concepts/hooks",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "UNCX v4 lockers",
+        "url": "https://docs.uncx.network/guides/for-projects/liquidity-lockers-v4.md",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "iPop v4 channel",
+        "url": "https://t.me/s/ipop_uniswap_v4",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "iPop 1M channel",
+        "url": "https://t.me/s/ipop_newpair_1m",
+        "observed": "2026-09-06"
+      },
+      {
+        "label": "LP 신호 검증 메모 05 (iPop 채널·NEST/SPRM/OTER 온체인 추적)",
+        "url": "https://t.me/s/ipop_uniswap_v4",
+        "observed": "2026-09-06"
+      }
+    ],
+    "safety": {
+      "research_only": true,
+      "strategy_consumption_allowed": false,
+      "order_input": false
+    },
+    "headline": "지금은 Pons V2(로빈후드) 1순위: 공급 100 % 커브(프로토콜 고정 71.43 % 판매 / 28.57 % 졸업 LP), 팀 0 %, 공개 dev-buy 1건 0.05–0.08 ETH(≤5 %), 크리에이터 세금 0–2 %, 바이백 OFF, 4.2 ETH 자동 졸업 → 영구 잠금 v4 풀, 크리에이터 수입 = 거래량의 0.7 %. 자금은 CEX → Arbitrum → Relay/Across(Robinhood 앱은 미국 전용). GIWA는 메인넷 부재 → Joseon.fun Sepolia 리허설 + CreateX 동일 주소 키트만 준비. GIWA MARKETS는 사용 금지."
+  },
   "metrics": {
     "ecosystem_entries": 16,
     "official_entries": 5,
@@ -42,8 +1354,8 @@
     "verified_claims": 204,
     "unresolved_claims": 33,
     "refuted_claims": 25,
-    "implemented_tracks": 4,
-    "total_tracks": 13
+    "implemented_tracks": 5,
+    "total_tracks": 14
   },
   "network_observation": {
     "observed_at": "2026-09-03T03:53:09.216084+00:00",
@@ -1718,6 +3030,34 @@
   ],
   "build_tracks": [
     {
+      "id": "robinhood-launch-prep",
+      "name": "Robinhood · GIWA launch prep (2026-09-06)",
+      "status": "implemented",
+      "progress": 100,
+      "summary": "로빈후드 체인(TVL $905M, DEX $1.89B/일, Pons V2 수수료 $8.75M/일) 즉시 론칭 + GIWA 리허설: 런치패드 15개 비교, 공급 배분·초기 LP·졸업 규범 13개 플랫폼, D-3→D+7 플레이북, 비용표, LP 상태 체크",
+      "next": "오너가 Pons V2 파라미터(dev-buy 0.05–0.08 ETH, 세금 0–2 %, 바이백 OFF, 콜드 수취인) 확정 → 로빈후드 첫 론칭; GIWA는 Joseon Sepolia 리허설",
+      "files": [
+        {
+          "path": "docs/LAUNCH_PREP_2026-09-06.md",
+          "label": "LAUNCH_PREP_2026-09-06.md",
+          "url": "./library/docs/LAUNCH_PREP_2026-09-06.md.html",
+          "exists": true
+        },
+        {
+          "path": "data/launch_prep.json",
+          "label": "launch_prep.json",
+          "url": "./library/data/launch_prep.json.html",
+          "exists": true
+        },
+        {
+          "path": "docs/launch_research_2026-09-06/README.md",
+          "label": "README.md",
+          "url": "./library/docs/launch_research_2026-09-06/README.md.html",
+          "exists": true
+        }
+      ]
+    },
+    {
       "id": "locker-launcher",
       "name": "Flat-fee locker launcher (fee = 0 on Sepolia)",
       "status": "spec_only",
@@ -2035,6 +3375,54 @@
     }
   ],
   "document_groups": [
+    {
+      "name": "론칭 준비",
+      "description": "로빈후드 즉시 론칭과 GIWA 리허설 — 런치패드 비교, 공급 배분·초기 LP 규범, 플레이북, 비용, LP 체크",
+      "files": [
+        {
+          "path": "docs/LAUNCH_PREP_2026-09-06.md",
+          "label": "LAUNCH_PREP_2026-09-06.md",
+          "url": "./library/docs/LAUNCH_PREP_2026-09-06.md.html",
+          "exists": true
+        },
+        {
+          "path": "docs/launch_research_2026-09-06/README.md",
+          "label": "README.md",
+          "url": "./library/docs/launch_research_2026-09-06/README.md.html",
+          "exists": true
+        },
+        {
+          "path": "docs/launch_research_2026-09-06/01_robinhood_launchpads.md",
+          "label": "01_robinhood_launchpads.md",
+          "url": "./library/docs/launch_research_2026-09-06/01_robinhood_launchpads.md.html",
+          "exists": true
+        },
+        {
+          "path": "docs/launch_research_2026-09-06/02_launch_structure_norms.md",
+          "label": "02_launch_structure_norms.md",
+          "url": "./library/docs/launch_research_2026-09-06/02_launch_structure_norms.md.html",
+          "exists": true
+        },
+        {
+          "path": "docs/launch_research_2026-09-06/03_fastest_path_playbook.md",
+          "label": "03_fastest_path_playbook.md",
+          "url": "./library/docs/launch_research_2026-09-06/03_fastest_path_playbook.md.html",
+          "exists": true
+        },
+        {
+          "path": "docs/launch_research_2026-09-06/04_giwa_parallel_prep.md",
+          "label": "04_giwa_parallel_prep.md",
+          "url": "./library/docs/launch_research_2026-09-06/04_giwa_parallel_prep.md.html",
+          "exists": true
+        },
+        {
+          "path": "docs/launch_research_2026-09-06/05_lp_burn_signal.md",
+          "label": "05_lp_burn_signal.md",
+          "url": "./library/docs/launch_research_2026-09-06/05_lp_burn_signal.md.html",
+          "exists": true
+        }
+      ]
+    },
     {
       "name": "결정 메모",
       "description": "무엇을 만들지와 언제 멈출지를 빠르게 판단 — 2026-09-04 fee-capture 결정이 상위",

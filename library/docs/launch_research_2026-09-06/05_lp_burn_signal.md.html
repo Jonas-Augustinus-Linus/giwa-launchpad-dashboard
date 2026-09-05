@@ -1,0 +1,427 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex,nofollow,noarchive" />
+    <meta name="theme-color" content="#090c0e" />
+    <title>Is &quot;LP burned&quot; still a valid signal? (Sept 2026) — memo for a memecoin launcher · GIWA · Robinhood Launchpad</title>
+    <link rel="stylesheet" href="../../../assets/document.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#document">본문으로 바로가기</a>
+    <header class="document-header">
+      <a class="brand" href="../../../development.html" aria-label="GIWA 대시보드로 돌아가기">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span><strong>GIWA · RH</strong><small>LAUNCHPAD ROOM</small></span>
+      </a>
+      <nav aria-label="문서 동작">
+        <a href="../../../development.html">← 대시보드</a>
+      </nav>
+    </header>
+    <main id="document" class="document-shell">
+      <div class="document-meta">
+        <span>REPORT</span>
+        <span>SHA256 4788d7df6b61</span>
+      </div>
+      <h1>Is &quot;LP burned&quot; still a valid signal? (Sept 2026) — memo for a memecoin launcher</h1>
+      <p class="source-path">docs/launch_research_2026-09-06/05_lp_burn_signal.md</p>
+      <article class="markdown-body"><h1 id="is-lp-burned-still-a-valid-signal-sept-2026-memo-for-a-memecoin-launcher">Is "LP burned" still a valid signal? (Sept 2026) — memo for a memecoin launcher</h1>
+<p>Observed: 2026-09-06 04:30–05:30 KST (2026-09-05 19:30–20:30 UTC). All Telegram data is from the public previews <code>https://t.me/s/&amp;lt;channel&gt;</code>; all chain data was read directly from public RPCs / Blockscout at that time. Nothing here is investment advice.</p>
+<hr>
+<h2 id="0-tldr">0. TL;DR</h2>
+<ul>
+<li>"LP burned" was a <strong>Uniswap v2-era</strong> signal: an ERC-20 LP token sent to <code>0x…dead</code> cannot be redeemed, so a 100%-burned pair cannot be pulled. It is still a valid check <strong>wherever an ERC-20 LP token exists</strong> (Uniswap v2 / PancakeSwap v2 forks, PumpSwap, Raydium CPMM).</li>
+<li>In Sept 2026 the venues where new memecoins actually launch have moved to <strong>v4</strong> (measured: Base ≈87% of new pools in the last 24h are v4; Robinhood Chain ≈92% in the last 6h) and to <strong>launchpads with hooks + lockers</strong> (Clanker, Zora, Doppler, Pons v2, …). There is <strong>no LP token</strong> in v3/v4: liquidity is an NFT (PositionManager) or a raw position owned by a contract. "Burned" is the wrong question; the right question is <strong>"who owns the position, and is there any code path that can remove it?"</strong></li>
+<li>The two iPop channels <strong>do not report any LP status at all</strong> (no burn, no lock, no locker, no hook, no honeypot). They only report chain / launchpad label / ticker / MC / cumulative fee / age / CA. The launchpad label is the only indirect LP hint ("Pons v2" ⇒ locker-owned by construction; "pool_uniswap_v4" ⇒ unknown owner — could be a permanent locker, a time-lock, or a plain EOA).</li>
+<li>Three alerted tokens traced on-chain show all three cases side by side: <strong>NEST</strong> (Pons v2) → NFT owned by <code>PonsV2LaunchLocker</code> with no withdraw function; <strong>SPRM</strong> ("pool_uniswap_v4") → NFT owned by a custom <code>SPRMLiquidityLocker</code> with a <code>withdrawPosition()</code> function whose state happens to be sealed permanent; <strong>OTER</strong> ("pool_uniswap_v4", MC shown as 5.4M→7.9M) → NFT owned by a plain <strong>EOA</strong> that can pull liquidity any time.</li>
+</ul>
+<hr>
+<h2 id="1-what-the-two-ipop-channels-actually-post">1. What the two iPop channels actually post</h2>
+<h3 id="11-httpstmesipop_uniswap_v4">1.1 <code>https://t.me/s/ipop_uniswap_v4</code></h3>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Observed</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Title</td>
+<td><code>⚠️허니팟 조심</code></td>
+</tr>
+<tr>
+<td>Description</td>
+<td><code>런치패드가 아닌 Uniswap V4 풀 감지</code> / <code>허니팟 조심하세요...</code> ("detects Uniswap V4 pools that are not launchpads; beware of honeypots")</td>
+</tr>
+<tr>
+<td>Subscribers</td>
+<td>25 (t.me/ipop_uniswap_v4, 2026-09-06 05:00 KST)</td>
+</tr>
+<tr>
+<td>Created</td>
+<td>2026-09-04T08:44:26Z (message #1 "Channel created")</td>
+</tr>
+<tr>
+<td>Observed messages</td>
+<td>#8 … #49 (2026-09-04T15:40Z → 2026-09-05T19:54Z) = 35 alerts in ~28 h ≈ <strong>1.2 alerts/hour</strong></td>
+</tr>
+<tr>
+<td>Chain</td>
+<td>100% <code>🟩 Robinhood</code> (Robinhood Chain, chainId 4663) in every observed message</td>
+</tr>
+<tr>
+<td><code>launchpad :</code> values</td>
+<td><code>pool_uniswap_v4</code> ×30, <code>pool_uniswap_v3</code> ×4, <code>launchpad_unclassified</code> ×1</td>
+</tr>
+<tr>
+<td>Fields</td>
+<td>chain emoji, <code>launchpad</code>, <code>token</code>, <code>MC</code>, <code>total fee</code> (cumulative swap fees in ETH — a volume proxy), <code>age</code>, <code>CA</code></td>
+</tr>
+<tr>
+<td><strong>Not present</strong></td>
+<td>liquidity (USD/ETH), LP burned %, LP locked %, locker name/unlock date, hook address/permissions, honeypot/tax check, mint/blacklist flags, deployer address or funding, top-holder %, socials, links, buy buttons</td>
+</tr>
+<tr>
+<td>LP status encoding</td>
+<td><strong>None.</strong> The channel never distinguishes burn / lock / hook. Despite the name, <code>pool_uniswap_v3</code> pools are also posted.</td>
+</tr>
+<tr>
+<td>Re-alerts</td>
+<td>The same CA is re-posted when MC/fee moves (SPRM #31→#32, OTER #35→#36, VIBES #48→#49, NET #17→#18).</td>
+</tr>
+</tbody>
+</table>
+<p>Verbatim examples (copied from the preview HTML, newlines preserved):</p>
+<pre><code>ipop_uniswap_v4/31 | 2026-09-05T00:15:48+00:00
+🟩 Robinhood
+
+launchpad : pool_uniswap_v4
+token : SPRM 
+MC : 506.3 K
+total fee : 0.38 ETH
+age : 1m
+CA :
+0x90ab6e4b8faaf3d5407f253dff070d222d1bf10b
+</code></pre>
+<pre><code>ipop_uniswap_v4/35 | 2026-09-05T04:30:38+00:00
+🟩 Robinhood
+
+launchpad : pool_uniswap_v4
+token : OTER 
+MC : 5.4 M
+total fee : 0.07 ETH
+age : 2m
+CA :
+0x7e687223d4df3c601a38d17f5b453348a18abe0b
+</code></pre>
+<pre><code>ipop_uniswap_v4/48 | 2026-09-05T19:54:16+00:00
+🟩 Robinhood
+
+launchpad : pool_uniswap_v3
+token : VIBES 
+MC : 5 M
+total fee : 0.72 ETH
+age : 24s
+CA :
+0x9a73d60b9c8c2d330eb6d885e69fcc1399c33c18
+</code></pre>
+<p>(Others in the window: cGOLD, SKYCAT, CLAUDE, FROGE, KPOP, par, NET (MC 58.1 M, fee 26.82 ETH), SNOWBALL, Viagra, FRIES, OZEMPIC, LIGER ×2, eagle, LIT (MC 964.1 M), FATRICK, NOTHING, ATS, POETRY, r33, QMINI, USDC(!), GRACE, UP, ENCIO.)</p>
+<h3 id="12-httpstmesipop_newpair_1m">1.2 <code>https://t.me/s/ipop_newpair_1m</code></h3>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Observed</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Title</td>
+<td><code>1M Alert</code> (no description)</td>
+</tr>
+<tr>
+<td>Subscribers</td>
+<td>36 (2026-09-06 05:00 KST)</td>
+</tr>
+<tr>
+<td>Observed messages</td>
+<td>#22 … #61 (2026-09-04T20:16Z → 2026-09-05T19:39Z) = 40 alerts in ~23.4 h ≈ <strong>1.7 alerts/hour</strong></td>
+</tr>
+<tr>
+<td>What triggers it</td>
+<td>A <strong>graduated launchpad token crossing ≈ $1M MC</strong> (every <code>MC</code> is 0.97 M–2.1 M; every message has a <code>migrated :</code> age)</td>
+</tr>
+<tr>
+<td>Chains</td>
+<td><code>🟩 Robinhood</code> ×32, <code>🔶 BSC</code> ×7, <code>🟦 Base</code> ×1</td>
+</tr>
+<tr>
+<td><code>launchpad :</code> values</td>
+<td><code>Pons v2</code> ×27, <code>Flap</code> ×7, <code>Longxyz</code> ×3, <code>O1 rwa</code> ×2, <code>Bankr</code> ×1</td>
+</tr>
+<tr>
+<td>Fields</td>
+<td>chain emoji, <code>launchpad</code>, <code>token</code>, <code>MC</code>, <code>total fee</code> (ETH or BNB), <code>age</code>, <code>migrated</code> (time since graduation), <code>CA</code></td>
+</tr>
+<tr>
+<td><strong>Not present</strong></td>
+<td>same gaps as above: no liquidity, no LP burn/lock, no locker, no hook, no honeypot/tax, no deployer, no holders, no socials</td>
+</tr>
+<tr>
+<td>LP status encoding</td>
+<td><strong>None</strong> explicitly. Implicitly, the launchpad label tells you the <em>class</em> of LP custody (see §3).</td>
+</tr>
+</tbody>
+</table>
+<p>Verbatim examples:</p>
+<pre><code>ipop_newpair_1m/42 | 2026-09-05T06:05:58+00:00
+🟩 Robinhood
+
+launchpad : Pons v2
+token : NEST 
+MC : 1 M
+total fee : 1.75 ETH
+age : 1h
+migrated : 51m
+CA :
+0x8e859dbdfbfd2df6a99870e2871eaa58e8784e05
+</code></pre>
+<pre><code>ipop_newpair_1m/45 | 2026-09-05T09:39:10+00:00
+🔶 BSC
+
+launchpad : Flap
+token : MEME 
+MC : 1 M
+total fee : 12.2 BNB
+age : 16m
+migrated : 13m
+CA :
+0x6f24a22bee0b15b1c8f5d7e217127ae05df87777
+</code></pre>
+<pre><code>ipop_newpair_1m/60 | 2026-09-05T19:26:11+00:00
+🟩 Robinhood
+
+launchpad : Longxyz
+token : FSD 
+MC : 1.1 M
+total fee : 5.04 ETH
+age : 2h
+migrated : 26m
+CA :
+0x8de9018c1bb82884245f06dede9fe2bebabd1e18
+</code></pre>
+<h3 id="13-where-the-alerted-pools-actually-live-dexscreener-api-2026-09-06">1.3 Where the alerted pools actually live (Dexscreener API, 2026-09-06)</h3>
+<p><code>https://api.dexscreener.com/latest/dex/tokens/&amp;lt;CA&gt;</code>:</p>
+<ul>
+<li>SPRM <code>0x90ab…bf10b</code> → chain <code>robinhood</code>, dex <code>uniswap</code>, labels <code>['v4']</code>, pool id <code>0x5bfd4c99…16680</code>, liq $137k.</li>
+<li>VIBES <code>0x9a73…33c18</code> → <code>uniswap v3</code> pair <code>0x3A9BFEc8…bAc5</code> (liq $21.7k) <strong>plus</strong> four tiny <code>v4</code> pools opened within minutes (liq $40–$280) — copycat pools on the same CA.</li>
+<li>NEST <code>0x8e85…84e05</code> (Pons v2) → 30 pairs, all <code>uniswap v4</code>; main pool <code>0x2a5c5239…15e7</code> liq $85.8k.</li>
+<li>OTER <code>0x7e68…abe0b</code> → 9 pairs, all <code>uniswap v4</code>; main pool <code>0x9adf54c2…e52a</code> liq $610k.</li>
+<li>Flap <code>🔶</code> <code>0xb17c…7777</code> → <code>bsc</code> <code>pancakeswap</code> labels <code>['v2']</code> (an ERC-20 LP token exists here).</li>
+</ul>
+<hr>
+<h2 id="2-is-lp-burned-still-meaningful-by-pool-type">2. Is "LP burned" still meaningful? — by pool type</h2>
+<h3 id="2a-uniswap-v2-style-pairs-erc-20-lp-token-still-meaningful-but-a-shrinking-minority">2.a Uniswap v2-style pairs (ERC-20 LP token) — still meaningful, but a shrinking minority</h3>
+<p>Mechanics: the pair mints an ERC-20 LP token; sending it to <code>0x…dead</code> (or <code>0x0</code>) makes <code>burn()</code> impossible for that share, so "100% of LP supply burned" ⇒ pool cannot be drained by the deployer. Locking (UNCX/Team Finance v2 lockers) is the time-limited alternative; GoPlus exposes it as <code>lp_holders[].is_locked</code> / <code>locked_detail</code> (docs: https://docs.gopluslabs.io/reference/response-details — <code>lp_holders</code>: "Top 10 LP holders' info including address, is_locked, tag, is_contract, balance, percent, and locked_detail").</p>
+<p>Share of new pools today (measured via <code>eth_getLogs</code> on factory events, see <code>factory_counts_24h.json</code>):</p>
+<table>
+<thead>
+<tr>
+<th>Chain</th>
+<th>Window</th>
+<th>v2 <code>PairCreated</code></th>
+<th>v3 <code>PoolCreated</code></th>
+<th>v4 <code>Initialize</code></th>
+<th>v4 share</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Base (<code>https://mainnet.base.org</code>)</td>
+<td>blocks 50,881,405–50,924,605 (~24 h to 2026-09-05 20:00 UTC)</td>
+<td>337</td>
+<td>104</td>
+<td>2,964</td>
+<td><strong>87%</strong></td>
+</tr>
+<tr>
+<td>Robinhood Chain (<code>https://rpc.mainnet.chain.robinhood.com</code>, chainId 4663)</td>
+<td>last ~6 h to block 55,393,720 (topic-only filter; 4,384 of 4,388 v4 inits came from the canonical PoolManager <code>0x8366a39c…0951</code>)</td>
+<td>142</td>
+<td>245</td>
+<td>4,388</td>
+<td><strong>92%</strong></td>
+</tr>
+<tr>
+<td>Ethereum mainnet</td>
+<td>—</td>
+<td>not measured (every free public RPC refused <code>eth_getLogs</code> ranges: publicnode 403, llamarpc 521, ankr auth, 1rpc 50-block cap, cloudflare "Cannot fulfill")</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>So on the chains the iPop channels cover, roughly <strong>9 of 10 new pools have no LP token to burn</strong>. The v2 check still applies to: PancakeSwap v2 graduations (Flap tax tokens: "it can only be migrated to Uniswap V2 or its forks" — https://docs.flap.sh/flap/developers/basic-and-mechanism/list-on-dex.md), PumpSwap, Raydium CPMM, and the ~10% of Base pools still created on the v2 factory.</p>
+<h3 id="2b-uniswap-v3-positions-erc-721-nft">2.b Uniswap v3 positions (ERC-721 NFT)</h3>
+<ul>
+<li>Positions are NFTs minted by <code>NonfungiblePositionManager</code>; "Every NFT is identified by a unique uint256 ID inside the ERC-721 smart contract, declared as the <code>tokenId</code>" (https://developers.uniswap.org/docs/protocols/v3/guides/managing-liquidity/getting-started). <code>decreaseLiquidity</code>/<code>collect</code>/<code>burn</code> are callable by the NFT owner/approved — so "burning the LP" means <strong>sending the NFT to <code>0x…dead</code></strong> (fees become unclaimable too), and "locking" means the NFT sits in a locker contract that only allows fee <code>collect</code> until an unlock date.</li>
+<li>Lockers: UNCX v3 locker docs — https://docs.uncx.network/guides/for-projects/liquidity-lockers-v3.md ; investor check — https://docs.uncx.network/guides/for-investors/liquidity-lockers/how-can-i-check-if-the-project-locked-liquidity.md ("enter the pair address into the searchbar … browse all the details about the liquidity locks for that pair"). Team Finance: landing page advertises "regular and UniSwap V3 LP tokens" and "NFT Liquidity Bonds" (https://www.team.finance/, https://handbook.team.finance/services/token-locks/liquidity-locks.md — "Split Locks", "Lock Transfers", "Partial Claims"; withdrawal after expiry via the "Claims" dashboard). Neither handbook page documents v4.</li>
+<li>What tools show: GoPlus <code>lp_holders[]</code> carries <code>NFT_list[{NFT_id, amount, in_effect, NFT_percentage}]</code> and <code>is_locked</code> per holder (seen live for CLANKER on Base, 2026-09-06: largest v3 LP holder <code>0xce0b18f8…</code> is a contract holding NFT #1119330 = 87.6% of LP, <code>is_locked: 0</code>). GMGN ETH panel shows "Locked/Burned" ("the risk of liquidity pool withdrawal", https://docs.gmgn.ai/index/ca-security-checks).</li>
+<li>Verdict: still a meaningful check, but you must read <strong>(NFT owner, locker unlock date, who can <code>collect</code>)</strong> — a percentage alone is not enough, and it is not "burned" unless the owner is a dead address.</li>
+</ul>
+<h3 id="2c-uniswap-v4-pools-burned-is-the-wrong-question">2.c Uniswap v4 pools — "burned" is the wrong question</h3>
+<p>Primary docs:</p>
+<ul>
+<li>PoolManager singleton: "Uniswap v4 uses a Singleton design pattern for the <code>PoolManager</code>", "All pool state and logic are encapsulated within the <code>PoolManager</code> contract"; liquidity is modified "via a periphery contract to handle the locking &amp; unlocking" (https://developers.uniswap.org/docs/protocols/v4/concepts/poolmanager). There is no per-pool contract and <strong>no LP token</strong>.</li>
+<li>Positions: minted through <code>PositionManager</code> as ERC-721 ("recipient, // Who receives the NFT"; actions <code>INCREASE_LIQUIDITY</code>, <code>DECREASE_LIQUIDITY</code>, <code>BURN_POSITION</code>, collect = decrease with liquidity 0) — https://developers.uniswap.org/docs/protocols/v4/guides/position-manager . Any contract can also hold raw liquidity in PoolManager without an NFT at all (hook-owned singletons).</li>
+<li>Hooks: ten permissions (<code>beforeInitialize/afterInitialize</code>, <code>beforeAddLiquidity/afterAddLiquidity</code>, <code>beforeRemoveLiquidity/afterRemoveLiquidity</code>, <code>beforeSwap/afterSwap</code>, <code>beforeDonate/afterDonate</code>) plus four return-delta permissions; "A hook contract must be deployed to an address whose low bits encode exactly the permissions it implements"; "a hook can serve an infinite amount of pools" (https://developers.uniswap.org/docs/protocols/v4/concepts/hooks). A hook with <code>beforeSwap</code>/<code>afterSwapReturnDelta</code> can tax or block swaps; one with <code>beforeRemoveLiquidity</code> can block or allow removals; hook owners can usually change fee parameters.</li>
+<li>v4 is deployed on Robinhood Chain: PoolManager <code>0x8366a39cc670b4001a1121b8f6a443a643e40951</code>, PositionManager <code>0x58daec3116aae6d93017baaea7749052e8a04fa7</code> (https://developers.uniswap.org/docs/protocols/v4/deployments).</li>
+</ul>
+<p>Who creates v4 pools today (hook address decoded from <code>Initialize</code> events; <code>v4_hooks_tally.json</code>; names from Blockscout verified-contract names):</p>
+<table>
+<thead>
+<tr>
+<th>Chain / window</th>
+<th>total v4 inits</th>
+<th>no hook (<code>0x0</code>)</th>
+<th>top hooks</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Base, 24 h</td>
+<td>2,961</td>
+<td>793 (27%)</td>
+<td><code>ZoraV4CoinHook</code> 599, <code>ClankerHookStaticFeeV2</code> 354, <code>DopplerHookInitializer</code> 353, <code>LaunchHook</code> 180, <code>DecayMulticurveInitializerHook</code> 97, unverified <code>0x6b9d…8088</code> 83</td>
+</tr>
+<tr>
+<td>Robinhood, 6 h</td>
+<td>4,395</td>
+<td>2,627 (60%)</td>
+<td><code>DopplerHookInitializer</code> 777, <code>PonsV2MemeHook</code> 267, unverified <code>0x4eb1…e0cc</code> 118, <code>LaunchHook</code> 82, <code>PairV4Hook</code> 48, <code>CashCatHookV2</code> 47</td>
+</tr>
+</tbody>
+</table>
+<p>i.e. on Base ~3 of 4 new v4 pools are launchpad/hook pools; on Robinhood 40% are hook pools and 60% are raw pools — exactly the population <code>ipop_uniswap_v4</code> targets.</p>
+<p><strong>Launchpad custody models (primary sources):</strong></p>
+<ul>
+<li><strong>Clanker v4</strong> (Base/Ethereum/Arbitrum/Unichain/Monad): "Upon deployment of a standard Clanker token, the full supply of the token is deposited into a single-sided Uniswap v4 LP (the 'initial LP')" ; creator:protocol fee split 80:20 ("Clanker takes 20% of LP fees") — https://clanker.gitbook.io/documentation/general/creator-rewards-and-fees.md . Locker source <code>src/lp-lockers/ClankerLpLockerFeeConversion.sol</code> (https://github.com/clanker-devco/v4-contracts): the NFT can only arrive from the factory (<code>onERC721Received … if (from != factory) revert Unauthorized()</code>), fees are pulled with <code>Actions.DECREASE_LIQUIDITY</code> and the comment <code>/// @dev collecting fees is achieved with liquidity=0</code>; there is <strong>no function that transfers the NFT out, decreases real liquidity, or burns the position</strong> (<code>withdrawETH</code>/<code>withdrawERC20</code> are <code>onlyOwner</code> sweeps of stray balances in the locker, not of the position). Reward admins can only re-point recipients (<code>updateRewardRecipient</code>, <code>updateFeePreference</code>, <code>updateRewardAdmin</code> — https://clanker.gitbook.io/documentation/references/core-contracts/v4/fee-management-contracts/clankerlplockerfeeconversion.md). Hook: protocol fee "always … 20% of the active LP fee", max LP fee 30%, MEV module up to 2 minutes (https://clanker.gitbook.io/documentation/references/core-contracts/v4/clankerhook.md). Deployment config incl. <code>LockerConfig</code> (locker, rewardAdmins, rewardRecipients, rewardBps, tick ranges, positionBps, max 7 recipients): https://clanker.gitbook.io/documentation/references/core-contracts/v4/deployment-config.md . Deployed addresses: https://clanker.gitbook.io/documentation/references/deployed-contracts.md and the repo README (Base v4.0 <code>ClankerLpLockerFeeConversion</code> <code>0x63D2DfEA64b3433F4071A98665bcD7Ca14d93496</code>, <code>ClankerFeeLocker</code> <code>0xF3622742b1E446D92e45E22923Ef11C2fcD55D68</code>, <code>ClankerHookStaticFeeV2</code> <code>0xb429d62f8f3bFFb98CdB9569533eA23bF0Ba28CC</code>).</li>
+<li><strong>Pons v2</strong> (Robinhood Chain; app <code>https://pons.family/launchpad</code>; official site <code>pons.fun</code> was unreachable/Cloudflare-challenged from here). Community docs snapshot (verified against the UI 2026-07-15, https://github.com/MEADGod/pons-docs): "Launch liquidity is displayed as locked"; "Verify the locker contract and withdrawal properties on-chain before relying on that statement programmatically"; "Do not treat graduation or locked launch liquidity as an endorsement"; Pons does not publish an official address registry, fee %, or graduation formula (<code>docs/contracts/DEPLOYMENTS.md</code>, <code>docs/reference/FAQ.md</code>, <code>docs/security/SECURITY_AND_RISK.md</code>). Independent dashboards: <code>0xakhil/rh-eth-lock-dashboard</code> ("Pons Family (V2) → Permanent after graduation … Always verify the actual LP NFT owner and locker contract on Blockscout"), <code>ponsvitals/ponsvitals</code> (22,851 launches/day, 82% never receive a buy, 1.5% graduate, 23% of launches route the creator fee to a wallet ≠ deployer).
+  <strong>On-chain verification done here (NEST, <code>ipop_newpair_1m/42</code>)</strong>: pool <code>0x2a5c5239…15e7</code> initialised in tx <code>0x8951e513…d1fe</code> (block 54,862,888) with hook <strong><code>PonsV2MemeHook</code> <code>0xe5e702641ea86f4ae6cc3cdaed2b886f976be044</code></strong> (verified; permissions <code>beforeInitialize</code>, <code>afterSwap</code>, <code>afterSwapReturnDelta</code>; live params <code>hookFeeBps()=100</code> (1%), <code>protocolFeeShareBps()=3000</code>, <code>buybackBurnBps()=5000</code>; owner <code>0x263ed295…19dd</code> can call <code>setHookFeeBps</code>, <code>setProtocolFeeRecipient</code>, <code>setCreatorFeeRecipient</code>, <code>setBuybackVault</code>, <code>rescuePoolFees</code> …), pool <code>fee=0</code> (fee is taken by the hook). The full-range position was minted via PositionManager as tokenId <strong>1867331</strong> and <code>ownerOf</code> = <strong><code>PonsV2LaunchLocker</code> <code>0x267444d099b10fb5ed7c3cc7b7c767adca574952</code></strong> (verified 2026-08-03). Its whole ABI is <code>setFactory</code> (once), <code>lockPosition</code>, <code>lockTokenSupply</code>, <code>isLocked</code>, <code>onERC721Received</code> (only from PositionManager); <code>renounceOwnership()</code> reverts with <code>OwnershipCannotBeRenounced</code>; there is <strong>no withdraw / decrease / transfer path</strong> — so Pons v2 graduate liquidity is permanent by construction. The creator's economics come from the hook fee split, not from the position.</li>
+<li><strong>Zora / Doppler / Flaunch / Bankr / Longxyz / O1 rwa</strong>: <code>ZoraV4CoinHook</code> and <code>DopplerHookInitializer</code> dominate Base and Robinhood v4 pool creation (table above). Their docs were not fetched in this session (web-search budget exhausted); treat as "hook-owned or locker-owned, verify per launchpad".</li>
+<li><strong>Raw "pool_uniswap_v4" tokens</strong> (what <code>ipop_uniswap_v4</code> posts): anything goes. Two traces:</li>
+<li><strong>SPRM</strong> (<code>ipop_uniswap_v4/31</code>): pool <code>0x5bfd4c99…16680</code>, hook <code>0xc16d9de2…e5cc</code> (unverified on Blockscout, "Internal server error"), fee 0.3%; LP NFT tokenId 1842427 owner = <strong><code>SPRMLiquidityLocker</code> <code>0xfae4a735…7dde</code></strong> (verified 2026-09-05T01:52Z, i.e. deployed for this token). ABI includes <code>withdrawPosition</code>, <code>extendLock</code>, <code>lockedUntil</code>, <code>isPermanent</code>, <code>sealTerms</code>, <code>sweepEth</code>, <code>sweepToken</code>, <code>collectFees</code>, <code>setFeeRecipient</code>. Live state: <code>lockedUntil()=0xffffffffffffffff</code> (= <code>PERMANENT()</code>), <code>isPermanent()=true</code>, <code>termsSealed()=true</code>, <code>owner()=0x0</code> (renounced), <code>beneficiary()=0x3f43fd27…88d6</code> (fee collector = deployer). So it <em>is</em> effectively permanent — but only a state read tells you that; the same contract with <code>lockedUntil = now+7d</code> and <code>owner ≠ 0</code> would look identical in an alert.</li>
+<li><strong>OTER</strong> (<code>ipop_uniswap_v4/35–36</code>, MC 5.4 M → 7.9 M): pool <code>0x9adf54c2…e52a</code>, <strong>no hook</strong>, fee 0.9%; LP NFT tokenId 1863774 owner = <strong>EOA <code>0x3bb5c8a00190da68059f0f66c24794584eb10d07</code></strong> (no code). The deployer can <code>DECREASE_LIQUIDITY</code>/<code>BURN_POSITION</code> at any moment. Two other EOAs added and one already removed small positions (tokenId 1864231 added +19.4e15 at block 54,838,965 and removed at 54,839,019).</li>
+<li>GoPlus for chain 4663 returns <code>is_in_dex: "0"</code>, <code>is_open_source: "0"</code>, no <code>lp_holders</code> for SPRM/VIBES/NEST (checked 2026-09-06) — the usual "LP locked/burned" API field is simply <strong>empty</strong> for Robinhood v4 pools even though GoPlus lists Robinhood (id 4663) as supported (<code>/api/v1/supported_chains</code>). On Base, GoPlus lists v4 pools in <code>dex[]</code> (<code>liquidity_type: "UniV4"</code>, <code>pool_manager</code>, pool id) but gives no v4 position owner/lock information.</li>
+</ul>
+<h3 id="2d-pump-style-graduations-solana-lp-token-exists-burned-or-platform-locked">2.d Pump-style graduations (Solana) — LP token exists; burned or platform-locked</h3>
+<ul>
+<li><strong>PumpSwap</strong>: "When the coin hits a certain market cap the liquidity from the bonding curve is migrated to PumpSwap (an AMM on Solana). The LP tokens received from the PumpSwap pool are then burnt." (https://github.com/pump-fun/pump-public-docs/blob/main/docs/PUMP_PROGRAM_README.md). <code>migrate</code> "is also permisionless, so anyone can migrate a completed bonding curve". Pool state tracks <code>lp_supply</code> "without burns and lock-ups" and <code>coin_creator</code> accrues creator fees to a <code>creator_vault</code> (docs/PUMP_SWAP_README.md, docs/PUMP_SWAP_CREATOR_FEE_README.md). Note the admin <code>disable(admin, disable_create_pool, disable_deposit, disable_withdraw, disable_buy, disable_sell)</code> flag exists at program level. ⇒ "LP burned" is true by construction for canonical pump pools; the residual risks are token-side (creator/insider supply) not LP-side.</li>
+<li><strong>Raydium LaunchLab</strong>: after graduation "platform_scale + creator_scale is locked through LP-Lock" with Fee Keys, and "burn_scale is burned permanently and has no Fee Key" (https://docs.raydium.io/products/launchlab/overview.md, https://docs.raydium.io/products/launchlab/tips-and-gotchas/lp-fee-distribution.md — since 2026-08-17 the creator share merges into the platform's locked LP). <strong>Burn &amp; Earn</strong>: "Permanently lock a CPMM or CLMM LP position while retaining the right to claim trading fees via a transferable Raydium Fee Key NFT" — the Fee Key "can be sold on any Solana NFT marketplace" (https://docs.raydium.io/user-flows/burn-and-earn.md). ⇒ "burned" on Solana now often means <em>locked-with-fee-key</em>; GMGN's Solana "Burnt" % ("100% indicating that the project cannot withdraw from the liquidity pool", https://docs.gmgn.ai/index/ca-security-checks) is the right field there.</li>
+</ul>
+<hr>
+<h2 id="3-replacement-checklist-for-v3v4-era-launches-what-to-verify-instead-of-burned">3. Replacement checklist for v3/v4-era launches (what to verify instead of "burned")</h2>
+<p>For each new CA, in this order:</p>
+<ol>
+<li><strong>Pool version + hook</strong> — Dexscreener API <code>labels</code> (<code>v2</code>/<code>v3</code>/<code>v4</code>) and, for v4, the <code>hooks</code> address in the <code>Initialize</code> event (or the pool page). No hook + raw pool ⇒ go straight to step 2. Hook ⇒ resolve its verified name on Blockscout/Basescan (Clanker/Zora/Doppler/Pons/… vs unverified bytecode) and read <code>getHookPermissions()</code>: <code>beforeSwap</code>/<code>*ReturnDelta</code> = can tax/block trades; <code>beforeRemoveLiquidity</code> = can gate removals; check whether the hook has an owner and what <code>set*</code> functions exist (PonsV2MemeHook: 9 <code>onlyOwner</code> setters incl. <code>setHookFeeBps</code>).</li>
+<li><strong>Position owner</strong> — v3: <code>NonfungiblePositionManager.ownerOf(tokenId)</code>; v4: <code>PositionManager.ownerOf(tokenId)</code> where tokenId = <code>salt</code> of the <code>ModifyLiquidity</code> event (sender = PositionManager). Acceptable owners: <code>0x…dead</code>, a launchpad locker (<code>PonsV2LaunchLocker</code>, <code>ClankerLpLockerFeeConversion</code>), UNCX/Team Finance lockers. Red flag: EOA (OTER) or an unverified contract.</li>
+<li><strong>Does the owner contract have a withdraw path?</strong> Read the verified ABI: any of <code>withdrawPosition</code>, <code>unlock</code>, <code>decreaseLiquidity</code>, <code>burn</code>, <code>safeTransferFrom(this→…)</code>, <code>rescue*</code>, <code>sweep*</code> of the NFT, upgradeable proxy, <code>owner ≠ 0x0</code>. If it has a timelock (<code>lockedUntil</code>, <code>unlockDate</code>), read the value and who can <code>extendLock</code>/<code>transferOwnership</code>. Pons v2 locker: none. SPRM locker: has <code>withdrawPosition</code> but sealed permanent. UNCX/Team Finance: unlock date + lock-owner transferability.</li>
+<li><strong>Fee recipient / who earns</strong> — Clanker <code>rewardRecipients</code> (80/20 split, admin-changeable recipients), Pons hook <code>protocolFeeShareBps</code>/<code>buybackBurnBps</code>/creator recipient, Raydium Fee Key holder, PumpSwap <code>coin_creator</code>. A fee stream to an EOA ≠ deployer is a clustering signal (ponsvitals: 23% of Pons launches).</li>
+<li><strong>Token contract</strong> — mint authority, blacklist, pausable transfer, tax, proxy/upgradeable, hidden owner: GoPlus <code>is_mintable</code>, <code>is_blacklisted</code>, <code>transfer_pausable</code>, <code>buy_tax</code>/<code>sell_tax</code>, <code>is_proxy</code>, <code>hidden_owner</code>, <code>can_take_back_ownership</code>, <code>owner_change_balance</code> (https://docs.gopluslabs.io/reference/response-details). Note GoPlus returns nothing useful for Robinhood v4 tokens today; for those, read the verified token source directly on <code>robinhoodchain.blockscout.com</code>.</li>
+<li><strong>Supply concentration</strong> — Bubblemaps token metrics: <code>Top 10 Adjusted</code> ("top 10 entities (after clustering) adjusted to ignore CEXs, DEXs"), <code>Bundles</code>, Bubblemaps score 0–100, Gini/HHI, Nakamoto coefficient (https://docs.bubblemaps.io/data/api/tokens/metrics.md; chain list includes <code>robinhood</code>, <code>base</code>, <code>bsc</code>, <code>solana</code>). GMGN: Top10 &lt;30% rule, Insiders/Bundlers/Snipers/Dev holdings.</li>
+<li><strong>Deployer funding &amp; history</strong> — first funding tx of the deployer EOA (CEX vs bridge vs another fresh wallet), prior launches, GMGN "Rug History" ("which rug pull tokens may have been previously launched by the creator").</li>
+<li><strong>Copycat pools</strong> — the same CA can have several pools (VIBES: 1 v3 + 4 v4; NEST: 30 v4 pairs). Check that the pool you route through is the locked one; small side pools owned by EOAs are normal but should not be where you buy.</li>
+<li><strong>Only then</strong> MC / cumulative fee / age (the only things the iPop channels give you).</li>
+</ol>
+<p>Tool coverage as verified today:</p>
+<table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Shows</th>
+<th>Verified limits</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Dexscreener (<code>api.dexscreener.com</code>)</td>
+<td>chain, dex, <code>labels</code> v2/v3/v4, pool id, liquidity USD, FDV, pairCreatedAt; covers Robinhood</td>
+<td>API has no audit/lock fields; the site "Audit" tab is not documented at docs.dexscreener.com</td>
+</tr>
+<tr>
+<td>GoPlus (<code>api.gopluslabs.io</code>)</td>
+<td>honeypot/tax/mint/blacklist/proxy/hidden-owner, <code>lp_holders[].is_locked</code> + <code>NFT_list</code>, <code>dex[]</code> incl. <code>UniV4</code> pool ids on Base</td>
+<td>Robinhood (4663) listed as supported but returns empty for v4 tokens tested; no v4 position owner/lock field</td>
+</tr>
+<tr>
+<td>GMGN (docs.gmgn.ai)</td>
+<td>Solana <code>Burnt</code> %, <code>MintDisable</code>, <code>Top10</code>, <code>Blacklist</code>, <code>Rug probability/History</code>; ETH <code>Honeypot</code>, <code>Verified</code>, <code>Renounced</code>, <code>Locked/Burned</code>, taxes; data "sourced from multiple third-party providers" (GoPlus)</td>
+<td>Robinhood-chain support not verified here</td>
+</tr>
+<tr>
+<td>Bubblemaps</td>
+<td>clustering, decentralization score, top-10 adjusted, bundles; chain ids include <code>robinhood</code></td>
+<td>no LP/lock info by design</td>
+</tr>
+<tr>
+<td>UNCX</td>
+<td>v2/v3/<strong>v4</strong> lockers; v4 locker "deployed … Ethereum, BSC, Robinhood, BASE, Arbitrum, Polygon, Unichain" (https://docs.uncx.network/guides/for-projects/liquidity-lockers-v4.md); investor lookup by pair</td>
+<td>fee-collection/unlock details not on the fetched page</td>
+</tr>
+<tr>
+<td>Team Finance</td>
+<td>v2 LP + v3 NFT locks, split/transfer/partial claim</td>
+<td>v4 not documented on handbook.team.finance</td>
+</tr>
+<tr>
+<td>TokenSniffer</td>
+<td>(not verifiable — <code>tokensniffer.com</code> returned Cloudflare 403 to curl and to r.jina.ai)</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Blockscout (<code>robinhoodchain.blockscout.com</code>, <code>base.blockscout.com</code>)</td>
+<td>verified contract names/ABIs/source for hooks and lockers — the only place the v4 questions above are actually answerable</td>
+<td>rate-limited; some addresses return "Internal server error"</td>
+</tr>
+<tr>
+<td>iPop channels</td>
+<td>chain, launchpad label, ticker, MC, cumulative fee, age, migrated, CA</td>
+<td>nothing LP-related</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="4-what-the-ipop-channels-miss-honest-list">4. What the iPop channels miss (honest list)</h2>
+<ol>
+<li><strong>Any LP custody information</strong> — no burn %, no lock %, no locker address, no unlock date, no NFT owner, no hook name/permissions. Their own description ("허니팟 조심하세요") admits they do no honeypot check.</li>
+<li><strong>No liquidity depth</strong> — only MC and cumulative fees; a "MC 964.1 M" LIT alert or "MC 5.4 M" OTER alert says nothing about how much ETH is actually in the pool (OTER main pool: $610k; its LP is EOA-owned).</li>
+<li><strong>No token-contract audit</strong> — mint/blacklist/tax/proxy/owner are absent; on Robinhood v4 tokens GoPlus is empty too, so the launcher must read source on Blockscout himself.</li>
+<li><strong>No holder/deployer context</strong> — no top-10, no bundler/sniper detection, no deployer funding source, no cluster of fee recipients (ponsvitals shows 23% of Pons launches split deployer vs fee wallet).</li>
+<li><strong>Label noise</strong> — <code>pool_uniswap_v3</code> and <code>launchpad_unclassified</code> appear in the "v4" channel; <code>USDC</code> was posted as a new token; the same CA is re-alerted repeatedly; <code>Pons v2</code> covers both healthy grads and the 82%-flatline population's survivors without distinguishing them.</li>
+<li><strong>Copycat pools</strong> — the alert gives a CA, not a pool id; the CA may have many pools (VIBES, NEST) with different owners.</li>
+<li><strong>Latency and scale</strong> — ~1–2 alerts/hour each, 25–36 subscribers, channels created 2026-09-04; they cover only Robinhood (+ a few BSC/Base grads), while Robinhood alone initialises ~4.4k v4 pools per 6 h and Pons launches ~22.8k tokens/day — the channel's filter (which pools get posted) is undocumented.</li>
+</ol>
+<hr>
+<h2 id="5-unknowns-not-verified">5. Unknowns / not verified</h2>
+<ul>
+<li>Ethereum mainnet v2/v3/v4 new-pool share (no free RPC allowed <code>eth_getLogs</code> at range; needs an API key or Dune).</li>
+<li>Official Pons documentation (pons.fun unreachable / Cloudflare; docs used are a third-party snapshot verified 2026-07-15 plus my own on-chain reads of the verified <code>PonsV2LaunchLocker</code> and <code>PonsV2MemeHook</code>). Whether every Pons v2 graduation uses that locker (vs. an upgraded factory) was checked for one token (NEST) only.</li>
+<li>Zora, Doppler, Flaunch, Bankr, Longxyz, O1 rwa locker semantics — not fetched (web-search budget exhausted this session); Flap docs do not say what happens to PancakeSwap LP tokens after listing.</li>
+<li>Hook <code>0xc16d9de2…e5cc</code> on SPRM and the unverified hooks <code>0x4eb1…e0cc</code>, <code>0xf752…a0cc</code> (Robinhood) and <code>0x6b9d…8088</code> (Base) — identity unknown.</li>
+<li>GMGN Robinhood-chain support; Dexscreener "Audit" tab data sources; TokenSniffer's current liquidity thresholds (site blocked).</li>
+<li>Sample sizes: channel stats are from one ~28 h window; the hook tallies are one 24 h (Base) / 6 h (Robinhood) window; position-owner traces cover 3 tokens.</li>
+</ul>
+<hr>
+<h2 id="6-raw-artifacts-in-this-directory">6. Raw artifacts in this directory</h2>
+<p><code>ipop_uniswap_v4.html/.txt</code>, <code>ipop_newpair_1m.html/.txt</code>, <code>v4_old.html</code>, <code>m1_old.html</code> (channel previews), <code>factory_counts_24h.json</code> (v2/v3/v4 counts), <code>v4_hooks_tally.json</code> (hook distribution), <code>rh_pool_ownership.json</code> (NEST/SPRM/OTER traces), <code>rh_locker_calls.json</code> (locker/hook state reads), <code>owner_src.json</code> (PonsV2LaunchLocker verified source), <code>hook_src.json</code>, <code>ClankerLpLockerFeeConversion.sol</code>, <code>pons_docs.txt</code>, <code>pump_docs.txt</code>, <code>pump_program.md</code>.</p></article>
+    </main>
+    <footer>
+      <span>research_only=true</span>
+      <span>strategy_consumption_allowed=false</span>
+      <span>order_input=false</span>
+    </footer>
+  </body>
+</html>

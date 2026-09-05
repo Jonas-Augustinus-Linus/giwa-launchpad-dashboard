@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="noindex,nofollow,noarchive" />
     <meta name="theme-color" content="#090c0e" />
-    <title>build_dashboard_catalog.py · GIWA Control Room</title>
+    <title>build_dashboard_catalog.py · GIWA · Robinhood Launchpad</title>
     <link rel="stylesheet" href="../../assets/document.css" />
   </head>
   <body>
@@ -13,7 +13,7 @@
     <header class="document-header">
       <a class="brand" href="../../development.html" aria-label="GIWA 대시보드로 돌아가기">
         <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
-        <span><strong>GIWA</strong><small>CONTROL ROOM</small></span>
+        <span><strong>GIWA · RH</strong><small>LAUNCHPAD ROOM</small></span>
       </a>
       <nav aria-label="문서 동작">
         <a href="../../development.html">← 대시보드</a>
@@ -22,7 +22,7 @@
     <main id="document" class="document-shell">
       <div class="document-meta">
         <span>SOURCE CODE</span>
-        <span>SHA256 1154c03394f0</span>
+        <span>SHA256 1e2fc3638fae</span>
       </div>
       <h1>build_dashboard_catalog.py</h1>
       <p class="source-path">scripts/build_dashboard_catalog.py</p>
@@ -44,361 +44,387 @@
 <span class="code-line"><i>16</i><code>MANIFEST_PATH = ROOT / &quot;data&quot; / &quot;dashboard_manifest.json&quot;</code></span>
 <span class="code-line"><i>17</i><code>ECOSYSTEM_PATH = ROOT / &quot;data&quot; / &quot;ecosystem.json&quot;</code></span>
 <span class="code-line"><i>18</i><code>OUTPUT_PATH = ROOT / &quot;dashboard&quot; / &quot;data&quot; / &quot;catalog.json&quot;</code></span>
-<span class="code-line"><i>19</i><code>OBSERVATION_GLOB = &quot;RESEARCH/**/artifacts/giwa_sepolia_observation_*.json&quot;</code></span>
-<span class="code-line"><i>20</i><code>REVENUE_GLOB = &quot;RESEARCH/GIWA_revenue_models_chain_launch_benchmarks_*/artifacts/comparison_data.json&quot;</code></span>
-<span class="code-line"><i>21</i><code>GIWA_SEPOLIA_CHAIN_ID = 91342</code></span>
-<span class="code-line"><i>22</i><code>OBSERVATION_SAFETY = {</code></span>
-<span class="code-line"><i>23</i><code>    &quot;research_only&quot;: True,</code></span>
-<span class="code-line"><i>24</i><code>    &quot;strategy_consumption_allowed&quot;: False,</code></span>
-<span class="code-line"><i>25</i><code>    &quot;order_input&quot;: False,</code></span>
-<span class="code-line"><i>26</i><code>}</code></span>
-<span class="code-line"><i>27</i><code></code></span>
-<span class="code-line"><i>28</i><code>RESEARCH_COPY: dict[str, tuple[str, str]] = {</code></span>
-<span class="code-line"><i>29</i><code>    &quot;GIWA_fee_capture_product_decision&quot;: (</code></span>
-<span class="code-line"><i>30</i><code>        &quot;Fee-capture product decision (2026-09-04)&quot;,</code></span>
-<span class="code-line"><i>31</i><code>        &quot;스왑·텔레그램 봇·런치패드 fee 사업을 리서치 13편·설계 4안·심사 3편·반증 검증으로 판정&quot;,</code></span>
-<span class="code-line"><i>32</i><code>    ),</code></span>
-<span class="code-line"><i>33</i><code>    &quot;GABOJA_cross-border_crypto_tax&quot;: (</code></span>
-<span class="code-line"><i>34</i><code>        &quot;6개국 크립토 세무 비교&quot;,</code></span>
-<span class="code-line"><i>35</i><code>        &quot;오스트리아·호주·미국·독일·프랑스·캐나다의 운영·거주·수익 과세 경계&quot;,</code></span>
-<span class="code-line"><i>36</i><code>    ),</code></span>
-<span class="code-line"><i>37</i><code>    &quot;GIWA_ecosystem_readiness&quot;: (</code></span>
-<span class="code-line"><i>38</i><code>        &quot;GIWA ecosystem readiness&quot;,</code></span>
-<span class="code-line"><i>39</i><code>        &quot;네트워크·생태계·지역 반응과 public mainnet 준비도를 함께 검증&quot;,</code></span>
-<span class="code-line"><i>40</i><code>    ),</code></span>
-<span class="code-line"><i>41</i><code>    &quot;GIWA_ecosystem_fee_projects&quot;: (</code></span>
-<span class="code-line"><i>42</i><code>        &quot;GIWA ecosystem &amp; fee projects&quot;,</code></span>
-<span class="code-line"><i>43</i><code>        &quot;GASOK 공개 프로젝트, DEX 신호와 현실적인 fee 제품 후보를 비교&quot;,</code></span>
-<span class="code-line"><i>44</i><code>    ),</code></span>
-<span class="code-line"><i>45</i><code>    &quot;GIWA_simple_open_dex_volume&quot;: (</code></span>
-<span class="code-line"><i>46</i><code>        &quot;Simple DEX volume strategy&quot;,</code></span>
-<span class="code-line"><i>47</i><code>        &quot;v3-compatible venue, anchor pair, organic volume와 90일 go/no-go 전략&quot;,</code></span>
-<span class="code-line"><i>48</i><code>    ),</code></span>
-<span class="code-line"><i>49</i><code>    &quot;GIWA_dex_fee_jurisdictions&quot;: (</code></span>
-<span class="code-line"><i>50</i><code>        &quot;DEX fee jurisdiction matrix&quot;,</code></span>
-<span class="code-line"><i>51</i><code>        &quot;호주·오스트리아·독일·미국에서 동일 기능과 fee 흐름을 비교&quot;,</code></span>
-<span class="code-line"><i>52</i><code>    ),</code></span>
-<span class="code-line"><i>53</i><code>    &quot;GIWA_revenue_models_chain_launch_benchmarks&quot;: (</code></span>
-<span class="code-line"><i>54</i><code>        &quot;Revenue models &amp; launch benchmarks&quot;,</code></span>
-<span class="code-line"><i>55</i><code>        &quot;DEX·NFT·밈코인·데이터 수익을 Ethereum·Base·Solana·Robinhood 사례와 비교&quot;,</code></span>
-<span class="code-line"><i>56</i><code>    ),</code></span>
-<span class="code-line"><i>57</i><code>}</code></span>
-<span class="code-line"><i>58</i><code></code></span>
+<span class="code-line"><i>19</i><code>LAUNCH_PREP_PATH = ROOT / &quot;data&quot; / &quot;launch_prep.json&quot;</code></span>
+<span class="code-line"><i>20</i><code>OBSERVATION_GLOB = &quot;RESEARCH/**/artifacts/giwa_sepolia_observation_*.json&quot;</code></span>
+<span class="code-line"><i>21</i><code>REVENUE_GLOB = &quot;RESEARCH/GIWA_revenue_models_chain_launch_benchmarks_*/artifacts/comparison_data.json&quot;</code></span>
+<span class="code-line"><i>22</i><code>GIWA_SEPOLIA_CHAIN_ID = 91342</code></span>
+<span class="code-line"><i>23</i><code>OBSERVATION_SAFETY = {</code></span>
+<span class="code-line"><i>24</i><code>    &quot;research_only&quot;: True,</code></span>
+<span class="code-line"><i>25</i><code>    &quot;strategy_consumption_allowed&quot;: False,</code></span>
+<span class="code-line"><i>26</i><code>    &quot;order_input&quot;: False,</code></span>
+<span class="code-line"><i>27</i><code>}</code></span>
+<span class="code-line"><i>28</i><code></code></span>
+<span class="code-line"><i>29</i><code>RESEARCH_COPY: dict[str, tuple[str, str]] = {</code></span>
+<span class="code-line"><i>30</i><code>    &quot;GIWA_fee_capture_product_decision&quot;: (</code></span>
+<span class="code-line"><i>31</i><code>        &quot;Fee-capture product decision (2026-09-04)&quot;,</code></span>
+<span class="code-line"><i>32</i><code>        &quot;스왑·텔레그램 봇·런치패드 fee 사업을 리서치 13편·설계 4안·심사 3편·반증 검증으로 판정&quot;,</code></span>
+<span class="code-line"><i>33</i><code>    ),</code></span>
+<span class="code-line"><i>34</i><code>    &quot;GABOJA_cross-border_crypto_tax&quot;: (</code></span>
+<span class="code-line"><i>35</i><code>        &quot;6개국 크립토 세무 비교&quot;,</code></span>
+<span class="code-line"><i>36</i><code>        &quot;오스트리아·호주·미국·독일·프랑스·캐나다의 운영·거주·수익 과세 경계&quot;,</code></span>
+<span class="code-line"><i>37</i><code>    ),</code></span>
+<span class="code-line"><i>38</i><code>    &quot;GIWA_ecosystem_readiness&quot;: (</code></span>
+<span class="code-line"><i>39</i><code>        &quot;GIWA ecosystem readiness&quot;,</code></span>
+<span class="code-line"><i>40</i><code>        &quot;네트워크·생태계·지역 반응과 public mainnet 준비도를 함께 검증&quot;,</code></span>
+<span class="code-line"><i>41</i><code>    ),</code></span>
+<span class="code-line"><i>42</i><code>    &quot;GIWA_ecosystem_fee_projects&quot;: (</code></span>
+<span class="code-line"><i>43</i><code>        &quot;GIWA ecosystem &amp; fee projects&quot;,</code></span>
+<span class="code-line"><i>44</i><code>        &quot;GASOK 공개 프로젝트, DEX 신호와 현실적인 fee 제품 후보를 비교&quot;,</code></span>
+<span class="code-line"><i>45</i><code>    ),</code></span>
+<span class="code-line"><i>46</i><code>    &quot;GIWA_simple_open_dex_volume&quot;: (</code></span>
+<span class="code-line"><i>47</i><code>        &quot;Simple DEX volume strategy&quot;,</code></span>
+<span class="code-line"><i>48</i><code>        &quot;v3-compatible venue, anchor pair, organic volume와 90일 go/no-go 전략&quot;,</code></span>
+<span class="code-line"><i>49</i><code>    ),</code></span>
+<span class="code-line"><i>50</i><code>    &quot;GIWA_dex_fee_jurisdictions&quot;: (</code></span>
+<span class="code-line"><i>51</i><code>        &quot;DEX fee jurisdiction matrix&quot;,</code></span>
+<span class="code-line"><i>52</i><code>        &quot;호주·오스트리아·독일·미국에서 동일 기능과 fee 흐름을 비교&quot;,</code></span>
+<span class="code-line"><i>53</i><code>    ),</code></span>
+<span class="code-line"><i>54</i><code>    &quot;GIWA_revenue_models_chain_launch_benchmarks&quot;: (</code></span>
+<span class="code-line"><i>55</i><code>        &quot;Revenue models &amp; launch benchmarks&quot;,</code></span>
+<span class="code-line"><i>56</i><code>        &quot;DEX·NFT·밈코인·데이터 수익을 Ethereum·Base·Solana·Robinhood 사례와 비교&quot;,</code></span>
+<span class="code-line"><i>57</i><code>    ),</code></span>
+<span class="code-line"><i>58</i><code>}</code></span>
 <span class="code-line"><i>59</i><code></code></span>
-<span class="code-line"><i>60</i><code>def load_json(path: Path) -&gt; Any:</code></span>
-<span class="code-line"><i>61</i><code>    with path.open(encoding=&quot;utf-8&quot;) as handle:</code></span>
-<span class="code-line"><i>62</i><code>        return json.load(handle)</code></span>
-<span class="code-line"><i>63</i><code></code></span>
+<span class="code-line"><i>60</i><code></code></span>
+<span class="code-line"><i>61</i><code>def load_json(path: Path) -&gt; Any:</code></span>
+<span class="code-line"><i>62</i><code>    with path.open(encoding=&quot;utf-8&quot;) as handle:</code></span>
+<span class="code-line"><i>63</i><code>        return json.load(handle)</code></span>
 <span class="code-line"><i>64</i><code></code></span>
-<span class="code-line"><i>65</i><code>def json_line_count(path: Path) -&gt; int:</code></span>
-<span class="code-line"><i>66</i><code>    if not path.exists():</code></span>
-<span class="code-line"><i>67</i><code>        return 0</code></span>
-<span class="code-line"><i>68</i><code>    with path.open(encoding=&quot;utf-8&quot;) as handle:</code></span>
-<span class="code-line"><i>69</i><code>        return sum(1 for line in handle if line.strip())</code></span>
-<span class="code-line"><i>70</i><code></code></span>
+<span class="code-line"><i>65</i><code></code></span>
+<span class="code-line"><i>66</i><code>def json_line_count(path: Path) -&gt; int:</code></span>
+<span class="code-line"><i>67</i><code>    if not path.exists():</code></span>
+<span class="code-line"><i>68</i><code>        return 0</code></span>
+<span class="code-line"><i>69</i><code>    with path.open(encoding=&quot;utf-8&quot;) as handle:</code></span>
+<span class="code-line"><i>70</i><code>        return sum(1 for line in handle if line.strip())</code></span>
 <span class="code-line"><i>71</i><code></code></span>
-<span class="code-line"><i>72</i><code>def normalized_repo_path(path: str) -&gt; str:</code></span>
-<span class="code-line"><i>73</i><code>    candidate = Path(path)</code></span>
-<span class="code-line"><i>74</i><code>    if candidate.is_absolute() or not candidate.parts or &quot;..&quot; in candidate.parts:</code></span>
-<span class="code-line"><i>75</i><code>        raise ValueError(f&quot;repository path must stay inside the project: {path}&quot;)</code></span>
-<span class="code-line"><i>76</i><code>    return candidate.as_posix()</code></span>
-<span class="code-line"><i>77</i><code></code></span>
+<span class="code-line"><i>72</i><code></code></span>
+<span class="code-line"><i>73</i><code>def normalized_repo_path(path: str) -&gt; str:</code></span>
+<span class="code-line"><i>74</i><code>    candidate = Path(path)</code></span>
+<span class="code-line"><i>75</i><code>    if candidate.is_absolute() or not candidate.parts or &quot;..&quot; in candidate.parts:</code></span>
+<span class="code-line"><i>76</i><code>        raise ValueError(f&quot;repository path must stay inside the project: {path}&quot;)</code></span>
+<span class="code-line"><i>77</i><code>    return candidate.as_posix()</code></span>
 <span class="code-line"><i>78</i><code></code></span>
-<span class="code-line"><i>79</i><code>def library_link(path: str) -&gt; str:</code></span>
-<span class="code-line"><i>80</i><code>    encoded = quote(normalized_repo_path(path), safe=&quot;/._-&quot;)</code></span>
-<span class="code-line"><i>81</i><code>    return f&quot;./library/{encoded}.html&quot;</code></span>
-<span class="code-line"><i>82</i><code></code></span>
+<span class="code-line"><i>79</i><code></code></span>
+<span class="code-line"><i>80</i><code>def library_link(path: str) -&gt; str:</code></span>
+<span class="code-line"><i>81</i><code>    encoded = quote(normalized_repo_path(path), safe=&quot;/._-&quot;)</code></span>
+<span class="code-line"><i>82</i><code>    return f&quot;./library/{encoded}.html&quot;</code></span>
 <span class="code-line"><i>83</i><code></code></span>
-<span class="code-line"><i>84</i><code>def label_for_path(path: str) -&gt; str:</code></span>
-<span class="code-line"><i>85</i><code>    return Path(path).name</code></span>
-<span class="code-line"><i>86</i><code></code></span>
+<span class="code-line"><i>84</i><code></code></span>
+<span class="code-line"><i>85</i><code>def label_for_path(path: str) -&gt; str:</code></span>
+<span class="code-line"><i>86</i><code>    return Path(path).name</code></span>
 <span class="code-line"><i>87</i><code></code></span>
-<span class="code-line"><i>88</i><code>def file_link(path: str, label: str | None = None) -&gt; dict[str, Any]:</code></span>
-<span class="code-line"><i>89</i><code>    return {</code></span>
-<span class="code-line"><i>90</i><code>        &quot;path&quot;: path,</code></span>
-<span class="code-line"><i>91</i><code>        &quot;label&quot;: label or label_for_path(path),</code></span>
-<span class="code-line"><i>92</i><code>        &quot;url&quot;: library_link(path),</code></span>
-<span class="code-line"><i>93</i><code>        &quot;exists&quot;: (ROOT / path).is_file(),</code></span>
-<span class="code-line"><i>94</i><code>    }</code></span>
-<span class="code-line"><i>95</i><code></code></span>
+<span class="code-line"><i>88</i><code></code></span>
+<span class="code-line"><i>89</i><code>def file_link(path: str, label: str | None = None) -&gt; dict[str, Any]:</code></span>
+<span class="code-line"><i>90</i><code>    return {</code></span>
+<span class="code-line"><i>91</i><code>        &quot;path&quot;: path,</code></span>
+<span class="code-line"><i>92</i><code>        &quot;label&quot;: label or label_for_path(path),</code></span>
+<span class="code-line"><i>93</i><code>        &quot;url&quot;: library_link(path),</code></span>
+<span class="code-line"><i>94</i><code>        &quot;exists&quot;: (ROOT / path).is_file(),</code></span>
+<span class="code-line"><i>95</i><code>    }</code></span>
 <span class="code-line"><i>96</i><code></code></span>
-<span class="code-line"><i>97</i><code>def add_repo_links(items: list[dict[str, Any]]) -&gt; None:</code></span>
-<span class="code-line"><i>98</i><code>    for item in items:</code></span>
-<span class="code-line"><i>99</i><code>        paths = item.pop(&quot;paths&quot;, [])</code></span>
-<span class="code-line"><i>100</i><code>        item[&quot;files&quot;] = [file_link(path) for path in paths]</code></span>
-<span class="code-line"><i>101</i><code></code></span>
+<span class="code-line"><i>97</i><code></code></span>
+<span class="code-line"><i>98</i><code>def add_repo_links(items: list[dict[str, Any]]) -&gt; None:</code></span>
+<span class="code-line"><i>99</i><code>    for item in items:</code></span>
+<span class="code-line"><i>100</i><code>        paths = item.pop(&quot;paths&quot;, [])</code></span>
+<span class="code-line"><i>101</i><code>        item[&quot;files&quot;] = [file_link(path) for path in paths]</code></span>
 <span class="code-line"><i>102</i><code></code></span>
-<span class="code-line"><i>103</i><code>def research_copy(folder_name: str, fallback: str) -&gt; tuple[str, str]:</code></span>
-<span class="code-line"><i>104</i><code>    for prefix, copy in RESEARCH_COPY.items():</code></span>
-<span class="code-line"><i>105</i><code>        if folder_name.startswith(prefix):</code></span>
-<span class="code-line"><i>106</i><code>            return copy</code></span>
-<span class="code-line"><i>107</i><code>    return folder_name, fallback</code></span>
-<span class="code-line"><i>108</i><code></code></span>
+<span class="code-line"><i>103</i><code></code></span>
+<span class="code-line"><i>104</i><code>def research_copy(folder_name: str, fallback: str) -&gt; tuple[str, str]:</code></span>
+<span class="code-line"><i>105</i><code>    for prefix, copy in RESEARCH_COPY.items():</code></span>
+<span class="code-line"><i>106</i><code>        if folder_name.startswith(prefix):</code></span>
+<span class="code-line"><i>107</i><code>            return copy</code></span>
+<span class="code-line"><i>108</i><code>    return folder_name, fallback</code></span>
 <span class="code-line"><i>109</i><code></code></span>
-<span class="code-line"><i>110</i><code>def build_research(session_allowlist: list[str]) -&gt; list[dict[str, Any]]:</code></span>
-<span class="code-line"><i>111</i><code>    if not session_allowlist or len(session_allowlist) != len(set(session_allowlist)):</code></span>
-<span class="code-line"><i>112</i><code>        raise ValueError(&quot;publication.research_session_allowlist must be a non-empty unique list&quot;)</code></span>
-<span class="code-line"><i>113</i><code>    allowed = set(session_allowlist)</code></span>
-<span class="code-line"><i>114</i><code>    sessions: list[dict[str, Any]] = []</code></span>
-<span class="code-line"><i>115</i><code>    discovered: set[str] = set()</code></span>
-<span class="code-line"><i>116</i><code>    for state_path in sorted((ROOT / &quot;RESEARCH&quot;).glob(&quot;*/state.json&quot;), reverse=True):</code></span>
-<span class="code-line"><i>117</i><code>        folder = state_path.parent</code></span>
-<span class="code-line"><i>118</i><code>        if folder.name not in allowed:</code></span>
-<span class="code-line"><i>119</i><code>            continue</code></span>
-<span class="code-line"><i>120</i><code>        discovered.add(folder.name)</code></span>
-<span class="code-line"><i>121</i><code>        state = load_json(state_path)</code></span>
-<span class="code-line"><i>122</i><code>        eval_path = folder / &quot;outputs&quot; / &quot;eval_report.json&quot;</code></span>
-<span class="code-line"><i>123</i><code>        evaluation = load_json(eval_path) if eval_path.exists() else {}</code></span>
-<span class="code-line"><i>124</i><code>        counts = evaluation.get(&quot;counts&quot;, {})</code></span>
-<span class="code-line"><i>125</i><code>        topic = state.get(&quot;topic&quot;) or &quot;근거 기반 리서치 세션&quot;</code></span>
-<span class="code-line"><i>126</i><code>        title, description = research_copy(folder.name, topic)</code></span>
-<span class="code-line"><i>127</i><code>        rel = folder.relative_to(ROOT).as_posix()</code></span>
-<span class="code-line"><i>128</i><code>        report_path = f&quot;{rel}/outputs/01_full_report/01_report.ko.md&quot;</code></span>
-<span class="code-line"><i>129</i><code>        summary_path = f&quot;{rel}/outputs/00_executive_summary.md&quot;</code></span>
-<span class="code-line"><i>130</i><code>        sources_path = f&quot;{rel}/sources/sources.jsonl&quot;</code></span>
-<span class="code-line"><i>131</i><code>        ledger_path = f&quot;{rel}/artifacts/claim_ledger.jsonl&quot;</code></span>
-<span class="code-line"><i>132</i><code>        sessions.append(</code></span>
-<span class="code-line"><i>133</i><code>            {</code></span>
-<span class="code-line"><i>134</i><code>                &quot;id&quot;: state.get(&quot;session_id&quot;, folder.name),</code></span>
-<span class="code-line"><i>135</i><code>                &quot;title&quot;: title,</code></span>
-<span class="code-line"><i>136</i><code>                &quot;description&quot;: description,</code></span>
-<span class="code-line"><i>137</i><code>                &quot;topic&quot;: topic,</code></span>
-<span class="code-line"><i>138</i><code>                &quot;status&quot;: state.get(&quot;status&quot;, &quot;UNKNOWN&quot;),</code></span>
-<span class="code-line"><i>139</i><code>                &quot;updated_at&quot;: state.get(&quot;updated_at&quot;) or state.get(&quot;created_at&quot;),</code></span>
-<span class="code-line"><i>140</i><code>                &quot;verdict&quot;: evaluation.get(&quot;verdict&quot;, &quot;NOT_EVALUATED&quot;),</code></span>
-<span class="code-line"><i>141</i><code>                &quot;source_count&quot;: counts.get(&quot;sources_total&quot;, json_line_count(folder / &quot;sources&quot; / &quot;sources.jsonl&quot;)),</code></span>
-<span class="code-line"><i>142</i><code>                &quot;claim_count&quot;: json_line_count(folder / &quot;artifacts&quot; / &quot;claim_ledger.jsonl&quot;),</code></span>
-<span class="code-line"><i>143</i><code>                &quot;verified_count&quot;: counts.get(&quot;verified&quot;, 0),</code></span>
-<span class="code-line"><i>144</i><code>                &quot;unresolved_count&quot;: counts.get(&quot;unresolved&quot;, 0),</code></span>
-<span class="code-line"><i>145</i><code>                &quot;refuted_count&quot;: counts.get(&quot;refuted&quot;, 0),</code></span>
-<span class="code-line"><i>146</i><code>                &quot;citation_rate&quot;: evaluation.get(&quot;metrics&quot;, {}).get(&quot;citation_resolution_rate&quot;),</code></span>
-<span class="code-line"><i>147</i><code>                &quot;links&quot;: [</code></span>
-<span class="code-line"><i>148</i><code>                    file_link(summary_path, &quot;요약&quot;),</code></span>
-<span class="code-line"><i>149</i><code>                    file_link(report_path, &quot;전체 보고서&quot;),</code></span>
-<span class="code-line"><i>150</i><code>                    file_link(sources_path, &quot;출처&quot;),</code></span>
-<span class="code-line"><i>151</i><code>                    file_link(ledger_path, &quot;주장 원장&quot;),</code></span>
-<span class="code-line"><i>152</i><code>                ],</code></span>
-<span class="code-line"><i>153</i><code>            }</code></span>
-<span class="code-line"><i>154</i><code>        )</code></span>
-<span class="code-line"><i>155</i><code>    missing = allowed - discovered</code></span>
-<span class="code-line"><i>156</i><code>    if missing:</code></span>
-<span class="code-line"><i>157</i><code>        raise ValueError(f&quot;publication allowlist sessions are missing: {sorted(missing)}&quot;)</code></span>
-<span class="code-line"><i>158</i><code>    return sorted(sessions, key=lambda item: item.get(&quot;updated_at&quot;) or &quot;&quot;, reverse=True)</code></span>
-<span class="code-line"><i>159</i><code></code></span>
+<span class="code-line"><i>110</i><code></code></span>
+<span class="code-line"><i>111</i><code>def build_research(session_allowlist: list[str]) -&gt; list[dict[str, Any]]:</code></span>
+<span class="code-line"><i>112</i><code>    if not session_allowlist or len(session_allowlist) != len(set(session_allowlist)):</code></span>
+<span class="code-line"><i>113</i><code>        raise ValueError(&quot;publication.research_session_allowlist must be a non-empty unique list&quot;)</code></span>
+<span class="code-line"><i>114</i><code>    allowed = set(session_allowlist)</code></span>
+<span class="code-line"><i>115</i><code>    sessions: list[dict[str, Any]] = []</code></span>
+<span class="code-line"><i>116</i><code>    discovered: set[str] = set()</code></span>
+<span class="code-line"><i>117</i><code>    for state_path in sorted((ROOT / &quot;RESEARCH&quot;).glob(&quot;*/state.json&quot;), reverse=True):</code></span>
+<span class="code-line"><i>118</i><code>        folder = state_path.parent</code></span>
+<span class="code-line"><i>119</i><code>        if folder.name not in allowed:</code></span>
+<span class="code-line"><i>120</i><code>            continue</code></span>
+<span class="code-line"><i>121</i><code>        discovered.add(folder.name)</code></span>
+<span class="code-line"><i>122</i><code>        state = load_json(state_path)</code></span>
+<span class="code-line"><i>123</i><code>        eval_path = folder / &quot;outputs&quot; / &quot;eval_report.json&quot;</code></span>
+<span class="code-line"><i>124</i><code>        evaluation = load_json(eval_path) if eval_path.exists() else {}</code></span>
+<span class="code-line"><i>125</i><code>        counts = evaluation.get(&quot;counts&quot;, {})</code></span>
+<span class="code-line"><i>126</i><code>        topic = state.get(&quot;topic&quot;) or &quot;근거 기반 리서치 세션&quot;</code></span>
+<span class="code-line"><i>127</i><code>        title, description = research_copy(folder.name, topic)</code></span>
+<span class="code-line"><i>128</i><code>        rel = folder.relative_to(ROOT).as_posix()</code></span>
+<span class="code-line"><i>129</i><code>        report_path = f&quot;{rel}/outputs/01_full_report/01_report.ko.md&quot;</code></span>
+<span class="code-line"><i>130</i><code>        summary_path = f&quot;{rel}/outputs/00_executive_summary.md&quot;</code></span>
+<span class="code-line"><i>131</i><code>        sources_path = f&quot;{rel}/sources/sources.jsonl&quot;</code></span>
+<span class="code-line"><i>132</i><code>        ledger_path = f&quot;{rel}/artifacts/claim_ledger.jsonl&quot;</code></span>
+<span class="code-line"><i>133</i><code>        sessions.append(</code></span>
+<span class="code-line"><i>134</i><code>            {</code></span>
+<span class="code-line"><i>135</i><code>                &quot;id&quot;: state.get(&quot;session_id&quot;, folder.name),</code></span>
+<span class="code-line"><i>136</i><code>                &quot;title&quot;: title,</code></span>
+<span class="code-line"><i>137</i><code>                &quot;description&quot;: description,</code></span>
+<span class="code-line"><i>138</i><code>                &quot;topic&quot;: topic,</code></span>
+<span class="code-line"><i>139</i><code>                &quot;status&quot;: state.get(&quot;status&quot;, &quot;UNKNOWN&quot;),</code></span>
+<span class="code-line"><i>140</i><code>                &quot;updated_at&quot;: state.get(&quot;updated_at&quot;) or state.get(&quot;created_at&quot;),</code></span>
+<span class="code-line"><i>141</i><code>                &quot;verdict&quot;: evaluation.get(&quot;verdict&quot;, &quot;NOT_EVALUATED&quot;),</code></span>
+<span class="code-line"><i>142</i><code>                &quot;source_count&quot;: counts.get(&quot;sources_total&quot;, json_line_count(folder / &quot;sources&quot; / &quot;sources.jsonl&quot;)),</code></span>
+<span class="code-line"><i>143</i><code>                &quot;claim_count&quot;: json_line_count(folder / &quot;artifacts&quot; / &quot;claim_ledger.jsonl&quot;),</code></span>
+<span class="code-line"><i>144</i><code>                &quot;verified_count&quot;: counts.get(&quot;verified&quot;, 0),</code></span>
+<span class="code-line"><i>145</i><code>                &quot;unresolved_count&quot;: counts.get(&quot;unresolved&quot;, 0),</code></span>
+<span class="code-line"><i>146</i><code>                &quot;refuted_count&quot;: counts.get(&quot;refuted&quot;, 0),</code></span>
+<span class="code-line"><i>147</i><code>                &quot;citation_rate&quot;: evaluation.get(&quot;metrics&quot;, {}).get(&quot;citation_resolution_rate&quot;),</code></span>
+<span class="code-line"><i>148</i><code>                &quot;links&quot;: [</code></span>
+<span class="code-line"><i>149</i><code>                    file_link(summary_path, &quot;요약&quot;),</code></span>
+<span class="code-line"><i>150</i><code>                    file_link(report_path, &quot;전체 보고서&quot;),</code></span>
+<span class="code-line"><i>151</i><code>                    file_link(sources_path, &quot;출처&quot;),</code></span>
+<span class="code-line"><i>152</i><code>                    file_link(ledger_path, &quot;주장 원장&quot;),</code></span>
+<span class="code-line"><i>153</i><code>                ],</code></span>
+<span class="code-line"><i>154</i><code>            }</code></span>
+<span class="code-line"><i>155</i><code>        )</code></span>
+<span class="code-line"><i>156</i><code>    missing = allowed - discovered</code></span>
+<span class="code-line"><i>157</i><code>    if missing:</code></span>
+<span class="code-line"><i>158</i><code>        raise ValueError(f&quot;publication allowlist sessions are missing: {sorted(missing)}&quot;)</code></span>
+<span class="code-line"><i>159</i><code>    return sorted(sessions, key=lambda item: item.get(&quot;updated_at&quot;) or &quot;&quot;, reverse=True)</code></span>
 <span class="code-line"><i>160</i><code></code></span>
-<span class="code-line"><i>161</i><code>def parse_gates() -&gt; list[dict[str, str]]:</code></span>
-<span class="code-line"><i>162</i><code>    path = ROOT / &quot;docs&quot; / &quot;MAINNET_GATES.md&quot;</code></span>
-<span class="code-line"><i>163</i><code>    gates: list[dict[str, str]] = []</code></span>
-<span class="code-line"><i>164</i><code>    for line in path.read_text(encoding=&quot;utf-8&quot;).splitlines():</code></span>
-<span class="code-line"><i>165</i><code>        if line.startswith(&quot;- &quot;):</code></span>
-<span class="code-line"><i>166</i><code>            gates.append({&quot;id&quot;: f&quot;gate-{len(gates) + 1}&quot;, &quot;state&quot;: &quot;blocked&quot;, &quot;text&quot;: line[2:].strip()})</code></span>
-<span class="code-line"><i>167</i><code>        elif gates and line.startswith(&quot;  &quot;) and line.strip():</code></span>
-<span class="code-line"><i>168</i><code>            gates[-1][&quot;text&quot;] += f&quot; {line.strip()}&quot;</code></span>
-<span class="code-line"><i>169</i><code>    return gates</code></span>
-<span class="code-line"><i>170</i><code></code></span>
+<span class="code-line"><i>161</i><code></code></span>
+<span class="code-line"><i>162</i><code>def parse_gates() -&gt; list[dict[str, str]]:</code></span>
+<span class="code-line"><i>163</i><code>    path = ROOT / &quot;docs&quot; / &quot;MAINNET_GATES.md&quot;</code></span>
+<span class="code-line"><i>164</i><code>    gates: list[dict[str, str]] = []</code></span>
+<span class="code-line"><i>165</i><code>    for line in path.read_text(encoding=&quot;utf-8&quot;).splitlines():</code></span>
+<span class="code-line"><i>166</i><code>        if line.startswith(&quot;- &quot;):</code></span>
+<span class="code-line"><i>167</i><code>            gates.append({&quot;id&quot;: f&quot;gate-{len(gates) + 1}&quot;, &quot;state&quot;: &quot;blocked&quot;, &quot;text&quot;: line[2:].strip()})</code></span>
+<span class="code-line"><i>168</i><code>        elif gates and line.startswith(&quot;  &quot;) and line.strip():</code></span>
+<span class="code-line"><i>169</i><code>            gates[-1][&quot;text&quot;] += f&quot; {line.strip()}&quot;</code></span>
+<span class="code-line"><i>170</i><code>    return gates</code></span>
 <span class="code-line"><i>171</i><code></code></span>
-<span class="code-line"><i>172</i><code>def validate_observation(item: Any, path: Path) -&gt; dict[str, Any]:</code></span>
-<span class="code-line"><i>173</i><code>    if not isinstance(item, dict):</code></span>
-<span class="code-line"><i>174</i><code>        raise ValueError(f&quot;unsafe observation {path}: root must be an object&quot;)</code></span>
-<span class="code-line"><i>175</i><code>    errors: list[str] = []</code></span>
-<span class="code-line"><i>176</i><code>    if item.get(&quot;chain_id&quot;) != GIWA_SEPOLIA_CHAIN_ID:</code></span>
-<span class="code-line"><i>177</i><code>        errors.append(f&quot;chain_id must be {GIWA_SEPOLIA_CHAIN_ID}&quot;)</code></span>
-<span class="code-line"><i>178</i><code>    for key, expected in OBSERVATION_SAFETY.items():</code></span>
-<span class="code-line"><i>179</i><code>        if item.get(key) is not expected:</code></span>
-<span class="code-line"><i>180</i><code>            errors.append(f&quot;{key} must be {str(expected).lower()}&quot;)</code></span>
-<span class="code-line"><i>181</i><code>    if not item.get(&quot;observed_at&quot;):</code></span>
-<span class="code-line"><i>182</i><code>        errors.append(&quot;observed_at is required&quot;)</code></span>
-<span class="code-line"><i>183</i><code>    if errors:</code></span>
-<span class="code-line"><i>184</i><code>        raise ValueError(f&quot;unsafe observation {path}: {&#x27;; &#x27;.join(errors)}&quot;)</code></span>
-<span class="code-line"><i>185</i><code>    return item</code></span>
-<span class="code-line"><i>186</i><code></code></span>
+<span class="code-line"><i>172</i><code></code></span>
+<span class="code-line"><i>173</i><code>def validate_observation(item: Any, path: Path) -&gt; dict[str, Any]:</code></span>
+<span class="code-line"><i>174</i><code>    if not isinstance(item, dict):</code></span>
+<span class="code-line"><i>175</i><code>        raise ValueError(f&quot;unsafe observation {path}: root must be an object&quot;)</code></span>
+<span class="code-line"><i>176</i><code>    errors: list[str] = []</code></span>
+<span class="code-line"><i>177</i><code>    if item.get(&quot;chain_id&quot;) != GIWA_SEPOLIA_CHAIN_ID:</code></span>
+<span class="code-line"><i>178</i><code>        errors.append(f&quot;chain_id must be {GIWA_SEPOLIA_CHAIN_ID}&quot;)</code></span>
+<span class="code-line"><i>179</i><code>    for key, expected in OBSERVATION_SAFETY.items():</code></span>
+<span class="code-line"><i>180</i><code>        if item.get(key) is not expected:</code></span>
+<span class="code-line"><i>181</i><code>            errors.append(f&quot;{key} must be {str(expected).lower()}&quot;)</code></span>
+<span class="code-line"><i>182</i><code>    if not item.get(&quot;observed_at&quot;):</code></span>
+<span class="code-line"><i>183</i><code>        errors.append(&quot;observed_at is required&quot;)</code></span>
+<span class="code-line"><i>184</i><code>    if errors:</code></span>
+<span class="code-line"><i>185</i><code>        raise ValueError(f&quot;unsafe observation {path}: {&#x27;; &#x27;.join(errors)}&quot;)</code></span>
+<span class="code-line"><i>186</i><code>    return item</code></span>
 <span class="code-line"><i>187</i><code></code></span>
-<span class="code-line"><i>188</i><code>def latest_observation() -&gt; dict[str, Any] | None:</code></span>
-<span class="code-line"><i>189</i><code>    observations: list[dict[str, Any]] = []</code></span>
-<span class="code-line"><i>190</i><code>    for path in ROOT.glob(OBSERVATION_GLOB):</code></span>
-<span class="code-line"><i>191</i><code>        try:</code></span>
-<span class="code-line"><i>192</i><code>            item = load_json(path)</code></span>
-<span class="code-line"><i>193</i><code>        except (OSError, json.JSONDecodeError) as exc:</code></span>
-<span class="code-line"><i>194</i><code>            raise ValueError(f&quot;invalid observation {path}: {exc}&quot;) from exc</code></span>
-<span class="code-line"><i>195</i><code>        validate_observation(item, path)</code></span>
-<span class="code-line"><i>196</i><code>        item[&quot;source_file&quot;] = path.relative_to(ROOT).as_posix()</code></span>
-<span class="code-line"><i>197</i><code>        observations.append(item)</code></span>
-<span class="code-line"><i>198</i><code>    if not observations:</code></span>
-<span class="code-line"><i>199</i><code>        return None</code></span>
-<span class="code-line"><i>200</i><code>    return max(observations, key=lambda item: item.get(&quot;observed_at&quot;, &quot;&quot;))</code></span>
-<span class="code-line"><i>201</i><code></code></span>
+<span class="code-line"><i>188</i><code></code></span>
+<span class="code-line"><i>189</i><code>def latest_observation() -&gt; dict[str, Any] | None:</code></span>
+<span class="code-line"><i>190</i><code>    observations: list[dict[str, Any]] = []</code></span>
+<span class="code-line"><i>191</i><code>    for path in ROOT.glob(OBSERVATION_GLOB):</code></span>
+<span class="code-line"><i>192</i><code>        try:</code></span>
+<span class="code-line"><i>193</i><code>            item = load_json(path)</code></span>
+<span class="code-line"><i>194</i><code>        except (OSError, json.JSONDecodeError) as exc:</code></span>
+<span class="code-line"><i>195</i><code>            raise ValueError(f&quot;invalid observation {path}: {exc}&quot;) from exc</code></span>
+<span class="code-line"><i>196</i><code>        validate_observation(item, path)</code></span>
+<span class="code-line"><i>197</i><code>        item[&quot;source_file&quot;] = path.relative_to(ROOT).as_posix()</code></span>
+<span class="code-line"><i>198</i><code>        observations.append(item)</code></span>
+<span class="code-line"><i>199</i><code>    if not observations:</code></span>
+<span class="code-line"><i>200</i><code>        return None</code></span>
+<span class="code-line"><i>201</i><code>    return max(observations, key=lambda item: item.get(&quot;observed_at&quot;, &quot;&quot;))</code></span>
 <span class="code-line"><i>202</i><code></code></span>
-<span class="code-line"><i>203</i><code>def validate_revenue_data(payload: Any, path: Path) -&gt; dict[str, Any]:</code></span>
-<span class="code-line"><i>204</i><code>    if not isinstance(payload, dict):</code></span>
-<span class="code-line"><i>205</i><code>        raise ValueError(f&quot;unsafe revenue dataset {path}: root must be an object&quot;)</code></span>
-<span class="code-line"><i>206</i><code>    errors: list[str] = []</code></span>
-<span class="code-line"><i>207</i><code>    safety = payload.get(&quot;safety&quot;) or {}</code></span>
-<span class="code-line"><i>208</i><code>    for key, expected in OBSERVATION_SAFETY.items():</code></span>
-<span class="code-line"><i>209</i><code>        if safety.get(key) is not expected:</code></span>
-<span class="code-line"><i>210</i><code>            errors.append(f&quot;safety.{key} must be {str(expected).lower()}&quot;)</code></span>
-<span class="code-line"><i>211</i><code></code></span>
-<span class="code-line"><i>212</i><code>    session = path.parents[1]</code></span>
-<span class="code-line"><i>213</i><code>    state = load_json(session / &quot;state.json&quot;)</code></span>
-<span class="code-line"><i>214</i><code>    evaluation = load_json(session / &quot;outputs&quot; / &quot;eval_report.json&quot;)</code></span>
-<span class="code-line"><i>215</i><code>    if state.get(&quot;status&quot;) not in {&quot;COMPLETE&quot;, &quot;COMPLETED&quot;}:</code></span>
-<span class="code-line"><i>216</i><code>        errors.append(&quot;owning research session must be complete&quot;)</code></span>
-<span class="code-line"><i>217</i><code>    if not state.get(&quot;verification&quot;, {}).get(&quot;passed&quot;):</code></span>
-<span class="code-line"><i>218</i><code>        errors.append(&quot;owning research verification must pass&quot;)</code></span>
-<span class="code-line"><i>219</i><code>    if evaluation.get(&quot;verdict&quot;) != &quot;PASS&quot;:</code></span>
-<span class="code-line"><i>220</i><code>        errors.append(&quot;owning research evaluation must pass&quot;)</code></span>
-<span class="code-line"><i>221</i><code></code></span>
-<span class="code-line"><i>222</i><code>    source_rows: list[dict[str, Any]] = []</code></span>
-<span class="code-line"><i>223</i><code>    sources_path = session / &quot;sources&quot; / &quot;sources.jsonl&quot;</code></span>
-<span class="code-line"><i>224</i><code>    try:</code></span>
-<span class="code-line"><i>225</i><code>        with sources_path.open(encoding=&quot;utf-8&quot;) as handle:</code></span>
-<span class="code-line"><i>226</i><code>            source_rows = [json.loads(line) for line in handle if line.strip()]</code></span>
-<span class="code-line"><i>227</i><code>    except (OSError, json.JSONDecodeError) as exc:</code></span>
-<span class="code-line"><i>228</i><code>        errors.append(f&quot;source registry is invalid: {exc}&quot;)</code></span>
-<span class="code-line"><i>229</i><code>    known_sources = {row.get(&quot;id&quot;) for row in source_rows}</code></span>
-<span class="code-line"><i>230</i><code>    for collection_name in (&quot;models&quot;, &quot;case_studies&quot;):</code></span>
-<span class="code-line"><i>231</i><code>        collection = payload.get(collection_name)</code></span>
-<span class="code-line"><i>232</i><code>        if not isinstance(collection, list) or not collection:</code></span>
-<span class="code-line"><i>233</i><code>            errors.append(f&quot;{collection_name} must be a non-empty list&quot;)</code></span>
-<span class="code-line"><i>234</i><code>            continue</code></span>
-<span class="code-line"><i>235</i><code>        for item in collection:</code></span>
-<span class="code-line"><i>236</i><code>            item_id = item.get(&quot;id&quot;, &quot;unknown&quot;) if isinstance(item, dict) else &quot;unknown&quot;</code></span>
-<span class="code-line"><i>237</i><code>            source_ids = item.get(&quot;source_ids&quot;, []) if isinstance(item, dict) else []</code></span>
-<span class="code-line"><i>238</i><code>            unknown = set(source_ids) - known_sources</code></span>
-<span class="code-line"><i>239</i><code>            if not source_ids:</code></span>
-<span class="code-line"><i>240</i><code>                errors.append(f&quot;{collection_name}.{item_id} requires source_ids&quot;)</code></span>
-<span class="code-line"><i>241</i><code>            elif unknown:</code></span>
-<span class="code-line"><i>242</i><code>                errors.append(f&quot;{collection_name}.{item_id} has unknown source_ids {sorted(unknown)}&quot;)</code></span>
-<span class="code-line"><i>243</i><code>    if errors:</code></span>
-<span class="code-line"><i>244</i><code>        raise ValueError(f&quot;unsafe revenue dataset {path}: {&#x27;; &#x27;.join(errors)}&quot;)</code></span>
-<span class="code-line"><i>245</i><code>    return payload</code></span>
-<span class="code-line"><i>246</i><code></code></span>
+<span class="code-line"><i>203</i><code></code></span>
+<span class="code-line"><i>204</i><code>def validate_revenue_data(payload: Any, path: Path) -&gt; dict[str, Any]:</code></span>
+<span class="code-line"><i>205</i><code>    if not isinstance(payload, dict):</code></span>
+<span class="code-line"><i>206</i><code>        raise ValueError(f&quot;unsafe revenue dataset {path}: root must be an object&quot;)</code></span>
+<span class="code-line"><i>207</i><code>    errors: list[str] = []</code></span>
+<span class="code-line"><i>208</i><code>    safety = payload.get(&quot;safety&quot;) or {}</code></span>
+<span class="code-line"><i>209</i><code>    for key, expected in OBSERVATION_SAFETY.items():</code></span>
+<span class="code-line"><i>210</i><code>        if safety.get(key) is not expected:</code></span>
+<span class="code-line"><i>211</i><code>            errors.append(f&quot;safety.{key} must be {str(expected).lower()}&quot;)</code></span>
+<span class="code-line"><i>212</i><code></code></span>
+<span class="code-line"><i>213</i><code>    session = path.parents[1]</code></span>
+<span class="code-line"><i>214</i><code>    state = load_json(session / &quot;state.json&quot;)</code></span>
+<span class="code-line"><i>215</i><code>    evaluation = load_json(session / &quot;outputs&quot; / &quot;eval_report.json&quot;)</code></span>
+<span class="code-line"><i>216</i><code>    if state.get(&quot;status&quot;) not in {&quot;COMPLETE&quot;, &quot;COMPLETED&quot;}:</code></span>
+<span class="code-line"><i>217</i><code>        errors.append(&quot;owning research session must be complete&quot;)</code></span>
+<span class="code-line"><i>218</i><code>    if not state.get(&quot;verification&quot;, {}).get(&quot;passed&quot;):</code></span>
+<span class="code-line"><i>219</i><code>        errors.append(&quot;owning research verification must pass&quot;)</code></span>
+<span class="code-line"><i>220</i><code>    if evaluation.get(&quot;verdict&quot;) != &quot;PASS&quot;:</code></span>
+<span class="code-line"><i>221</i><code>        errors.append(&quot;owning research evaluation must pass&quot;)</code></span>
+<span class="code-line"><i>222</i><code></code></span>
+<span class="code-line"><i>223</i><code>    source_rows: list[dict[str, Any]] = []</code></span>
+<span class="code-line"><i>224</i><code>    sources_path = session / &quot;sources&quot; / &quot;sources.jsonl&quot;</code></span>
+<span class="code-line"><i>225</i><code>    try:</code></span>
+<span class="code-line"><i>226</i><code>        with sources_path.open(encoding=&quot;utf-8&quot;) as handle:</code></span>
+<span class="code-line"><i>227</i><code>            source_rows = [json.loads(line) for line in handle if line.strip()]</code></span>
+<span class="code-line"><i>228</i><code>    except (OSError, json.JSONDecodeError) as exc:</code></span>
+<span class="code-line"><i>229</i><code>        errors.append(f&quot;source registry is invalid: {exc}&quot;)</code></span>
+<span class="code-line"><i>230</i><code>    known_sources = {row.get(&quot;id&quot;) for row in source_rows}</code></span>
+<span class="code-line"><i>231</i><code>    for collection_name in (&quot;models&quot;, &quot;case_studies&quot;):</code></span>
+<span class="code-line"><i>232</i><code>        collection = payload.get(collection_name)</code></span>
+<span class="code-line"><i>233</i><code>        if not isinstance(collection, list) or not collection:</code></span>
+<span class="code-line"><i>234</i><code>            errors.append(f&quot;{collection_name} must be a non-empty list&quot;)</code></span>
+<span class="code-line"><i>235</i><code>            continue</code></span>
+<span class="code-line"><i>236</i><code>        for item in collection:</code></span>
+<span class="code-line"><i>237</i><code>            item_id = item.get(&quot;id&quot;, &quot;unknown&quot;) if isinstance(item, dict) else &quot;unknown&quot;</code></span>
+<span class="code-line"><i>238</i><code>            source_ids = item.get(&quot;source_ids&quot;, []) if isinstance(item, dict) else []</code></span>
+<span class="code-line"><i>239</i><code>            unknown = set(source_ids) - known_sources</code></span>
+<span class="code-line"><i>240</i><code>            if not source_ids:</code></span>
+<span class="code-line"><i>241</i><code>                errors.append(f&quot;{collection_name}.{item_id} requires source_ids&quot;)</code></span>
+<span class="code-line"><i>242</i><code>            elif unknown:</code></span>
+<span class="code-line"><i>243</i><code>                errors.append(f&quot;{collection_name}.{item_id} has unknown source_ids {sorted(unknown)}&quot;)</code></span>
+<span class="code-line"><i>244</i><code>    if errors:</code></span>
+<span class="code-line"><i>245</i><code>        raise ValueError(f&quot;unsafe revenue dataset {path}: {&#x27;; &#x27;.join(errors)}&quot;)</code></span>
+<span class="code-line"><i>246</i><code>    return payload</code></span>
 <span class="code-line"><i>247</i><code></code></span>
-<span class="code-line"><i>248</i><code>def latest_revenue_data() -&gt; dict[str, Any] | None:</code></span>
-<span class="code-line"><i>249</i><code>    candidates = sorted(ROOT.glob(REVENUE_GLOB), reverse=True)</code></span>
-<span class="code-line"><i>250</i><code>    if not candidates:</code></span>
-<span class="code-line"><i>251</i><code>        return None</code></span>
-<span class="code-line"><i>252</i><code>    path = candidates[0]</code></span>
-<span class="code-line"><i>253</i><code>    try:</code></span>
-<span class="code-line"><i>254</i><code>        payload = load_json(path)</code></span>
-<span class="code-line"><i>255</i><code>    except (OSError, json.JSONDecodeError) as exc:</code></span>
-<span class="code-line"><i>256</i><code>        raise ValueError(f&quot;invalid revenue dataset {path}: {exc}&quot;) from exc</code></span>
-<span class="code-line"><i>257</i><code>    validate_revenue_data(payload, path)</code></span>
-<span class="code-line"><i>258</i><code>    payload[&quot;source_file&quot;] = path.relative_to(ROOT).as_posix()</code></span>
-<span class="code-line"><i>259</i><code>    return payload</code></span>
-<span class="code-line"><i>260</i><code></code></span>
+<span class="code-line"><i>248</i><code></code></span>
+<span class="code-line"><i>249</i><code>def latest_revenue_data() -&gt; dict[str, Any] | None:</code></span>
+<span class="code-line"><i>250</i><code>    candidates = sorted(ROOT.glob(REVENUE_GLOB), reverse=True)</code></span>
+<span class="code-line"><i>251</i><code>    if not candidates:</code></span>
+<span class="code-line"><i>252</i><code>        return None</code></span>
+<span class="code-line"><i>253</i><code>    path = candidates[0]</code></span>
+<span class="code-line"><i>254</i><code>    try:</code></span>
+<span class="code-line"><i>255</i><code>        payload = load_json(path)</code></span>
+<span class="code-line"><i>256</i><code>    except (OSError, json.JSONDecodeError) as exc:</code></span>
+<span class="code-line"><i>257</i><code>        raise ValueError(f&quot;invalid revenue dataset {path}: {exc}&quot;) from exc</code></span>
+<span class="code-line"><i>258</i><code>    validate_revenue_data(payload, path)</code></span>
+<span class="code-line"><i>259</i><code>    payload[&quot;source_file&quot;] = path.relative_to(ROOT).as_posix()</code></span>
+<span class="code-line"><i>260</i><code>    return payload</code></span>
 <span class="code-line"><i>261</i><code></code></span>
-<span class="code-line"><i>262</i><code>def catalog_payload() -&gt; dict[str, Any]:</code></span>
-<span class="code-line"><i>263</i><code>    manifest = load_json(MANIFEST_PATH)</code></span>
-<span class="code-line"><i>264</i><code>    ecosystem = load_json(ECOSYSTEM_PATH)</code></span>
-<span class="code-line"><i>265</i><code>    project = manifest[&quot;project&quot;]</code></span>
-<span class="code-line"><i>266</i><code>    branch = os.environ.get(&quot;DASHBOARD_REPO_REF&quot;) or project[&quot;default_branch&quot;]</code></span>
-<span class="code-line"><i>267</i><code>    project = dict(project)</code></span>
-<span class="code-line"><i>268</i><code>    project.pop(&quot;repo_url&quot;, None)</code></span>
-<span class="code-line"><i>269</i><code>    project[&quot;content_ref&quot;] = branch</code></span>
-<span class="code-line"><i>270</i><code>    overrides = manifest.get(&quot;ecosystem_overrides&quot;, {})</code></span>
-<span class="code-line"><i>271</i><code></code></span>
-<span class="code-line"><i>272</i><code>    ecosystem_entries: list[dict[str, Any]] = []</code></span>
-<span class="code-line"><i>273</i><code>    for raw_entry in ecosystem[&quot;entries&quot;]:</code></span>
-<span class="code-line"><i>274</i><code>        entry = dict(raw_entry)</code></span>
-<span class="code-line"><i>275</i><code>        override = overrides.get(entry[&quot;id&quot;], {})</code></span>
-<span class="code-line"><i>276</i><code>        entry[&quot;code_state&quot;] = override.get(&quot;code_state&quot;, &quot;unknown&quot;)</code></span>
-<span class="code-line"><i>277</i><code>        if entry.get(&quot;contracts&quot;):</code></span>
-<span class="code-line"><i>278</i><code>            entry[&quot;address_state&quot;] = override.get(&quot;address_state&quot;, &quot;catalogued_unverified&quot;)</code></span>
-<span class="code-line"><i>279</i><code>        else:</code></span>
-<span class="code-line"><i>280</i><code>            entry[&quot;address_state&quot;] = &quot;not_applicable&quot;</code></span>
-<span class="code-line"><i>281</i><code>        entry[&quot;links&quot;] = override.get(&quot;links&quot;, [])</code></span>
-<span class="code-line"><i>282</i><code>        entry[&quot;source_count&quot;] = len(entry.get(&quot;source_ids&quot;, []))</code></span>
-<span class="code-line"><i>283</i><code>        entry[&quot;contract_count&quot;] = len(entry.get(&quot;contracts&quot;, []))</code></span>
-<span class="code-line"><i>284</i><code>        ecosystem_entries.append(entry)</code></span>
+<span class="code-line"><i>262</i><code></code></span>
+<span class="code-line"><i>263</i><code>def validate_launch_prep(payload: Any, path: Path) -&gt; dict[str, Any]:</code></span>
+<span class="code-line"><i>264</i><code>    if not isinstance(payload, dict):</code></span>
+<span class="code-line"><i>265</i><code>        raise ValueError(f&quot;unsafe launch prep {path}: root must be an object&quot;)</code></span>
+<span class="code-line"><i>266</i><code>    errors: list[str] = []</code></span>
+<span class="code-line"><i>267</i><code>    safety = payload.get(&quot;safety&quot;) or {}</code></span>
+<span class="code-line"><i>268</i><code>    for key, expected in OBSERVATION_SAFETY.items():</code></span>
+<span class="code-line"><i>269</i><code>        if safety.get(key) is not expected:</code></span>
+<span class="code-line"><i>270</i><code>            errors.append(f&quot;safety.{key} must be {str(expected).lower()}&quot;)</code></span>
+<span class="code-line"><i>271</i><code>    if not payload.get(&quot;as_of&quot;):</code></span>
+<span class="code-line"><i>272</i><code>        errors.append(&quot;as_of is required&quot;)</code></span>
+<span class="code-line"><i>273</i><code>    for key in (&quot;launchpads&quot;, &quot;norms&quot;, &quot;playbook&quot;, &quot;costs&quot;, &quot;sources&quot;):</code></span>
+<span class="code-line"><i>274</i><code>        if not isinstance(payload.get(key, []), list):</code></span>
+<span class="code-line"><i>275</i><code>            errors.append(f&quot;{key} must be a list&quot;)</code></span>
+<span class="code-line"><i>276</i><code>    if errors:</code></span>
+<span class="code-line"><i>277</i><code>        raise ValueError(f&quot;unsafe launch prep {path}: {&#x27;; &#x27;.join(errors)}&quot;)</code></span>
+<span class="code-line"><i>278</i><code>    return payload</code></span>
+<span class="code-line"><i>279</i><code></code></span>
+<span class="code-line"><i>280</i><code></code></span>
+<span class="code-line"><i>281</i><code>def launch_prep_data() -&gt; dict[str, Any] | None:</code></span>
+<span class="code-line"><i>282</i><code>    if not LAUNCH_PREP_PATH.is_file():</code></span>
+<span class="code-line"><i>283</i><code>        return None</code></span>
+<span class="code-line"><i>284</i><code>    return validate_launch_prep(load_json(LAUNCH_PREP_PATH), LAUNCH_PREP_PATH)</code></span>
 <span class="code-line"><i>285</i><code></code></span>
-<span class="code-line"><i>286</i><code>    publication = manifest.get(&quot;publication&quot;) or {}</code></span>
-<span class="code-line"><i>287</i><code>    research = build_research(publication.get(&quot;research_session_allowlist&quot;, []))</code></span>
-<span class="code-line"><i>288</i><code>    build_tracks = [dict(item) for item in manifest.get(&quot;build_tracks&quot;, [])]</code></span>
-<span class="code-line"><i>289</i><code>    add_repo_links(build_tracks)</code></span>
-<span class="code-line"><i>290</i><code>    document_groups = [dict(item) for item in manifest.get(&quot;document_groups&quot;, [])]</code></span>
-<span class="code-line"><i>291</i><code>    add_repo_links(document_groups)</code></span>
-<span class="code-line"><i>292</i><code></code></span>
-<span class="code-line"><i>293</i><code>    official_count = sum(item[&quot;officiality&quot;] == &quot;official&quot; for item in ecosystem_entries)</code></span>
-<span class="code-line"><i>294</i><code>    provider_count = sum(item[&quot;officiality&quot;] == &quot;provider_reported&quot; for item in ecosystem_entries)</code></span>
-<span class="code-line"><i>295</i><code>    third_party_count = sum(item[&quot;officiality&quot;] == &quot;third_party&quot; for item in ecosystem_entries)</code></span>
-<span class="code-line"><i>296</i><code>    total_sources = sum(item[&quot;source_count&quot;] for item in research)</code></span>
-<span class="code-line"><i>297</i><code>    total_verified = sum(item[&quot;verified_count&quot;] for item in research)</code></span>
-<span class="code-line"><i>298</i><code>    total_unresolved = sum(item[&quot;unresolved_count&quot;] for item in research)</code></span>
-<span class="code-line"><i>299</i><code>    total_refuted = sum(item[&quot;refuted_count&quot;] for item in research)</code></span>
-<span class="code-line"><i>300</i><code>    contract_count = sum(item[&quot;contract_count&quot;] for item in ecosystem_entries)</code></span>
-<span class="code-line"><i>301</i><code>    code_ready_count = sum(item[&quot;status&quot;] == &quot;implemented&quot; for item in build_tracks)</code></span>
-<span class="code-line"><i>302</i><code></code></span>
-<span class="code-line"><i>303</i><code>    fingerprint_inputs = [Path(__file__), MANIFEST_PATH, ECOSYSTEM_PATH]</code></span>
-<span class="code-line"><i>304</i><code>    fingerprint_inputs.extend(sorted((ROOT / &quot;RESEARCH&quot;).glob(&quot;*/state.json&quot;)))</code></span>
-<span class="code-line"><i>305</i><code>    fingerprint_inputs.extend(sorted((ROOT / &quot;RESEARCH&quot;).glob(&quot;*/outputs/eval_report.json&quot;)))</code></span>
-<span class="code-line"><i>306</i><code>    fingerprint_inputs.extend(sorted((ROOT / &quot;RESEARCH&quot;).glob(&quot;*/sources/sources.jsonl&quot;)))</code></span>
-<span class="code-line"><i>307</i><code>    fingerprint_inputs.extend(sorted((ROOT / &quot;RESEARCH&quot;).glob(&quot;*/artifacts/claim_ledger.jsonl&quot;)))</code></span>
-<span class="code-line"><i>308</i><code>    fingerprint_inputs.extend(sorted((ROOT / &quot;RESEARCH&quot;).glob(&quot;*/outputs/**/*.md&quot;)))</code></span>
-<span class="code-line"><i>309</i><code>    fingerprint_inputs.extend(sorted(ROOT.glob(REVENUE_GLOB)))</code></span>
-<span class="code-line"><i>310</i><code>    fingerprint = hashlib.sha256(branch.encode(&quot;utf-8&quot;))</code></span>
-<span class="code-line"><i>311</i><code>    for path in fingerprint_inputs:</code></span>
-<span class="code-line"><i>312</i><code>        if path.is_file():</code></span>
-<span class="code-line"><i>313</i><code>            fingerprint.update(path.relative_to(ROOT).as_posix().encode(&quot;utf-8&quot;))</code></span>
-<span class="code-line"><i>314</i><code>            fingerprint.update(path.read_bytes())</code></span>
-<span class="code-line"><i>315</i><code>    source_fingerprint = fingerprint.hexdigest()[:12]</code></span>
-<span class="code-line"><i>316</i><code></code></span>
-<span class="code-line"><i>317</i><code>    return {</code></span>
-<span class="code-line"><i>318</i><code>        &quot;schema_version&quot;: 1,</code></span>
-<span class="code-line"><i>319</i><code>        &quot;catalog_revision&quot;: source_fingerprint,</code></span>
-<span class="code-line"><i>320</i><code>        &quot;as_of&quot;: manifest[&quot;as_of&quot;],</code></span>
-<span class="code-line"><i>321</i><code>        &quot;project&quot;: project,</code></span>
-<span class="code-line"><i>322</i><code>        &quot;publication&quot;: publication,</code></span>
-<span class="code-line"><i>323</i><code>        &quot;safety&quot;: manifest[&quot;safety&quot;],</code></span>
-<span class="code-line"><i>324</i><code>        &quot;metrics&quot;: {</code></span>
-<span class="code-line"><i>325</i><code>            &quot;ecosystem_entries&quot;: len(ecosystem_entries),</code></span>
-<span class="code-line"><i>326</i><code>            &quot;official_entries&quot;: official_count,</code></span>
-<span class="code-line"><i>327</i><code>            &quot;provider_entries&quot;: provider_count,</code></span>
-<span class="code-line"><i>328</i><code>            &quot;third_party_entries&quot;: third_party_count,</code></span>
-<span class="code-line"><i>329</i><code>            &quot;catalogued_addresses&quot;: contract_count,</code></span>
-<span class="code-line"><i>330</i><code>            &quot;research_sessions&quot;: len(research),</code></span>
-<span class="code-line"><i>331</i><code>            &quot;registered_sources&quot;: total_sources,</code></span>
-<span class="code-line"><i>332</i><code>            &quot;verified_claims&quot;: total_verified,</code></span>
-<span class="code-line"><i>333</i><code>            &quot;unresolved_claims&quot;: total_unresolved,</code></span>
-<span class="code-line"><i>334</i><code>            &quot;refuted_claims&quot;: total_refuted,</code></span>
-<span class="code-line"><i>335</i><code>            &quot;implemented_tracks&quot;: code_ready_count,</code></span>
-<span class="code-line"><i>336</i><code>            &quot;total_tracks&quot;: len(build_tracks),</code></span>
-<span class="code-line"><i>337</i><code>        },</code></span>
-<span class="code-line"><i>338</i><code>        &quot;network_observation&quot;: latest_observation(),</code></span>
-<span class="code-line"><i>339</i><code>        &quot;official_resources&quot;: manifest.get(&quot;official_resources&quot;, []),</code></span>
-<span class="code-line"><i>340</i><code>        &quot;ecosystem&quot;: ecosystem_entries,</code></span>
-<span class="code-line"><i>341</i><code>        &quot;infrastructure&quot;: manifest.get(&quot;infrastructure&quot;, {}),</code></span>
-<span class="code-line"><i>342</i><code>        &quot;pool_blueprint&quot;: manifest.get(&quot;pool_blueprint&quot;, {}),</code></span>
-<span class="code-line"><i>343</i><code>        &quot;revenue&quot;: latest_revenue_data(),</code></span>
-<span class="code-line"><i>344</i><code>        &quot;research&quot;: research,</code></span>
-<span class="code-line"><i>345</i><code>        &quot;build_tracks&quot;: build_tracks,</code></span>
-<span class="code-line"><i>346</i><code>        &quot;document_groups&quot;: document_groups,</code></span>
-<span class="code-line"><i>347</i><code>        &quot;mainnet_gates&quot;: parse_gates(),</code></span>
-<span class="code-line"><i>348</i><code>    }</code></span>
-<span class="code-line"><i>349</i><code></code></span>
-<span class="code-line"><i>350</i><code></code></span>
-<span class="code-line"><i>351</i><code>def serialized_catalog() -&gt; str:</code></span>
-<span class="code-line"><i>352</i><code>    return json.dumps(catalog_payload(), ensure_ascii=False, indent=2, sort_keys=False) + &quot;\n&quot;</code></span>
-<span class="code-line"><i>353</i><code></code></span>
-<span class="code-line"><i>354</i><code></code></span>
-<span class="code-line"><i>355</i><code>def main() -&gt; int:</code></span>
-<span class="code-line"><i>356</i><code>    parser = argparse.ArgumentParser(description=__doc__)</code></span>
-<span class="code-line"><i>357</i><code>    parser.add_argument(&quot;--check&quot;, action=&quot;store_true&quot;, help=&quot;fail if the checked-in catalog is stale&quot;)</code></span>
-<span class="code-line"><i>358</i><code>    args = parser.parse_args()</code></span>
-<span class="code-line"><i>359</i><code>    expected = serialized_catalog()</code></span>
-<span class="code-line"><i>360</i><code>    if args.check:</code></span>
-<span class="code-line"><i>361</i><code>        if not OUTPUT_PATH.exists() or OUTPUT_PATH.read_text(encoding=&quot;utf-8&quot;) != expected:</code></span>
-<span class="code-line"><i>362</i><code>            print(f&quot;dashboard catalog is stale: run {Path(__file__).relative_to(ROOT)}&quot;)</code></span>
-<span class="code-line"><i>363</i><code>            return 1</code></span>
-<span class="code-line"><i>364</i><code>        print(f&quot;dashboard catalog is current ({catalog_payload()[&#x27;catalog_revision&#x27;]})&quot;)</code></span>
-<span class="code-line"><i>365</i><code>        return 0</code></span>
-<span class="code-line"><i>366</i><code>    OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)</code></span>
-<span class="code-line"><i>367</i><code>    OUTPUT_PATH.write_text(expected, encoding=&quot;utf-8&quot;)</code></span>
-<span class="code-line"><i>368</i><code>    print(f&quot;wrote {OUTPUT_PATH.relative_to(ROOT)}&quot;)</code></span>
-<span class="code-line"><i>369</i><code>    return 0</code></span>
-<span class="code-line"><i>370</i><code></code></span>
-<span class="code-line"><i>371</i><code></code></span>
-<span class="code-line"><i>372</i><code>if __name__ == &quot;__main__&quot;:</code></span>
-<span class="code-line"><i>373</i><code>    raise SystemExit(main())</code></span></pre></article>
+<span class="code-line"><i>286</i><code></code></span>
+<span class="code-line"><i>287</i><code>def catalog_payload() -&gt; dict[str, Any]:</code></span>
+<span class="code-line"><i>288</i><code>    manifest = load_json(MANIFEST_PATH)</code></span>
+<span class="code-line"><i>289</i><code>    ecosystem = load_json(ECOSYSTEM_PATH)</code></span>
+<span class="code-line"><i>290</i><code>    project = manifest[&quot;project&quot;]</code></span>
+<span class="code-line"><i>291</i><code>    branch = os.environ.get(&quot;DASHBOARD_REPO_REF&quot;) or project[&quot;default_branch&quot;]</code></span>
+<span class="code-line"><i>292</i><code>    project = dict(project)</code></span>
+<span class="code-line"><i>293</i><code>    project.pop(&quot;repo_url&quot;, None)</code></span>
+<span class="code-line"><i>294</i><code>    project[&quot;content_ref&quot;] = branch</code></span>
+<span class="code-line"><i>295</i><code>    overrides = manifest.get(&quot;ecosystem_overrides&quot;, {})</code></span>
+<span class="code-line"><i>296</i><code></code></span>
+<span class="code-line"><i>297</i><code>    ecosystem_entries: list[dict[str, Any]] = []</code></span>
+<span class="code-line"><i>298</i><code>    for raw_entry in ecosystem[&quot;entries&quot;]:</code></span>
+<span class="code-line"><i>299</i><code>        entry = dict(raw_entry)</code></span>
+<span class="code-line"><i>300</i><code>        override = overrides.get(entry[&quot;id&quot;], {})</code></span>
+<span class="code-line"><i>301</i><code>        entry[&quot;code_state&quot;] = override.get(&quot;code_state&quot;, &quot;unknown&quot;)</code></span>
+<span class="code-line"><i>302</i><code>        if entry.get(&quot;contracts&quot;):</code></span>
+<span class="code-line"><i>303</i><code>            entry[&quot;address_state&quot;] = override.get(&quot;address_state&quot;, &quot;catalogued_unverified&quot;)</code></span>
+<span class="code-line"><i>304</i><code>        else:</code></span>
+<span class="code-line"><i>305</i><code>            entry[&quot;address_state&quot;] = &quot;not_applicable&quot;</code></span>
+<span class="code-line"><i>306</i><code>        entry[&quot;links&quot;] = override.get(&quot;links&quot;, [])</code></span>
+<span class="code-line"><i>307</i><code>        entry[&quot;source_count&quot;] = len(entry.get(&quot;source_ids&quot;, []))</code></span>
+<span class="code-line"><i>308</i><code>        entry[&quot;contract_count&quot;] = len(entry.get(&quot;contracts&quot;, []))</code></span>
+<span class="code-line"><i>309</i><code>        ecosystem_entries.append(entry)</code></span>
+<span class="code-line"><i>310</i><code></code></span>
+<span class="code-line"><i>311</i><code>    publication = manifest.get(&quot;publication&quot;) or {}</code></span>
+<span class="code-line"><i>312</i><code>    research = build_research(publication.get(&quot;research_session_allowlist&quot;, []))</code></span>
+<span class="code-line"><i>313</i><code>    build_tracks = [dict(item) for item in manifest.get(&quot;build_tracks&quot;, [])]</code></span>
+<span class="code-line"><i>314</i><code>    add_repo_links(build_tracks)</code></span>
+<span class="code-line"><i>315</i><code>    document_groups = [dict(item) for item in manifest.get(&quot;document_groups&quot;, [])]</code></span>
+<span class="code-line"><i>316</i><code>    add_repo_links(document_groups)</code></span>
+<span class="code-line"><i>317</i><code></code></span>
+<span class="code-line"><i>318</i><code>    official_count = sum(item[&quot;officiality&quot;] == &quot;official&quot; for item in ecosystem_entries)</code></span>
+<span class="code-line"><i>319</i><code>    provider_count = sum(item[&quot;officiality&quot;] == &quot;provider_reported&quot; for item in ecosystem_entries)</code></span>
+<span class="code-line"><i>320</i><code>    third_party_count = sum(item[&quot;officiality&quot;] == &quot;third_party&quot; for item in ecosystem_entries)</code></span>
+<span class="code-line"><i>321</i><code>    total_sources = sum(item[&quot;source_count&quot;] for item in research)</code></span>
+<span class="code-line"><i>322</i><code>    total_verified = sum(item[&quot;verified_count&quot;] for item in research)</code></span>
+<span class="code-line"><i>323</i><code>    total_unresolved = sum(item[&quot;unresolved_count&quot;] for item in research)</code></span>
+<span class="code-line"><i>324</i><code>    total_refuted = sum(item[&quot;refuted_count&quot;] for item in research)</code></span>
+<span class="code-line"><i>325</i><code>    contract_count = sum(item[&quot;contract_count&quot;] for item in ecosystem_entries)</code></span>
+<span class="code-line"><i>326</i><code>    code_ready_count = sum(item[&quot;status&quot;] == &quot;implemented&quot; for item in build_tracks)</code></span>
+<span class="code-line"><i>327</i><code></code></span>
+<span class="code-line"><i>328</i><code>    fingerprint_inputs = [Path(__file__), MANIFEST_PATH, ECOSYSTEM_PATH, LAUNCH_PREP_PATH]</code></span>
+<span class="code-line"><i>329</i><code>    fingerprint_inputs.extend(sorted((ROOT / &quot;RESEARCH&quot;).glob(&quot;*/state.json&quot;)))</code></span>
+<span class="code-line"><i>330</i><code>    fingerprint_inputs.extend(sorted((ROOT / &quot;RESEARCH&quot;).glob(&quot;*/outputs/eval_report.json&quot;)))</code></span>
+<span class="code-line"><i>331</i><code>    fingerprint_inputs.extend(sorted((ROOT / &quot;RESEARCH&quot;).glob(&quot;*/sources/sources.jsonl&quot;)))</code></span>
+<span class="code-line"><i>332</i><code>    fingerprint_inputs.extend(sorted((ROOT / &quot;RESEARCH&quot;).glob(&quot;*/artifacts/claim_ledger.jsonl&quot;)))</code></span>
+<span class="code-line"><i>333</i><code>    fingerprint_inputs.extend(sorted((ROOT / &quot;RESEARCH&quot;).glob(&quot;*/outputs/**/*.md&quot;)))</code></span>
+<span class="code-line"><i>334</i><code>    fingerprint_inputs.extend(sorted(ROOT.glob(REVENUE_GLOB)))</code></span>
+<span class="code-line"><i>335</i><code>    fingerprint = hashlib.sha256(branch.encode(&quot;utf-8&quot;))</code></span>
+<span class="code-line"><i>336</i><code>    for path in fingerprint_inputs:</code></span>
+<span class="code-line"><i>337</i><code>        if path.is_file():</code></span>
+<span class="code-line"><i>338</i><code>            fingerprint.update(path.relative_to(ROOT).as_posix().encode(&quot;utf-8&quot;))</code></span>
+<span class="code-line"><i>339</i><code>            fingerprint.update(path.read_bytes())</code></span>
+<span class="code-line"><i>340</i><code>    source_fingerprint = fingerprint.hexdigest()[:12]</code></span>
+<span class="code-line"><i>341</i><code></code></span>
+<span class="code-line"><i>342</i><code>    return {</code></span>
+<span class="code-line"><i>343</i><code>        &quot;schema_version&quot;: 1,</code></span>
+<span class="code-line"><i>344</i><code>        &quot;catalog_revision&quot;: source_fingerprint,</code></span>
+<span class="code-line"><i>345</i><code>        &quot;as_of&quot;: manifest[&quot;as_of&quot;],</code></span>
+<span class="code-line"><i>346</i><code>        &quot;project&quot;: project,</code></span>
+<span class="code-line"><i>347</i><code>        &quot;publication&quot;: publication,</code></span>
+<span class="code-line"><i>348</i><code>        &quot;safety&quot;: manifest[&quot;safety&quot;],</code></span>
+<span class="code-line"><i>349</i><code>        &quot;launch_prep&quot;: launch_prep_data(),</code></span>
+<span class="code-line"><i>350</i><code>        &quot;metrics&quot;: {</code></span>
+<span class="code-line"><i>351</i><code>            &quot;ecosystem_entries&quot;: len(ecosystem_entries),</code></span>
+<span class="code-line"><i>352</i><code>            &quot;official_entries&quot;: official_count,</code></span>
+<span class="code-line"><i>353</i><code>            &quot;provider_entries&quot;: provider_count,</code></span>
+<span class="code-line"><i>354</i><code>            &quot;third_party_entries&quot;: third_party_count,</code></span>
+<span class="code-line"><i>355</i><code>            &quot;catalogued_addresses&quot;: contract_count,</code></span>
+<span class="code-line"><i>356</i><code>            &quot;research_sessions&quot;: len(research),</code></span>
+<span class="code-line"><i>357</i><code>            &quot;registered_sources&quot;: total_sources,</code></span>
+<span class="code-line"><i>358</i><code>            &quot;verified_claims&quot;: total_verified,</code></span>
+<span class="code-line"><i>359</i><code>            &quot;unresolved_claims&quot;: total_unresolved,</code></span>
+<span class="code-line"><i>360</i><code>            &quot;refuted_claims&quot;: total_refuted,</code></span>
+<span class="code-line"><i>361</i><code>            &quot;implemented_tracks&quot;: code_ready_count,</code></span>
+<span class="code-line"><i>362</i><code>            &quot;total_tracks&quot;: len(build_tracks),</code></span>
+<span class="code-line"><i>363</i><code>        },</code></span>
+<span class="code-line"><i>364</i><code>        &quot;network_observation&quot;: latest_observation(),</code></span>
+<span class="code-line"><i>365</i><code>        &quot;official_resources&quot;: manifest.get(&quot;official_resources&quot;, []),</code></span>
+<span class="code-line"><i>366</i><code>        &quot;ecosystem&quot;: ecosystem_entries,</code></span>
+<span class="code-line"><i>367</i><code>        &quot;infrastructure&quot;: manifest.get(&quot;infrastructure&quot;, {}),</code></span>
+<span class="code-line"><i>368</i><code>        &quot;pool_blueprint&quot;: manifest.get(&quot;pool_blueprint&quot;, {}),</code></span>
+<span class="code-line"><i>369</i><code>        &quot;revenue&quot;: latest_revenue_data(),</code></span>
+<span class="code-line"><i>370</i><code>        &quot;research&quot;: research,</code></span>
+<span class="code-line"><i>371</i><code>        &quot;build_tracks&quot;: build_tracks,</code></span>
+<span class="code-line"><i>372</i><code>        &quot;document_groups&quot;: document_groups,</code></span>
+<span class="code-line"><i>373</i><code>        &quot;mainnet_gates&quot;: parse_gates(),</code></span>
+<span class="code-line"><i>374</i><code>    }</code></span>
+<span class="code-line"><i>375</i><code></code></span>
+<span class="code-line"><i>376</i><code></code></span>
+<span class="code-line"><i>377</i><code>def serialized_catalog() -&gt; str:</code></span>
+<span class="code-line"><i>378</i><code>    return json.dumps(catalog_payload(), ensure_ascii=False, indent=2, sort_keys=False) + &quot;\n&quot;</code></span>
+<span class="code-line"><i>379</i><code></code></span>
+<span class="code-line"><i>380</i><code></code></span>
+<span class="code-line"><i>381</i><code>def main() -&gt; int:</code></span>
+<span class="code-line"><i>382</i><code>    parser = argparse.ArgumentParser(description=__doc__)</code></span>
+<span class="code-line"><i>383</i><code>    parser.add_argument(&quot;--check&quot;, action=&quot;store_true&quot;, help=&quot;fail if the checked-in catalog is stale&quot;)</code></span>
+<span class="code-line"><i>384</i><code>    args = parser.parse_args()</code></span>
+<span class="code-line"><i>385</i><code>    expected = serialized_catalog()</code></span>
+<span class="code-line"><i>386</i><code>    if args.check:</code></span>
+<span class="code-line"><i>387</i><code>        if not OUTPUT_PATH.exists() or OUTPUT_PATH.read_text(encoding=&quot;utf-8&quot;) != expected:</code></span>
+<span class="code-line"><i>388</i><code>            print(f&quot;dashboard catalog is stale: run {Path(__file__).relative_to(ROOT)}&quot;)</code></span>
+<span class="code-line"><i>389</i><code>            return 1</code></span>
+<span class="code-line"><i>390</i><code>        print(f&quot;dashboard catalog is current ({catalog_payload()[&#x27;catalog_revision&#x27;]})&quot;)</code></span>
+<span class="code-line"><i>391</i><code>        return 0</code></span>
+<span class="code-line"><i>392</i><code>    OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)</code></span>
+<span class="code-line"><i>393</i><code>    OUTPUT_PATH.write_text(expected, encoding=&quot;utf-8&quot;)</code></span>
+<span class="code-line"><i>394</i><code>    print(f&quot;wrote {OUTPUT_PATH.relative_to(ROOT)}&quot;)</code></span>
+<span class="code-line"><i>395</i><code>    return 0</code></span>
+<span class="code-line"><i>396</i><code></code></span>
+<span class="code-line"><i>397</i><code></code></span>
+<span class="code-line"><i>398</i><code>if __name__ == &quot;__main__&quot;:</code></span>
+<span class="code-line"><i>399</i><code>    raise SystemExit(main())</code></span></pre></article>
     </main>
     <footer>
       <span>research_only=true</span>

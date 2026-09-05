@@ -1,0 +1,803 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex,nofollow,noarchive" />
+    <meta name="theme-color" content="#090c0e" />
+    <title>Lens 03 — Fastest operational path to launch on Robinhood Chain (creator side) + market temperature · GIWA · Robinhood Launchpad</title>
+    <link rel="stylesheet" href="../../../assets/document.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#document">본문으로 바로가기</a>
+    <header class="document-header">
+      <a class="brand" href="../../../development.html" aria-label="GIWA 대시보드로 돌아가기">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span><strong>GIWA · RH</strong><small>LAUNCHPAD ROOM</small></span>
+      </a>
+      <nav aria-label="문서 동작">
+        <a href="../../../development.html">← 대시보드</a>
+      </nav>
+    </header>
+    <main id="document" class="document-shell">
+      <div class="document-meta">
+        <span>REPORT</span>
+        <span>SHA256 8e4b2b29e3e7</span>
+      </div>
+      <h1>Lens 03 — Fastest operational path to launch on Robinhood Chain (creator side) + market temperature</h1>
+      <p class="source-path">docs/launch_research_2026-09-06/03_fastest_path_playbook.md</p>
+      <article class="markdown-body"><h1 id="lens-03-fastest-operational-path-to-launch-on-robinhood-chain-creator-side-market-temperature">Lens 03 — Fastest operational path to launch on Robinhood Chain (creator side) + market temperature</h1>
+<p>Observed window: 2026-09-05 20:00–21:30 UTC (2026-09-06 05:00–06:30 KST). ETH = $2,477.62 (coins.llama.fi <code>coingecko:ethereum</code>, ts 1788638390). All USD figures below use that price. Every number carries its source and the observation time; anything I could not observe is marked <strong>UNVERIFIED</strong>. Legal/registration topics are deliberately out of scope.</p>
+<p>Raw pulls saved under <code>scratchpad/launch/raw/</code> (DefiLlama JSON, Blockscout JSON, contract ABI, RPC samples, Pons docs text).</p>
+<hr>
+<h2 id="0-executive-summary-what-to-do-in-order">0. Executive summary (what to do, in order)</h2>
+<ol>
+<li><strong>Fund from a CEX to Arbitrum One, then Relay/Across into chain 4663.</strong> No CEX I could check (Binance, Coinbase) withdraws directly to Robinhood Chain; the Robinhood app itself does transfer ETH to Robinhood Chain but only for US accounts. Cheapest observed route: Binance → Arbitrum One (0.00002 ETH fee) → Relay (≈$0.10 per 0.1 ETH, ~1 s fill). Canonical Arbitrum bridge from Ethereum L1 works too (deposit ~10 min) but withdrawal back is a 7-day challenge period.</li>
+<li><strong>Wallet: Rabby (Robinhood Chain is in its native chain list) or MetaMask with manual params</strong> (chain 4663, RPC <code>https://rpc.mainnet.chain.robinhood.com</code>, symbol ETH, explorer <code>robinhoodchain.blockscout.com</code>).</li>
+<li><strong>Gas is trivial:</strong> a Pons V2 token creation costs ≈0.0015 ETH ($3.6) in gas + 0.0005 ETH ($1.24) launch fee; a fee claim costs ≈0.000013 ETH ($0.03). Gas price ≈0.4–0.5 gwei normally, spikes to ~5 gwei.</li>
+<li><strong>Launch on Pons V2</strong> (<code>ponsfamily.com/launchpad/create</code>; factory <code>0x7eD598Bc…EC7e</code>). On-chain terms right now: 1 B fixed supply, 1% trading fee (70% creator / 30% protocol, or 35/35/30 with buyback on), <strong>optional creator tax up to 10% on top, 100% to creator, fixed at creation</strong>, graduation at <strong>4.2 ETH raised (~$10.4k; ≈$51k FDV)</strong>, permanent locked Uniswap-v4 liquidity, 99%→0 snipe tax over the first 3 s (contract) / 5 s (docs). Public launching is open (<code>canLaunch(anyAddress) == true</code>, <code>launchEnabled == true</code>), despite a stale "whitelist only" sentence in the docs.</li>
+<li><strong>Competition is brutal and graduation is a launch-time decision:</strong> ~40,850 V2 launches and 959 graduations in the 36.6 h before observation (≈26.8k launches/day, <strong>2.3% graduation rate</strong>); sampled graduations happen a <strong>median 2.0 min after launch (p90 41 min, none &gt; 2 h)</strong> — the 4.2 ETH curve is bought out by the launcher's bundle + bots, not by an organic climb. 41% of graduated tokens set a creator tax (1–10%); none use buyback. Distribution, not deployment, is the whole game.</li>
+<li><strong>Attention lives on GMGN (Robinhood tab; 1% fee; $2.8M/day fees on this chain), Dexscreener (chain slug <code>robinhood</code>; 16 of the 30 latest paid boosts and 21 of 30 latest token profiles were Robinhood-chain tokens at observation), X (@ponsdotfamily, @RobinhoodCrypto), hoodscan.co, and in Korea GMGN Korea TG (1,736 members) + dcinside 차트갤/코박갤 + fmkorea 코인게시판 + Naver blogs.</strong></li>
+<li><strong>Timing:</strong> weekdays beat weekends (Fri $984M avg DEX volume vs Sat $534M); hourly activity peaks 15:00–22:00 UTC (00:00–07:00 KST) and troughs 02:00–10:00 UTC (11:00–19:00 KST). Launch into the US afternoon/evening, i.e. late night KST.</li>
+<li><strong>Market temperature:</strong> the memecoin heat is <em>rotating into Robinhood Chain</em>, not a broad bull. Robinhood DEX volume: $1.89B/24h, $10.7B/7d (+105% w/w), $23.1B/30d (+263% m/m) — now on par with Solana's daily DEX volume ($1.88B). Pons V2 fees $8.75M/day (7d = 5.7× the previous 7d) vs pump.fun $0.93M (7d 0.9×, last day possibly partial), letsbonk $5k, four.meme $7k. Solana/Base/ETH 7d DEX volumes are all down 11–27% w/w while BSC (+32%) and Robinhood (+105%) are up.</li>
+</ol>
+<hr>
+<h2 id="1-funding-getting-eth-onto-chain-4663">1. Funding: getting ETH onto chain 4663</h2>
+<h3 id="11-robinhood-app-robinhood-chain-direct">1.1 Robinhood app → Robinhood Chain (direct)</h3>
+<ul>
+<li>Robinhood support "Crypto transfers": "<strong>Robinhood Chain</strong>: Ethereum (ETH), Global Dollar (USDG), and Cash Cat (CASHCAT) are currently available for transfers on Robinhood Chain, which uses the same address format as Ethereum" and "CASHCAT, ETH, and USDG on Robinhood Chain are currently unavailable for transfers in New York." Eligibility: "Robinhood Crypto transfers are currently available in every US state… also… US Virgin Islands, Puerto Rico, and the District of Columbia." No non-US availability mentioned. Source: https://robinhood.com/us/en/support/articles/crypto-transfers/ (observed 2026-09-05 20:20 UTC). No fee beyond network fee ("Robinhood charges no additional fees to send or receive crypto").</li>
+<li>Robinhood support "Robinhood Chain mainnet": "You can bridge ETH and supported ERC-20 tokens to Robinhood Chain using the canonical Arbitrum bridge or partner bridging routes." "Robinhood Wallet natively supports Robinhood Chain with no manual setup required." Source: https://robinhood.com/us/en/support/articles/robinhood-chain-mainnet (observed 20:35 UTC).</li>
+<li><strong>Implication for a Korea-resident individual:</strong> the Robinhood brokerage/crypto app path is not available (US-only per the article). Use the bridge path below. Whether Robinhood Wallet (separate self-custody app; supports "Ethereum, Bitcoin, Solana, Dogecoin, Arbitrum, Polygon, Optimism, Base, and Robinhood Chain networks" per https://robinhood.com/us/en/support/articles/robinhood-wallet/) can be installed/used from Korea is <strong>UNVERIFIED</strong>.</li>
+</ul>
+<h3 id="12-bridges-into-chain-4663-observed-quotes">1.2 Bridges into chain 4663 — observed quotes</h3>
+<table>
+<thead>
+<tr>
+<th>Route</th>
+<th>Fee observed</th>
+<th>Time</th>
+<th>Source / observed</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Canonical Arbitrum bridge</strong> (Ethereum L1 → RH)</td>
+<td>L1 gas only (not quoted)</td>
+<td>"Deposit ~10 min"; "Withdrawal ~7 days (challenge period)"</td>
+<td>docs.robinhood.com/chain/bridging; portal URL <code>https://portal.arbitrum.io/bridge?destinationChain=robinhood-chain&amp;sourceChain=ethereum</code> (also in chainid.network entry for 4663) — 20:05 UTC</td>
+</tr>
+<tr>
+<td><strong>Relay</strong> (<code>relay.link/bridge/robinhood</code>) Ethereum→RH, 0.1 ETH</td>
+<td>relayer $0.080 + origin gas $0.014; out 0.0999678 ETH; impact −0.03%</td>
+<td>timeEstimate <strong>1 s</strong></td>
+<td><code>POST api.relay.link/quote</code> — 20:08 UTC</td>
+</tr>
+<tr>
+<td>Relay Arbitrum→RH, 0.1 ETH</td>
+<td>relayer $0.103 + gas $0.0014; out 0.0999583 ETH; −0.04%</td>
+<td>1 s</td>
+<td>same</td>
+</tr>
+<tr>
+<td>Relay Base→RH, 1 ETH</td>
+<td>relayer $0.538 + gas $0.0004; out 0.9997828 ETH; −0.02%</td>
+<td>1 s</td>
+<td>same</td>
+</tr>
+<tr>
+<td><strong>Across</strong> (<code>across.to/?to=robinhood</code>) Ethereum→RH, 0.1 ETH (WETH/ETH route exists)</td>
+<td>totalRelayFee 0.000101 ETH (0.101%) ≈ $0.25; lpFee 0; minDeposit 0.000377 ETH</td>
+<td>estimatedFillTimeSec <strong>2</strong></td>
+<td><code>app.across.to/api/suggested-fees</code> + <code>available-routes?destinationChainId=4663</code> — 20:08 UTC</td>
+</tr>
+<tr>
+<td>Across Arbitrum→RH, 0.1 ETH</td>
+<td>0.104% ≈ $0.26</td>
+<td>1 s</td>
+<td>same</td>
+</tr>
+<tr>
+<td><strong>LI.FI / Jumper</strong> Arbitrum→RH, 0.1 ETH</td>
+<td>routes via <code>relaydepository</code>: LI.FI fixed fee $0.62 + relayer gas $0.04 + relayer service $0.07 + gas $0.02; toAmountUSD $246.37 of $247.76</td>
+<td>1 s</td>
+<td><code>li.quest/v1/quote</code> — 20:08 UTC; LI.FI chain entry has <code>id 4663, mainnet true, relayerSupported false</code> and MetaMask add-params</td>
+</tr>
+<tr>
+<td><strong>Superbridge</strong> <code>superbridge.app/robinhood</code></td>
+<td>page live (HTTP 200; config lists Ethereum + Arbitrum One + RH) — fee/time not extracted</td>
+<td>canonical-style bridge; treat withdrawal as 7-day</td>
+<td>20:06 UTC</td>
+</tr>
+<tr>
+<td><strong>Stargate</strong> (listed by Robinhood docs)</td>
+<td>Stargate v2 metadata (<code>mainnet.stargate-api.com/v1/metadata?version=v2</code>) contains no "robinhood" chain — <strong>UNVERIFIED / likely not live</strong></td>
+<td>—</td>
+<td>20:25 UTC</td>
+</tr>
+<tr>
+<td><strong>Transporter (Chainlink CCIP)</strong> <code>app.transporter.io/?to=robinhood&amp;tab=token</code></td>
+<td>page HTTP 200; fees not quoted — <strong>UNVERIFIED</strong></td>
+<td>—</td>
+<td>20:25 UTC</td>
+</tr>
+<tr>
+<td>0x (listed in docs as a route)</td>
+<td>not tested</td>
+<td>—</td>
+<td>docs.robinhood.com/chain/bridging</td>
+</tr>
+</tbody>
+</table>
+<p>Practical: <strong>Relay or Across from Arbitrum One is the fastest and cheapest (~$0.10–0.26 per 0.1 ETH, 1–2 s).</strong> Keep 0.05 ETH on Arbitrum as a "return lane" so you never depend on the 7-day canonical withdrawal.</p>
+<h3 id="13-cex-direct-withdrawal-to-robinhood-chain">1.3 CEX direct withdrawal to Robinhood Chain</h3>
+<table>
+<thead>
+<tr>
+<th>CEX</th>
+<th>ETH withdrawal networks observed</th>
+<th>Robinhood Chain?</th>
+<th>Source / observed</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Binance</strong></td>
+<td>BSC, Ethereum, Arbitrum One (fee 0.00002 ETH, min 0.0003), Base (0.00005), Manta, Optimism, Scroll, Starknet, zkSync Era</td>
+<td><strong>No</strong> (the only "Robinhood" string is the <code>HOODB</code> bStock token on BSC)</td>
+<td><code>binance.com/bapi/capital/v2/public/capital/getNetworkCoinAll</code> — 20:06 UTC</td>
+</tr>
+<tr>
+<td><strong>Coinbase</strong></td>
+<td>arbitrum, base, ethereum, optimism, polygon, unichain (all "online", min 0.0001)</td>
+<td><strong>No</strong></td>
+<td><code>api.exchange.coinbase.com/currencies/ETH</code> — 20:20 UTC</td>
+</tr>
+<tr>
+<td><strong>OKX</strong></td>
+<td>API requires auth key (<code>50103</code>)</td>
+<td><strong>UNVERIFIED</strong></td>
+<td>20:06 UTC</td>
+</tr>
+<tr>
+<td><strong>Bybit</strong></td>
+<td>API requires apiKey (<code>10001</code>)</td>
+<td><strong>UNVERIFIED</strong></td>
+<td>20:06 UTC</td>
+</tr>
+<tr>
+<td><strong>Upbit</strong></td>
+<td><code>/v1/status/wallet</code> requires Authorization</td>
+<td><strong>UNVERIFIED</strong> (Upbit historically withdraws ETH only on Ethereum mainnet — unverified today)</td>
+<td>20:06 UTC</td>
+</tr>
+</tbody>
+</table>
+<p>Recommended KR path: Upbit/Bithumb → ETH (Ethereum mainnet) → own wallet → Relay/Across to RH (≈$0.25 + L1 gas), <strong>or</strong> if you already hold on Binance/OKX: withdraw to Arbitrum One → Relay to RH (cheapest, ~$0.15 all-in for 0.1 ETH).</p>
+<hr>
+<h2 id="2-wallets">2. Wallets</h2>
+<ul>
+<li><strong>Official params</strong> (docs.robinhood.com/chain/add-network-to-wallet, 20:05 UTC): Chain ID <strong>4663</strong>, RPC <code>https://rpc.mainnet.chain.robinhood.com/</code>, symbol <strong>ETH</strong>, explorer <code>robinhoodchain.blockscout.com</code>. Testnet 46630. "Robinhood Chain is compatible with EVM Wallets (MetaMask and more)"; Robinhood Wallet (iOS/Android) has it built in.</li>
+<li><strong>Other public RPCs</strong> (chainid.network, 20:03 UTC): <code>https://robinhood-rpc.publicnode.com</code>, <code>wss://robinhood-rpc.publicnode.com</code>, <code>https://rpc.arrowrpc.com</code> (returned Cloudflare 530 at 20:40 UTC), <code>https://rpc.ordofi.network</code> (worked). Alchemy is the "recommended RPC provider" (docs.robinhood.com/chain). Explorers: robinscan.io, robinhoodchain.blockscout.com, hoodscan.co. Note: the official RPC rate-limited me (HTTP 429) under ~10 req/s; ordofi returned "network is busy" under log scans. For launch-day scripts, get an Alchemy key.</li>
+<li><strong>Rabby</strong>: native support — <code>api.rabby.io/v1/chain/list</code> contains <code>('hood', 'Robinhood', community_id 4663)</code> (20:25 UTC). No manual add needed.</li>
+<li><strong>MetaMask</strong>: manual "Add network" with the params above (LI.FI's chain entry also ships the <code>metamask</code> add-params with chainId <code>0x1237</code>).</li>
+<li><strong>Hardware wallets</strong>: any Ledger/Trezor through MetaMask/Rabby works as a generic EVM chain (standard behaviour; <strong>UNVERIFIED</strong> whether Ledger Live lists Robinhood Chain natively).</li>
+<li>Address format is standard 0x; WETH on RH = <code>0x0Bd7D308f8E1639FAb988df18A8011f41EAcAD73</code>; Permit2 = canonical <code>0x000000000022D473030F116dDEE9F6B43aC78BA3</code>; L2 Multicall <code>0x2cAC2D899eCC914d704FeaAE33ac1bF36277DaD1</code> (docs.robinhood.com/chain/protocol-contracts, 20:35 UTC).</li>
+</ul>
+<hr>
+<h2 id="3-gas-costs-observed">3. Gas costs (observed)</h2>
+<ul>
+<li><strong>Gas price now:</strong> <code>eth_gasPrice</code> = 0x18256d50 = <strong>0.405 gwei</strong>; latest block baseFee 0.405 gwei (RPC, 20:00 UTC). Blockscout stats: slow 0.39 / average 0.46 / fast 2.74 gwei; 13.98M txs "today"; avg block time 101 ms (<code>/api/v2/stats</code>, 20:02 UTC). Over the last 7 days my hourly block samples saw baseFee between <strong>0.10 and 5.27 gwei</strong> (168 samples via RPC).</li>
+<li>Fee model: L2 execution + L1 data fee (docs.robinhood.com/chain/gas-and-fees) — Blockscout's <code>fee</code> field below already includes both.</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Action (contract)</th>
+<th>gasUsed observed</th>
+<th>Fee observed</th>
+<th>USD</th>
+<th>Source (Blockscout tx list, 20:05–20:08 UTC)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Pons V2 <code>launchToken</code> (factory <code>0x7eD598Bc…</code>)</td>
+<td>3,576,896 – 3,688,038</td>
+<td>0.001449 – 0.001499 ETH (+0.0005 ETH launch fee as <code>value</code>)</td>
+<td><strong>$3.6–3.7 + $1.24</strong></td>
+<td>e.g. tx <code>0x3bb2b3f1…794de</code>, <code>0xce0bc6f7…b30</code></td>
+</tr>
+<tr>
+<td>Pons V2 <code>launchAndBuy</code> (router <code>0xe33E9E47…2948</code>)</td>
+<td>3,694,347 – 3,991,272</td>
+<td>0.001470 – 0.001611 ETH (+launch fee + initial buy as <code>value</code>)</td>
+<td><strong>$3.6–4.0</strong></td>
+<td>txs <code>0xb4ffc462…</code>, <code>0x7bdaa7ab…</code></td>
+</tr>
+<tr>
+<td><code>transferCreatorFeeRecipient</code></td>
+<td>76,127</td>
+<td>0.0000306–0.0000318 ETH</td>
+<td>$0.08</td>
+<td>factory txs</td>
+</tr>
+<tr>
+<td>Fee escrow <code>claim()</code> (<code>0xd3AFEB2a…Ac9e</code>)</td>
+<td>32,632 – 37,467</td>
+<td>0.0000130–0.0000152 ETH</td>
+<td><strong>$0.03–0.04</strong></td>
+<td>escrow txs <code>0xb181fe56…</code>, <code>0x88df1ea4…</code></td>
+</tr>
+<tr>
+<td>Fee escrow <code>claimToken(address)</code></td>
+<td>85,515</td>
+<td>0.0000347 ETH</td>
+<td>$0.09</td>
+<td>tx <code>0x318e83cb…</code></td>
+</tr>
+<tr>
+<td>Pons V1 failed <code>launchToken</code> (V1 factory <code>0xA5aAb3F0…</code>)</td>
+<td>36,164 (revert)</td>
+<td>0.0000128 ETH</td>
+<td>$0.03</td>
+<td>V1 factory tx list, all <code>error</code> on 2026-09-04 — <strong>V1 is effectively closed; use V2</strong></td>
+</tr>
+<tr>
+<td>Uniswap V4 / curve swap</td>
+<td><strong>UNVERIFIED</strong> — my log scans hit RPC "network busy" limits; see §11 unknowns. Expect 150–350k gas ≈ 0.00006–0.00015 ETH ($0.15–0.37) at 0.4 gwei (estimate, not observed)</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Initial buys observed in <code>launchAndBuy</code> <code>value</code> fields (minus 0.0005 fee): 0.0001, 0.01, 0.012, 0.015, 0.075, 0.08, 0.13, 0.163, <strong>0.40 ETH</strong> — i.e. most creators dev-buy 0.01–0.16 ETH; a 0.4 ETH dev buy is ~10% of the 4.2 ETH curve.</p>
+<hr>
+<h2 id="4-launch-execution-on-pons-v2-the-top-launchpad-by-fees">4. Launch execution on Pons V2 (the top launchpad by fees)</h2>
+<h3 id="41-why-pons-v2">4.1 Why Pons V2</h3>
+<p>DefiLlama fees overview for Robinhood Chain (20:00 UTC): Uniswap V4 $8.82M/24h, <strong>Pons V2 $8.75M/24h ($37.3M/7d, $47.4M/30d)</strong>, chain gas $6.04M, GMGN $2.81M, Pons V1 $0.26M, o1 Launchpad $0.24M, NOXA Fun $0.16M, PAIR $0.07M, Bags $11k. DEX volume: Pons V2 curve volume $161M/24h (<code>api.llama.fi/overview/dexs/Robinhood%20Chain</code>). Pons V2 fee series starts 2026-08-04 and went $32k → $8.75M/day in a month (<code>api.llama.fi/summary/fees/pons-v2</code>). Note the fee/volume ratio (5.4%) is far above the 1% base fee: DefiLlama's methodology counts "launch fees, curve swap fees and swap fees post graduation (uniswap v4: realised through fee swept events)" plus "taxes (optional) to creators and buybacks" — so creator taxes and post-graduation pool fees (whose volume is excluded) inflate it; do not read 5.4% as the take rate.</p>
+<h3 id="42-on-chain-terms-right-now-read-directly-from-factory-0x7ed598bcef8bd9edd8c97a195c6d13f40801ec7e-rpc-eth_call-2015-utc">4.2 On-chain terms right now (read directly from factory <code>0x7eD598BcEf8bd9Edd8C97A195C6d13f40801EC7e</code>, RPC eth_call, 20:15 UTC)</h3>
+<ul>
+<li><code>launchFee</code> = 500,000,000,000,000 wei = <strong>0.0005 ETH</strong></li>
+<li><code>launchEnabled</code> = <strong>true</strong>; <code>canLaunch(0x…dEaD)</code> = <strong>true</strong>, <code>canLaunch(0x1111…)</code> = <strong>true</strong> → public launches are open. (docs.ponsfamily.com/v2 still says "Public launches are closed, so only whitelisted addresses can create a token for now" — stale.)</li>
+<li><code>launchConfigCount</code> = 1; <strong>config 0</strong> = supply <strong>1,000,000,000 × 1e18</strong>, <code>curveFeeBps</code> <strong>100 (1%)</strong>, <code>phantomQuote</code> <strong>1.68 ETH</strong>, <code>graduationThreshold</code> <strong>4.2 ETH</strong>, <code>poolFee</code> 0 (hook charges the fee), <code>tickSpacing</code> 200, enabled.</li>
+<li><code>maxCreatorTaxBps</code> = <strong>1000 (10%)</strong>; <code>snipeTaxStartBps</code> = 9900 (99%); <code>snipeTaxSeconds</code> = <strong>3</strong> (docs say "across the first 5 seconds… near 25% one second in and around 3% at two seconds").</li>
+<li><code>CREATOR_FEE_RECIPIENT_TIMELOCK</code> = 259,200 s (3 days); <code>GRADUATION_RESCUE_DELAY</code> = 604,800 s (7 days).</li>
+<li><code>approvedPairTokens(WETH)</code> = false; native ETH (pairToken = zero address) is the launch quote asset ("Pass the zero address for a native ETH launch, or an approved ERC-20" — docs).</li>
+<li>Contracts (docs.ponsfamily.com/v2, confirmed by <code>feeEscrow()</code>, <code>memeHook()</code>, <code>locker()</code>, <code>buybackVault()</code> calls): Meme Hook <code>0xE5e702641Ea86F4ae6cC3cDaeD2B886f976Be044</code>, Fee Escrow <code>0xd3AFEB2a57f70eF218Aa82451c51B2fb0416Ac9e</code>, Buyback Vault <code>0x42df2a798f82289E177311362e8f5ccC45c1219c</code>, Launch Locker <code>0x267444D099b10fB5Ed7c3Cc7B7c767AdcA574952</code>, Launch &amp; Buy Router <code>0xe33E9E479dF8802cb0866d5d05258bEc4cF62948</code> (= <code>launchForwarder</code>), Launch Deployer <code>0x3711ceA4feaDE896C913C68F01Eda97Cb06D1A42</code>, Graduation Executor <code>0xC7819B64A1dAECD7eC19856d026cb14EfBd89046</code>, Uniswap V4 PoolManager used by Pons <code>0x58daec3116aae6D93017bAAea7749052E8a04fA7</code> (DefiLlama adapter <code>fees/ponsdotfamily-v2/index.ts</code>).</li>
+<li>Factory verified on Blockscout (<code>PonsV2LaunchFactory</code>, solc 0.8.30); 76,659 txs to the factory and 79,462 to the router lifetime (counters, 20:07 UTC).</li>
+<li><strong>Audits:</strong> docs state "pons v2 is under review by three independent security teams… All three engagements are in progress… Treat v2 as unaudited until the reports are published" (SB Security, Dingbats, Pashov). Risk you accept as a creator.</li>
+</ul>
+<h3 id="43-curve-economics-computed-from-config-0">4.3 Curve economics (computed from config 0)</h3>
+<ul>
+<li>Reserved-for-pool = supply × phantom ÷ (phantom + threshold) = 1e9 × 1.68/5.88 = <strong>285.7M tokens (28.57%)</strong>; <strong>714.3M sold on the curve</strong>.</li>
+<li>Start price 1.68e-9 ETH/token → <strong>FDV at launch ≈ 1.68 ETH ≈ $4.2k</strong>. Graduation price 2.058e-8 ETH → <strong>FDV at graduation ≈ 20.6 ETH ≈ $51k</strong>, a 12.25× from first buy.</li>
+<li>At graduation the 4.2 ETH raised + 285.7M tokens seed a Uniswap v4 pool (≈$20.8k two-sided liquidity), <strong>permanently locked</strong> (docs: "liquidity is locked permanently… no way for anyone to reach the liquidity once it is locked"). Same price on both sides — "every launch on the same settings graduates into a pool of the same size, at the same price."</li>
+<li>If the curve is bought out by one buy, the buyer is filled up to the reserved allocation and refunded the rest.</li>
+</ul>
+<h3 id="44-fees-creator-income">4.4 Fees &amp; creator income</h3>
+<ul>
+<li>Base fee 1% on every trade, <strong>same rate before and after graduation</strong> ("You pay the same rate whether the token is on its curve or in its Uniswap pool"); post-graduation the hook charges it, the v4 pool fee is 0, and "trading a graduated pons token does not cost you a Uniswap fee on top of the pons one."</li>
+<li>Split (DefiLlama adapter constants, consistent with docs' "pons takes its share first"): protocol <strong>30%</strong>; creator <strong>70%</strong> with buyback off; with buyback on: <strong>35% creator / 35% buyback</strong>. Buyback-bought tokens vest over five years to the creator (docs "Buyback and vesting").</li>
+<li><strong>Creator tax</strong>: optional, ≤10%, set at creation, immutable, charged on top of the 1%, <strong>100% to the creator</strong> ("The creator tax… goes entirely to them"). Snipe tax is capped so the buyer always nets ≥1% of spend.</li>
+<li>Payouts are in the launch's quote asset (ETH). Fees accrue in the <strong>Fee Escrow</strong>; creator calls <code>claim()</code> (native) or <code>claimToken(addr)</code> (ERC-20); read <code>balanceOf()</code>. In the UI this is the Profile page (<code>ponsfamily.com/profile</code>). Cost ≈$0.03 per claim (observed).</li>
+<li>Creator can (a) <code>setCreatorFeeRecipient</code> / propose <code>transferCreatorFeeRecipient</code> (3-day timelock + 3-day execution window) and (b) toggle buyback — "Exactly two things stay adjustable." Community takeover (CTO) form: https://forms.gle/JjrWvybFeNfE5v8F6 (docs).</li>
+<li>Worked example: a token that only graduates (4.2 ETH of curve buys) earns the creator 0.7% × 4.2 = <strong>0.029 ETH ($73)</strong> from the base fee — plus 10% × 4.2 = 0.42 ETH if you set a 10% tax (which also deters buyers). Real income comes from post-graduation volume: 1 ETH creator income requires ≈143 ETH ($354k) of traded volume at 0.7%.</li>
+</ul>
+<h3 id="45-exact-create-flow-contract-fields-ui-fields">4.5 Exact create flow (contract fields = UI fields)</h3>
+<p><code>launchToken(TokenParams params, uint256 launchConfigId, address pairToken[, address[] snipeTaxExemptions])</code>, or <code>launchAndBuy</code> via the router to bundle the dev buy atomically. <code>TokenParams</code> (verified ABI): <code>name</code>, <code>symbol</code>, <code>logo</code> (URI string), <code>description</code>, <code>socials {twitter, telegram, discord, website, farcaster}</code>, <code>creatorFeeRecipient</code>, <code>creatorTaxBps</code> (0–1000), <code>buybackEnabled</code> (bool), <code>expectedEconomics</code> (bytes32 from <code>previewLaunchEconomics(configId, pairToken)</code> — protects you from a config change between quote and send), <code>salt</code> (CREATE2; token address predictable via <code>predictTokenAddress</code>).</p>
+<p>UI steps (from the docs' lifecycle "01 Create: The creator sets a name, symbol, image, description, and links, and pays a launch fee" — the create page itself is Cloudflare-gated to bots, so field order/labels are <strong>UNVERIFIED</strong>):
+1. Connect wallet (Rabby/MetaMask) on chain 4663 with ≥0.01 ETH + your dev-buy amount.
+2. Name, ticker, logo, description, socials (X/TG/Discord/website/Farcaster).
+3. Creator fee recipient (default = your wallet; you can point to a cold wallet), creator tax % (0–10), buyback on/off.
+4. Optional: snipe-tax-exempt wallets (max 32; launcher + fee recipient are auto-exempt) — this is how a team bundles its own opening buys across several wallets without paying the 99% tax.
+5. Initial buy amount (sent as <code>value</code> with the launch; <code>launchAndBuy</code>). Total value = 0.0005 ETH + buy.
+6. Sign; gas ≈0.0015 ETH. Token + curve deploy in one tx; trading is live immediately (nothing to snipe pre-launch).
+7. Graduation is automatic when <code>sellableTokens()</code> hits zero; if the auto step fails "anyone at all can push the launch forward" via <code>createGraduatedPool(token)</code>.
+8. Claim fees any time from Profile / <code>claim()</code>.</p>
+<h3 id="46-launch-rate-graduation-rate-time-to-graduation-observed-via-eth_getlogs-on-the-factory">4.6 Launch rate, graduation rate, time-to-graduation (observed via <code>eth_getLogs</code> on the factory)</h3>
+<ul>
+<li>Window: blocks 54,098,741 → 55,398,741 (1.3M blocks ≈ 36.6 h at the measured 9.87 blocks/s; observed 20:45–21:05 UTC): <strong>40,854 <code>TokenLaunched</code> events, 959 <code>PoolGraduated</code> events</strong> → ≈26.8k launches/day, ≈630 graduations/day, <strong>graduation rate ≈2.3%</strong>.</li>
+<li>Time-to-graduation: median <strong>2 minutes</strong>, p90 41 min (§4.7).</li>
+<li>Blockscout showed launch txs landing every few seconds from different EOAs, each followed within seconds by a <code>transferCreatorFeeRecipient</code> from the same deployer — a signature of scripted launch farms. Expect your token to be one of ~1,100 per hour.</li>
+</ul>
+<h3 id="47-time-to-graduation-sample">4.7 Time-to-graduation sample</h3>
+<p>Method: <code>PoolGraduated</code> logs on the V2 factory over the last 700k blocks (~19.7 h; 561 graduations), random sample, graduation block timestamp (RPC) minus curve-contract creation-tx timestamp (Blockscout). n = 22 completed before Blockscout/RPC rate limits (<code>raw/grad3.log</code>; observed 21:10–21:40 UTC).</p>
+<table>
+<thead>
+<tr>
+<th>Statistic</th>
+<th>Launch → graduation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Median</strong></td>
+<td><strong>2.0 min</strong></td>
+</tr>
+<tr>
+<td>p10 / p25</td>
+<td>0.8 / 1.3 min</td>
+</tr>
+<tr>
+<td>p75 / p90</td>
+<td>18.6 / 40.8 min</td>
+</tr>
+<tr>
+<td>Max in sample</td>
+<td>97 min</td>
+</tr>
+<tr>
+<td>Share &lt; 10 min</td>
+<td>15 / 22 (68%)</td>
+</tr>
+<tr>
+<td>Share &lt; 60 min</td>
+<td>21 / 22 (95%)</td>
+</tr>
+<tr>
+<td>Share &gt; 24 h</td>
+<td>0 / 22</td>
+</tr>
+</tbody>
+</table>
+<p>Reading: <strong>"good launches" do not climb to graduation over hours — the 4.2 ETH (~$10.4k) curve is bought out within minutes, usually by the launcher's own bundle plus early bots.</strong> A token that has not graduated within ~1 hour almost never does (0 of 22 sampled graduations took longer than 97 min, while 97.7% of launches never graduate at all). Plan the launch as a bundle-to-graduation event, not a slow organic curve.</p>
+<p>Creator settings in the same sample (read via <code>getLaunchedToken</code>): creator tax set on <strong>9 of 22 (41%)</strong> graduated tokens — values 1%, 1.5%, 2%, 8%, 10% (median 0%); buyback enabled on <strong>0 of 22</strong>. So a moderate tax (1–2%) is normal among tokens that graduate; nobody uses the buyback option.</p>
+<h3 id="48-alternatives-on-the-same-chain-if-pons-is-saturated">4.8 Alternatives on the same chain (if Pons is saturated)</h3>
+<ul>
+<li><strong>o1 Launchpad</strong> (<code>launch.o1.exchange</code>, Base + Robinhood): $236k/24h, $1.48M/7d fees on RH (DefiLlama fees overview); site returned HTTP 429 to my fetch, terms <strong>UNVERIFIED</strong>.</li>
+<li><strong>NOXA Fun</strong> (<code>fun.noxa.eth.limo</code>, multi-chain incl. RH): $165k/24h; methodology says "All fees collected from swaps are distributed to the creator of the token" (100% creator) but "Revenue is disabled for now" — small.</li>
+<li><strong>Bags on Robinhood</strong>: 2% flat (1% creator / 1% protocol), 0.02 ETH creation fee, 830M/170M curve (prior lens 02, docs.bags.fm/robinhood) — only $11k/24h fees now.</li>
+<li><strong>PAIR</strong>: 1% pool fee to locked v4 positions + 0.0005 ETH launch fee, $74k/24h.</li>
+<li>Pons V1 (<code>0xA5aAb3F0…</code>): 4.2 ETH threshold, 70/30, but every <code>launchToken</code> on 2026-09-04 reverted → closed.</li>
+</ul>
+<hr>
+<h2 id="5-distribution-where-robinhood-chain-memecoin-attention-lives-now">5. Distribution: where Robinhood-Chain memecoin attention lives now</h2>
+<table>
+<thead>
+<tr>
+<th>Channel</th>
+<th>What I observed</th>
+<th>Link</th>
+<th>Observed</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>GMGN</strong> (web/app/TG)</td>
+<td>Robinhood Chain supported since <strong>2026-07-03</strong> (DefiLlama <code>fees/gmgnai.ts</code>: <code>[CHAIN.ROBINHOOD]: { start: '2026-07-03' }</code>, USDG as stable); 1% per trade; <strong>$2.81M/24h, $13.4M/7d fees on Robinhood Chain alone</strong> — the dominant retail terminal here. Token pages are at <code>gmgn.ai/robinhood/token/&amp;lt;addr&gt;</code> (a prior 09-04 X hit used exactly that path). gmgn.ai returns 403 to scripts.</td>
+<td>https://gmgn.ai (Robinhood tab); docs https://docs.gmgn.ai/index/gmgn-fees-settings</td>
+<td>20:20–20:30 UTC</td>
+</tr>
+<tr>
+<td><strong>Dexscreener</strong></td>
+<td>Chain slug <strong><code>robinhood</code></strong> is live (<code>api.dexscreener.com/latest/dex/search</code> returns <code>chainId: robinhood</code> pairs, e.g. PONS/WETH $41M 24h at <code>dexscreener.com/robinhood/0xed50bd…</code>). <strong>Latest paid boosts: 16 of 30 on <code>robinhood</code></strong> (vs 11 Solana, 2 Base, 1 BSC); latest token profiles: <strong>21 of 30 on <code>robinhood</code></strong>. Boost prices not observed — <strong>UNVERIFIED</strong>.</td>
+<td>https://dexscreener.com/robinhood</td>
+<td>20:06 &amp; 20:20 UTC</td>
+</tr>
+<tr>
+<td><strong>X</strong></td>
+<td>Pons official handle <strong>@ponsdotfamily</strong> (listed on docs.ponsfamily.com and DefiLlama); Robinhood's crypto account <strong>@RobinhoodCrypto</strong> (linked from hoodscan.co/project/robinhood-chain); <strong>@RobinhoodApp</strong> (linked from robinhood.com/chain); <strong>@gmgnai</strong>; o1 <strong>@o1_exchange</strong>; NOXA <strong>@Noxa_Fi</strong>. Follower counts and post cadence <strong>UNVERIFIED</strong> (x.com blocked; syndication endpoints dead). No dedicated "Robinhood Chain" handle or Discord was found in the official docs (docs list only chain-developers-group@robinhood.com and http://status.robinhoodchain.offchain.io/).</td>
+<td>https://x.com/ponsdotfamily · https://x.com/RobinhoodCrypto · https://x.com/gmgnai</td>
+<td>20:10–20:35 UTC</td>
+</tr>
+<tr>
+<td><strong>Telegram</strong></td>
+<td><code>t.me/ponsfamily</code> exists (13 subscribers; posts 2026-09-02 "#pons", "$PONS", launchpad link) — not a real community yet. No official Robinhood Chain channel found (<code>t.me/hoodchain</code> is a squatter). <strong>GMGN Korea</strong> <code>t.me/GMGN_Korea</code> <strong>1,736 members</strong> (prior scan 2026-09-04; official status unverified). GMGN global <code>t.me/gmgnai</code> 23,033 members (prior scan).</td>
+<td>https://t.me/ponsfamily · https://t.me/GMGN_Korea</td>
+<td>20:25 UTC; prior 09-04</td>
+</tr>
+<tr>
+<td><strong>hoodscan.co</strong></td>
+<td>"independent block explorer and market data site for Robinhood Chain" with Discover / Feed / Swaps / Projects / Stocks / Stories sections; "Advertise with us". Useful for token discovery pages.</td>
+<td>https://hoodscan.co/discover</td>
+<td>20:30 UTC</td>
+</tr>
+<tr>
+<td><strong>Korean communities</strong></td>
+<td>Naver blogs: "로빈후드 체인 &amp; 밈코인 트렌드 완벽 정리 (2026 하반기)" (2026-09-01, blog.naver.com/englandkim77/224397838354), "로빈후드 체인 밈코인, CASHCAT의 미래 전망은?" (2026-08-27, blog.naver.com/ucrypto/224392232277). Prior 09-04 scan: dcinside 차트갤 2026-07-18 "로빈후드 밈코가 핫해서 gmgn 처음 다운받고…", 코박갤 2026-09-01/09-03 (GMGN as venue for Robinhood stock-pair memes); fmkorea 코인게시판 2026-07-12 "로빈후드 밈코인 캐시캣으로 110만달러 번사람의 전략", 2026-07-18 "후드 밈코 하시는분들을 위한 개인적인 팁" / "후드 밈코인 러그풀 예시". dcinside search endpoints blocked scripted access tonight ("잘못된 접근"); fmkorea returned HTTP 430.</td>
+<td>https://search.dcinside.com/combine/q/GMGN · https://www.fmkorea.com/search.php?mid=coin&amp;search_target=title_content&amp;search_keyword=GMGN</td>
+<td>20:40 UTC; prior 09-04</td>
+</tr>
+<tr>
+<td>Bubblemaps</td>
+<td>bubblemaps.io homepage ships a <code>robinhood</code> chain icon; the legacy API rejects <code>chain=robinhood</code>; the v2 app URL redirects to v2.bubblemaps.io — support <strong>UNVERIFIED</strong>.</td>
+<td>https://bubblemaps.io</td>
+<td>20:25 UTC</td>
+</tr>
+</tbody>
+</table>
+<p>Reading: the retail funnel on this chain is <strong>GMGN trending + Dexscreener boosts + X CT threads</strong>, with Korean retail arriving via GMGN Korea and dcinside/fmkorea. There is no Pons-native community to lean on; you bring your own.</p>
+<hr>
+<h2 id="6-timing">6. Timing</h2>
+<h3 id="61-weekday-defillama-daily-last-28-full-days-to-2026-09-04-rawdexs_robinhoodjson-rawfees_robinhoodjson">6.1 Weekday (DefiLlama daily, last 28 full days to 2026-09-04, <code>raw/dexs_robinhood.json</code>, <code>raw/fees_robinhood.json</code>)</h3>
+<table>
+<thead>
+<tr>
+<th>Day</th>
+<th>Robinhood DEX volume avg</th>
+<th>Chain fees avg (all protocols)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Mon</td>
+<td>$802M</td>
+<td>$6.6M</td>
+</tr>
+<tr>
+<td>Tue</td>
+<td>$820M</td>
+<td>$6.3M</td>
+</tr>
+<tr>
+<td>Wed</td>
+<td>$850M</td>
+<td>$7.1M</td>
+</tr>
+<tr>
+<td>Thu</td>
+<td>$868M</td>
+<td>$6.8M</td>
+</tr>
+<tr>
+<td><strong>Fri</strong></td>
+<td><strong>$984M</strong></td>
+<td><strong>$8.9M</strong></td>
+</tr>
+<tr>
+<td>Sat</td>
+<td><strong>$534M</strong></td>
+<td><strong>$3.8M</strong></td>
+</tr>
+<tr>
+<td>Sun</td>
+<td>$667M</td>
+<td>$4.6M</td>
+</tr>
+</tbody>
+</table>
+<p>The trend dominates the weekday effect right now: daily DEX volume rose every day from $495M (Sun 08-23) to $1.89B (Fri 09-04), $1.63B on Sat 09-05 (partial day at pull time).</p>
+<h3 id="62-hour-of-day-my-rpc-sampling-168-hourly-samples-over-7-days-10-blocks-per-sample-tx-count-per-10-blocks-rawhour_samplesjson">6.2 Hour of day (my RPC sampling: 168 hourly samples over 7 days, 10 blocks per sample, tx count per 10 blocks; <code>raw/hour_samples.json</code>)</h3>
+<table>
+<thead>
+<tr>
+<th>UTC</th>
+<th>KST</th>
+<th>avg txs / 10 blocks</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>00–01</td>
+<td>09–10</td>
+<td>158 / 138</td>
+</tr>
+<tr>
+<td>02–10</td>
+<td>11–19</td>
+<td><strong>100–125 (trough; min 100 at 06Z/15 KST)</strong></td>
+</tr>
+<tr>
+<td>11–13</td>
+<td>20–22</td>
+<td>130–139</td>
+</tr>
+<tr>
+<td>14</td>
+<td>23</td>
+<td>159</td>
+</tr>
+<tr>
+<td><strong>15–17</strong></td>
+<td><strong>00–02</strong></td>
+<td><strong>189 / 189 / 196</strong></td>
+</tr>
+<tr>
+<td>18–20</td>
+<td>03–05</td>
+<td>167 / 155 / 166</td>
+</tr>
+<tr>
+<td><strong>21</strong></td>
+<td><strong>06</strong></td>
+<td><strong>221 (peak)</strong></td>
+</tr>
+<tr>
+<td>22–23</td>
+<td>07–08</td>
+<td>175 / 142</td>
+</tr>
+</tbody>
+</table>
+<p>Sampled weekday tx density (same data): Fri 156 &gt; Sun 152 &gt; Thu 150 &gt; Sat 145 &gt; Wed 141 &gt; Mon 137 &gt; Tue 135 — i.e. per-block activity is flat across the week; the weekend dip in USD volume is size, not count.</p>
+<p><strong>Launch window:</strong> Tue–Fri, <strong>14:00–22:00 UTC = 23:00–07:00 KST</strong> (US afternoon/evening). Korean daytime is the chain's quietest period. If you want Korean retail first, 21:00–23:00 KST (12–14Z) is the compromise before the US wave.</p>
+<h3 id="63-is-the-memecoin-market-hot-defillama-pulled-20002030-utc-last-day-may-be-partial">6.3 Is the memecoin market hot? (DefiLlama, pulled 20:00–20:30 UTC; last day may be partial)</h3>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>24h</th>
+<th>7d</th>
+<th>7d vs prior 7d</th>
+<th>30d</th>
+<th>30d vs prior 30d</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Robinhood Chain DEX volume</strong></td>
+<td>$1.89B (+12% d/d)</td>
+<td>$10.73B</td>
+<td><strong>+105%</strong></td>
+<td>$23.09B</td>
+<td><strong>+263%</strong></td>
+</tr>
+<tr>
+<td>Solana DEX volume</td>
+<td>$1.88B (−23.5% d/d)</td>
+<td>$14.90B</td>
+<td>−27% (computed 0.70×)</td>
+<td>$65.12B</td>
+<td>+16% (1.35×)</td>
+</tr>
+<tr>
+<td>Base DEX volume</td>
+<td>$1.00B</td>
+<td>$5.73B</td>
+<td>−11% (0.72×)</td>
+<td>$24.41B</td>
+<td>+46% (1.13×)</td>
+</tr>
+<tr>
+<td>BSC DEX volume</td>
+<td>$1.46B</td>
+<td>$7.76B</td>
+<td>+32% (0.95×)</td>
+<td>$33.11B</td>
+<td>−15% (1.29×)</td>
+</tr>
+<tr>
+<td>Ethereum DEX volume</td>
+<td>$1.60B</td>
+<td>$9.18B</td>
+<td>−19% (0.82×)</td>
+<td>$36.45B</td>
+<td>+58% (1.26×)</td>
+</tr>
+<tr>
+<td><strong>Pons V2 fees</strong></td>
+<td>$8.75M</td>
+<td>$37.3M</td>
+<td><strong>5.66×</strong></td>
+<td>$47.4M</td>
+<td>(started 08-04)</td>
+</tr>
+<tr>
+<td>pump.fun fees</td>
+<td>$0.93M (09-04; 09-05 not yet posted)</td>
+<td>$10.7M</td>
+<td>0.90×</td>
+<td>$47.5M</td>
+<td>1.70×</td>
+</tr>
+<tr>
+<td>GMGN fees (all chains)</td>
+<td>$3.45M</td>
+<td>$16.9M</td>
+<td>2.03×</td>
+<td>$40.3M</td>
+<td>1.56×</td>
+</tr>
+<tr>
+<td>letsbonk.fun fees</td>
+<td>$5.4k</td>
+<td>$32k</td>
+<td>0.58×</td>
+<td>$166k</td>
+<td>1.07×</td>
+</tr>
+<tr>
+<td>four.meme fees</td>
+<td>$7.2k</td>
+<td>$48k</td>
+<td>0.78×</td>
+<td>$287k</td>
+<td>0.24×</td>
+</tr>
+<tr>
+<td>Flap.sh (BSC launchpad)</td>
+<td>$2.69M</td>
+<td>$8.82M</td>
+<td>—</td>
+<td>$17.1M</td>
+<td>—</td>
+</tr>
+<tr>
+<td>o1 Launchpad (Base+RH)</td>
+<td>$320k</td>
+<td>$1.93M</td>
+<td>—</td>
+<td>$3.84M</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<p>(DefiLlama's own <code>change_7d</code> for Solana/Base/Ethereum is −27%/−11%/−19%; my "computed" ratios compare the last 7 full days to the 7 before. pump.fun's series shows $2.65M on 08-27 → $0.93M on 09-04 — cooling, though the final day is often revised upward.)</p>
+<p><strong>Honest read:</strong> this is a <strong>Robinhood-Chain-specific mania inside a flat-to-cooling broader memecoin market.</strong> Robinhood DEX volume tripled month-over-month and doubled week-over-week to Solana's level; Pons V2's daily fees ($8.75M) are now ~9× pump.fun's last posted day and its 7d fees ($37.3M) are 3.5× pump.fun's ($10.7M). Solana, Base and Ethereum DEX volumes are down double digits w/w; letsbonk and four.meme are near zero. "Bull market" is true only for this chain — which is the right place for a creator today, but it also means the rotation can leave as fast as it came (Robinhood's own weekly volumes fell −8…−33% after week 2 in July before re-spiking; lens 05/gap-unit-economics decay curves).</p>
+<hr>
+<h2 id="7-post-launch-tooling">7. Post-launch tooling</h2>
+<ul>
+<li><strong>GMGN Robinhood tab</strong> — 1% fee (docs.gmgn.ai: "GMGN only charges a 1% handling fee for a single transaction"); token pages show holders/traders; anti-MEV and priority settings are documented for Solana only (no Robinhood-specific section — <strong>UNVERIFIED</strong> which sniper/bundle widgets appear on RH tokens). GMGN wallets are bot-generated with key export prohibited (lens 01) — keep creator fees in your own wallet, use GMGN only for trading views.</li>
+<li><strong>Blockscout</strong> <code>robinhoodchain.blockscout.com/token/&amp;lt;addr&gt;</code> — holders tab, transfers, verified factory ABI; API <code>api/v2/tokens/&amp;lt;addr&gt;/holders</code>. Rate-limits scripts after ~20 quick calls (observed 422/500).</li>
+<li><strong>Pons analytics/profile</strong> — <code>ponsfamily.com/analytics</code>, <code>ponsfamily.com/profile</code> (fee balances, claims).</li>
+<li><strong>hoodscan.co</strong> — Discover/Feed/Swaps; unofficial.</li>
+<li><strong>Dexscreener</strong> <code>dexscreener.com/robinhood/&amp;lt;pair&gt;</code> — chart + boosts; pair appears after graduation (v4 pool). Curve-phase charting lives on Pons/GMGN.</li>
+<li><strong>Bubblemaps</strong> — chain icon present on bubblemaps.io; working map for RH tokens <strong>UNVERIFIED</strong>.</li>
+<li><strong>Sniper/bundle monitoring, practically:</strong> (1) Pons' snipe tax makes t=0 sniping unprofitable (99% at 0 s, ~25% at 1 s, ~3% at 2 s per docs; 3 s window on-chain), so watch buys in the first 3–10 s on the curve contract (<code>Buy</code> events) and the first 100 blocks (~10 s) for clusters of fresh wallets; (2) query <code>currentSnipeTaxBps(recipient)</code> before quoting your own bundled buys, and list your team wallets in <code>snipeTaxExemptions</code> (max 32) so your bundle pays 0 snipe tax; (3) after graduation, watch the v4 pool's <code>PoolFeesSwept</code> events (hook) to reconcile creator income vs. Dexscreener volume.</li>
+</ul>
+<hr>
+<h2 id="8-d-3-d-day-d7-checklist">8. D-3 → D-day → D+7 checklist</h2>
+<p><strong>D-3</strong>
+- [ ] Buy ETH on Upbit/Bithumb (or use Binance/OKX balance). Withdraw to your own EVM wallet on Arbitrum One (if the CEX supports it) or Ethereum mainnet.
+- [ ] Rabby (native RH support) or MetaMask + manual network (4663). Test a 0.01 ETH Relay bridge Arbitrum→RH (≈$0.10, 1 s).
+- [ ] Bridge the launch budget (see cost table). Keep 0.05 ETH on Arbitrum as return lane.
+- [ ] Get an Alchemy key for RH if you will script anything (public RPCs 429/“busy” under load).
+- [ ] Prepare assets: 512×512 logo, ticker, 1-line description, X account, TG group, website (Socials struct: twitter/telegram/discord/website/farcaster).
+- [ ] Decide creator tax (0–10%) and buyback on/off — <strong>immutable after launch</strong>. Default recommendation for a volume play: tax 0–2%, buyback off (70% of 1% to you).
+- [ ] Decide team wallets for the opening buy and pre-list them as <code>snipeTaxExemptions</code>.
+- [ ] Verify the factory on Blockscout is still <code>0x7eD598Bc…</code> and <code>launchEnabled()</code>/<code>canLaunch(you)</code> are true; read <code>launchFee()</code>.</p>
+<p><strong>D-day (launch in the 14–22Z / 23–07 KST window, Tue–Fri)</strong>
+- [ ] Pre-seed X/TG 30–60 min before; line up 2–3 CT reposts and a Korean post (dcinside 코박갤/차트갤, fmkorea 코인게시판, GMGN Korea).
+- [ ] Launch via <code>launchAndBuy</code> (UI "initial buy") with 0.05–0.4 ETH; total value = buy + 0.0005 ETH; gas ≈0.0015 ETH.
+- [ ] Immediately post the token address (names/tickers are not unique — docs warn imitators will appear).
+- [ ] Buy a Dexscreener boost/profile as soon as the pair is visible (post-graduation) — price <strong>UNVERIFIED</strong>; 16/30 latest boosts are RH tokens, so competitors do.
+- [ ] Watch first 10 s for snipe clusters; watch curve progress toward 4.2 ETH; if auto-graduation stalls, call <code>createGraduatedPool(token)</code> yourself.
+- [ ] After graduation: confirm the v4 pool + locked position (<code>PoolGraduated</code> event), pin the Dexscreener link, update GMGN listing socials.</p>
+<p><strong>D+1 → D+7</strong>
+- [ ] Claim fees daily (<code>claim()</code>, $0.03) to the cold recipient; consider <code>setCreatorFeeRecipient</code> to a cold wallet if you launched from a hot one.
+- [ ] Keep posting in the US-evening window; track holders on Blockscout/GMGN; respond to CTO pressure (a CTO proposal is public with a 3-day timelock).
+- [ ] Re-launch cadence: with a 2.3% graduation rate, plan multiple attempts; each costs ≈0.002 ETH + dev buy.</p>
+<hr>
+<h2 id="9-cost-table-eth-usd-at-247762">9. Cost table (ETH; USD at $2,477.62)</h2>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>ETH</th>
+<th>USD</th>
+<th>Basis</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CEX withdrawal to Arbitrum One (Binance)</td>
+<td>0.00002</td>
+<td>$0.05</td>
+<td>Binance network list</td>
+</tr>
+<tr>
+<td>Bridge Arbitrum→RH 0.1 ETH (Relay)</td>
+<td>≈0.00004 + gas</td>
+<td>≈$0.10</td>
+<td>Relay quote</td>
+</tr>
+<tr>
+<td>Bridge Ethereum→RH 0.1 ETH (Across/Relay)</td>
+<td>≈0.0001 + L1 gas</td>
+<td>≈$0.25 + L1 gas</td>
+<td>Across/Relay quotes</td>
+</tr>
+<tr>
+<td>Pons V2 launch fee</td>
+<td>0.0005</td>
+<td>$1.24</td>
+<td><code>launchFee()</code></td>
+</tr>
+<tr>
+<td>Launch gas (<code>launchToken</code>/<code>launchAndBuy</code>)</td>
+<td>0.0015–0.0016</td>
+<td>$3.6–4.0</td>
+<td>Blockscout txs</td>
+</tr>
+<tr>
+<td>Dev/initial buy (typical range observed)</td>
+<td>0.01–0.40</td>
+<td>$25–$990</td>
+<td>router <code>value</code> fields</td>
+</tr>
+<tr>
+<td>Fee claim</td>
+<td>0.000013</td>
+<td>$0.03</td>
+<td>escrow txs</td>
+</tr>
+<tr>
+<td>Change fee recipient</td>
+<td>0.00003</td>
+<td>$0.08</td>
+<td>factory txs</td>
+</tr>
+<tr>
+<td>Swap on curve / v4 (est.)</td>
+<td>≈0.00006–0.00015</td>
+<td>$0.15–0.37</td>
+<td><strong>estimate, UNVERIFIED</strong></td>
+</tr>
+<tr>
+<td>Return lane parked on Arbitrum</td>
+<td>0.05</td>
+<td>$124</td>
+<td>recommendation</td>
+</tr>
+<tr>
+<td>Dexscreener boost</td>
+<td>—</td>
+<td><strong>UNVERIFIED</strong></td>
+<td>not observed</td>
+</tr>
+<tr>
+<td><strong>Minimum viable launch (no marketing)</strong></td>
+<td><strong>≈0.06–0.10</strong></td>
+<td><strong>$150–250</strong></td>
+<td>0.05 dev buy + fees + gas + bridge</td>
+</tr>
+<tr>
+<td><strong>Serious attempt</strong></td>
+<td><strong>≈0.5–1.0</strong></td>
+<td><strong>$1.2k–2.5k</strong></td>
+<td>0.2–0.4 dev buy + team bundle + boosts</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="10-giwa-note-parity">10. GIWA note (parity)</h2>
+<p>GIWA is still Sepolia-only (chain 91342; <code>eip155-9134.json</code> "incubating", empty RPC — chainid.network, 20:03 UTC). Nothing in this playbook transfers there yet except the wallet/bridge muscle memory (OP-Stack canonical bridge via Superbridge, ~7-day withdrawals; lens 05/06). GIWA MARKETS runs a pump-style pad on both chains but its RH-side <code>$GIWA</code> token carries brand-confusion risk (lens 06).</p>
+<hr>
+<h2 id="11-unknowns-unverified">11. Unknowns / UNVERIFIED</h2>
+<ol>
+<li>OKX, Bybit, Upbit ETH withdrawal networks (auth-gated APIs).</li>
+<li>Pons create-page UI labels/order and whether the UI exposes <code>snipeTaxExemptions</code> and <code>creatorFeeRecipient</code> (Cloudflare-gated; contract fields verified instead).</li>
+<li>Uniswap v4 / curve swap gas on RH (RPC log scans returned "network busy").</li>
+<li>Dexscreener boost pricing on the <code>robinhood</code> chain; Bubblemaps v2 support.</li>
+<li>X follower counts / activity of @ponsdotfamily, @RobinhoodCrypto; whether a Robinhood Chain Discord exists (none in docs).</li>
+<li>GMGN's Robinhood-specific sniper/bundle widgets and anti-MEV settings (docs cover Solana only).</li>
+<li>Robinhood Wallet availability for a Korea-resident (app store region).</li>
+<li>Stargate / Transporter live status for chain 4663 (docs list them; Stargate metadata lacks the chain).</li>
+<li>o1 Launchpad terms (site 429).</li>
+<li>Pons V2 audit completion (docs: in progress, "treat v2 as unaudited").</li>
+<li>pump.fun's 09-04/09-05 fee figures may be revised upward by DefiLlama.</li>
+</ol>
+<hr>
+<h2 id="12-sources-url-observed-utc">12. Sources (URL · observed UTC)</h2>
+<ul>
+<li>https://api.llama.fi/overview/dexs/Robinhood%20Chain · 20:00 — DEX volume series, protocol breakdown</li>
+<li>https://api.llama.fi/overview/fees/Robinhood%20Chain · 20:00 — fee ranking + methodologies</li>
+<li>https://api.llama.fi/overview/dexs/{Solana,Base,BSC,Ethereum} · 20:00</li>
+<li>https://api.llama.fi/summary/fees/{pons-v2,pons-v1,pons,pump.fun,letsbonk.fun,four.meme,gmgn,o1-launchpad,noxa-fun,bags}?dataType=dailyFees · 20:00–20:30</li>
+<li>https://api.llama.fi/overview/fees/{Solana,Base,BSC} · 20:30 — launchpad category rows</li>
+<li>https://coins.llama.fi/prices/current/coingecko:ethereum · 20:00</li>
+<li>https://rpc.mainnet.chain.robinhood.com (eth_chainId/eth_gasPrice/eth_getBlockByNumber/eth_call) · 20:00–20:15; https://rpc.ordofi.network (eth_getLogs, get_block) · 20:45–21:30</li>
+<li>https://chainid.network/chains.json · 20:03 (4663, 9134, 91342 entries)</li>
+<li>https://docs.robinhood.com/chain, /chain/bridging, /chain/add-network-to-wallet, /chain/gas-and-fees, /chain/protocol-contracts · 20:05–20:35</li>
+<li>https://robinhood.com/us/en/support/articles/crypto-transfers/ · 20:20; https://robinhood.com/us/en/support/articles/robinhood-chain-mainnet · 20:35; https://robinhood.com/us/en/support/articles/robinhood-wallet/ · 20:40; https://robinhood.com/chain · 20:25</li>
+<li>https://docs.ponsfamily.com (v1) · 20:05; https://docs.ponsfamily.com/v2 (full text saved <code>raw/ponsv2.txt</code>) · 20:10, 20:35; https://www.ponsfamily.com/launchpad · 20:05</li>
+<li>https://raw.githubusercontent.com/DefiLlama/dimension-adapters/master/fees/ponsdotfamily-v2/index.ts · 20:10; …/fees/gmgnai.ts · 20:25</li>
+<li>https://robinhoodchain.blockscout.com/api/v2/{stats, smart-contracts/…, addresses/…/transactions, addresses/…/counters} · 20:02–20:50</li>
+<li>https://api.relay.link/chains, /quote · 20:06–20:08; https://li.quest/v1/chains, /v1/quote · 20:06–20:08; https://app.across.to/api/available-routes, /suggested-fees · 20:06–20:08; https://superbridge.app/robinhood · 20:06; https://mainnet.stargate-api.com/v1/metadata?version=v2 · 20:25; https://app.transporter.io/?to=robinhood&amp;tab=token · 20:25</li>
+<li>https://www.binance.com/bapi/capital/v2/public/capital/getNetworkCoinAll · 20:06; https://api.exchange.coinbase.com/currencies/ETH · 20:20; OKX/Bybit/Upbit public endpoints (auth errors) · 20:06</li>
+<li>https://api.rabby.io/v1/chain/list · 20:25</li>
+<li>https://api.dexscreener.com/latest/dex/search?q=robinhoodchain%20WETH, /token-boosts/latest/v1, /token-boosts/top/v1, /token-profiles/latest/v1 · 20:06–20:20</li>
+<li>https://docs.gmgn.ai/index/gmgn-fees-settings · 20:10</li>
+<li>https://t.me/s/ponsfamily, https://t.me/s/hoodchain · 20:25; https://hoodscan.co, /discover, /project/robinhood-chain · 20:30</li>
+<li>https://m.blog.naver.com/englandkim77/224397838354, https://m.blog.naver.com/ucrypto/224392232277 · 20:40</li>
+<li>Prior scratchpad lenses (2026-09-04): 01_tg_trading_bots.md (GMGN fees/custody), 02_launchpad_fee_models.md (Bags-RH), 06_giwa_ecosystem_competitors_now.md (GIWA MARKETS), gap_x_telegram_korean_community_scan.md (GMGN Korea, dcinside/fmkorea posts), gap_unit_economics_four_products.md (Robinhood decay curves)</li>
+</ul></article>
+    </main>
+    <footer>
+      <span>research_only=true</span>
+      <span>strategy_consumption_allowed=false</span>
+      <span>order_input=false</span>
+    </footer>
+  </body>
+</html>

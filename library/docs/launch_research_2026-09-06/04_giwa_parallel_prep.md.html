@@ -1,0 +1,729 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex,nofollow,noarchive" />
+    <meta name="theme-color" content="#090c0e" />
+    <title>04 — GIWA parallel prep: contract-level sameness, rehearsal on GIWA Sepolia, GIWA MARKETS audit, day-1 mainnet kit · GIWA · Robinhood Launchpad</title>
+    <link rel="stylesheet" href="../../../assets/document.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#document">본문으로 바로가기</a>
+    <header class="document-header">
+      <a class="brand" href="../../../development.html" aria-label="GIWA 대시보드로 돌아가기">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span><strong>GIWA · RH</strong><small>LAUNCHPAD ROOM</small></span>
+      </a>
+      <nav aria-label="문서 동작">
+        <a href="../../../development.html">← 대시보드</a>
+      </nav>
+    </header>
+    <main id="document" class="document-shell">
+      <div class="document-meta">
+        <span>REPORT</span>
+        <span>SHA256 4258a29f71a2</span>
+      </div>
+      <h1>04 — GIWA parallel prep: contract-level sameness, rehearsal on GIWA Sepolia, GIWA MARKETS audit, day-1 mainnet kit</h1>
+      <p class="source-path">docs/launch_research_2026-09-06/04_giwa_parallel_prep.md</p>
+      <article class="markdown-body"><h1 id="04-giwa-parallel-prep-contract-level-sameness-rehearsal-on-giwa-sepolia-giwa-markets-audit-day-1-mainnet-kit">04 — GIWA parallel prep: contract-level sameness, rehearsal on GIWA Sepolia, GIWA MARKETS audit, day-1 mainnet kit</h1>
+<ul>
+<li>Lens: prepare the <em>same</em> memecoin launch package for GIWA in parallel with Robinhood Chain, so the owner can launch within hours of a GIWA mainnet.</li>
+<li>Observation window: <strong>2026-09-05 20:00–20:25 UTC (2026-09-06 05:00–05:25 KST)</strong> unless a row says otherwise. Every number below carries its URL/RPC call and that window; anything not observed is marked <strong>UNVERIFIED</strong>.</li>
+<li>Method: read-only JSON-RPC (<code>eth_chainId</code>, <code>eth_getBlockByNumber</code>, <code>eth_getCode</code>, <code>eth_call</code>, <code>eth_gasPrice</code>) against <code>https://rpc.mainnet.chain.robinhood.com</code> (4663) and <code>https://sepolia-rpc.giwa.io</code> (91342); Blockscout <code>/api/v2</code> on both chains; DefiLlama <code>api.llama.fi</code>; DexScreener API; gas.zip chain API; giwa.markets JS bundles (<code>chain-De4PEEMR.js</code>, <code>index-tFmx5n0z.js</code>, <code>i18n-BUIJQVGU.js</code>); project docs (<code>.md</code> endpoints); GitHub API. Nothing was signed, deployed, faucet-claimed or bridged. The session's WebSearch budget was exhausted before this task started, so there is no fresh search-engine pass; X timelines could not be read (syndication/nitter/jina all blocked) — September X posts are UNVERIFIED.</li>
+<li>Prior inputs reused (2026-09-04): <code>research/06_giwa_ecosystem_competitors_now.md</code>, <code>research/05_giwa_mainnet_timing_and_liquidity_thesis.md</code> §2/§9, <code>research/gap_x_telegram_korean_community_scan.md</code>, <code>research/gap_onchain_provider_verification.md</code> §1 (EIP-7702 on GIWA Sepolia), <code>research/02_launchpad_fee_models.md</code> §4 (licences).</li>
+<li>Not covered by design: legal/registration topics.</li>
+</ul>
+<h2 id="0-ten-line-summary">0. Ten-line summary</h2>
+<ol>
+<li><strong>Contract-level sameness is real for the token, not for the venue.</strong> Both chains use ETH gas, Solidity ≥0.8 with PUSH0/Cancun, Blockscout verification, and the <em>same addresses</em> for Permit2, Multicall3, CreateX, Create2Deployer, Arachnid CREATE2 proxy, ERC-4337 EntryPoints v0.6/v0.7 and Safe L2 (bytecode observed on both). A plain ERC-20 + CreateX salt gives the <strong>same token address on Robinhood and GIWA</strong>. What differs: chain id (4663 vs 91342 test / 9134 reserved mainnet), WETH (Robinhood <code>0x0Bd7…AD73</code> = upgradeable <code>aeWETH</code> proxy; GIWA <code>0x4200…0006</code> immutable predeploy), DEX (Robinhood has Uniswap V4 PoolManager <code>0x8366…0951</code> + V3; <strong>GIWA has no Uniswap at all</strong>), block time (≈0.07–0.10 s vs 1.0 s), <code>block.number</code> semantics, no-mempool ordering (Robinhood FCFS vs GIWA "highest fee first"), bridges, explorers.</li>
+<li><strong>The launchpad shape that ports to GIWA is Pons-V1/Joseon style (own curve → V2/V3-type pool + permanent locker), not Pons-V2/Bags style (Uniswap V4 hook).</strong> V4 is BUSL until 2027-06-15 and is not deployed on GIWA; every live GIWA launchpad graduates into its own AMM.</li>
+<li><strong>Rehearsal venues live on 2026-09-05:</strong> Joseon.fun (30 launches, 2 new on 2026-09-05 06:24Z, 3 graduated; locker verifiable by <code>lockedPair/lockedLiquidity</code>), GIWA MARKETS Sepolia pad (<code>0x540e…ee43</code>, latest buys 2026-09-04 19:59Z), Ammora (writes enabled, manifest 2026-09-03, no numeric fees), Naru (identity-gated "simulation", issuance dormant since 2026-07-22), GIWATER (DEX only, roadmap "Coming Soon"). Exact steps in §2.</li>
+<li><strong>Full graduation rehearsal on Joseon costs ~3.67 test ETH</strong> (virtual reserves 1.2 ETH / 1.0667B; 800M sold; 2% fee; 3.6 WETH + 200M into a locked pair). Faucets give 0.005–0.01 ETH/day, so bridge Sepolia ETH via Superbridge (<code>sepolia-bridge.giwa.io</code>, 1–3 min deposit) or gas.zip (outbound to 91342 enabled).</li>
+<li><strong>GIWA MARKETS on Robinhood is mostly a Pons launch wearing a GIWA brand.</strong> <code>$GIWA</code> <code>0xdaB0…43b1</code> is a <code>PonsLauncherToken</code> created by the Pons V1 factory <code>0xA5aA…1feB</code> in a Uniswap V3 1% pool; <code>$GAEJUKI</code> ("token #0") is a <code>PonsV2LauncherToken</code>. GIWA MARKETS' <em>own</em> Robinhood pad <code>RhPump</code> <code>0xbdf4…4c11</code> has <strong>19 transactions total (3 <code>createToken</code>, 12 buys, 4 sells), all 2026-08-17→08-19</strong>; <code>RhZero</code> 0 txs; <code>RhFurnace</code> 1 <code>buyAndBurn</code> (2026-08-17). Not on DefiLlama.</li>
+<li><strong><code>$GIWA</code> market on 2026-09-05:</strong> price $0.000497, FDV $451k, liquidity $79.0k (15.23 WETH + 82.9M GIWA), 24h volume $44.0k / 124 trades, 957 holders, 93.7M (9.37%) at <code>0xdead</code>. Treasury EOA <code>0x0D45…10aC</code> holds 1.83 ETH (nonce 1,517). Telegram 314 subscribers, last post 2026-08-25.</li>
+<li><strong>Verdict on "launch on GIWA MARKETS (Robinhood side) as a day-1 GIWA path": not credible; net negative.</strong> The migration is a promise by an anonymous team ("fires at the GIWA mainnet genesis block, whenever Upbit ships it"), depends on them controlling a mainnet genesis deploy, contradicts Pons's permanent LP lock (they say they will "withdraw its own Robinhood pool liquidity" — the Pons position sits in a locker with no withdraw path), and the team itself plans to <strong>rename <code>$GIWA</code> → <code>GMAR</code> "so nobody mistakes us for the chain team."</strong> Official docs: "GIWA Chain does not plan to issue its own token." DexScreener already shows four other "GIWA" tickers on Robinhood. If the owner wants Robinhood exposure, launch on Pons directly — same rail, no intermediary.</li>
+<li><strong>Mainnet: every artefact still absent on 2026-09-05</strong> (re-probed): <code>rpc.giwa.io</code>/<code>explorer.giwa.io</code>/<code>bridge.giwa.io</code> unreachable; <code>eip155-9134.json</code> still <code>rpc: []</code>, <code>incubating</code>; viem <code>giwa.ts</code> 404; L2BEAT 404; <code>giwa-io/chain-operations</code> has only <code>sepolia/</code>; <code>giwa-io/node</code> last push 2026-07-13; docs contracts page "under development"; Flashblocks mainnet "Coming soon". <strong>Caution:</strong> <code>superbridge.app/giwa</code> returns HTTP 200 but so does <code>superbridge.app/definitely-not-a-chain-xyz123</code> — it is a catch-all SPA; HTTP 200 is <em>not</em> a mainnet signal.</li>
+<li><strong>Launchpads with stated GIWA-mainnet intent:</strong> Joseon (re-derive params, multisig required first; GASOK Phase-3 finalist per KOL list), Naru (env-swap resync to private mainnet; Phase 3), GIWA MARKETS (genesis deploy "whenever"; not in the public Phase-3 lineup), Ammora (testnet-only wording; Phase 3), GIWATER (DEX; TGE/mainnet "coming soon"; Phase 3). No launchpad has a mainnet address or date.</li>
+<li><strong>Day-1 kit (§4):</strong> metadata + images pinned now; deployer/fee/buyer wallet set pre-funded on Ethereum L1 (Superbridge deposit is the only bridge that will exist at genesis; ~1–3 min); CreateX-salted ERC-20 build already verified on GIWA Sepolia and Robinhood (same address); first-buy inside the creation tx (Joseon supports it; GIWA sequencer orders by fee so a separate first buy can be outbid); fallback if no launchpad is live at genesis = deploy own token + own V2-style pair + locker (Joseon's contracts are source-verified and can be read as reference; Pons V1 shape).</li>
+</ol>
+<hr>
+<h2 id="1-technical-sameness-differences-that-matter-observed-2026-09-05">1. Technical sameness / differences that matter (observed 2026-09-05)</h2>
+<h3 id="11-chain-parameters">1.1 Chain parameters</h3>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Robinhood Chain (mainnet)</th>
+<th>GIWA Sepolia (testnet) → GIWA mainnet</th>
+<th>Source / observation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Stack</td>
+<td>Arbitrum Orbit / Nitro ("Arbitrum Dedicated Blockchains", blobs to Ethereum, FCFS sequencer)</td>
+<td>OP Stack (op-reth only since Karst), Ethereum L1</td>
+<td>docs.robinhood.com/chain/ ; docs.giwa.io upgrade-19</td>
+</tr>
+<tr>
+<td>Chain id</td>
+<td><code>0x1237</code> = <strong>4663</strong></td>
+<td><code>0x164ce</code> = <strong>91342</strong>; mainnet <strong>9134</strong> reserved (<code>eip155-9134.json</code>, <code>incubating</code>, <code>rpc: []</code>)</td>
+<td>RPC <code>eth_chainId</code> 20:00Z; raw.githubusercontent.com/ethereum-lists/chains/…/eip155-9134.json 20:01Z</td>
+</tr>
+<tr>
+<td>Public RPC</td>
+<td><code>https://rpc.mainnet.chain.robinhood.com</code> (rate-limited; Alchemy <code>robinhood-mainnet.g.alchemy.com</code>, QuickNode; sequencer <code>sequencer.mainnet.chain.robinhood.com</code>, feed <code>wss://feed.mainnet.chain.robinhood.com</code>)</td>
+<td><code>https://sepolia-rpc.giwa.io</code> + Flashblocks <code>https://sepolia-rpc-flashblocks.giwa.io</code> (both "rate-limited, not for production"); mainnet RPC: none</td>
+<td>docs.robinhood.com/chain/connecting ; docs.giwa.io connect-to-giwa.md, flashblocks.md</td>
+</tr>
+<tr>
+<td>Explorer</td>
+<td>robinhoodchain.blockscout.com (Blockscout, API v2 works with a browser UA; contract-verification page 200) + robinscan.io (Routescan-style UI; <code>/api</code> 404, Routescan API says "chain not supported")</td>
+<td>sepolia-explorer.giwa.io (Blockscout, API v2 open)</td>
+<td>curl 20:05Z</td>
+</tr>
+<tr>
+<td>Block time (measured)</td>
+<td><strong>0.07 s / 100 blocks, 0.098 s / 1,000 blocks</strong> (blocks only when txs; Bags docs say "~100 ms")</td>
+<td><strong>1.00 s</strong> (100 and 1,000-block windows); Flashblocks ~200 ms preconfirmation via <code>pending</code> tag</td>
+<td><code>eth_getBlockByNumber</code> 55,389,978 / −100 / −1,000 and 35,293,337 / −100 / −1,000, 20:00Z</td>
+</tr>
+<tr>
+<td>Latest block / gas</td>
+<td>block 55,389,978; <code>eth_gasPrice</code> 0.408 gwei; baseFee 0.422 gwei; block gasLimit 2^50 (Arbitrum convention); ArbGasInfo <code>getPricesInWei</code> = [0, 0, 8.138e12, 2.0e7, 3.869e8, 4.069e8] wei, <code>getL1BaseFeeEstimate</code> = 0 (L1 component currently zero — matches the "sponsored gas" reports)</td>
+<td>block 35,293,337; <code>eth_gasPrice</code> 1,000,289 wei (≈0.001 gwei); baseFee 289 wei; gasLimit 60,000,000; GasPriceOracle <code>0x4200…000F</code>: <code>isEcotone</code>=1, <code>isFjord</code>=1, <code>baseFeeScalar</code>=1368, <code>blobBaseFeeScalar</code>=801,949, <code>l1BaseFee</code>=1.08 gwei, <code>blobBaseFee</code>=0.063 gwei (<code>isIsthmus()</code> reverted on this predeploy — selector not exposed; 7702 activation proven separately in the 09-04 gap file)</td>
+<td>RPC 20:00–20:10Z</td>
+</tr>
+<tr>
+<td>ArbOS / EVM level</td>
+<td><code>ArbSys.arbOSVersion()</code> = <strong>116</strong> (precompile convention is 55 + ArbOS version → ArbOS 61, <strong>UNVERIFIED mapping</strong>); ArbOS 40 "Callisto" added EIP-7702 + EIP-2935 (docs.arbitrum.io/…/arbos40); PUSH0 since ArbOS 11</td>
+<td>Isthmus (Prague/EIP-7702) active since 2025-07-24 block 4,584 (09-04 gap file); Jovian; <strong>Karst = Osaka EVM</strong> on 2026-07-06 (docs.giwa.io/notices/giwa-chain/upgrade-19.md)</td>
+<td><code>eth_call</code> 0x64 <code>0x051038f2</code> 20:08Z</td>
+</tr>
+<tr>
+<td>Precompiles</td>
+<td>ArbSys <code>0x…64</code>, ArbGasInfo <code>0x…6C</code> (code = 1 byte marker)</td>
+<td>none (OP predeploys <code>0x4200…0007/0010/0012/0015/0016/000F</code> all 2,059-byte proxies)</td>
+<td><code>eth_getCode</code> both chains 20:03Z</td>
+</tr>
+<tr>
+<td>WETH</td>
+<td><strong><code>0x0Bd7D308f8E1639FAb988df18A8011f41EAcAD73</code></strong> — <code>TransparentUpgradeableProxy</code> → impl <code>aeWETH</code> (Arbitrum bridged-WETH pattern), total supply 42,291.18 WETH; also listed by Bags docs as WETH</td>
+<td><strong><code>0x4200000000000000000000000000000000000006</code></strong> WETH9 predeploy (2,846 B code). Note Joseon ships its <strong>own</strong> WETH9 <code>0x323bbaAfff0518Ca107A73BA9870A426fA550B11</code> per stack; Naru uses <code>0x4200…0006</code></td>
+<td>blockscout RH <code>/addresses/0x0Bd7…</code>; <code>eth_call name/symbol/totalSupply</code>; docs.bags.fm/robinhood/overview.md; docs.joseon.fun/network/; naru.market/docs</td>
+</tr>
+<tr>
+<td>Uniswap</td>
+<td><strong>V4</strong> PoolManager <code>0x8366a39cc670b4001a1121b8f6a443a643e40951</code> (24,009 B), PositionManager <code>0x58daec3116aae6d93017baaea7749052e8a04fa7</code>, Quoter <code>0x8dc178efb8111bb0973dd9d722ebeff267c98f94</code>, StateView <code>0xf3334192d15450cdd385c8b70e03f9a6bd9e673b</code> (developers.uniswap.org v4 deployments); Universal Router <code>0x66a9…8af</code> has code (19,499 B); a V3 factory at canonical <code>0x1F98…1984</code> has only 2,109 B (not a real factory); the V3 factory Pons uses is <code>0x1f7d7550b1b028f7571e69a784071f0205fd2efa</code> (24,535 B; created the <code>$GIWA</code> pool) — canonical status <strong>UNVERIFIED</strong> (Uniswap's v3-robinhood page 404)</td>
+<td><strong>No Uniswap</strong>: canonical V4 PoolManager, V3 factory, V2 factory, Universal Router, Bags contracts all <code>code=0x</code> on 91342</td>
+<td><code>eth_getCode</code> 20:04Z; developers.uniswap.org/llms.mdx/docs/protocols/v4/deployments 20:02Z</td>
+</tr>
+<tr>
+<td>Shared pre-installs (identical addresses, bytecode present on both)</td>
+<td>Permit2 <code>0x0000…0022D4…8BA3</code> (9,152 B), Multicall3 <code>0xcA11…CA11</code> (3,808 B), CreateX <code>0xba5E…a5Ed</code> (11,838 B), Create2Deployer <code>0x13b0…beF2</code> (2,933 B on RH / 1,584 B on GIWA — different builds), Arachnid proxy <code>0x4e59…956C</code> (69 B), EntryPoint v0.6 <code>0x5FF1…2789</code> (23,689 B), v0.7 <code>0x0000…a032</code> (16,035 B), Safe L2 1.3 <code>0x3E5c…D36E</code> (23,800 B)</td>
+<td>same</td>
+<td><code>eth_getCode</code> batch 20:03Z; docs.giwa.io contracts.md</td>
+</tr>
+<tr>
+<td>Bridges</td>
+<td>Arbitrum native bridge + LayerZero (docs); gas.zip <strong>inbound enabled</strong> (min 0.015 ETH, max 750 ETH; RPC listed)</td>
+<td>Superbridge native (<code>sepolia-bridge.giwa.io</code> = Superbridge build; deposits 1–3 min, withdrawals ~7 days per docs bridging/eth.md); gas.zip lists 91342 with <code>inbound: false</code>, outbound to it allowed (this is what giwa.markets routes users to); <strong>no mainnet bridge exists</strong></td>
+<td>backend.gas.zip/v2/chains 20:07Z; docs.giwa.io/get-started/bridging/eth.md</td>
+</tr>
+<tr>
+<td>Verification</td>
+<td>Blockscout rust verifier enabled, solc up to v0.8.36 (<code>/api/v2/smart-contracts/verification/config</code>)</td>
+<td>same config on sepolia-explorer.giwa.io; docs example: <code>forge script … --verify --verifier blockscout --verifier-url https://sepolia-explorer.giwa.io/api</code></td>
+<td>20:06Z; docs.giwa.io/get-started/smart-contract/develop/foundry.md</td>
+</tr>
+<tr>
+<td>Mempool / ordering</td>
+<td>no public mempool; FCFS sequencer (Robinhood docs)</td>
+<td>no public mempool; "the sequencer currently executes transactions in order of highest fee" (docs diffs-ethereum-giwa.md) → <strong>priority fee wins the first block on GIWA; on Robinhood latency wins</strong></td>
+<td>docs 20:10Z</td>
+</tr>
+<tr>
+<td><code>block.number</code>, randomness</td>
+<td><code>block.number</code> = estimate of the <em>L1</em> block; L2 height via <code>ArbSys.arbBlockNumber()</code> (= <code>eth_blockNumber</code>, 55,395,574 at 20:08Z); <code>blockhash</code> pseudo-random/insecure; <code>prevrandao</code>/<code>difficulty</code> = 1; coinbase <code>0xA4b0…6572</code></td>
+<td><code>block.number</code> = L2 block; <code>PREVRANDAO</code> = L1 RANDAO at the L1 origin; coinbase = sequencer fee wallet</td>
+<td>docs.arbitrum.io solidity-support + block-numbers-and-time; docs.optimism.io/stack/differences</td>
+</tr>
+<tr>
+<td>L1→L2 aliasing</td>
+<td>yes (delayed inbox)</td>
+<td>yes (+<code>0x1111…1111</code>)</td>
+<td>both docs</td>
+</tr>
+<tr>
+<td>ETH reference price</td>
+<td>$2,478.27 (gas.zip)</td>
+<td>—</td>
+<td>backend.gas.zip 20:07Z</td>
+</tr>
+</tbody>
+</table>
+<h3 id="12-what-this-means-for-the-launch-package">1.2 What this means for the launch package</h3>
+<p><strong>Reusable as-is (one build, two targets):</strong>
+- ERC-20 token contract (OpenZeppelin, <code>evm_version = cancun</code> is the safe common denominator; <code>prague</code> also works on GIWA — docs example — and on Robinhood if ArbOS ≥ 40, UNVERIFIED which version is live).
+- Deterministic deployment via <strong>CreateX</strong> (<code>0xba5Ed099633D3B313e4D5F7bdc1305d3c28ba5Ed</code> on both) or Arachnid proxy: same deployer + same salt + same init-code ⇒ <strong>same token address on 4663 and 9134</strong>. This is the single most useful "sameness" for a memecoin: one CA to publish.
+- Permit2 / Multicall3 / EntryPoints: identical addresses, so any batching, approval or 4337 tooling is chain-agnostic.
+- Blockscout verification flow (identical API, same solc list). Foundry profile differs only in <code>chain_id</code>, <code>rpc_url</code>, <code>verifier-url</code>.
+- Metadata, images, socials, wallet set (§4).</p>
+<p><strong>Must change per chain (config table, no code changes):</strong>
+| Key | Robinhood | GIWA (testnet today / mainnet TBD) |
+|---|---|---|
+| <code>chainId</code> | 4663 | 91342 → 9134 |
+| <code>rpc</code> | rpc.mainnet.chain.robinhood.com / Alchemy | sepolia-rpc.giwa.io (+ flashblocks) → unknown |
+| <code>explorer</code> + verifier URL | robinhoodchain.blockscout.com/api | sepolia-explorer.giwa.io/api → unknown |
+| <code>WETH</code> | 0x0Bd7…AD73 | 0x4200…0006 (or the launchpad's own WETH: Joseon 0x323b…0B11) |
+| DEX target for graduation | Uniswap V4 (Pons V2, Bags) or V3 1% (Pons V1) | <strong>launchpad-owned AMM only</strong> (Joseon V2-fork <code>JoseonSwapFactoryV4 0x9AB1…8784</code>, router <code>0xcD4B…5d3D</code>; Naru V2 fork; GIWATER CL) |
+| Locker | Pons V1 locker <code>0x736D76699C26D0d966744cAe304C000d471f7F35</code>, Pons V2 <code>0x2674…4952</code>, Bags vault | Joseon <code>PermanentLiquidityLocker 0x2141630cf59bC2e04bd4A0864B86b84C21023fE6</code> |
+| Bridge | Arbitrum bridge / LayerZero / gas.zip | Superbridge only (mainnet route does not exist yet) |
+| Gas assumptions | 0.4 gwei, L1 component 0 now; ~5M-gas create ≈ 0.002 ETH ≈ $5 | testnet ≈ free (Joseon <code>createToken</code> 4,844,931 gas, fee 4.85e12 wei = 0.0000049 ETH); mainnet: EIP-1559 + L1 data fee (Fjord scalars) — keep calldata small, images off-chain |
+| First-block tactic | latency (FCFS, ~100 ms blocks) | priority fee (fee-ordered sequencer, 1 s blocks, 200 ms Flashblocks preconf) |
+| Time-based logic | never use <code>block.number</code> for time; <code>blockhash</code> insecure | 1 s blocks; <code>block.number</code> usable |</p>
+<p><strong>Design constraint that is not a config change:</strong> any launchpad contract of one's own must graduate into a V2/V3-style pool on GIWA (V3 is now GPL after its BUSL change date; V2 is GPL; V4 is BUSL until 2027-06-15 per lens 02 §4.1). Pons-V1's shape (own curve → V3 1% pool → locker, 0.0005 ETH launch fee, creator 70%) is the reference that ports; Pons-V2/Bags (V4 hook, 99%→0 snipe tax over 5 s, fee-in-hook, pool fee 0) does not.</p>
+<hr>
+<h2 id="2-rehearsal-on-giwa-sepolia-what-is-live-today-and-the-exact-steps">2. Rehearsal on GIWA Sepolia — what is live today and the exact steps</h2>
+<h3 id="21-liveness-re-check-2026-09-05-20002015-utc">2.1 Liveness re-check (2026-09-05 20:00–20:15 UTC)</h3>
+<table>
+<thead>
+<tr>
+<th>Venue</th>
+<th>Live?</th>
+<th>Fresh on-chain evidence</th>
+<th>Fees (published)</th>
+<th>Mainnet statement (verbatim / paraphrase)</th>
+<th>Source</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Joseon.fun</strong></td>
+<td>Yes — app 200; <code>api/health</code> → <code>{"network":"GIWA Sepolia","chainId":91342}</code></td>
+<td><code>/api/launches</code> = <strong>30</strong> (28 on 09-04); newest <code>createToken</code> 2026-09-05 06:25:36Z ("GIWA V!!!!"/V, 0.1 ETH initial buy) and 06:24:56Z ("Sexy"/SEX); <strong>3 graduated</strong> (Giwa 07-28, Joseon 07-28, Shiba 09-02 → pair <code>0x25f826d7…4b89</code>); locker read: <code>lockedPair(SHIBA)=0x25f826d7a6d0402426874786b6aff0717d4d4b89</code>, <code>lockedLiquidity=26,832,815,729,997,476,355,910</code></td>
+<td>curve 2% (70% creator / 30% protocol, in ETH); swap 0.30% (launch pools 50/30/20 creator/protocol/LP)</td>
+<td>FAQ: "GIWA mainnet is still in development, and the plan is to re-derive parameters against real gas and redeploy rather than port testnet numbers straight over"; fees: "Whether mainnet charges a small anti-spam fee is still an open decision"; security: "Moving [the admin key] behind a multisig is a requirement before mainnet"; "Internal review only so far"</td>
+<td>api.joseon.fun/api/launches; sepolia-rpc <code>eth_call</code> locker <code>0x2207ec87</code>/<code>0xf3288fe3</code>; docs.joseon.fun/{faq,fees,security,bonding-curve,graduation,quickstart,network}/</td>
+</tr>
+<tr>
+<td><strong>GIWA MARKETS (Sepolia pad)</strong></td>
+<td>Yes — site 200, <code>/launch</code> 200</td>
+<td>pump <code>0x540e2f0ae770133e30bb6c1212029b7862b8ee43</code>: counters 3,853 txs; latest <code>buy</code> 2026-09-04 19:59:56Z (0.1 ETH), <code>createToken</code> 19:54:08Z; claim contract <code>0xe3fa2762…6fc2</code> (merkle "dry-run")</td>
+<td>1% per curve trade; post-graduation 0.3% LP fee; "70% of protocol fees buy &amp; burn $GIWA, 30% dev" (testnet)</td>
+<td>Roadmap: "Fires at the GIWA mainnet genesis block — the trigger is the event, not a date, and it never expires"; "mainnet ready"</td>
+<td>sepolia-explorer.giwa.io/api/v2/addresses/0x540e…/transactions; giwa.markets i18n bundle <code>rd.*</code></td>
+</tr>
+<tr>
+<td><strong>Ammora</strong></td>
+<td>Yes — <code>/api/product-release</code>: <code>manifestId giwa-sepolia-product-20260903-1</code>, <code>writesEnabled:true</code>, commit 87c27097, verificationBlock 35,090,751; <code>/launch</code> 200</td>
+<td>contract addresses not exposed publicly; <strong>not confirmed on-chain</strong></td>
+<td>none numeric ("Fee sharing" page has no numbers)</td>
+<td>docs: "Live on GIWA Testnet"; footer "GIWA Sepolia · Testnet only"; no mainnet statement</td>
+<td>ammora-protocol.vercel.app/{api/product-release,fees,launch}; ammora-docs.vercel.app</td>
+</tr>
+<tr>
+<td><strong>Naru</strong></td>
+<td>Site/launch 200, but "테스트넷 데모입니다. 검증·발행 신청은 시뮬레이션"</td>
+<td><code>TokenFactory 0x102a…E256</code> last <code>issueAndList</code> <strong>2026-07-22</strong> (dormant)</td>
+<td>0.3% all to LPs; mainnet fee "decided separately"</td>
+<td>"메인넷에서는 시드 봇을 운영하지 않습니다"; private-mainnet resync "env 교체만으로"</td>
+<td>naru.market/{docs,launch}; sepolia-explorer API</td>
+</tr>
+<tr>
+<td><strong>GIWATER</strong></td>
+<td>Swap app 200 (DEX, not a launchpad)</td>
+<td>(09-04: universalRouter 1,103 txs) — not re-probed</td>
+<td>pool tiers 0.01/0.05/0.3%, ~33% protocol cut</td>
+<td>Roadmap page: "Coming Soon" (last updated 2026-06-08)</td>
+<td>docs.giwater.finance/1-introduction/3-roadmap</td>
+</tr>
+<tr>
+<td>Faucets / bridge / playground</td>
+<td><code>faucet.giwa.io</code> → 403 to curl (bot-gated; docs: up to 0.005 ETH / 24 h); <code>faucet.lambda256.io/giwa-sepolia</code> 200 (0.01 ETH / 24 h); <code>sepolia-bridge.giwa.io</code> 200 (Superbridge build); <code>sepolia-playground.giwa.io</code> 200</td>
+<td>—</td>
+<td>—</td>
+<td>—</td>
+<td>docs.giwa.io/get-started/faucets.md; curl 20:09Z</td>
+</tr>
+</tbody>
+</table>
+<h3 id="22-rehearsal-a-joseonfun-closest-to-the-robinhood-package-curve-locked-pool-creator-fee-stream">2.2 Rehearsal A — Joseon.fun (closest to the Robinhood package: curve → locked pool, creator fee stream)</h3>
+<p>Costs quoted from docs.joseon.fun (observed 2026-09-05): create ≈ 0.000005 ETH gas; curve trade &lt; 0.00001 ETH gas; <strong>filling the curve ≈ 3.67 ETH gross</strong> (virtual reserves 1.2 ETH / 1,066,666,666.67 tokens; 800M sold; opening price ~1.125e-9 ETH; final price 1.8e-8 ETH; FDV 18 ETH; 3.6 WETH + 200M tokens into the pool; overshoot refunds in the same tx).</p>
+<ol>
+<li><strong>Wallets.</strong> Fresh deployer EOA + fee-recipient EOA + 2–3 buyer EOAs (same set you will use on mainnet, §4). Add GIWA Sepolia: chainId 91342, RPC <code>https://sepolia-rpc.giwa.io</code>, explorer <code>https://sepolia-explorer.giwa.io</code>, symbol ETH. (viem: <code>giwaSepolia</code> upstream.)</li>
+<li><strong>Test ETH (≥ 4 ETH total for a full graduation).</strong> Faucets alone give 0.005–0.01/day. Get Sepolia ETH in bulk on Ethereum Sepolia (PoW/Alchemy-class faucets), then bridge: <code>https://sepolia-bridge.giwa.io</code> (Superbridge; docs: deposits ≈ 1–3 min after L1 confirmation; withdrawals ≈ 7 days + up to 2 h prove) — or gas.zip outbound to chain 91342. Spread across buyer wallets.</li>
+<li><strong>Create.</strong> joseon.fun → create form: name + symbol (on-chain, permanent), image + description (off-chain, editable), <strong>fee recipient</strong> (single address — use the fee wallet), <strong>optional initial buy</strong> executed inside the creation tx (observed launches use 0.05–2.0 ETH). Record: token, curve, <code>createdTx</code> (indexer <code>/api/launches</code> returns all of them).</li>
+<li><strong>Curve buys.</strong> From buyer wallets: 2% fee each side in ETH; watch Flashblocks <code>pending</code> preconfirmation (~200 ms) vs 1 s inclusion; log latencies.</li>
+<li><strong>Claim creator fees (pull-based).</strong> Portfolio → claim; or call <code>claimCreatorFeesFor(address)</code> permissionlessly. Confirm ETH lands in the fee wallet.</li>
+<li><strong>Graduate.</strong> The buy that sells out the curve triggers graduation in the same tx ("not a waiting period"); pool = 3.6 WETH + 200M tokens via <code>MigrationManagerV3 0x4D3401d27B45d49117ba9DF99F4315512C715c59</code>, LP into <code>PermanentLiquidityLocker 0x2141630cf59bC2e04bd4A0864B86b84C21023fE6</code>.</li>
+<li><strong>Verify the lock (read-only):</strong> <code>lockedPair(token)</code> selector <code>0x2207ec87</code>, <code>lockedLiquidity(token)</code> selector <code>0xf3288fe3</code> on the locker; check the pair exists on <code>JoseonSwapFactoryV4 0x9AB150A7e487FbdC1094077C8A18898297118784</code>; swap once through <code>JoseonSwapRouter 0xcD4B6582C6964Fae3dF4254cAED959789cFD5d3D</code>; confirm the 0.15% creator share accrues ("After graduation, 0.15% of swap volume accrues in the pool and you claim it there").</li>
+<li><strong>Note for mainnet:</strong> Joseon's stack ships its own WETH per version ("use one stack at a time"); admin key is a single EOA (<code>feeAdmin 0x923C…576E</code>) until the promised multisig; no external audit.</li>
+</ol>
+<h3 id="23-rehearsal-b-giwa-markets-sepolia-pad-pumpfun-identical-mechanics-four-modes">2.3 Rehearsal B — GIWA MARKETS Sepolia pad (pump.fun-identical mechanics, four modes)</h3>
+<p>From the site's own guide (i18n <code>gd.*</code>, observed 2026-09-05): "Any injected wallet works … the moment you hit Connect wallet, GIWA Sepolia (chain ID 91342) is added"; "0.01 ETH is more than enough for a launch plus a dev buy"; standard mode = "1B supply, no presale, no team cut … 1% fee per trade … at 800M sold it graduates — all curve ETH plus 200M tokens seed an AMM pool and the LP is burned forever"; optional "Dev buy in the same tx". Steps: connect → <code>/launch</code> → THE STANDARD → name/ticker/one-line/image URL/links → optional dev buy → "PULL THE LEVER" (one signature). Then buy/sell from other wallets on <code>/t/&amp;lt;address&gt;</code>; check graduation and the burned LP on the explorer; optionally try ZERO (block-hash lottery), PROPHECY (money-back) and DUEL modes, and the <code>/migrate</code> merkle-claim dry run. Value: a second, differently-shaped curve to time; not a mainnet path (see §3).</p>
+<h3 id="24-rehearsal-c-own-contracts-fallback-for-a-no-launchpad-genesis">2.4 Rehearsal C — own contracts (fallback for a no-launchpad genesis)</h3>
+<p><code>forge script script/Deploy.s.sol --rpc-url https://sepolia-rpc.giwa.io --broadcast --verify --verifier blockscout --verifier-url https://sepolia-explorer.giwa.io/api</code> (docs.giwa.io foundry.md). Deploy the ERC-20 through CreateX with a fixed salt; repeat on Robinhood with <code>--verifier-url https://robinhoodchain.blockscout.com/api</code>; confirm identical address. If a self-owned pool is needed on GIWA: V2-style factory/pair/router fork + a no-withdraw locker (Joseon's verified source is a readable reference; Uniswap V2/V3 licences allow it, V4 does not).</p>
+<hr>
+<h2 id="3-giwa-markets-on-robinhood-chain-what-the-contracts-say">3. GIWA MARKETS on Robinhood Chain — what the contracts say</h2>
+<h3 id="31-addresses-from-index-tfmx5n0zjs-chainid-4663-and-what-blockscout-reports-2026-09-05-20042012z">3.1 Addresses (from <code>index-tFmx5n0z.js</code>, chainId 4663) and what Blockscout reports (2026-09-05 20:04–20:12Z)</h3>
+<table>
+<thead>
+<tr>
+<th>Role (bundle key)</th>
+<th>Address</th>
+<th>Blockscout name / creator</th>
+<th>Activity</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>pump</code> (their Robinhood curve)</td>
+<td><code>0xbdf4bfa5a81f44ed6b933b120a609b77f4354c11</code></td>
+<td><strong><code>RhPump</code></strong>, verified, creator <code>0x0D45…10aC</code> (= <code>treasury</code>), deployed 2026-08-17 19:05:04Z (3,915,741 gas, fee 7.88e13 wei at 0.02 gwei)</td>
+<td><strong>19 txs</strong>: 3 <code>createToken</code>, 12 <code>buy</code>, 4 <code>sell</code>; first 2026-08-17 19:05Z, <strong>last 2026-08-19 03:37Z</strong></td>
+</tr>
+<tr>
+<td><code>zero</code></td>
+<td><code>0x0a9868896a86f3adc15c85aa805e46037729b246</code></td>
+<td><code>RhZero</code>, verified</td>
+<td><strong>0 txs</strong></td>
+</tr>
+<tr>
+<td><code>furnace</code></td>
+<td><code>0x7bd57276f2da6abea569c7fe6426cca4279bde63</code></td>
+<td><code>RhFurnace</code>, verified</td>
+<td><strong>1 tx</strong> (<code>buyAndBurn</code> 2026-08-17 20:41Z); holds 0.00085 ETH, 0 GIWA</td>
+</tr>
+<tr>
+<td><code>giwa</code> ($GIWA)</td>
+<td><code>0xdaB0E8CE3b999D16898709A6DfC44c953bFc43b1</code></td>
+<td><strong><code>PonsLauncherToken</code></strong>, creator <strong><code>0xA5aAb3F0c6EeadF30Ef1D3Eb997108E976351feB</code> = Pons V1 "active factory"</strong> (docs.ponsfamily.com), creation tx <code>0x3408bcd8…41a3</code> (same tx created the pool)</td>
+<td>name/symbol GIWA, 1,000,000,000 supply, 18 dec; 5,012 txs on the token contract; <strong>957 holders</strong>; 93,721,836 (9.37%) at <code>0x…dEaD</code></td>
+</tr>
+<tr>
+<td><code>giwaPool</code></td>
+<td><code>0x28f26FB95Ef30218E0090d0776A5cDF65BA44E73</code></td>
+<td><code>UniswapV3Pool</code>, created by factory <code>0x1f7d7550…2efa</code> (<code>giwaPoolFee: 10000</code> = 1%)</td>
+<td>DexScreener (uniswap, v3): price <strong>$0.0004974</strong>, FDV <strong>$450,807</strong>, liquidity <strong>$79,011</strong> (82,900,978 GIWA + 15.2258 WETH — matches on-chain balances 82,900,978.6 GIWA / 15.2258 WETH), 24h vol <strong>$43,951</strong>, 24h txns 64 buys / 60 sells, pair created 2026-07-27</td>
+</tr>
+<tr>
+<td><code>gaejuki</code> ($GAEJUKI, "token #0")</td>
+<td><code>0x3aCC80544eE35323F996E2338bfA548E8ffA79DE</code></td>
+<td><strong><code>PonsV2LauncherToken</code></strong>, creator <code>0x3711ceA4feaDE896C913C68F01Eda97Cb06D1A42</code> = <code>PonsV2LaunchDeployer</code></td>
+<td>391 holders; liquidity $25,857, 24h vol $3,128 (V4 pool id <code>0xd83ee0c4…</code>)</td>
+</tr>
+<tr>
+<td><code>kpepe</code> / <code>hbm</code> / <code>semi</code></td>
+<td><code>0x9B08…7955</code> / <code>0xf125…3d4E</code> / <code>0x5f03…bac8</code></td>
+<td>KOREAN PEPE 1B; High Bandwidth Meme 1B (paired to SKHY); semivault.xyz SEMI 79.07M (paired to MU)</td>
+<td>KPEPE liq $13.1k; HBM liq $2.35k; SEMI liq $921.6k, 24h vol $456.8k (an RWA-paired token that "stays native to Robinhood Chain")</td>
+</tr>
+<tr>
+<td><code>treasury</code></td>
+<td><code>0x0D459F23F801C1833B393877D3835f4992D310aC</code></td>
+<td>EOA-like (23 B code → 7702-delegated or minimal; UNVERIFIED)</td>
+<td>balance 1.8285 ETH, nonce 1,517</td>
+</tr>
+<tr>
+<td><code>v3Factory</code> / <code>v3Router</code></td>
+<td><code>0x1f7d7550…2efa</code> (24,535 B) / <code>0xcaf681a6…5cb2</code> (24,497 B)</td>
+<td>factory has 491 txs; Uniswap's Robinhood V3 deployment page returned 404 → canonical status UNVERIFIED</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>weth</code></td>
+<td><code>0x0Bd7D308…AD73</code></td>
+<td><code>aeWETH</code> proxy</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<p>DefiLlama (<code>/overview/dexs/Robinhood Chain</code>, <code>/overview/fees/Robinhood Chain</code>, <code>/protocols</code>, 20:01Z): no protocol named GIWA MARKETS / giwa.markets / GAEJUKI exists; Robinhood launchpads listed there are Pons V1/V2, o1, NOXA Fun, PAIR, Pools, StonkBrokers, token.select, Sentry, Hookers, Unihood, Coinbarrel, basedbid, Frontier, Boardwalk, Peeps, RaiseHood, Based Alpha, MerryForge, DexLaunch, RobinFun, RH.fun, popi, keep.coffee, HoodMint, ArrowPad, DOTT, Mixpad, HoodPump, H00D, ymym.meme, BlueFun, BowYard, AvaLove, LuckyLaunch. Chain context the same call returned: DEX 24h $1.890B / 7d $10.73B / 30d $23.09B; fees 24h $24.51M (Uniswap V4 $8.82M, Pons V2 $8.75M, GMGN $2.81M, Pons V1 $0.26M, o1 $0.24M, NOXA $0.16M); TVL $905.07M.</p>
+<h3 id="32-mechanics-as-published-by-giwa-markets-i18n-bundle-2026-09-05">3.2 Mechanics as published by GIWA MARKETS (i18n bundle, 2026-09-05)</h3>
+<ul>
+<li>Robinhood pad: "Real ETH. Curve trading from block one, then a real Uniswap v3 pool with the LP locked forever"; "Minimum 0.01 ETH … buys you the first tokens on the curve at the floor price"; "1% of every curve trade and every v3 pool fee afterwards routes to the furnace: 80% buys and burns $GIWA, 20% to treasury. The LP has no withdraw path"; a UI line still reads "Buy and sell straight on the verified pad contract … until the in-app panel lands".</li>
+<li>Token/migration: "$GIWA … trades on Robinhood Chain today and every holder ports 1:1 to GIWA mainnet at launch via a snapshot claim"; "RWA tokens like $SEMI and $HBM do not migrate"; Phase 2 "The Seal": "At the sealed block the protocol withdraws its own Robinhood Chain pool liquidity, bridges the ETH, and re-seeds the GIWA mainnet pool at the exact sealed price … Then the LP tokens are burned"; Phase 3: "Fires at the GIWA mainnet genesis block — the trigger is the event, not a date"; "The launchpad factory's constructor creates GAEJUKI itself … merkle root of Robinhood Chain holders wired in".</li>
+<li>Article #9 title/sub: <strong>"Why we built on Robinhood Chain first, and why $GIWA becomes GMAR — … renaming the launchpad token at migration so nobody mistakes us for the chain team."</strong></li>
+<li>Disclaimer: "GIWA.MARKETS is an independent community project. Not affiliated with, endorsed or sponsored by Upbit, Dunamu, GIWA, Robinhood or Micron … Testnet software."</li>
+<li>Staking: "ROOF POINTS — soft-stake $GIWA for mainnet launch access … get priority in curated mainnet launches"; GONGSIN NFT mint: "80% funds the liquidity migration to GIWA mainnet, 20% operations"; "What if GIWA mainnet never launches? … the 80% waits for the migration however long Upbit takes."</li>
+<li>Social: t.me/giwalaunch 314 subscribers, last post 2026-08-25 08:00Z (two linked X posts were deleted by the author per the 09-04 scan); X @GIWALAUNCHPAD last dated post found 2026-08-27 (09-04 scan); September posts UNVERIFIED (X unreachable in this session).</li>
+</ul>
+<h3 id="33-honest-assessment-day-1-path-or-brand-confusion-risk">3.3 Honest assessment: day-1 path or brand-confusion risk?</h3>
+<p><strong>It is a brand-confusion risk, not a day-1 path.</strong> Reasons, each tied to an observation above:</p>
+<ol>
+<li><strong>The "launchpad on Robinhood" barely exists.</strong> <code>RhPump</code>: 3 launches, 16 trades, silent since 2026-08-19; <code>RhZero</code>: 0 txs; <code>RhFurnace</code>: 1 burn. The economy the site markets (<code>$GIWA</code>, <code>$GAEJUKI</code>) was launched on <strong>Pons</strong> (V1 and V2 launcher tokens), i.e. the same public rail the owner can use directly with Pons's published terms (0.0005 ETH launch fee, 1% V3 pool, creator 70%, 4.2 WETH default graduation; V2: snipe tax 99%→0 over 5 s, V4 locked LP, escrowed creator claims).</li>
+<li><strong>"1:1 migration" is a third party's future promise with no date, no counter-party and an internal contradiction.</strong> Phase 2 says the protocol "withdraws its own Robinhood Chain pool liquidity", but <code>$GIWA</code>'s pool was created through Pons V1's flow whose opening position sits in the Pons locker ("no unlock button") — GIWA MARKETS can only lift liquidity it separately added (UNVERIFIED whether any exists). The mainnet side requires a genesis deploy on a chain that has no RPC, no bridge and no date, by a team that is <strong>not in the public GASOK Phase-3 lineup</strong> (KOL list of 2026-08-25: Hanok, Naru, Giwater, kachi, Joseon, VITe).</li>
+<li><strong>The name collides with the chain and the team admits it.</strong> Official FAQ: "GIWA Chain does not plan to issue its own token. The fundamental native token of GIWA is Ethereum's ETH." GIWA MARKETS: "$GIWA becomes GMAR … so nobody mistakes us for the chain team." giwa.eco already annotates "$GIWA minted on this launchpad is not the GIWA chain's token" (09-04). DexScreener search on 2026-09-05 shows <strong>four additional "GIWA" tokens on Robinhood</strong> with $10–$35 liquidity — the ticker is being copy-catted. Any token launched through that pad inherits the association.</li>
+<li><strong>Size.</strong> $79k liquidity / $44k daily volume for the flagship; the pad's own tokens are single-digit-thousands. This is not a distribution channel; launching there adds no audience the owner cannot reach directly on Pons/GMGN.</li>
+<li><strong>What is genuinely useful:</strong> their Sepolia pad and merkle-claim dry-run are a free rehearsal of a pump-style curve on a 1-s OP-Stack chain (§2.3), and their four-mode design (ZERO/PROPHECY/DUEL) is a menu of launch gimmicks to borrow. Use it as a sandbox; do not put a mainnet launch or the brand on it.</li>
+</ol>
+<hr>
+<h2 id="4-day-1-giwa-mainnet-plan">4. Day-1 GIWA mainnet plan</h2>
+<h3 id="41-status-of-the-imminent-signals-re-probed-2026-09-05-20002012z">4.1 Status of the "imminent" signals (re-probed 2026-09-05 20:00–20:12Z)</h3>
+<table>
+<thead>
+<tr>
+<th>Signal (from lens 05 §9 / gap scan)</th>
+<th>State now</th>
+<th>How to poll</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>eip155-9134.json</code> gains RPC/explorer</td>
+<td>still <code>"rpc": [], "status": "incubating"</code></td>
+<td>raw.githubusercontent.com/ethereum-lists/chains/master/_data/chains/eip155-9134.json</td>
+</tr>
+<tr>
+<td><code>giwa-io/node</code> or <code>chain-operations</code> commit a mainnet rollup/genesis</td>
+<td><code>chain-operations</code> tree = <code>.gitignore, LICENSE, README.md, resources/, sepolia/</code> only; repo pushes: node 2026-07-13, chain-operations 2026-07-06, dojang 2026-06-16, viem 2025-12-09, rundler 2025-11-05, chains 2025-09-28</td>
+<td>api.github.com/orgs/giwa-io/repos ; …/repos/giwa-io/chain-operations/contents/</td>
+</tr>
+<tr>
+<td>docs contracts page lists Ethereum-mainnet L1 addresses</td>
+<td>"GIWA Mainnet is currently under development. See you soon 👋"; only Sepolia pre-installs and Sepolia L1 contracts</td>
+<td>docs.giwa.io/giwa-chain/en/network-information/contracts.md</td>
+</tr>
+<tr>
+<td><code>rpc.giwa.io</code> answers <code>eth_chainId = 0x23ae</code></td>
+<td><code>rpc.giwa.io</code>, <code>mainnet-rpc.giwa.io</code>, <code>explorer.giwa.io</code>, <code>bridge.giwa.io</code> → connection failure (HTTP 000)</td>
+<td>curl</td>
+</tr>
+<tr>
+<td>Superbridge adds a <code>giwa</code> route</td>
+<td><strong>superbridge.app is a catch-all SPA</strong>: <code>/giwa</code> 200, <code>/giwa-sepolia</code> 200, <code>/definitely-not-a-chain-xyz123</code> 200, <code>/api/deployments</code> returns the SPA; no "giwa" string in the HTML. Poll the <em>chain picker</em> or <code>sepolia-bridge.giwa.io</code>'s sibling (<code>bridge.giwa.io</code>) instead</td>
+<td>curl</td>
+</tr>
+<tr>
+<td>viem <code>giwa.ts</code> / L2BEAT / DefiLlama chain</td>
+<td>viem definition 404; L2BEAT <code>/scaling/projects/giwa</code> → 301 → 404; DefiLlama <code>/v2/chains</code> has Robinhood Chain (4663) but no GIWA</td>
+<td>raw.githubusercontent.com/wevm/viem/main/src/chains/definitions/giwa.ts ; api.llama.fi/v2/chains</td>
+</tr>
+<tr>
+<td>Flashblocks mainnet endpoint</td>
+<td>"🚧 Coming soon"</td>
+<td>docs.giwa.io flashblocks.md</td>
+</tr>
+<tr>
+<td>Upbit rails / GIWA Wallet in app stores</td>
+<td>not re-checked this pass (09-04: no GIWA net_type; Wallet absent from App Store/Play)</td>
+<td>api-manager.upbit.com notices; iTunes/Play search</td>
+</tr>
+<tr>
+<td>@GIWA_by_Upbit posts</td>
+<td>unreachable this session (last discoverable dated post 2026-07-06 on 09-04)</td>
+<td>X</td>
+</tr>
+<tr>
+<td>KBW / GASOK Demo Day</td>
+<td>GASOK page (giwa.io/gasok, 20:10Z): Phase 3 "PRODUCTIZE — Ship to mainnet. MARKET READINESS &amp; LAUNCH AUG – SEP 2026 · GOAL 테스트넷 유저 지표 및 프라이빗 메인넷 배포"; "DEMODAY @ KBW OCTOBER 2026"; KBW site: Upbit Institutional Summit <strong>Sep 29</strong> (invite-only), main conference <strong>Sep 30 – Oct 1</strong>, Dunamu CEO Oh Kyoungsuk listed as speaker; no GIWA session published ("Agenda coming soon")</td>
+<td>giwa.io/gasok ; koreablockchainweek.com</td>
+</tr>
+</tbody>
+</table>
+<p>Reading: unchanged from 09-04 — the most probable announcement window is KBW week (Sep 29 – Oct 1); the most probable <em>form</em> is a whitelisted/private mainnet for GASOK teams first. Only the "private mainnet" exists as a stated milestone. Plan for two triggers: (T1) private mainnet with a launchpad partner live — you cannot launch unless a partner pad opens to the public; (T2) public RPC + bridge — you can launch your own contracts within hours.</p>
+<h3 id="42-which-launchpads-have-stated-mainnet-intent-and-what-would-be-needed-on-day-1">4.2 Which launchpads have stated mainnet intent (and what would be needed on day 1)</h3>
+<table>
+<thead>
+<tr>
+<th>Launchpad</th>
+<th>Stated intent</th>
+<th>Day-1 dependency</th>
+<th>Realistic day-1 role</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Joseon.fun</td>
+<td>redeploy with re-derived params; multisig first; anti-spam fee undecided; GASOK Phase-3 finalist (KOL list)</td>
+<td>new stack addresses (new WETH/factory/router/locker per version), UI switch</td>
+<td><strong>primary</strong>: same package (curve → locked pair → creator 70% curve / 50% swap share); the only pad whose whole flow was verified on-chain here</td>
+</tr>
+<tr>
+<td>GIWA MARKETS</td>
+<td>genesis deploy at mainnet genesis; brand rename to GMAR</td>
+<td>their deploy + rename</td>
+<td>sandbox only (§3.3)</td>
+</tr>
+<tr>
+<td>Naru</td>
+<td>private-mainnet resync via env; identity-gated issuance (Dojang/Upbit-KYC); no seed bot on mainnet</td>
+<td>KYC attestation for the issuer; approval flow</td>
+<td>not for a fast permissionless memecoin</td>
+</tr>
+<tr>
+<td>Ammora</td>
+<td>testnet-only wording; SDK <code>@ammora-protocol/sdk</code> 0.2.5; Phase 3</td>
+<td>unknown addresses</td>
+<td>watch; no numbers to plan against</td>
+</tr>
+<tr>
+<td>GIWATER</td>
+<td>DEX ("built for launchpads"), TGE/mainnet "coming soon"</td>
+<td>—</td>
+<td>post-graduation venue, not a pad</td>
+</tr>
+<tr>
+<td>kachi / Flutch (names from KOL/GIWA_CN lists)</td>
+<td>UNVERIFIED</td>
+<td>—</td>
+<td>check when RPC appears</td>
+</tr>
+</tbody>
+</table>
+<h3 id="43-pre-built-giwa-launch-kit-do-now-so-genesis-day-is-execution-only">4.3 Pre-built "GIWA launch kit" (do now, so genesis-day is execution only)</h3>
+<ol>
+<li><strong>Token metadata (frozen):</strong> name, symbol (≤ 6–8 chars; <strong>avoid "GIWA"/"기와"/Upbit/Dunamu strings</strong> — brand collision and copycat evidence in §3.3), 1B supply/18 decimals (matches every pad's default), description KO+EN, one-line, website/X/TG links; store as JSON; note which fields each pad keeps on-chain (Joseon: name+symbol on-chain, image/description off-chain and editable; GIWA MARKETS: image URL).</li>
+<li><strong>Images:</strong> square PNG 1000×1000 + 512×512 + 256×256, ≤ 1 MB, plus banner; pin to IPFS and mirror on a plain HTTPS host (pads take a URL); pre-render X/TG avatars and a chart-thumbnail.</li>
+<li><strong>Socials pre-warmed:</strong> X account (bio without "GIWA" in the ticker), TG channel + group, a pinned "official CA will be posted here first" message (copy the "trust only these channels" pattern GIWA MARKETS uses), DexScreener/GeckoTerminal profile assets ready; Korean + English copies.</li>
+<li><strong>Wallet set (hardware-backed, fresh, funded on Ethereum L1 <em>now</em>):</strong> deployer (only the create tx), fee-recipient (never trades), 3–5 buyer wallets (sized per §4.4), ops wallet for gas; keep a signed record of each address so the CA can be attributed. Fund on Ethereum L1 because <strong>Superbridge L1→L2 deposit will be the only bridge at genesis</strong> (docs: ~1–3 min after L1 confirmation; withdrawals ~7 days). Keep some ETH on Robinhood Chain too, in case a Robinhood-side twin launch (Pons) is wanted the same hour (gas.zip inbound to 4663: min 0.015 ETH).</li>
+<li><strong>Bridge plan:</strong> the moment <code>bridge.giwa.io</code>/Superbridge mainnet route answers — deposit from all wallets in parallel (L1 gas ×5 wallets); pre-sign nothing; verify <code>eth_chainId</code> = <code>0x23ae</code> and the L2 balances before touching any pad. Add the mainnet chain to wallets by hand (chainId 9134, RPC/explorer from the docs contracts/connect pages — expected <code>rpc.giwa.io</code>, <code>explorer.giwa.io</code> by analogy; UNVERIFIED until published).</li>
+<li><strong>Build artefacts:</strong> Foundry project with <code>[profile.giwa]</code> and <code>[profile.robinhood]</code> (only <code>chain_id</code>, <code>eth_rpc_url</code>, verifier URL differ), CreateX salt fixed, bytecode verified on GIWA Sepolia and Robinhood already (same address), <code>forge verify-contract --verifier blockscout</code> command templated for both explorers; a tiny script that polls: <code>eth_chainId</code> on <code>rpc.giwa.io</code>, <code>eip155-9134.json</code>, <code>giwa-io/*</code> pushes, docs contracts page hash, Joseon <code>/api/health</code> <code>chainId</code>, giwa.markets <code>chain-*.js</code> for a non-91342 GIWA entry.</li>
+<li><strong>First-buy plan (pad-specific):</strong>
+   - Joseon: put the dev buy <strong>inside the creation tx</strong> (the only guaranteed first fill); size against the curve (testnet math: 3.67 ETH fills 800M; 0.1 ETH ≈ the observed initial buys; 5–10% of the curve is 0.18–0.37 ETH at testnet params — re-derive on the mainnet stack); buyer wallets follow in the next 1–3 blocks with <strong>priority fee set high</strong> (GIWA orders by fee); use the Flashblocks <code>pending</code> tag to confirm at ~200 ms.
+   - Pump-style pads (GIWA MARKETS type): 1% fee, 800M graduation; dev buy in the same tx; no anti-snipe decay, so expect bots.
+   - Robinhood twin (if used): Pons V2 has a 99%→0 snipe tax over 5 s — do not buy in the first seconds; Pons V1 has none.</li>
+<li><strong>Fallback if no pad is live at T2:</strong> deploy the CreateX token; deploy a V2-style pair against <code>0x4200…0006</code> WETH (or a self-deployed V2 factory/router fork) + a no-withdraw locker; seed single-sided liquidity; publish CA + pair; route swaps through whichever DEX (GIWATER/Joseon router) is live. Have this path rehearsed on Sepolia (§2.4) so it is a 15-minute job.</li>
+<li><strong>Post-launch instrumentation:</strong> explorer links (Blockscout API on both chains works without a key), DexScreener pair URL pattern (<code>dexscreener.com/&amp;lt;chain&gt;/&amp;lt;pair&gt;</code> — GIWA chain slug unknown until listed), a holder-count poll, and the creator-fee claim command for each pad.</li>
+</ol>
+<h3 id="44-honest-limits-of-this-plan">4.4 Honest limits of this plan</h3>
+<ul>
+<li>Testnet numbers (3.67 ETH curve, 2% fee, 0.3% swap) are <strong>not</strong> mainnet numbers — Joseon says so explicitly. Re-size buys on the day.</li>
+<li>The GIWA sequencer's fee-ordering statement is from docs; whether Flashblocks builders honor priority fees the same way on mainnet is UNVERIFIED.</li>
+<li>If mainnet is <em>private/whitelisted</em> first (the only milestone officially named), none of this executes until a public RPC exists; the kit's value is being ready for T2 whenever it comes.</li>
+</ul>
+<hr>
+<h2 id="5-claims-ledger-url-observed">5. Claims ledger (URL · observed)</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Claim</th>
+<th>Source</th>
+<th>Observed (UTC)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>G-01</td>
+<td>Robinhood chainId 0x1237 (4663); block 55,389,978; <code>eth_gasPrice</code> 0x1853dff0 (0.408 gwei); baseFee 421,946,000 wei; gasLimit 2^50</td>
+<td><code>POST https://rpc.mainnet.chain.robinhood.com</code></td>
+<td>2026-09-05 20:00</td>
+</tr>
+<tr>
+<td>G-02</td>
+<td>GIWA Sepolia chainId 0x164ce (91342); block 35,293,337; gasPrice 1,000,289 wei; baseFee 289 wei; gasLimit 60,000,000</td>
+<td><code>POST https://sepolia-rpc.giwa.io</code></td>
+<td>20:00</td>
+</tr>
+<tr>
+<td>G-03</td>
+<td>Block time: Robinhood 0.07 s (100 blocks) / 0.098 s (1,000 blocks); GIWA 1.00 s / 1.00 s</td>
+<td><code>eth_getBlockByNumber</code> on both</td>
+<td>20:03</td>
+</tr>
+<tr>
+<td>G-04</td>
+<td>Identical pre-installs with code on both chains: Permit2, Multicall3, CreateX, Create2Deployer, Arachnid, EntryPoint v0.6/v0.7, Safe L2; OP WETH <code>0x4200…0006</code> code=0 on Robinhood, 2,846 B on GIWA; ArbSys/ArbGasInfo 1-B markers on Robinhood only</td>
+<td><code>eth_getCode</code> batch</td>
+<td>20:03</td>
+</tr>
+<tr>
+<td>G-05</td>
+<td>Uniswap V4 PoolManager <code>0x8366…0951</code> (24,009 B) and PositionManager <code>0x58da…4fa7</code> (23,877 B) on Robinhood; canonical V4/V3/V2/UR/Bags addresses all code=0 on GIWA Sepolia</td>
+<td><code>eth_getCode</code>; developers.uniswap.org/llms.mdx/docs/protocols/v4/deployments</td>
+<td>20:02–20:04</td>
+</tr>
+<tr>
+<td>G-06</td>
+<td>ArbSys <code>arbOSVersion()</code> = 116; ArbGasInfo <code>getPricesInWei</code> = [0,0,8.138e12,2e7,3.869e8,4.069e8]; <code>getL1BaseFeeEstimate</code> = 0; <code>arbBlockNumber</code> = <code>eth_blockNumber</code> = 55,395,574</td>
+<td><code>eth_call</code> 0x64/0x6C</td>
+<td>20:08</td>
+</tr>
+<tr>
+<td>G-07</td>
+<td>GIWA GasPriceOracle: isEcotone=1, isFjord=1, baseFeeScalar 1368, blobBaseFeeScalar 801,949, l1BaseFee 1,081,452,898, blobBaseFee 62,964,965; OP predeploys 0x4200…0007/0010/0012/0015/0016/000F each 2,059 B</td>
+<td><code>eth_call</code>/<code>eth_getCode</code> 91342</td>
+<td>20:10</td>
+</tr>
+<tr>
+<td>G-08</td>
+<td>Robinhood docs: chain 4663; RPC; Alchemy/QuickNode; sequencer + feed URLs; testnet 46630; "Arbitrum Layer-2 Chain built on Ethereum, using Ethereum blobs"; FCFS sequencing</td>
+<td>https://docs.robinhood.com/chain/connecting ; https://docs.robinhood.com/chain/</td>
+<td>20:06</td>
+</tr>
+<tr>
+<td>G-09</td>
+<td>GIWA docs: mainnet "currently under development"; Sepolia pre-install table; Flashblocks mainnet "Coming soon"; faucets 0.005/0.01 ETH per 24 h; forge verify example; diffs page (1 s blocks, 60M gas, "only the sequencer can view the mempool", "executes transactions in order of highest fee"); deposit 1–3 min / withdrawal ~7 days; Karst 2026-07-06 = Osaka EVM, op-reth only</td>
+<td>docs.giwa.io/*.md pages listed in §1</td>
+<td>20:02–20:12</td>
+</tr>
+<tr>
+<td>G-10</td>
+<td>Arbitrum docs: <code>block.number</code> ≈ L1 block; <code>ArbSys(100).arbBlockNumber()</code>; blockhash insecure; prevrandao/difficulty = 1; PUSH0 since ArbOS 11; ArbOS 40 adds EIP-7702</td>
+<td>docs.arbitrum.io (solidity-support, block-numbers-and-time, arbos40)</td>
+<td>20:06–20:12</td>
+</tr>
+<tr>
+<td>G-11</td>
+<td>Joseon: health <code>{"network":"GIWA Sepolia","chainId":91342}</code>; 30 launches; newest 2026-09-05 06:25:36Z / 06:24:56Z; 3 graduated (Giwa, Joseon 07-28; Shiba 09-02 pair <code>0x25f826d7…4b89</code>)</td>
+<td>https://api.joseon.fun/api/health ; /api/launches</td>
+<td>20:02, 20:11</td>
+</tr>
+<tr>
+<td>G-12</td>
+<td>Joseon locker <code>lockedPair(SHIBA)</code> = <code>0x25f826d7a6d0402426874786b6aff0717d4d4b89</code>; <code>lockedLiquidity</code> = 26,832,815,729,997,476,355,910</td>
+<td><code>eth_call</code> <code>0x2141630cf59bC2e04bd4A0864B86b84C21023fE6</code></td>
+<td>20:08</td>
+</tr>
+<tr>
+<td>G-13</td>
+<td>Joseon params: curve 2% (70/30), swap 0.30% (50/30/20 launch pools), virtual 1.2 ETH / 1,066,666,666.67, 800M sold, ~3.67 ETH to fill, 3.6 WETH + 200M into pool, FDV 18 ETH, overshoot refund; creation gas "0.000005 ETH"; mainnet re-derive; multisig required; internal review only; addresses (factory <code>0x33fF…463F</code>, swap factory <code>0x9AB1…8784</code>, router <code>0xcD4B…5d3D</code>, migration <code>0x4D34…5c59</code>, registry <code>0xC225…37aA</code>, locker <code>0x2141…3fE6</code>, WETH9 <code>0x323b…0B11</code>, feeAdmin <code>0x923C…576E</code>)</td>
+<td>docs.joseon.fun/{fees,bonding-curve,graduation,quickstart,faq,security,network,contracts}/</td>
+<td>20:05–20:14</td>
+</tr>
+<tr>
+<td>G-14</td>
+<td>Joseon <code>createToken</code> tx <code>0x5d715fd1…402d</code>: gas_used 4,844,931; fee 4,854,432,276,172 wei; value 0.1 ETH</td>
+<td>sepolia-explorer.giwa.io/api/v2/transactions/…</td>
+<td>20:13</td>
+</tr>
+<tr>
+<td>G-15</td>
+<td>GIWA MARKETS Sepolia pump <code>0x540e…ee43</code>: 3,853 txs; latest <code>buy</code> 2026-09-04 19:59:56Z, <code>createToken</code> 19:54:08Z</td>
+<td>sepolia-explorer.giwa.io/api/v2/addresses/…/{counters,transactions}</td>
+<td>20:09</td>
+</tr>
+<tr>
+<td>G-16</td>
+<td>GIWA MARKETS Robinhood config: chainId 4663, furnace <code>0x7bd5…de63</code>, pump <code>0xbdf4…4c11</code>, zero <code>0x0a98…b246</code>, giwa <code>0xdaB0…43b1</code>, weth <code>0x0Bd7…AD73</code>, v3Factory <code>0x1f7d…2efa</code>, v3Router <code>0xcaf6…5cb2</code>, giwaPoolFee 10000, treasury <code>0x0D45…10aC</code>; genesis tokens GAEJUKI <code>0x3aCC…79DE</code>, KPEPE <code>0x9B08…7955</code>, HBM <code>0xf125…3d4E</code>, SEMI <code>0x5f03…bac8</code>; Sepolia config pump <code>0x540e…ee43</code>, claim <code>0xe3fa…6fc2</code>, bridge link gas.zip</td>
+<td>https://giwa.markets/assets/index-tFmx5n0z.js ; /assets/chain-De4PEEMR.js</td>
+<td>20:01–20:03</td>
+</tr>
+<tr>
+<td>G-17</td>
+<td>Blockscout RH: <code>RhPump</code> verified, creator <code>0x0D45…10aC</code>, deployed 2026-08-17 19:05:04Z; 19 txs (3 createToken / 12 buy / 4 sell), last 2026-08-19 03:37Z; <code>RhZero</code> 0 txs; <code>RhFurnace</code> 1 <code>buyAndBurn</code> 2026-08-17 20:41Z; <code>$GIWA</code> = <code>PonsLauncherToken</code> creator <code>0xA5aA…1feB</code>, 5,012 txs, 957 holders; <code>$GAEJUKI</code> = <code>PonsV2LauncherToken</code> creator <code>0x3711…1A42</code> (<code>PonsV2LaunchDeployer</code>), 391 holders; pool <code>0x28f2…4E73</code> = <code>UniswapV3Pool</code> created by <code>0x1f7d…2efa</code>; WETH <code>0x0Bd7…AD73</code> = TransparentUpgradeableProxy → <code>aeWETH</code>; Pons V1 factory <code>0xA5aA…1feB</code> 266,144 txs</td>
+<td>https://robinhoodchain.blockscout.com/api/v2/addresses/… (browser UA required)</td>
+<td>20:04–20:13</td>
+</tr>
+<tr>
+<td>G-18</td>
+<td>On-chain reads RH: GIWA supply 1e9, 93,721,836 at <code>0xdead</code>, pool holds 82,900,978.6 GIWA + 15.2258 WETH; furnace 0.00085 ETH; treasury 1.8285 ETH nonce 1,517; WETH supply 42,291.18</td>
+<td><code>eth_call</code></td>
+<td>20:04</td>
+</tr>
+<tr>
+<td>G-19</td>
+<td>DexScreener: GIWA/WETH v3 pair price $0.0004974, FDV $450,807, liq $79,011.29, 24h vol $43,951.1, 64/60 txns, created 1785139645; GAEJUKI liq $25,857 vol $3,128; KPEPE liq $13,101; HBM liq $2,351; SEMI liq $921,574 vol $456,812; four other "GIWA" tokens on Robinhood with $9.8–$34.95 liquidity</td>
+<td>https://api.dexscreener.com/latest/dex/pairs/robinhood/0x28f2…4E73 ; /tokens/v1/robinhood/… ; /latest/dex/search?q=GIWA</td>
+<td>20:05</td>
+</tr>
+<tr>
+<td>G-20</td>
+<td>DefiLlama Robinhood Chain: TVL $905,065,592; DEX 24h $1,889,665,856 / 7d $10.73B / 30d $23.09B; fees 24h $24,510,918 (Uniswap V4 $8,817,797; Pons V2 $8,750,574; GMGN $2,810,621; Pons V1 $257,731; o1 $235,956; NOXA $164,961); no GIWA MARKETS protocol; Pons V1 methodology "1% swap fees … 0.0005 $ETH per token launched"; Pons V2 methodology "launch fees, curve swap fees and swap fees post graduation (uniswap v4)"</td>
+<td>https://api.llama.fi/v2/chains ; /overview/fees/Robinhood%20Chain ; /overview/dexs/Robinhood%20Chain ; /protocols ; /summary/fees/pons-v1, pons-v2</td>
+<td>20:01–20:12</td>
+</tr>
+<tr>
+<td>G-21</td>
+<td>Pons docs: launch fee 0.0005 ETH; V3 1% pool; creator 70% (active factory <code>0xA5aA…1feB</code>, locker <code>0x736D…7F35</code>) / 90% legacy; default graduation 4.2 WETH; V2: snipe tax 99%→0 over 5 s, V4 pool fee 0 with hook, permanent locker <code>0x2674…4952</code>, factory <code>0x7eD5…EC7e</code>, escrow claims</td>
+<td>https://docs.ponsfamily.com/ ; /v2</td>
+<td>20:13–20:15</td>
+</tr>
+<tr>
+<td>G-22</td>
+<td>GIWA MARKETS strings: "Why we built on Robinhood Chain first, and why $GIWA becomes GMAR … renaming the launchpad token at migration so nobody mistakes us for the chain team"; "Not affiliated with … Upbit, Dunamu, GIWA, Robinhood or Micron"; roadmap Phase 0–4 text; Robinhood pad "1% … 80% buys and burns $GIWA, 20% to treasury"; "Minimum 0.01 ETH"; guide "0.01 ETH is more than enough for a launch plus a dev buy"; "80% funds the liquidity migration … however long Upbit takes"</td>
+<td>https://giwa.markets/assets/i18n-BUIJQVGU.js ; r.jina.ai/https://giwa.markets/articles</td>
+<td>20:01, 20:12</td>
+</tr>
+<tr>
+<td>G-23</td>
+<td>GIWA FAQ: "GIWA Chain does not plan to issue its own token. The fundamental native token of GIWA is Ethereum's ETH"; Paymaster "in the future"</td>
+<td>https://docs.giwa.io/giwa-chain/en/introduction/faq.md</td>
+<td>20:10</td>
+</tr>
+<tr>
+<td>G-24</td>
+<td>t.me/s/giwalaunch: 314 subscribers; last post 2026-08-25 08:00:19Z</td>
+<td>https://t.me/s/giwalaunch</td>
+<td>20:02</td>
+</tr>
+<tr>
+<td>G-25</td>
+<td>Mainnet artefacts absent: <code>rpc.giwa.io</code>, <code>mainnet-rpc.giwa.io</code>, <code>explorer.giwa.io</code>, <code>bridge.giwa.io</code> HTTP 000; eip155-9134 <code>rpc: []</code> incubating; viem giwa.ts 404; L2BEAT giwa 404; giwa-io repos pushed_at (node 2026-07-13, chain-operations 2026-07-06, dojang 2026-06-16, viem 2025-12-09, rundler 2025-11-05, chains 2025-09-28, PoWFaucet 2025-09-08); chain-operations root = sepolia/ only; docs llms.txt lists no notice after Upgrade 19</td>
+<td>curl / GitHub API</td>
+<td>20:01–20:11</td>
+</tr>
+<tr>
+<td>G-26</td>
+<td>superbridge.app returns 200 for <code>/giwa</code>, <code>/giwa-sepolia</code> <strong>and</strong> <code>/definitely-not-a-chain-xyz123</code>; <code>api.superbridge.app</code> deployment endpoints 404</td>
+<td>curl</td>
+<td>20:02, 20:08</td>
+</tr>
+<tr>
+<td>G-27</td>
+<td>gas.zip: Robinhood (4663) inbound true, min 0.015 / max 750 ETH, price 2478.27; GIWA Sepolia (91342) inbound false, outbound allowed; Robinhood testnet 46630</td>
+<td>https://backend.gas.zip/v2/chains</td>
+<td>20:07</td>
+</tr>
+<tr>
+<td>G-28</td>
+<td>Ammora: manifest giwa-sepolia-product-20260903-1, writesEnabled true, commit 87c27097, verificationBlock 35,090,751; docs "Live on GIWA Testnet", no numeric fees</td>
+<td>https://ammora-protocol.vercel.app/api/product-release ; /fees ; ammora-docs.vercel.app</td>
+<td>20:02, 20:12</td>
+</tr>
+<tr>
+<td>G-29</td>
+<td>Naru: TokenFactory <code>0x102a…E256</code> last <code>issueAndList</code> 2026-07-22; docs addresses (V2 factory <code>0xD51d…0C47</code>, router <code>0x50D3…E649</code>, WETH <code>0x4200…0006</code>); "메인넷에서는 시드 봇을 운영하지 않습니다"; launch page "테스트넷 데모입니다 … 시뮬레이션"</td>
+<td>naru.market/docs, /launch ; sepolia-explorer API</td>
+<td>20:09–20:12</td>
+</tr>
+<tr>
+<td>G-30</td>
+<td>GIWATER roadmap "Coming Soon" (updated 2026-06-08); swap app 200</td>
+<td>docs.giwater.finance/1-introduction/3-roadmap ; test.giwater.finance/swap</td>
+<td>20:02, 20:12</td>
+</tr>
+<tr>
+<td>G-31</td>
+<td>giwa.io/gasok: Phase 3 "Ship to mainnet … AUG – SEP 2026 … 프라이빗 메인넷 배포"; "DEMODAY @ KBW OCTOBER 2026"; KBW: Sep 29 Upbit Institutional Summit, Sep 30–Oct 1 main, Dunamu CEO speaker, agenda "Coming Soon"</td>
+<td>https://giwa.io/gasok ; https://koreablockchainweek.com/</td>
+<td>20:10</td>
+</tr>
+<tr>
+<td>G-32</td>
+<td>Bags Robinhood docs: WETH <code>0x0Bd7…AD73</code>, PoolManager <code>0x8366…0951</code>, 2% fee, 0.02 ETH creation, 830M/170M, "~100 ms" blocks</td>
+<td>https://docs.bags.fm/robinhood/overview.md</td>
+<td>20:10</td>
+</tr>
+<tr>
+<td>G-33</td>
+<td>Explorer verification config: rust verifier enabled, solc to v0.8.36 on both Blockscouts; robinscan <code>/api</code> 404, Routescan API "chain not supported"; robinhoodchain.blockscout.com/contract-verification 200</td>
+<td>curl</td>
+<td>20:06, 20:09</td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-unknowns-not-verified-in-this-pass">6. Unknowns (not verified in this pass)</h2>
+<ul>
+<li>U-1 September 2026 X posts of @GIWA_by_Upbit, @GIWALAUNCHPAD, @JoseonFun, @Naru_giwa, @AmmoraHQ (syndication empty, nitter/jina blocked, no search budget).</li>
+<li>U-2 Whether <code>0x1f7d7550…2efa</code> is Uniswap's canonical V3 factory on Robinhood (Uniswap's v3-robinhood deployments page 404'd); Pons V1 uses it.</li>
+<li>U-3 ArbOS version mapping for <code>arbOSVersion()=116</code> and hence whether EIP-7702 is live on Robinhood today.</li>
+<li>U-4 Whether GIWA MARKETS holds any <em>unlocked</em> liquidity in the <code>$GIWA</code> V3 pool (their Phase-2 "liquidity lift" needs it); the <code>0x0D45…10aC</code> treasury's 23-byte code (7702 delegation?).</li>
+<li>U-5 Pons V2 numeric <code>feeBps</code>/<code>launchFee</code> (selectors guessed; calls returned empty) — docs say "callable via <code>launchFee()</code>".</li>
+<li>U-6 Ammora and Osige contract addresses / on-chain activity; kachi and Flutch launchpads (names only).</li>
+<li>U-7 GIWA mainnet RPC/explorer/bridge hostnames, chain slug on DexScreener, and whether Superbridge will be the mainnet bridge — all inferred by analogy to Sepolia.</li>
+<li>U-8 Whether the mainnet sequencer/Flashblocks builder orders by priority fee exactly as the Sepolia docs describe.</li>
+<li>U-9 GIWA Wallet / Upbit rails were not re-checked on 2026-09-05 (09-04 state: absent).</li>
+</ul></article>
+    </main>
+    <footer>
+      <span>research_only=true</span>
+      <span>strategy_consumption_allowed=false</span>
+      <span>order_input=false</span>
+    </footer>
+  </body>
+</html>

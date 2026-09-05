@@ -1,0 +1,713 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex,nofollow,noarchive" />
+    <meta name="theme-color" content="#090c0e" />
+    <title>02 — Cross-platform launch-structure norms (supply split, initial LP, graduation, dev buy, sniper controls) · GIWA · Robinhood Launchpad</title>
+    <link rel="stylesheet" href="../../../assets/document.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#document">본문으로 바로가기</a>
+    <header class="document-header">
+      <a class="brand" href="../../../development.html" aria-label="GIWA 대시보드로 돌아가기">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span><strong>GIWA · RH</strong><small>LAUNCHPAD ROOM</small></span>
+      </a>
+      <nav aria-label="문서 동작">
+        <a href="../../../development.html">← 대시보드</a>
+      </nav>
+    </header>
+    <main id="document" class="document-shell">
+      <div class="document-meta">
+        <span>REPORT</span>
+        <span>SHA256 6cd30d1d7d74</span>
+      </div>
+      <h1>02 — Cross-platform launch-structure norms (supply split, initial LP, graduation, dev buy, sniper controls)</h1>
+      <p class="source-path">docs/launch_research_2026-09-06/02_launch_structure_norms.md</p>
+      <article class="markdown-body"><h1 id="02-cross-platform-launch-structure-norms-supply-split-initial-lp-graduation-dev-buy-sniper-controls">02 — Cross-platform launch-structure norms (supply split, initial LP, graduation, dev buy, sniper controls)</h1>
+<p>Prepared 2026-09-06 (KST). Observation window: <strong>2026-09-05 19:40–21:30 UTC</strong> unless a cell says otherwise. Lens: what a <em>creator</em> launching on an existing launchpad should expect the launch to look like, and what the market now reads as "clean". Not legal/tax/investment advice. Legal/registration topics deliberately excluded per the owner's instruction.</p>
+<p>Spot prices used for USD conversions (CoinGecko <code>simple/price</code>, 2026-09-05 20:02 UTC): <strong>SOL $103.44 · ETH $2,477.90 · BNB $773.19 · VIRTUAL $0.6875</strong>. USD market caps below are computed from those; they move with the quote asset.</p>
+<p>Status labels: <code>official</code> = project docs / verified contract / on-chain read; <code>on-chain</code> = my own RPC/explorer read (Robinhood Chain RPC <code>https://rpc.mainnet.chain.robinhood.com</code>, chain 4663, head block 55,394,520–55,398,122 during the session); <code>derived</code> = arithmetic from official constants (formula shown); <code>third_party</code> = DefiLlama/news; <code>UNVERIFIED</code> = could not observe a primary source this session (web-search budget was exhausted, so only known URLs, DefiLlama APIs, GitHub raw files and RPC were available).</p>
+<p>Prior file reused as starting point and re-verified where it mattered: <code>research/02_launchpad_fee_models.md</code> (2026-09-04; fee splits, licences, legal). This memo does <strong>not</strong> repeat the fee-split/legal analysis; it adds the <em>composition</em> numbers.</p>
+<hr>
+<h2 id="0-direct-answers-read-this-first">0. Direct answers (read this first)</h2>
+<p><strong>Q1. "Of 100% supply, do you launch 80% or 90%?"</strong></p>
+<p>Neither number is a universal norm; the honest answer is <em>"it depends on the venue type, and the choice is usually made for you"</em>:</p>
+<ul>
+<li><strong>Curve launchpads (pump-style)</strong> put a fixed share on the curve and hold the rest back for the graduation pool. Observed today: pump.fun <strong>79.31%</strong> curve / 20.69% LP (<code>official</code> constants); Raydium LaunchLab/letsbonk <strong>80%</strong> default (creator may pick 51–80%); Four.meme <strong>~80/20</strong>; Bags-on-Robinhood <strong>83/17</strong> (830M/170M); Pons V2 (Robinhood) <strong>71.43%</strong> sold / 28.57% held back, of which 20.41% actually lands in the pool and ~8.2% is locked as leftover. So the pump-style band is <strong>71–83% on the curve, 17–29% reserved for LP</strong>, and <em>none of it is the creator's to allocate</em> — the reserved share is protocol-fixed, immutable and locked.</li>
+<li><strong>Direct single-sided pool launches (Clanker-style; Pons V1, o1, NOXA Fun, HoodPump on Robinhood)</strong> put <strong>100% of supply into one locked concentrated-liquidity position</strong> at a starting tick. There is no "80 vs 90" decision: the only supply that leaves the pool is what buyers (including the creator's own dev buy) purchase. The one optional carve-out is a <strong>vault</strong> (Clanker: ≤30% in v3.1, no cap in v4; observed sample: 2% or 5% with 7-day lock).</li>
+<li><strong>Team allocations are the exception, not the norm.</strong> Of 15 venues surveyed, only Zora Creator Coins (50% vesting 5 years), Zora Content Coins (1% to creator), Raydium LaunchLab custom mode (vesting ≤30%), Clanker vault, and Flaunch premine (≤ fair-launch share) allow one. pump.fun, letsbonk JustSendIt, Bags (both chains), Pons V1/V2, o1, NOXA, HoodPump, Four.meme, Virtuals give the creator <strong>0%</strong> at t0.</li>
+</ul>
+<p>So: if you are asked "80 or 90", the market's answer is <strong>"0% to me, 100% to the curve/pool (minus a disclosed dev buy)"</strong>; where a curve exists, the 80/20-ish split is the platform's, not yours.</p>
+<p><strong>Q2. "What is the average initial LP in ETH?"</strong></p>
+<ul>
+<li>Creator-seeded ETH in a single-sided launch is <strong>0 ETH</strong> by design on every EVM venue surveyed (Clanker v3.1/v4, Flaunch, Pons V1/V2, o1, NOXA Fun, HoodPump, Bags-RH). The ETH side of the pool is filled by buyers. What you control is the <strong>starting market cap</strong> (Clanker sample: 1.99 ETH ≈ $4.9k for 50% of recent deployments, 9.87 ETH ≈ $24.5k for 40%; o1 ≈ $4,000 FDV; Flaunch default $10,000; Pons V2 1.68 ETH ≈ $4.2k phantom reserve) and, optionally, your <strong>dev buy</strong>.</li>
+<li>Real ETH that lands in the pool at graduation on Robinhood: <strong>Pons V2 = 4.2 ETH</strong> (+204.08M tokens; median of 1,351 graduations in the last ~2 days is exactly 4.2 ETH), <strong>Bags-RH = 5 ETH</strong> (+170M tokens), <strong>Pons V1 / NOXA Fun = 4.2 ETH "paired" milestone</strong> (no migration; the pool simply reaches 4.2 ETH of buyer ETH). Solana equivalents: pump.fun ≈ <strong>85 SOL</strong> (≈ $8.8k), LaunchLab/letsbonk 85 SOL, Bags-Solana 85 SOL. BNB: Four.meme ≈ 18 BNB (≈ $13.9k). Virtuals: 42,000 VIRTUAL (≈ $28.9k).</li>
+<li>So the "initial LP" a <em>graduated</em> memecoin carries today is <strong>~$8–15k of quote asset on Solana/Robinhood/BNB</strong> (pump.fun 85 SOL ≈ $8.8k; Pons 4.2 ETH ≈ $10.4k; Bags-RH 5 ETH ≈ $12.4k; Four.meme 18 BNB ≈ $13.9k), against ~17–29% of supply, which prices the graduation market cap at <strong>≈ $42k (pump.fun) / $51k (Pons V2) / $73k (Bags-RH) / ~$70k (Four.meme, derived)</strong>.</li>
+</ul>
+<p><strong>Q3. "How are launchpad launches usually composed?"</strong> See §3 (d). One-line version: <em>fixed supply 1B (100B on Clanker/Flaunch) → 100% to curve or pool, 0% team → creator pays a tiny fixed launch fee (0–0.02 ETH) → optional atomic dev buy of ~0.5–3% of supply → protocol-fixed graduation into a permanently locked pool → creator paid from a 0.5–1% share of trade fees in the quote asset, claimable, splittable.</em></p>
+<hr>
+<h2 id="1-comparison-table-curve-launchpads-solana-bnb-robinhood">1. Comparison table — curve launchpads (Solana / BNB / Robinhood)</h2>
+<p>Every cell: value · status · source URL · observed date. "Grad." = graduation. Supply units are tokens; "vQ/vT" = initial virtual quote / virtual token reserves.</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>pump.fun (Solana)</th>
+<th>letsbonk.fun / Raydium LaunchLab (Solana)</th>
+<th>Bags (Solana)</th>
+<th>Moonshot/Moonit (Solana)</th>
+<th>Believe (Solana)</th>
+<th>Four.meme (BNB)</th>
+<th>Virtuals (Base)</th>
+<th>Bags-on-Robinhood (RH)</th>
+<th>Pons V2 (RH)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Total supply</td>
+<td><strong>1,000,000,000</strong> (<code>token_total_supply</code> 1e15 base units, 6 dec) · official · <a href="https://raw.githubusercontent.com/pump-fun/pump-public-docs/main/docs/PUMP_PROGRAM_README.md" target="_blank" rel="noopener noreferrer">PUMP_PROGRAM_README</a> · 09-05</td>
+<td>JustSendIt "fixed default"; LaunchLab custom "e.g. 1,000,000,000"; floor 10,000,000 · official · <a href="https://docs.raydium.io/user-flows/creating-a-launchlab-token.md" target="_blank" rel="noopener noreferrer">creating-a-launchlab-token</a>, <a href="https://docs.raydium.io/products/launchlab/global-config.md" target="_blank" rel="noopener noreferrer">global-config</a> · 09-05</td>
+<td>"Standard" (docs do not state the number; 1k-supply variant exists) · official · <a href="https://docs.bags.fm/how-to-guides/customize-token-fees.md" target="_blank" rel="noopener noreferrer">customize-token-fees</a> · 09-05</td>
+<td>UNVERIFIED (docs unreachable; moonit.com now resolves to a dating app)</td>
+<td>UNVERIFIED (docs.believe.app is API-only)</td>
+<td><strong>1,000,000,000</strong> preset · official · <a href="https://four-meme.gitbook.io/four.meme/guide/how-it-works" target="_blank" rel="noopener noreferrer">how-it-works</a> · 09-05</td>
+<td>UNVERIFIED in docs read (launch-mechanics + FAQ pages do not state supply)</td>
+<td><strong>1,000,000,000</strong> (18 dec) · on-chain (<code>BagsBondingCurve</code> constants) · <a href="https://robinhoodchain.blockscout.com/address/0x419890a21711c3d3af46b58548376420b9723275" target="_blank" rel="noopener noreferrer">curve impl 0x419890…</a> · 09-05</td>
+<td><strong>1,000,000,000</strong> (<code>LaunchConfig.supply</code> = 1e27) · on-chain <code>getLaunchConfig(0)</code> on factory <a href="https://robinhoodchain.blockscout.com/address/0x7eD598BcEf8bd9Edd8C97A195C6d13f40801EC7e" target="_blank" rel="noopener noreferrer">0x7eD598…</a> · 09-05</td>
+</tr>
+<tr>
+<td>% on curve / public</td>
+<td><strong>79.31%</strong> (<code>initial_real_token_reserves</code> 793.1M) · official · same · 09-05</td>
+<td><strong>80%</strong> default ("Usually 0.8 × base_supply_max"); custom <strong>51–80%</strong> · official · <a href="https://docs.raydium.io/products/launchlab/bonding-curve.md" target="_blank" rel="noopener noreferrer">bonding-curve</a>, creating-a-launchlab-token · 09-05</td>
+<td>not stated; Meteora DBC "dynamic supply" computes it · official · <a href="https://docs.meteora.ag/core-products/dbc/launch-configurations.md" target="_blank" rel="noopener noreferrer">DBC launch-configurations</a> · 09-05</td>
+<td>"~80% of supply sold then migrate" · third_party (prior file L02-036)</td>
+<td>UNVERIFIED</td>
+<td><strong>~80%</strong> ("20% of your tokens … paired on PancakeSwap") · official · same · 09-05</td>
+<td>not stated</td>
+<td><strong>83%</strong> (<code>CURVE_TOKEN_ALLOCATION</code> 830M) · on-chain · same · 09-05</td>
+<td><strong>71.43%</strong> (<code>sellableTokens()</code> = 714,285,714.29) · on-chain read of curve 0x10b8a9…, block 55,398,122 · 09-05</td>
+</tr>
+<tr>
+<td>% reserved for grad. LP</td>
+<td><strong>20.69%</strong> (206.9M) · derived (1B − 793.1M)</td>
+<td><strong>20%</strong> default; floor <code>min_base_migrate_rate</code> 20% · official · global-config · 09-05</td>
+<td>Meteora-computed · official</td>
+<td>~20% · third_party</td>
+<td>UNVERIFIED</td>
+<td><strong>20%</strong> · official</td>
+<td>remainder of curve (Hyperboost now re-deploys the idle part as 14-day rewards) · official · <a href="https://whitepaper.virtuals.io/about-virtuals/capital-formation-layer/virtuals-launch-mechanics.md" target="_blank" rel="noopener noreferrer">launch-mechanics</a> · 09-05</td>
+<td><strong>17%</strong> (<code>LP_TOKEN_AMOUNT</code> 170M) · on-chain</td>
+<td><strong>28.57%</strong> held back; <strong>20.41% (204,081,632 tokens) lands in the v4 pool</strong>, ~8.16% leftover locked in the locker · on-chain (<code>PoolGraduated.tokenAmount</code> median = 204,081,632.65 over 1,351 graduations, blocks 53.67M–55.40M) + docs "Any supply left over at graduation is locked in the same place" · <a href="https://docs.ponsfamily.com/docs/v2" target="_blank" rel="noopener noreferrer">docs v2</a> · 09-05</td>
+</tr>
+<tr>
+<td>Creator/team allocation norm</td>
+<td><strong>0</strong> (creator may buy on curve like anyone) · official (prior L02-001)</td>
+<td>JustSendIt <strong>0</strong>; LaunchLab optional vesting ≤ <strong>30%</strong> (<code>max_lock_rate</code> 300,000), cliff + linear, "Locked tokens do not enter the curve" · official · global-config, creating-a-launchlab-token · 09-05</td>
+<td><strong>0</strong> by default; "85% supply locked" / "96% supply locked" config types exist (locked, not allocated) · official</td>
+<td>not documented</td>
+<td>not documented</td>
+<td><strong>0</strong> (dev may buy in the launch tx) · official</td>
+<td><strong>0</strong> at t0; anti-snipe-tax buybacks go to team wallet with 3-mo cliff + 9-mo vest · official · <a href="https://whitepaper.virtuals.io/about-virtuals/capital-formation-layer/anti-sniper-protection-for-token-launches.md" target="_blank" rel="noopener noreferrer">anti-sniper page</a> · 09-05</td>
+<td><strong>0</strong> ("mints the fixed supply to the curve") · official · <a href="https://docs.bags.fm/robinhood/launch-token.md" target="_blank" rel="noopener noreferrer">robinhood/launch-token</a> · 09-05</td>
+<td><strong>0</strong> ("No one, including the creator, is holding a bag of tokens set aside before trading opens") · official · docs v2 · 09-05</td>
+</tr>
+<tr>
+<td>Initial virtual liquidity</td>
+<td><strong>vSOL 30 / vT 1.073B</strong> → start FDV 27.96 SOL ≈ <strong>$2.9k</strong> · official constants; FDV derived (30/1.073B×1B)</td>
+<td>curve-type 0 "virtual_base / virtual_quote" set at Initialize (no fixed default published) · official · bonding-curve · 09-05</td>
+<td>not published</td>
+<td>not published</td>
+<td>UNVERIFIED</td>
+<td>not published (18 BNB target only)</td>
+<td>not published</td>
+<td><strong>vETH 1.28788 / vT 1,043,787,878.79</strong> → start FDV 1.234 ETH ≈ <strong>$3.06k</strong> · on-chain (<code>initialVirtualQuoteReserves</code>, <code>INITIAL_VIRTUAL_TOKEN_RESERVES</code>); FDV derived</td>
+<td><strong>phantomQuote 1.68 ETH / 1B tokens</strong> (<code>getReserves()</code> = 1.68 ETH, 1e27) → start FDV 1.68 ETH ≈ <strong>$4.16k</strong> · on-chain · 09-05</td>
+</tr>
+<tr>
+<td>Graduation threshold (quote)</td>
+<td>real SOL raised ≈ <strong>85.0 SOL</strong> (≈ $8.8k) · derived: k=30×1.073B; vT at completion = 279.9M ⇒ vSOL = 115.0 ⇒ real = 85.0 (official page states "when the coin hits a certain market cap"; the 85-SOL figure is arithmetic, not a quoted number)</td>
+<td><strong>85 SOL fixed</strong> (JustSendIt); custom <strong>≥ 24 SOL</strong> · official · creating-a-launchlab-token · 09-05</td>
+<td><strong>85 SOL</strong> (default); 100 SOL (85%-locked type); 55 SOL (96%-locked type) · official · customize-token-fees · 09-05</td>
+<td>UNVERIFIED</td>
+<td>"$100k mcap" · third_party (prior L02-035) UNVERIFIED</td>
+<td><strong>≈ 18 BNB</strong> (≈ $13.9k) · official · how-it-works · 09-05</td>
+<td><strong>42,000 VIRTUAL</strong> (≈ $28.9k) · official · launch-mechanics · 09-05</td>
+<td><strong>5 ETH</strong> (<code>graduationThreshold()</code>; docs say factory-settable, bounds 0.01–1,000 ETH) · on-chain · 09-05</td>
+<td><strong>4.2 ETH</strong> for native-ETH launches (<code>LaunchConfig.graduationThreshold</code>); custom pairs have their own thresholds (41.6 / 72.2 / 10.9 units seen) · on-chain; 131,278 of 254,394 captured <code>TokenLaunched</code> events carried 4.2 ETH · 09-05</td>
+</tr>
+<tr>
+<td>USD mcap at graduation</td>
+<td>≈ <strong>410.9 SOL ≈ $42.5k</strong> · derived (115.0/279.9M × 1B)</td>
+<td>depends on curve; for 85 SOL/80% CPMM handoff ≈ 85/200M × 1B ≈ <strong>425 SOL ≈ $44k</strong> (surplus lands as extra quote) · derived from docs' handoff rule</td>
+<td>≈ 85 SOL / LP share — not derivable without curve % · UNVERIFIED</td>
+<td>UNVERIFIED</td>
+<td>UNVERIFIED</td>
+<td>≈ 18/200M × 1B = <strong>90 BNB ≈ $69.6k</strong> · derived (assumes 200M to LP, curve-end price = pool price)</td>
+<td>not derivable (VIRTUAL/token ratio not published)</td>
+<td>6.2879/213.79M × 1B ≈ <strong>29.41 ETH ≈ $72.9k</strong> · derived from on-chain constants</td>
+<td>5.88/285.71M × 1B ≈ <strong>20.58 ETH ≈ $51.0k</strong> · derived (1.68+4.2 = 5.88 vETH at sell-out)</td>
+</tr>
+<tr>
+<td>Real quote that lands in LP</td>
+<td><strong>≈ 84.985 SOL + 206.9M tokens</strong> (85.0 − <code>pool_migration_fee</code> 15,000,001 lamports); LP tokens <strong>burnt</strong> · official text + derived</td>
+<td>"collected SOL and remaining curve tokens as initial liquidity" (85 SOL + 20%) · official</td>
+<td>85 SOL → DAMM v2 · official</td>
+<td>"Meteora DAMM v2 … LP permanently locked" · third_party</td>
+<td>Meteora · third_party</td>
+<td><strong>18 BNB + 20% tokens → PancakeSwap</strong> · official</td>
+<td>42,000 VIRTUAL + tokens → Uniswap V2 · official</td>
+<td><strong>5 ETH + 170M tokens</strong> → Uniswap v4 hook pool (<code>lpQuoteAmount()</code> = 5e18) · on-chain</td>
+<td><strong>4.2 ETH + 204.08M tokens</strong> → Uniswap v4 (<code>PoolGraduated</code> median pairTokenAmount = 4.2) · on-chain</td>
+</tr>
+<tr>
+<td>LP lock / burn</td>
+<td>LP burnt · official · PUMP_PROGRAM_README · 09-05</td>
+<td>platform+creator scale <strong>locked</strong> (Fee Key to platform), burn scale <strong>burned</strong>; CPMM-only since 2026-08-17 · official · <a href="https://docs.raydium.io/products/launchlab/tips-and-gotchas/lp-fee-distribution.md" target="_blank" rel="noopener noreferrer">lp-fee-distribution</a> · 09-05</td>
+<td>DBC: ≥10% locked at day 1, vesting ≤2 y; "25% of fees compounded" · official · <a href="https://docs.meteora.ag/core-products/dbc/migration-and-liquidity.md" target="_blank" rel="noopener noreferrer">DBC migration</a> · 09-05</td>
+<td>"permanently locked" · third_party</td>
+<td>UNVERIFIED</td>
+<td><strong>not documented</strong> · official (absence)</td>
+<td>LP tokens <strong>staked 10 years</strong> · official</td>
+<td>"locked liquidity" position minted from curve · official docs + on-chain <code>Migrated</code> event</td>
+<td>"locked permanently … the function does not exist" · official · docs v2</td>
+</tr>
+<tr>
+<td>Pool fee tier (post-grad.)</td>
+<td>PumpSwap canonical tiered 1.25%→0.30% by mcap · official (prior L02-001)</td>
+<td>CPMM 0.25% tier typical · official</td>
+<td>DAMM v2 2% (0.75/0.75/0.5) default · official</td>
+<td>1% · third_party</td>
+<td>Meteora · third_party</td>
+<td>PancakeSwap default (0.25%) · UNVERIFIED for the tier</td>
+<td>Uniswap V2 0.30% + 1% tax · official</td>
+<td>v4 hook: <strong>2% on ETH leg</strong> both phases · on-chain <code>TX_FEE_BPS</code> 200</td>
+<td>pool <code>poolFee</code> = <strong>0</strong>; hook charges <strong>1%</strong> (<code>hookFeeBps</code> 100) on quote leg · on-chain <code>getLaunchFeePolicy</code></td>
+</tr>
+<tr>
+<td>Creator fee share</td>
+<td>0.30% of curve trades; 0.30%→0.05% post · official</td>
+<td>LaunchLab creator ≤ 0.50%; letsbonk "Classic" 0% creator / 0.30% swap · official + third_party (prior L02-032/033)</td>
+<td>1% (of 2%), splittable ≤100 addresses · official</td>
+<td>80% of LP rewards · third_party</td>
+<td>70% · third_party</td>
+<td>dynamic (third_party)</td>
+<td>70% of 1% tax · official</td>
+<td><strong>1% of volume</strong> (50% of 2%), splittable by bps to ≤100 claimers · on-chain/official</td>
+<td><strong>70% of the 1%</strong> after protocol's 30% (<code>protocolFeeShareBps</code> 3000); if buyback on, 50% of the creator remainder (<code>buybackBurnBps</code> 5000) is spent buying back (vests 5 y, split creator/protocol); optional <strong>creator tax ≤ 10%</strong> (<code>maxCreatorTaxBps</code> 1000) 100% to creator · on-chain · 09-05</td>
+</tr>
+<tr>
+<td>Platform fee</td>
+<td>0.95% curve; PumpSwap protocol 0.05–0.93% · official</td>
+<td>Raydium 0.25% + platform ≤1.00% · official</td>
+<td>1% (partner 25% of it = 0.25% of volume) · official</td>
+<td>20% of LP rewards · third_party</td>
+<td>30% · third_party</td>
+<td>1% curve (min 0.001 BNB) · official</td>
+<td>30% · official</td>
+<td><strong>1% of volume</strong> (<code>partnerFeeBps</code> 2500 = 25% of the protocol half to partner) · on-chain</td>
+<td><strong>30% of 1%</strong> = 0.30% of volume; of that, 80% funds TWAP buybacks / 20% ops (v1 docs) · on-chain + official</td>
+</tr>
+<tr>
+<td>Creation fee</td>
+<td>0 · official</td>
+<td>~0.05–0.1 SOL rent (JustSendIt) · official</td>
+<td>not stated</td>
+<td>UNVERIFIED</td>
+<td>UNVERIFIED</td>
+<td>0.01 BNB (third_party, 2025-10)</td>
+<td>0; modules 10–100 VIRTUAL · official</td>
+<td><strong>0 ETH now</strong> (<code>creationFee()</code> = 0 on 2026-09-05; docs/default constant 0.02 ETH) · on-chain</td>
+<td><strong>0.0005 ETH</strong> (<code>launchFee()</code> = 5e14) · on-chain</td>
+</tr>
+<tr>
+<td>Typical dev buy</td>
+<td>no official guidance; community lore (UNVERIFIED) 1–5% "normal", ≥10% flagged</td>
+<td>official warning: <em>"Not making an initial buy — Without an early buy, sniping bots may capture all early tokens at near-zero cost"</em> · <a href="https://docs.raydium.io/user-flows/creating-a-launchlab-token.md" target="_blank" rel="noopener noreferrer">creating-a-launchlab-token</a> · 09-05</td>
+<td><code>initialBuyAmountLamports</code> param; no norm stated · official · <a href="https://docs.bags.fm/how-to-guides/launch-token.md" target="_blank" rel="noopener noreferrer">launch-token</a></td>
+<td>UNVERIFIED</td>
+<td>UNVERIFIED</td>
+<td>"purchase a portion … in the same transaction to protect your coins from snipers" · official</td>
+<td>none (no presale/whitelist) · official</td>
+<td><code>createAndBuy</code> atomic; docs example <strong>0.01 ETH</strong>; sample of last 60 tokens — see §2.3</td>
+<td>atomic <code>launchAndBuy</code> router; <strong>34 of 40 recent native launches had a same-block first buy: median 0.02 ETH ≈ 1.16% of supply, p75 0.052 ETH ≈ 2.9%, p90 0.125 ETH ≈ 6.9%, max 0.45 ETH ≈ 21%</strong> · on-chain sample (curves of the last 40 4.2-ETH launches, <code>CurveBuy</code> first log) · 09-05</td>
+</tr>
+<tr>
+<td>Time-decaying sniper fee</td>
+<td>none in program (fixed 1% + creator) · official</td>
+<td>none built in (platforms may set share fee) · official</td>
+<td>DBC fee scheduler: cliff fee ≤ <strong>99%</strong>, linear or exponential decay, base ≥0.25% · official · <a href="https://docs.meteora.ag/core-products/dbc/fees/fee-scheduler.md" target="_blank" rel="noopener noreferrer">fee-scheduler</a> · 09-05</td>
+<td>"fees start at 5% and decline to 1% after two hours" (post-grad) · third_party</td>
+<td>Meteora scheduler (UNVERIFIED use)</td>
+<td>none documented</td>
+<td><strong>99% → 1%</strong> over 0 s / 60 s / 10 min / 98 min (buy-side default; proceeds → buybacks → team vest) · official</td>
+<td>none in curve source (2% flat) · on-chain (absence)</td>
+<td><strong>99% → 0 exponential</strong> ("near 25% at 1 s, ~3% at 2 s"), docs say 5 s, factory reads <code>snipeTaxSeconds</code> = <strong>3</strong>, <code>snipeTaxStartBps</code> 9900; launcher, fee recipient and ≤32 named wallets exempt; collected tax joins the fee split · on-chain + docs</td>
+</tr>
+</tbody>
+</table>
+<p>Notes on the curve arithmetic (so you can re-run it): for a virtual-reserve x·y=k curve, real quote at sell-out = k/(vT₀ − sold) − vQ₀. pump.fun: 30×1.073e9/(1.073e9−7.931e8) − 30 = 115.0 − 30 = 85.0 SOL. Bags-RH: vQ₀ = 5×(1,043.79M−830M)/830M = 1.2879 ETH (matches the on-chain <code>initialVirtualQuoteReserves</code>), end vQ = 6.2879 ETH. Pons V2: 1.68×1e9/(1e9−714.29M) − 1.68 = 5.88 − 1.68 = 4.2 ETH; full-range pool at price 5.88/285.71M needs 4.2/(5.88/285.71M) = 204.08M tokens — which is exactly the median <code>PoolGraduated.tokenAmount</code>.</p>
+<h2 id="2-comparison-table-direct-single-sided-pool-launches-base-robinhood-and-zoraflaunch">2. Comparison table — direct single-sided pool launches (Base / Robinhood) and Zora/Flaunch</h2>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Clanker v3.1 (Base; MIT)</th>
+<th>Clanker v4 (Base; observed)</th>
+<th>Zora Coins (Base)</th>
+<th>Flaunch (Base; also RH)</th>
+<th>Pons V1 (RH)</th>
+<th>o1 Launchpad (Base + RH)</th>
+<th>NOXA Fun (RH)</th>
+<th>HoodPump (RH)</th>
+<th>"Plain" Uniswap v3/v4 single-sided launch (DIY, Clanker-style)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Total supply</td>
+<td>100B (prior file, official spec)</td>
+<td><strong>100,000,000,000</strong> ("Supply is set to 100 billion tokens with 18 decimals"; API <code>supply</code> = 1e29) · official · <a href="https://raw.githubusercontent.com/clanker-devco/v4-contracts/main/specs/v4_0_0.md" target="_blank" rel="noopener noreferrer">v4_0_0 spec</a>, <a href="https://www.clanker.world/api/tokens?page=1" target="_blank" rel="noopener noreferrer">api/tokens</a> · 09-05</td>
+<td><strong>1,000,000,000</strong> all coin types · official · <a href="https://docs.zora.co/coins" target="_blank" rel="noopener noreferrer">docs.zora.co/coins</a> · 09-05</td>
+<td><strong>100,000,000,000</strong> · official · <a href="https://docs.flaunch.gg/community/whitepaper.md" target="_blank" rel="noopener noreferrer">whitepaper</a> · 09-05</td>
+<td><strong>1,000,000,000</strong> · official · <a href="https://docs.ponsfamily.com" target="_blank" rel="noopener noreferrer">docs.ponsfamily.com</a> · 09-05</td>
+<td><strong>1,000,000,000</strong> · official · <a href="https://docs.o1.exchange/launchpad/trading/liquidity.md" target="_blank" rel="noopener noreferrer">liquidity</a> · 09-05</td>
+<td>not stated in docs read · UNVERIFIED</td>
+<td>not stated · UNVERIFIED</td>
+<td>your choice; 1B or 100B are the two conventions</td>
+</tr>
+<tr>
+<td>% in pool at t0</td>
+<td>100% of non-vaulted supply, single-sided</td>
+<td>100% of non-vaulted/non-airdrop supply across ≤7 positions; sample: 80% of tokens used 1 position, 20% used 5 · official + API sample (100 tokens)</td>
+<td>Content: <strong>990M</strong> (99%) to pool / 10M creator; Creator coin: <strong>500M</strong> pool / 500M 5-y vest; Trend: 100% · official</td>
+<td>fair-launch share <strong>1–69%</strong> of supply at a fixed price for 30 min, rest to a full-range position above spot; ETH raised → "PPP" below spot · official · whitepaper, <a href="https://docs.flaunch.gg/guides/flaunching-a-coin.md" target="_blank" rel="noopener noreferrer">SDK guide</a></td>
+<td>100% single-sided into a <strong>Uniswap V3 1% pool</strong>, locked · official</td>
+<td><strong>100%</strong> ("Pool supply: complete fixed supply … Range share 100%") · official</td>
+<td>100% single-sided V3, 1% tier, locked forever · official · <a href="https://docs.noxa.fi/launchpad/overview/" target="_blank" rel="noopener noreferrer">overview</a> · 09-05</td>
+<td>100% single-sided V3 1% (adapter: WETH token0) · third_party (DefiLlama adapter)</td>
+<td>100% single-sided (v3 range from starting tick upward, or v4 with a hook)</td>
+</tr>
+<tr>
+<td>Creator/team allocation</td>
+<td>vault ≤30%, ≥30 d · official</td>
+<td>vault: no min/max in spec; <strong>observed 60% of last 100 deployments used a vault: 2% (50 tokens) or 5% (10 tokens), lockDuration 604,800 s (7 d), no vest</strong> · API sample · 09-05</td>
+<td>1% (content) / 50% vesting (creator coin) · official</td>
+<td>premine ≤ fair-launch amount (creator buys at fair-launch price) · official</td>
+<td>0 (block-0 creator buy only) · official</td>
+<td>0 (+ optional dev buy) · official</td>
+<td>0 (+ optional initial buy) · official</td>
+<td>0 (+ <code>initialBuyWeth</code>) · third_party adapter</td>
+<td>0 unless you keep some off-pool (market reads any kept supply as "team")</td>
+</tr>
+<tr>
+<td>Starting market cap / initial ETH seeded by creator</td>
+<td>example <code>initialMarketCap: "10"</code> ETH; creator seeds <strong>0 ETH</strong> · official · <a href="https://raw.githubusercontent.com/clanker-devco/clanker-sdk/main/README.md" target="_blank" rel="noopener noreferrer">clanker-sdk README</a></td>
+<td><strong>0 ETH seeded</strong>; <code>starting_market_cap</code> (in paired-token units): <strong>1.99 ETH ≈ $4.9k (tick −246400) for 50/100</strong>, <strong>9.87 ETH ≈ $24.5k (tick −230400) for 40/100</strong>, 21,625 USDC for 10/100 (USDC-paired) · API sample of 100 most recent · 09-05</td>
+<td>Doppler multi-curve; starting cap not published · official (absence)</td>
+<td>default <strong>$10,000</strong> (web2 flow); SDK min $1,000; flaunching fee <strong>0.1% of the market cap set</strong> · official (docs <code>?ask</code> answer + SDK guide) · 09-05</td>
+<td>starting price not published; graduation "4.2 ETH paired in the locked pool" · official</td>
+<td><strong>opening FDV ≈ USD 4,000</strong>, "creator does not need to deposit ETH" · official</td>
+<td>not published</td>
+<td>not published</td>
+<td>you pick the tick; the two live conventions are ≈$4–5k (Clanker low tick, o1) and ≈$10–25k (Flaunch default, Clanker 10-ETH tick)</td>
+</tr>
+<tr>
+<td>Graduation</td>
+<td>none (already a pool)</td>
+<td>none</td>
+<td>none</td>
+<td>none (fair launch → open market)</td>
+<td>milestone <strong>4.2 ETH</strong> paired; "not a quality signal" · official</td>
+<td>none</td>
+<td>milestone <strong>4.2 ETH</strong> net buy on Robinhood (100k MON, 12.5k TRUST, 0.1 BTC on other chains) · official · <a href="https://docs.noxa.fi/launchpad/chains/" target="_blank" rel="noopener noreferrer">chains</a></td>
+<td>none</td>
+<td>none</td>
+</tr>
+<tr>
+<td>LP lock</td>
+<td>NFT in <code>LpLockerv2</code>, no withdraw path (inferred) · official</td>
+<td>locker address per token (API <code>locker_address</code>); spec silent on permanence · official (gap)</td>
+<td>20% of fees re-minted as locked/burned single-sided LP · official</td>
+<td>"position is effectively burned" · official</td>
+<td>"locked automatically" · official</td>
+<td>"Removal: Permanently disabled" · official</td>
+<td>"locked in our locker contract permanently" · official</td>
+<td>(locker per adapter comment) UNVERIFIED</td>
+<td>lock via UNCX v3/v4 locker (present on RH per DefiLlama) or burn the NFT — otherwise the market treats it as rug-able</td>
+</tr>
+<tr>
+<td>Pool fee tier</td>
+<td>1% v3</td>
+<td>static <strong>1%</strong> (60/100) or <strong>3%</strong> (40/100) LP fee; +20% protocol on top (1.2% / 3.6% all-in) · API sample + hook constant <code>PROTOCOL_FEE_NUMERATOR</code> 200_000 · 09-05</td>
+<td>1% (0.01% trend) · official</td>
+<td>1% · official</td>
+<td>1% v3 · official</td>
+<td><strong>1%</strong> of paired asset · official</td>
+<td>1% v3 tier · official</td>
+<td>1% v3 · third_party</td>
+<td>1% is the norm for memecoins; 0.3% reads as "not a meme launch"</td>
+</tr>
+<tr>
+<td>Creator fee share</td>
+<td>≤80% of LP fee (rest interface) · official</td>
+<td>up to 7 recipients by bps; sample: 100% to one recipient in all 100 · API</td>
+<td>50% of 1% · official</td>
+<td>0–100%, immutable; UI default <strong>80% creator / 20% buybacks</strong> · official · <a href="https://docs.flaunch.gg/getting-started/flaunch-a-coin.md" target="_blank" rel="noopener noreferrer">flaunch-a-coin</a></td>
+<td><strong>70% creator / 30% protocol</strong> (active factory from block 8,991,118; legacy 90/10) · official</td>
+<td><strong>50% creator / 30% platform / 20% referrer</strong> (referrer share → platform if none) · official · <a href="https://docs.o1.exchange/launchpad/trading/fees-referrals.md" target="_blank" rel="noopener noreferrer">fees-referrals</a></td>
+<td>"All fees … distributed to the creator" · third_party (DefiLlama adapter methodology)</td>
+<td><strong>10% creator / 30% community treasury / 60% platform</strong> · third_party (adapter)</td>
+<td>100% of LP fees are yours (you own the position) — this is the only structure with no platform take</td>
+</tr>
+<tr>
+<td>Creation fee</td>
+<td>gas</td>
+<td>gas (+ interface may charge)</td>
+<td>gas</td>
+<td>0.1% of set mcap · official</td>
+<td><strong>0.0005 ETH</strong> · official + adapter</td>
+<td><strong>0.001 ETH</strong> (Base and RH) · official</td>
+<td>not stated</td>
+<td><strong>0.002 ETH</strong> · third_party (adapter)</td>
+<td>gas only</td>
+</tr>
+<tr>
+<td>Dev buy</td>
+<td><code>initialSwap</code> at deploy · official</td>
+<td><code>ClankerUniv4EthDevBuy</code>; SDK default 0; sample: 30/100 had a dev buy but all were dust (1e-5 to 1e-6 ETH, bot deployers) · API sample</td>
+<td>none documented</td>
+<td>premine ≤ fair-launch share · official</td>
+<td><strong>block 0: only the creator's initial buy can execute</strong> · official</td>
+<td>"Include Dev Buy" toggle <strong>off by default</strong>; atomic; pays 1% but not the anti-snipe surcharge · official</td>
+<td>optional initial buy in native token · official · <a href="https://docs.noxa.fi/launchpad/how-to-launch/" target="_blank" rel="noopener noreferrer">how-to-launch</a></td>
+<td><code>initialBuyWeth</code> in <code>LaunchCreated</code> · adapter</td>
+<td>do it atomically in the deploy tx or you will be sniped</td>
+</tr>
+<tr>
+<td>Sniper control</td>
+<td>2-block delay (v3.1 spec)</td>
+<td>MEV modules: <code>ClankerMevBlockDelay</code> (2 blocks), <code>ClankerMevDescendingFees</code> (parabolic decay; <strong>sample: 80.01% → 5.00% over 1 s / 15 s / 99 s</strong>, hook cap <code>MAX_MEV_LP_FEE</code> 80%, <code>MAX_MEV_MODULE_DELAY</code> 2 min), <code>SniperAuctionV0/V2</code> (gas-priority auction, proceeds <strong>80% reward recipients / 20% Clanker</strong>) · official code + API sample · <a href="https://raw.githubusercontent.com/clanker-devco/v4-contracts/main/src/hooks/ClankerHookV2.sol" target="_blank" rel="noopener noreferrer">ClankerHookV2.sol</a>, <a href="https://raw.githubusercontent.com/clanker-devco/v4-contracts/main/specs/SniperAuctionV0Explainer.md" target="_blank" rel="noopener noreferrer">SniperAuctionV0Explainer</a> · 09-05</td>
+<td><strong>99% → base fee linear over 10 s</strong> · official · <a href="https://docs.zora.co/coins/contracts/hook" target="_blank" rel="noopener noreferrer">hook</a></td>
+<td>30-min fixed-price fair launch (no price advantage to being first) · official</td>
+<td>blocks 1–2: <strong>each wallet ≤5% of supply held, ≤5.5% bought</strong>; selling never restricted · official</td>
+<td><strong>99% → 1% linear over 20 s</strong> (both chains); surcharge → platform · official</td>
+<td>none documented</td>
+<td>none documented</td>
+<td>none unless you add a hook (v4) or a fair-launch window</td>
+</tr>
+</tbody>
+</table>
+<h2 id="23-robinhood-specific-observations-on-chain-2026-09-05">2.3 Robinhood-specific observations (on-chain, 2026-09-05)</h2>
+<ul>
+<li><strong>Pons V2 scale:</strong> a 2-day window (blocks 53,668,075–55,396,075) contained <strong>52,422 <code>TokenLaunched</code> and 1,351 <code>PoolGraduated</code> events → 2.58% graduation rate, ≈25k launches/day</strong> (Robinhood blocks ≈ 0.1 s, so 1.728M blocks ≈ 2.1 days). 124,819 distinct deployers in the partial 254k-launch capture; the top deployer alone made 11,489 launches — i.e. the launch feed is bot-dominated, which is why per-launch dev-buy medians are small. DefiLlama: Pons V2 fees $8.75M/24h, $47.4M/30d (<a href="https://api.llama.fi/summary/fees/pons-v2" target="_blank" rel="noopener noreferrer">api.llama.fi/summary/fees/pons-v2</a>, 09-05).</li>
+<li><strong>Pons V2 first buys:</strong> of the last 40 native-ETH launches, 34 had a same-block first <code>CurveBuy</code> (the atomic launch-and-buy router). Sizes: min 0.00001 ETH, p25 0.001, <strong>median 0.02 ETH (1.16% of supply)</strong>, p75 0.052 (2.9%), p90 0.125 (6.9%), max 0.45 ETH (20.96%). 12/34 were ≥0.05 ETH; 7/34 were dust (&lt;0.001 ETH). File: <code>launch/ponsv2_firstbuys.json</code>.</li>
+<li><strong>Bags-RH is quiet:</strong> 4,015 tokens launched through the V2 factory; live <code>creationFee()</code> = 0; <code>graduationThreshold()</code> = 5 ETH. Of the <strong>last 60 tokens, 54 sit at 0% bonding progress, 35 have any buy at all, 1 has migrated</strong>; only one first buy came from the creator address itself (0.0019 ETH ≈ 0.15% of supply) — <code>createAndBuy</code> routes the buy through the factory, so creator-tagged first buys under-count (<code>launch/bags_rh_sample.json</code>, <code>logs_summary2.json</code>, head 55,401,311).</li>
+<li><strong>Pons V1 is dormant for new launches:</strong> zero <code>TokenLaunched</code> events on the active V1 factory in the last 6M blocks (~7 days); <strong>HoodPump</strong> has 2 launches ever (initial buys 0.003 and 0.0064 ETH).</li>
+<li><strong>Uniswap v4 on Robinhood</strong> is canonical: PoolManager <code>0x8366a39cc670b4001a1121b8f6a443a643e40951</code>, PositionManager <code>0x58daec3116aae6d93017baaea7749052e8a04fa7</code>, Universal Router <code>0x8876789976decbfcbbbe364623c63652db8c0904</code>, Permit2 canonical (<a href="http://developers.uniswap.org/llms.mdx/docs/protocols/v4/deployments" target="_blank" rel="noopener noreferrer">developers.uniswap.org v4 deployments</a>, 09-05). Pons V2 and Bags-RH both read <code>poolManager()</code> = that address, so graduated pools are ordinary v4 pools with a hook.</li>
+<li><strong>Fee league on Robinhood (DefiLlama 24h / 30d, 09-05):</strong> Pons V2 $8.75M / $47.4M; GMGN (all chains) $3.45M / $40.3M; o1 Launchpad (Base+RH) $320k / $3.84M; Pons V1 $258k / $8.03M; NOXA Fun (6 chains) $165k / $4.15M; Bags (Solana+RH) $11.4k / $1.78M; HoodPump $0 / $0 ($20.72 all-time). Clanker (all chains incl. RH) $8.5k / $277k.</li>
+</ul>
+<hr>
+<h2 id="3-synthesis-the-norms">3. Synthesis — the norms</h2>
+<h3 id="a-the-80-or-90-answer-with-the-actual-distribution">(a) The "80% or 90%" answer, with the actual distribution</h3>
+<table>
+<thead>
+<tr>
+<th>Structure</th>
+<th>Share of supply that leaves creator control at t0</th>
+<th>Who decides</th>
+<th>Venues</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>100% to a single-sided locked pool, 0% creator</td>
+<td>100%</td>
+<td>protocol</td>
+<td>Clanker v4 (minus optional vault), Pons V1, o1, NOXA Fun, HoodPump, Flaunch (31–99% at fixed price first, rest full-range)</td>
+</tr>
+<tr>
+<td>100% to curve, protocol-fixed LP reserve 17–29%</td>
+<td>100% (71–83% sellable now, rest locked as LP)</td>
+<td>protocol</td>
+<td>pump.fun 79.3/20.7, LaunchLab 80/20 (51–80 custom), Four.meme ~80/20, Bags-RH 83/17, Pons V2 71.4/28.6 (20.4 to pool + 8.2 leftover locked)</td>
+</tr>
+<tr>
+<td>Creator keeps a vested slice</td>
+<td>70–99%</td>
+<td>creator/platform</td>
+<td>Zora creator coin 50% (5-y linear), Zora content 99/1, Raydium LaunchLab vesting ≤30%, Clanker vault (observed 2–5%, 7 d), Flaunch premine</td>
+</tr>
+</tbody>
+</table>
+<p>So the empirical mode is <strong>"100% out, 0% kept"</strong>, with a <strong>2–5% short-lock vault</strong> as the only common creator carve-out on Base and none on Robinhood curve pads. A launch that keeps 10–20% "for the team" is outside today's norm on every memecoin venue surveyed; if you want inventory, the venues' own answer is <em>buy it in the launch transaction, disclosed</em> (see (c)).</p>
+<h3 id="b-initial-lp-in-eth-for-direct-pool-launches-on-base-robinhood">(b) Initial LP in ETH for direct-pool launches on Base / Robinhood</h3>
+<ul>
+<li><strong>Creator-seeded ETH = 0</strong> on Clanker v3.1/v4, Flaunch, Pons V1, o1, NOXA Fun, HoodPump, Bags-RH, Pons V2. The contract <em>refuses</em> configurations that would require the creator to deposit ETH (o1: "If a configuration would require ETH … from the creator, the transaction stops"). The pool's ETH side is 100% buyer money.</li>
+<li><strong>Starting market cap is the real knob.</strong> Observed values: o1 ≈ $4,000 FDV (factory-managed); Clanker recent sample 1.99 ETH ≈ $4.9k (50%) or 9.87 ETH ≈ $24.5k (40%); Flaunch default $10,000; Pons V2 phantom 1.68 ETH ≈ $4.2k; Bags-RH 1.23 ETH ≈ $3.1k; pump.fun 28 SOL ≈ $2.9k. <strong>The band is $3k–$5k for "degen" starts and $10k–$25k for "serious" starts.</strong></li>
+<li><strong>What the first buys look like</strong> (single-sided v3 position from tick t₀ upward): each buy moves price along the range; with 1B supply at $4k FDV the first 0.1 ETH ($248) buys ≈ 6% of supply on Clanker-style full-range math, which is why every Robinhood pad added a 3–20-second 99% tax or a per-wallet cap (Pons V1: ≤5.5% per wallet in blocks 1–2). On Pons V2 the empirical first-block buy is 0.001–0.125 ETH (p25–p90), i.e. <strong>$2.5–$310</strong>, taking 0.06–6.9% of supply.</li>
+<li><strong>"Graduated" ETH depth</strong> on Robinhood is protocol-fixed at <strong>4.2 ETH (Pons V1/V2, NOXA)</strong> or <strong>5 ETH (Bags-RH)</strong> ≈ $10.4k–$12.4k, paired with ≈17–20% of supply, giving a <strong>$51k–$73k graduation FDV</strong>. That is the number a Robinhood memecoin needs to reach for its pool to be "real"; below it, the token is still a curve position or a thin single-sided range.</li>
+</ul>
+<h3 id="c-how-much-eth-a-creator-commits-dev-buy-and-how-it-is-perceived">(c) How much ETH a creator commits (dev buy) and how it is perceived</h3>
+<ul>
+<li><strong>Mechanism norm:</strong> every venue that cares about snipers exposes an <em>atomic</em> dev buy (pump.fun creator buy in the create tx; LaunchLab "initial buy amount"; Four.meme same-tx purchase; Bags <code>createAndBuy</code>; Pons V2 <code>launchAndBuy</code> router; Pons V1 block-0 creator-only buy; o1 "Include Dev Buy" toggle; NOXA "Initial Buy"; Clanker <code>ClankerUniv4EthDevBuy</code>; Flaunch premine). The atomic buy is exempt from the venue's sniper tax (Pons V2 "the creator is never a sniper on their own launch"; o1 "pays the normal 1% but not the anti-snipe surcharge"). Raydium's official docs list "Not making an initial buy" as a <em>mistake</em> ("sniping bots may capture all early tokens at near-zero cost, which can undermine community trust").</li>
+<li><strong>Size norm (observed on Robinhood, Pons V2, 09-05):</strong> median <strong>0.02 ETH ≈ $50 ≈ 1.2% of supply</strong>; the upper quartile is 0.05–0.13 ETH (2.9–6.9%); the largest in 40 was 0.45 ETH (21%). Bags-RH docs' worked example is 0.01 ETH. Clanker's recent Base deployments are bot-spam with dust dev buys, so they say nothing about human norms. <strong>Solana pump.fun "1–5% normal, ≥10% red flag" is community lore that I could not source to a primary page this session — treat as UNVERIFIED.</strong></li>
+<li><strong>Perception heuristics the trenches actually use (sourced):</strong> GMGN's security panel marks <strong>Top-10 holders &lt; 30%</strong> as "relatively safe", shows <strong>Burnt/Locked</strong> LP %, <strong>Insider holder ratio</strong> (wallets holding without buying = suspected creator split), <strong>Snipers / first-70-buyers total bought vs. current holdings</strong>, "Rug probability" from holder history, and flags a <strong>99% sell tax as honeypot</strong> (<a href="https://docs.gmgn.ai/index/ca-security-checks.md" target="_blank" rel="noopener noreferrer">CA security check</a>, <a href="https://docs.gmgn.ai/index/insider-traders-snipers-first-70-buyers.md" target="_blank" rel="noopener noreferrer">insiders/snipers</a>, 09-05). Pons V1 hard-codes the same intuition as a rule: <strong>no wallet may hold &gt;5% or buy &gt;5.5% in blocks 1–2</strong>. Read together: a <strong>disclosed dev buy of ≤5% in one wallet</strong> is inside every heuristic; 5–10% is tolerated if disclosed and not split across wallets (splitting is exactly what the "insider" and "bundle" detectors are built to catch); &gt;10% in the creator's hands is read as a dump risk regardless of intent.</li>
+<li><strong>Perceived meaning of the ETH amount:</strong> on Robinhood/Base, ~0.05–0.1 ETH ($125–$250) signals "creator has skin in the game, not a bot"; ~0.5 ETH+ ($1.2k+) buys 10–20% at a $4k start and is read as a <em>pre-mine by another name</em> unless the venue's per-wallet caps prevent it. On Solana the same logic is denominated in ~0.5–5 SOL.</li>
+</ul>
+<h3 id="d-what-a-clean-composition-looks-like-to-the-current-market">(d) What a "clean" composition looks like to the current market</h3>
+<p>The pattern that every 2026 venue converged on, which the owner should copy whether launching on Pons V2, Bags-RH, o1, NOXA or a DIY v4 hook:</p>
+<ol>
+<li><strong>Fixed supply, no mint/blacklist/pause/tax hooks</strong> (Pons V2: "no mint, no way to freeze or blacklist a wallet, no way to add a tax after launch"; o1: "no owner who can mint, pause, upgrade, or take balances"). Four.meme "Tax Tokens" and Virtuals' 1% tax are the outliers and are read as taxes.</li>
+<li><strong>0% team allocation at t0; 100% to curve/pool.</strong> Any creator inventory comes from a <strong>single, disclosed, atomic dev buy of roughly 1–5% of supply</strong> (≈0.02–0.1 ETH at Robinhood starting caps), from the same wallet that receives fees.</li>
+<li><strong>Liquidity permanently locked or burned by the protocol, not by a promise</strong> (pump.fun LP burnt; LaunchLab locked/burned; Pons "the function does not exist"; o1 "Removal: permanently disabled"; NOXA "locked forever"; Flaunch "effectively burned"; Virtuals 10-year stake). On a DIY launch the market substitutes UNCX lock or an NFT burn for this.</li>
+<li><strong>Creator monetised by a fee stream, not by supply:</strong> 0.5–1% of volume in the <em>quote asset</em> (Pons V2 0.7% of volume; o1 0.5%; Bags 1%; pump.fun 0.30%→0.05%; Clanker 80% of a 1–3% LP fee), pull-claimed, splittable to team/KOL wallets by bps (Bags ≤100 claimers, Clanker ≤7, pump.fun ≤10). Optional creator tax (Pons ≤10%) exists but every doc tells buyers to "read it before trading" — using it costs trust.</li>
+<li><strong>Sniper control that the venue applies, not one you improvise:</strong> 99%→~0 tax over 3–20 s (Pons V2, o1, Zora), per-wallet caps in the first blocks (Pons V1), 30-min fixed price (Flaunch), or gas auctions/2-block delay (Clanker). Tax proceeds flow to the fee split or platform, never to the creator's wallet directly (Virtuals routes them to a vested team buyback, which is the one design that puts sniper tax in the team's pocket).</li>
+<li><strong>Protocol-fixed graduation</strong> (4.2–5 ETH / 85 SOL / 18 BNB) into a public pool at the curve's end price; no creator step, no migration the creator can botch or skip. "Graduation is not a quality signal" is now boilerplate on Pons/NOXA.</li>
+<li><strong>Metadata immutability + verifiable addresses</strong> (CREATE2 vanity/predictable addresses on Pons V2; profile immutable by default on o1).</li>
+</ol>
+<p>Anything outside this — kept supply, mutable fees, creator-controlled LP, undisclosed multi-wallet buys — is precisely what GMGN/Rugcheck-style panels are built to flag, and on Robinhood the two largest pads (Pons V2, Bags) make most of it impossible by construction.</p>
+<hr>
+<h2 id="4-practical-read-out-for-the-owners-two-chains">4. Practical read-out for the owner's two chains</h2>
+<ul>
+<li><strong>Robinhood Chain today:</strong> the volume is on <strong>Pons V2</strong> (curve → v4, 4.2 ETH, 1% fee, 70% creator, 0.0005 ETH launch, 99% snipe tax 3 s, ~25k launches/day, 2.6% graduate), then <strong>Bags-RH</strong> (curve → v4, 5 ETH, 2% fee, 50% creator, creation fee currently 0), then the single-sided v3/v4 pads (<strong>o1</strong> $4k start, 1% fee, 50% creator, 0.001 ETH; <strong>NOXA Fun</strong> v3 1%, 4.2 ETH milestone; <strong>Pons V1</strong> v3 1%, 70% creator; <strong>HoodPump</strong> dormant). Note Pons V2 launching is gated: <code>canLaunch(address)</code> / <code>launchEnabled()</code> — it read <code>true</code> on 09-05, but llms.txt says "Public launching is closed" for some periods; read it before planning.</li>
+<li><strong>GIWA:</strong> no mainnet; the same ETH-quoted composition transfers 1:1 (Joseon.fun 2% curve / 0.3% swap and GIWA MARKETS 800M/200M + 1% are already using pump-style 80/20 on Sepolia — prior file <code>06_giwa_ecosystem_competitors_now.md</code>). Design the launch to Robinhood numbers (4.2–5 ETH depth, $4k start, 1% fee, 1–5% atomic dev buy) and re-parameterise for GIWA gas/ETH when parameters are published.</li>
+</ul>
+<hr>
+<h2 id="5-claims-ledger-url-observed-date-for-every-load-bearing-number">5. Claims ledger (URL + observed date for every load-bearing number)</h2>
+<table>
+<thead>
+<tr>
+<th>id</th>
+<th>claim</th>
+<th>status</th>
+<th>source</th>
+<th>observed</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LS-01</td>
+<td>pump.fun global constants: total 1e15 base units (1B), vT 1.073B, vSOL 30, real 793.1M, fee 100 bps, <code>pool_migration_fee</code> 15,000,001 lamports, LP burnt</td>
+<td>official</td>
+<td>https://raw.githubusercontent.com/pump-fun/pump-public-docs/main/docs/PUMP_PROGRAM_README.md</td>
+<td>2026-09-05</td>
+</tr>
+<tr>
+<td>LS-02</td>
+<td>pump.fun sell-out ⇒ 85.0 SOL real, 206.9M tokens migrate, FDV 410.9 SOL ≈ $42.5k; start FDV 27.96 SOL</td>
+<td>derived from LS-01 (formula in §1 notes)</td>
+<td>—</td>
+<td>2026-09-05</td>
+</tr>
+<tr>
+<td>LS-03</td>
+<td>LaunchLab: JustSendIt 85 SOL fixed, custom ≥24 SOL, curve 51–80%, default "0.8 × supply", vesting ≤30% (<code>max_lock_rate</code> 300,000), <code>min_base_migrate_rate</code> 20%, "Not making an initial buy" listed as a mistake, graduation bounty caller</td>
+<td>official</td>
+<td>https://docs.raydium.io/user-flows/creating-a-launchlab-token.md ; https://docs.raydium.io/products/launchlab/bonding-curve.md ; https://docs.raydium.io/products/launchlab/global-config.md</td>
+<td>2026-09-05</td>
+</tr>
+<tr>
+<td>LS-04</td>
+<td>LaunchLab LP after 2026-08-17: platform+creator scale locked (platform Fee Key), burn scale burned; CPMM-only</td>
+<td>official</td>
+<td>https://docs.raydium.io/products/launchlab/tips-and-gotchas/lp-fee-distribution.md</td>
+<td>2026-09-05</td>
+</tr>
+<tr>
+<td>LS-05</td>
+<td>Bags Solana: 7 fee configs; graduation 85 SOL (100 / 55 for supply-locked types); 2% default; 25–50% compounding</td>
+<td>official</td>
+<td>https://docs.bags.fm/how-to-guides/customize-token-fees.md</td>
+<td>2026-09-05</td>
+</tr>
+<tr>
+<td>LS-06</td>
+<td>Bags-RH docs: 1B supply, 830M curve, 170M + raise → v4 locked pool, 2% ETH-leg fee 1%/1%, creationFee default 0.02 ETH, partner default 2500 bps of protocol half, <code>createAndBuy</code> atomic, example 0.01 ETH</td>
+<td>official</td>
+<td>https://docs.bags.fm/robinhood/overview.md ; https://docs.bags.fm/robinhood/launch-token.md</td>
+<td>2026-09-05</td>
+</tr>
+<tr>
+<td>LS-07</td>
+<td>Bags-RH on-chain: factory proxy 0xe8Cc44… → impl 0x7dfa01…; <code>graduationThreshold()</code> 5e18, <code>creationFee()</code> 0, <code>partnerFeeBps</code> 2500, <code>allTokensLength</code> 4,015; curve impl 0x419890…: <code>INITIAL_VIRTUAL_TOKEN_RESERVES</code> 1,043,787,878.79, <code>CURVE_TOKEN_ALLOCATION</code> 830M, <code>LP_TOKEN_AMOUNT</code> 170M, <code>TX_FEE_BPS</code> 200; sample curve <code>initialVirtualQuoteReserves</code> 1.28788 ETH, <code>lpQuoteAmount</code> 5 ETH</td>
+<td>on-chain</td>
+<td>https://robinhoodchain.blockscout.com/api/v2/smart-contracts/0x7dfa0131F6c8626F199A2E33E49DfB5660e6Ef1C ; …/0x419890a21711c3d3af46b58548376420b9723275 ; RPC eth_call</td>
+<td>2026-09-05</td>
+</tr>
+<tr>
+<td>LS-08</td>
+<td>Pons V2 on-chain: <code>getLaunchConfig(0)</code> = {supply 1e27, curveFeeBps 100, phantomQuote 1.68e18, graduationThreshold 4.2e18, poolFee 0, tickSpacing 200}; <code>launchFee</code> 5e14; <code>snipeTaxSeconds</code> 3; <code>snipeTaxStartBps</code> 9900; <code>maxCreatorTaxBps</code> 1000; <code>launchEnabled</code> true; <code>poolManager</code> 0x8366a3…; curve <code>sellableTokens()</code> 714,285,714.29; <code>getReserves()</code> (1.68 ETH, 1e27); <code>getLaunchFeePolicy</code> = (30% protocol, 50% buyback, hookFee 100 bps, 300 bps max impact)</td>
+<td>on-chain</td>
+<td>factory https://robinhoodchain.blockscout.com/address/0x7eD598BcEf8bd9Edd8C97A195C6d13f40801EC7e ; curve 0x10b8a9c8c9bd0fcd72b9ce7a433a8227a8aa49e3</td>
+<td>2026-09-05</td>
+</tr>
+<tr>
+<td>LS-09</td>
+<td>Pons V2 docs: entire supply minted to curve, no creator bag; fixed held-back share becomes pool; liquidity locked permanently ("the function does not exist"); leftover supply locked; snipe tax 99%→0 exponential over first 5 s (doc) / launcher + fee recipient + ≤32 wallets exempt; creator tax capped, fixed at creation; fees in quote asset; buyback vests 5 y; CTO 3-day timelock</td>
+<td>official</td>
+<td>https://docs.ponsfamily.com/docs/v2 ; https://docs.ponsfamily.com/llms.txt</td>
+<td>2026-09-05</td>
+</tr>
+<tr>
+<td>LS-10</td>
+<td>Pons V2 events (blocks 53,668,075–55,396,075): 52,422 TokenLaunched, 1,351 PoolGraduated (2.58%); graduated pool median 204,081,632.65 tokens + 4.2 ETH; captured 254,394 launches from block 27.0M, 131,278 with 4.2 ETH threshold, 124,819 deployers</td>
+<td>on-chain (eth_getLogs)</td>
+<td>RPC; adapter event ABIs from https://raw.githubusercontent.com/DefiLlama/dimension-adapters/master/fees/ponsdotfamily-v2/index.ts</td>
+<td>2026-09-05</td>
+</tr>
+<tr>
+<td>LS-11</td>
+<td>Pons V2 first-buy sample (last 40 native launches): 34 same-block; ETH p25/med/p75/p90/max = 0.001/0.02/0.052/0.125/0.45; % supply 0.06/1.16/2.9/6.9/20.96</td>
+<td>on-chain sample</td>
+<td><code>launch/ponsv2_firstbuys.json</code></td>
+<td>2026-09-05</td>
+</tr>
+<tr>
+<td>LS-12</td>
+<td>Pons V1: 1B supply, no curve, v3 1% pool, locked; 4.2 ETH graduation; 0.0005 ETH launch; creator 70/protocol 30 (active, block 8,991,118) vs 90/10 legacy; block-0 creator-only, blocks 1–2 ≤5% hold / ≤5.5% buy; DefiLlama: one-sixth of the 1% to Uniswap after 2026-07-27</td>
+<td>official + third_party</td>
+<td>https://docs.ponsfamily.com ; https://raw.githubusercontent.com/DefiLlama/dimension-adapters/master/fees/ponsdotfamily/index.ts</td>
+<td>2026-09-05</td>
+</tr>
+<tr>
+<td>LS-13</td>
+<td>o1 Launchpad: 1B supply, 100% single-sided v4, opening FDV ≈ $4,000, creator deposits no paired asset, removal permanently disabled; 1% fee 50/30/20; 99%→1% linear over 20 s; creation 0.001 ETH (Base and RH); Dev Buy toggle off by default, exempt from surcharge</td>
+<td>official</td>
+<td>https://docs.o1.exchange/launchpad/trading/liquidity.md ; …/trading/fees-referrals.md ; …/create/token-creation.md</td>
+<td>2026-09-05</td>
+</tr>
+<tr>
+<td>LS-14</td>
+<td>NOXA Fun: single-sided V3 1% tier, locked forever, graduation milestone 4.2 ETH on Robinhood (no migration), optional initial buy; RH factory 0xD9eC2d…</td>
+<td>official</td>
+<td>https://docs.noxa.fi/launchpad/overview/ ; …/launchpad/chains/ ; …/contracts/noxa-fun/</td>
+<td>2026-09-05</td>
+</tr>
+<tr>
+<td>LS-15</td>
+<td>HoodPump: 0.002 ETH launch fee, v3 1%, 60% platform / 30% community / 10% creator; $20.72 all-time fees</td>
+<td>third_party (DefiLlama adapter + API)</td>
+<td>https://raw.githubusercontent.com/DefiLlama/dimension-adapters/master/fees/hoodpump/index.ts ; https://api.llama.fi/summary/fees/hoodpump</td>
+<td>2026-09-05</td>
+</tr>
+<tr>
+<td>LS-16</td>
+<td>Clanker v4 spec: 100B supply; ≤7 positions summing to 10,000 bps; dev-buy extension; vault no min/max; 2-block delay; protocol fee 20% of LP fee</td>
+<td>official</td>
+<td>https://raw.githubusercontent.com/clanker-devco/v4-contracts/main/specs/v4_0_0.md</td>
+<td>2026-09-05</td>
+</tr>
+<tr>
+<td>LS-17</td>
+<td>Clanker API sample (100 most recent, all Base): start mcap 1.99 ETH ×50 (tick −246400), 9.87 ETH ×40 (−230400), 21,625 USDC ×10; static fee 1% ×60 / 3% ×40; vault 2% ×50, 5% ×10, lock 604,800 s; dev buy 30 (dust); sniper module 800,132→50,008 over 1/15/99 s; 1 position ×80, 5 ×20</td>
+<td>on-chain via project API</td>
+<td>https://www.clanker.world/api/tokens?page=1…10</td>
+<td>2026-09-05</td>
+</tr>
+<tr>
+<td>LS-18</td>
+<td>Clanker hook constants: <code>MAX_LP_FEE</code> 10%, <code>MAX_MEV_LP_FEE</code> 80%, <code>PROTOCOL_FEE_NUMERATOR</code> 20%, <code>MAX_MEV_MODULE_DELAY</code> 2 min; descending-fee module parabolic decay; sniper auction proceeds 80/20</td>
+<td>official code</td>
+<td>https://raw.githubusercontent.com/clanker-devco/v4-contracts/main/src/hooks/ClankerHookV2.sol ; …/src/mev-modules/ClankerMevDescendingFees.sol ; …/specs/SniperAuctionV0Explainer.md</td>
+<td>2026-09-05</td>
+</tr>
+<tr>
+<td>LS-19</td>
+<td>Clanker SDK example: <code>initialMarketCap: "10"</code> ETH, vault 10% / 30 d, dev buy 0, creator reward 75%</td>
+<td>official</td>
+<td>https://raw.githubusercontent.com/clanker-devco/clanker-sdk/main/README.md</td>
+<td>2026-09-05</td>
+</tr>
+<tr>
+<td>LS-20</td>
+<td>Zora: 1B; creator coin 500M pool / 500M 5-y vest; content 990M / 10M creator; trend 100%; 1% fee; 20% of fees re-minted locked LP; 99%→base over 10 s</td>
+<td>official</td>
+<td>https://docs.zora.co/coins ; https://docs.zora.co/coins/contracts/hook</td>
+<td>2026-09-05</td>
+</tr>
+<tr>
+<td>LS-21</td>
+<td>Flaunch: 100B supply; 30-min fixed-price fair launch; <code>initialTokenFairLaunch</code> 1–69%; premine ≤ fair-launch amount; flaunching fee 0.1% of set mcap; min mcap $1,000; default $10,000; default 80% creator / 20% buybacks; single-sided, "effectively burned"</td>
+<td>official</td>
+<td>https://docs.flaunch.gg/community/whitepaper.md ; https://docs.flaunch.gg/guides/flaunching-a-coin.md ; https://docs.flaunch.gg/getting-started/flaunch-a-coin.md ; docs <code>?ask=</code> answer</td>
+<td>2026-09-05</td>
+</tr>
+<tr>
+<td>LS-22</td>
+<td>Four.meme: 1B; ~18 BNB graduation; 20% tokens + all BNB to PancakeSwap; 1% fee min 0.001 BNB; same-tx dev purchase; LP lock not documented</td>
+<td>official</td>
+<td>https://four-meme.gitbook.io/four.meme/guide/how-it-works</td>
+<td>2026-09-05</td>
+</tr>
+<tr>
+<td>LS-23</td>
+<td>Virtuals: 42,000 VIRTUAL graduation → Uniswap V2; LP staked 10 y; 1% fee 70/30; sniper tax 99%→1% over 0/60 s/10 min/98 min, buy-side default, proceeds → buybacks → team wallet 3-mo cliff + 9-mo vest; Hyperboost re-deploys idle supply over 14 d; no presales/whitelists</td>
+<td>official</td>
+<td>https://whitepaper.virtuals.io/about-virtuals/capital-formation-layer/virtuals-launch-mechanics.md ; …/anti-sniper-protection-for-token-launches.md</td>
+<td>2026-09-05</td>
+</tr>
+<tr>
+<td>LS-24</td>
+<td>Meteora DBC: cliff fee ≤99%, ≥0.25% base, linear/exponential scheduler; ≥10% of migrated liquidity locked at day 1, vesting ≤2 y; 0.2% protocol migration fee</td>
+<td>official</td>
+<td>https://docs.meteora.ag/core-products/dbc/fees/fee-scheduler.md ; …/migration-and-liquidity.md ; …/launch-configurations.md</td>
+<td>2026-09-05</td>
+</tr>
+<tr>
+<td>LS-25</td>
+<td>GMGN heuristics: Top-10 &lt; 30% "relatively safe"; Burnt % (100% = cannot withdraw LP); insider holder ratio; snipers = first few blocks; first-70-buyers bought vs held; 99% sell tax = honeypot</td>
+<td>official (GMGN docs)</td>
+<td>https://docs.gmgn.ai/index/ca-security-checks.md ; https://docs.gmgn.ai/index/insider-traders-snipers-first-70-buyers.md</td>
+<td>2026-09-05</td>
+</tr>
+<tr>
+<td>LS-26</td>
+<td>Uniswap v4 canonical on Robinhood: PoolManager 0x8366a39c…, PositionManager 0x58daec31…, Universal Router 0x88767899…</td>
+<td>official</td>
+<td>http://developers.uniswap.org/llms.mdx/docs/protocols/v4/deployments</td>
+<td>2026-09-05</td>
+</tr>
+<tr>
+<td>LS-27</td>
+<td>DefiLlama fee summaries (24h/30d): pons-v2 $8.75M/$47.4M; gmgn $3.45M/$40.3M; o1 $320k/$3.84M; pons-v1 $258k/$8.03M; noxa-fun $165k/$4.15M; bags $11.4k/$1.78M; clanker $8.5k/$277k; pump.fun $928k/$47.5M; pumpswap $2.84M/$88.8M; letsbonk $5.4k/$166k; four.meme $7.2k/$287k; zora-coins $746/$15k; flaunch $16/$377; moonshot-create $1.4k/$77k; believe $0.35/$214; virtuals $24k/$665k</td>
+<td>third_party</td>
+<td>https://api.llama.fi/summary/fees/{slug}</td>
+<td>2026-09-05</td>
+</tr>
+<tr>
+<td>LS-28</td>
+<td>Spot: SOL 103.44, ETH 2,477.90, BNB 773.19, VIRTUAL 0.6875</td>
+<td>third_party</td>
+<td>https://api.coingecko.com/api/v3/simple/price</td>
+<td>2026-09-05 20:02 UTC</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="6-unknowns-could-not-verify">6. Unknowns / could not verify</h2>
+<ol>
+<li><strong>Moonshot/Moonit and Believe</strong> launch parameters (supply, curve %, graduation) — no reachable primary docs (moonit.com is now a dating app; docs.believe.app is API-only; DEX Screener docs have no Moonshot section). Prior third-party figures kept, flagged.</li>
+<li><strong>Bags Solana and Believe curve split / virtual reserves</strong> — Meteora DBC configs are per-partner and not published on their docs.</li>
+<li><strong>Virtuals total supply and initial virtual liquidity</strong> — not on the two whitepaper pages read.</li>
+<li><strong>NOXA Fun and HoodPump supply/starting price</strong> — not in docs; HoodPump numbers are from the DefiLlama adapter only.</li>
+<li><strong>Zora starting market cap</strong> — Doppler multi-curve; not published.</li>
+<li><strong>Clanker v4 LP permanence</strong> — spec is silent; v3.1 had no withdraw path.</li>
+<li><strong>Pons V2 snipe-tax window</strong>: docs say 5 s, factory reads 3 s — the on-chain value governs; docs may be stale. Pons V1 starting price / tick not published.</li>
+<li><strong>Solana dev-buy folklore (1–5% ok, ≥10% flagged)</strong> — community lore, no primary source found within this session's tool budget (web search exhausted); the Robinhood numbers in §3(c) are the only measured ones.</li>
+<li><strong>Bags-RH <code>creationFee()</code> = 0</strong> on 09-05 contradicts the docs' 0.02 ETH default — could be a promo; re-read before launching.</li>
+<li><strong>Pons V2 launch gating</strong>: llms.txt says "Public launching is closed" while <code>launchEnabled()</code> returned <code>true</code>; check <code>canLaunch(you)</code> at launch time.</li>
+<li>Four.meme LP lock/burn policy and PancakeSwap tier remain undocumented.</li>
+<li>Bags-RH creator-buy sizes: the factory executes <code>createAndBuy</code> via <code>buyFor</code>, so the <code>TokensBought.buyer</code> is not the creator; a proper measurement needs the tx sender, which I did not pull. The 54/60 zero-progress figure and Pons V1 dormancy are measured (§2.3).</li>
+</ol></article>
+    </main>
+    <footer>
+      <span>research_only=true</span>
+      <span>strategy_consumption_allowed=false</span>
+      <span>order_input=false</span>
+    </footer>
+  </body>
+</html>

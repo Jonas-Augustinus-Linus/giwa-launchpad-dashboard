@@ -1,0 +1,1787 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex,nofollow,noarchive" />
+    <meta name="theme-color" content="#090c0e" />
+    <title>GIWA · Robinhood Launchpad — 론칭 준비 발사대 (2026-09-06) · GIWA · Robinhood Launchpad</title>
+    <link rel="stylesheet" href="../../assets/document.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#document">본문으로 바로가기</a>
+    <header class="document-header">
+      <a class="brand" href="../../development.html" aria-label="GIWA 대시보드로 돌아가기">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span><strong>GIWA · RH</strong><small>LAUNCHPAD ROOM</small></span>
+      </a>
+      <nav aria-label="문서 동작">
+        <a href="../../development.html">← 대시보드</a>
+      </nav>
+    </header>
+    <main id="document" class="document-shell">
+      <div class="document-meta">
+        <span>REPORT</span>
+        <span>SHA256 e5cf52d110a5</span>
+      </div>
+      <h1>GIWA · Robinhood Launchpad — 론칭 준비 발사대 (2026-09-06)</h1>
+      <p class="source-path">docs/LAUNCH_PREP_2026-09-06.md</p>
+      <article class="markdown-body"><h1 id="giwa-robinhood-launchpad-2026-09-06">GIWA · Robinhood Launchpad — 론칭 준비 발사대 (2026-09-06)</h1>
+<ul>
+<li>작성: 2026-09-06 KST. 관측창: 2026-09-05 19:30–21:40 UTC (= 09-06 04:30–06:40 KST). 근거는 렌즈 메모 01(로빈후드 런치패드), 02(구성 규범), 03(최속 경로·시장 온도), 04(GIWA 병행), 05(LP 소각 신호). 모든 숫자는 §7 출처 URL로 추적 가능. 관측 못한 값은 <strong>UNVERIFIED</strong>.</li>
+<li>ETH 환산 가격: $2,476–2,478 (Blockscout stats / coins.llama.fi / CoinGecko, 09-05).</li>
+<li>오너 규칙: 워시·번들·매집-매도 없음. 법률·등록 항목은 다루지 않음.</li>
+<li>한 줄 결론: <strong>지금 당장은 Pons V2(로빈후드) 1순위. 공급 100 % 커브, 팀 0 %, 공개 dev-buy 1건 ≤5 %, 크리에이터 세금 0–2 %, 바이백 OFF, 졸업 4.2 ETH 자동 영구 잠금. GIWA는 메인넷 부재 → Sepolia 리허설 + 키트만 준비.</strong></li>
+</ul>
+<hr>
+<h2 id="1">1. 로빈후드 체인 지금</h2>
+<h3 id="11-defillama-blockscout-09-05-2000-utc">1.1 체인 숫자 (DefiLlama · Blockscout, 09-05 20:00 UTC)</h3>
+<table>
+<thead>
+<tr>
+<th>지표</th>
+<th>값</th>
+<th>비고</th>
+<th>출처</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TVL</td>
+<td><strong>$905.07M</strong></td>
+<td>—</td>
+<td>api.llama.fi/v2/chains</td>
+</tr>
+<tr>
+<td>DEX 일거래량</td>
+<td><strong>$1.89B</strong> (24h, +12 % d/d)</td>
+<td>솔라나 $1.88B와 동급</td>
+<td>api.llama.fi/overview/dexs/robinhood-chain</td>
+</tr>
+<tr>
+<td>DEX 7d / 30d</td>
+<td>$10.73B (<strong>+105 % w/w</strong>) / $23.09B (<strong>+263 % m/m</strong>)</td>
+<td>솔라나·베이스·ETH 7d는 −11~−27 %</td>
+<td>동일</td>
+</tr>
+<tr>
+<td>체인 수수료 24h / 7d / 30d</td>
+<td>$24.51M / $112.2M / $182.1M</td>
+<td>가스 $6.04M 포함</td>
+<td>api.llama.fi/overview/fees/robinhood-chain</td>
+</tr>
+<tr>
+<td>트랜잭션</td>
+<td>13.98M tx/24h · 누적 619.4M · 주소 19.37M</td>
+<td>블록 0.101 s</td>
+<td>robinhoodchain.blockscout.com/api/v2/stats</td>
+</tr>
+<tr>
+<td>가스</td>
+<td>0.405 gwei (baseFee) · 7일 범위 0.10–5.27 gwei · L1 성분 0</td>
+<td>Pons V2 생성 ≈ 0.0015 ETH ($3.6)</td>
+<td>RPC eth_gasPrice · ArbGasInfo</td>
+</tr>
+<tr>
+<td>온도 판독</td>
+<td><strong>로빈후드 체인 국지적 과열, 밈코인 전체는 보합~냉각</strong></td>
+<td>pump.fun 24h $0.93M vs Pons V2 $8.75M</td>
+<td>api.llama.fi/summary/fees/{pons-v2,pump.fun}</td>
+</tr>
+</tbody>
+</table>
+<h3 id="12-defillama-24h-09-05">1.2 런치패드·봇 수수료 순위 (DefiLlama 24h, 09-05)</h3>
+<table>
+<thead>
+<tr>
+<th>순위</th>
+<th>프로토콜</th>
+<th>분류</th>
+<th>Fees 24h</th>
+<th>7d</th>
+<th>30d</th>
+<th>활동 (온체인 24h)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Uniswap V4</td>
+<td>DEX</td>
+<td>$8.82M</td>
+<td>$43.68M</td>
+<td>$68.34M</td>
+<td>v4 Initialize 16,745 (훅 없음 11,691)</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>Pons V2</strong></td>
+<td>런치패드</td>
+<td><strong>$8.75M</strong></td>
+<td>$37.31M</td>
+<td>$47.41M</td>
+<td><strong>26,711 런칭 / 708 졸업 (2.65 %)</strong></td>
+</tr>
+<tr>
+<td>3</td>
+<td>GMGN</td>
+<td>TG 봇</td>
+<td>$2.81M</td>
+<td>$13.38M</td>
+<td>$21.38M</td>
+<td>거래량 $641.7M/24h, 1 %/거래</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Pons V1</td>
+<td>런치패드</td>
+<td>$258k</td>
+<td>$2.66M</td>
+<td>$8.03M</td>
+<td>신규 런칭 폐쇄 (<code>launchEnabled()=false</code>)</td>
+</tr>
+<tr>
+<td>5</td>
+<td>o1 Launchpad</td>
+<td>런치패드</td>
+<td>$236k</td>
+<td>$1.475M</td>
+<td>$1.51M</td>
+<td>337 런칭/24h</td>
+</tr>
+<tr>
+<td>6</td>
+<td>NOXA Fun</td>
+<td>런치패드</td>
+<td>$165k</td>
+<td>$1.15M</td>
+<td>$4.15M</td>
+<td>0 런칭 (폐쇄)</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Maestro</td>
+<td>TG 봇</td>
+<td>$95.8k</td>
+<td>$502k</td>
+<td>$811k</td>
+<td>1 %/거래</td>
+</tr>
+<tr>
+<td>8</td>
+<td>PAIR</td>
+<td>런치패드</td>
+<td>$74k</td>
+<td>$368k</td>
+<td>$381k</td>
+<td>234 풀/24h</td>
+</tr>
+<tr>
+<td>9</td>
+<td>pools.trade</td>
+<td>런치패드</td>
+<td>$47k</td>
+<td>$305k</td>
+<td>$1.34M</td>
+<td>276 토큰/24h</td>
+</tr>
+<tr>
+<td>10</td>
+<td>LetsCash</td>
+<td>런치패드</td>
+<td>$21k</td>
+<td>$448k</td>
+<td>$1.68M</td>
+<td>108 런칭/24h</td>
+</tr>
+<tr>
+<td>—</td>
+<td>Bags (RH)</td>
+<td>런치패드</td>
+<td>$9k</td>
+<td>$74.5k</td>
+<td>$221k</td>
+<td>24 팩토리 이벤트/24h</td>
+</tr>
+<tr>
+<td>—</td>
+<td>Bankr</td>
+<td>런치패드</td>
+<td>DefiLlama 미추적</td>
+<td>—</td>
+<td>—</td>
+<td><strong>2,315 풀/24h</strong> (훅 <code>0x4e34…a544</code>)</td>
+</tr>
+<tr>
+<td>—</td>
+<td>Clanker (RH)</td>
+<td>런치패드</td>
+<td>$1.5k</td>
+<td>—</td>
+<td>—</td>
+<td>공식 배포 목록에 RH 없음</td>
+</tr>
+</tbody>
+</table>
+<p>Pons V2 일일 수수료 추이: 08-22 $254k → 08-29 $3.46M → 09-04 <strong>$8.75M</strong> (2주 34×). 요일: 금 $984M &gt; 목 $868M &gt; … &gt; 토 $534M. 시간대 피크 15–22 UTC (= <strong>00–07 KST</strong>), 저점 02–10 UTC (= 11–19 KST).</p>
+<h3 id="13-ui">1.3 봇·UI·집계기 지원</h3>
+<table>
+<thead>
+<tr>
+<th>표면</th>
+<th>지원</th>
+<th>근거</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GMGN (web/app/TG)</td>
+<td><strong>O</strong> — RH 탭, 2026-07-03부터, 1 % 수수료, $2.81M/24h</td>
+<td>adapter <code>fees/gmgnai.ts</code>; gmgn.ai 자체는 403</td>
+</tr>
+<tr>
+<td>Maestro</td>
+<td><strong>O</strong> — 12체인 목록에 Robinhood</td>
+<td>docs.maestrobots.com/sniper/getting-started</td>
+</tr>
+<tr>
+<td>Trojan·Photon·Axiom·BullX·Banana·Sigma·Bloom</td>
+<td><strong>X</strong> — 문서에 "robinhood" 0건</td>
+<td>각 docs curl</td>
+</tr>
+<tr>
+<td>DexScreener</td>
+<td><strong>O</strong> — 슬러그 <code>robinhood</code>; 최근 부스트 30건 중 16건이 RH</td>
+<td>api.dexscreener.com/token-boosts/latest/v1</td>
+</tr>
+<tr>
+<td>GeckoTerminal</td>
+<td><strong>O</strong> — 네트워크 <code>robinhood</code>, 39+ DEX</td>
+<td>api.geckoterminal.com/api/v2/networks/robinhood/dexes</td>
+</tr>
+<tr>
+<td>DexTools</td>
+<td>UNVERIFIED (Cloudflare)</td>
+<td>—</td>
+</tr>
+<tr>
+<td>탐색기</td>
+<td>robinscan.io · robinhoodchain.blockscout.com (둘 다 Blockscout, 간헐 500) · hoodscan.co</td>
+<td>—</td>
+</tr>
+<tr>
+<td>지갑</td>
+<td>Rabby 네이티브 (<code>hood</code>, 4663) · MetaMask 수동 추가</td>
+<td>api.rabby.io/v1/chain/list; docs.robinhood.com/chain/add-network-to-wallet</td>
+</tr>
+</tbody>
+</table>
+<h3 id="14">1.4 브리지·입금 경로</h3>
+<table>
+<thead>
+<tr>
+<th>경로</th>
+<th>수수료·시간 (관측)</th>
+<th>상태</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Robinhood 앱 → RH 체인 직접</td>
+<td>네트워크비만; <strong>미국 계정만</strong> ("every US state…"); 뉴욕 제외</td>
+<td>한국 거주자 <strong>불가</strong> (robinhood.com/us/en/support/articles/crypto-transfers)</td>
+</tr>
+<tr>
+<td>Robinhood Wallet (셀프커스터디)</td>
+<td>RH 체인 내장</td>
+<td>한국 앱스토어 가용 <strong>UNVERIFIED</strong></td>
+</tr>
+<tr>
+<td><strong>Relay</strong> Arbitrum→RH 0.1 ETH</td>
+<td>$0.103 + 가스 $0.0014, <strong>1 s</strong></td>
+<td>검증 (api.relay.link/quote)</td>
+</tr>
+<tr>
+<td>Relay Ethereum→RH 0.1 ETH</td>
+<td>$0.080 + $0.014, 1 s</td>
+<td>검증</td>
+</tr>
+<tr>
+<td><strong>Across</strong> Arbitrum→RH 0.1 ETH</td>
+<td>0.104 % ≈ $0.26, 1 s; minDeposit 0.000377 ETH</td>
+<td>검증 (app.across.to/api)</td>
+</tr>
+<tr>
+<td>Across Ethereum→RH 0.1 ETH</td>
+<td>0.101 % ≈ $0.25, 2 s</td>
+<td>검증</td>
+</tr>
+<tr>
+<td>LI.FI/Jumper Arbitrum→RH</td>
+<td>고정 $0.62 + $0.13, 1 s</td>
+<td>검증 (li.quest/v1/quote)</td>
+</tr>
+<tr>
+<td>Arbitrum 정식 브리지 (L1→RH)</td>
+<td>입금 ~10분, <strong>출금 7일</strong></td>
+<td>검증 (docs.robinhood.com/chain/bridging)</td>
+</tr>
+<tr>
+<td>Superbridge <code>/robinhood</code></td>
+<td>페이지 200; 수수료 미추출</td>
+<td>부분 검증</td>
+</tr>
+<tr>
+<td>Stargate · Transporter</td>
+<td>메타데이터에 RH 없음 / 페이지만 200</td>
+<td>UNVERIFIED</td>
+</tr>
+<tr>
+<td>gas.zip → 4663</td>
+<td>inbound O, min 0.015 ETH</td>
+<td>검증 (backend.gas.zip/v2/chains)</td>
+</tr>
+<tr>
+<td><strong>CEX 직접 출금</strong></td>
+<td>Binance: RH 없음 (Arbitrum One 0.00002 ETH) · Coinbase: 없음 · OKX/Bybit/Upbit: <strong>UNVERIFIED</strong> (인증 API)</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<p>권장 자금 경로: Upbit/Bithumb → ETH(이더리움 메인넷) → 본인 지갑 → Relay/Across → RH (≈$0.25 + L1 가스) <strong>또는</strong> Binance/OKX 잔고 → Arbitrum One → Relay → RH (0.1 ETH당 ≈$0.15). Arbitrum에 0.05 ETH 귀환 차선 상시 보관.</p>
+<hr>
+<h2 id="2-pons-v2">2. 런치패드 비교표 (Pons V2 우선)</h2>
+<h3 id="21-5">2.1 로빈후드 체인 — 핵심 5개</h3>
+<table>
+<thead>
+<tr>
+<th>항목</th>
+<th><strong>Pons V2</strong></th>
+<th>Bankr</th>
+<th>o1 Launchpad</th>
+<th>Bags (RH)</th>
+<th>PAIR</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>모델</td>
+<td>커브 → Uniswap v4 풀(훅)</td>
+<td>단면 v4 풀, 커브 없음</td>
+<td>단면 v4 풀, 커브 없음</td>
+<td>커브 → v4 풀(훅)</td>
+<td>v4 풀(훅), 주식토큰 페어</td>
+</tr>
+<tr>
+<td>공급</td>
+<td>1B</td>
+<td>100B</td>
+<td>1B</td>
+<td>1B</td>
+<td>UNVERIFIED</td>
+</tr>
+<tr>
+<td>공급 배분</td>
+<td><strong>71.43 % 커브 / 28.57 % 보류</strong> (20.41 % 풀 + 8.16 % 락커 잠금) · 팀 0</td>
+<td><strong>85 % 풀 / 15 % 크리에이터 베스팅</strong>(1년, 30일 클리프, 옵션)</td>
+<td>100 % 풀 · 팀 0</td>
+<td>83 % 커브 / 17 % LP · 팀 0</td>
+<td>UNVERIFIED</td>
+</tr>
+<tr>
+<td>가상 유동성 / 시작 FDV</td>
+<td>phantomQuote <strong>1.68 ETH</strong> → FDV ≈ $4.2k</td>
+<td>— (동적 수수료 풀)</td>
+<td>FDV ≈ <strong>$4,000</strong></td>
+<td>vETH 1.288 / vT 1.044B → FDV ≈ $3.1k</td>
+<td>UNVERIFIED</td>
+</tr>
+<tr>
+<td>졸업 임계</td>
+<td><strong>4.2 ETH</strong> (또는 8,090 USDG · 주식토큰 페어별)</td>
+<td>없음</td>
+<td>없음</td>
+<td><strong>5 ETH</strong></td>
+<td>없음</td>
+</tr>
+<tr>
+<td>졸업 시 실제 LP</td>
+<td><strong>4.2 ETH + 204.08M 토큰</strong> (1,351건 중앙값 정확히 4.2) · 졸업 FDV ≈ $51k</td>
+<td>0 ETH (구매자 자금)</td>
+<td>0 ETH (구매자 자금)</td>
+<td>5 ETH + 170M · 졸업 FDV ≈ $73k</td>
+<td>0 ETH</td>
+</tr>
+<tr>
+<td>LP 잠금</td>
+<td><strong>영구</strong> — <code>PonsV2LaunchLocker</code> 0x2674…4952, 인출 함수 없음 (NEST 온체인 검증)</td>
+<td>훅 소유 (UNVERIFIED 세부)</td>
+<td>"Removal: permanently disabled"</td>
+<td>영구 잠금 (docs)</td>
+<td>영구 락커 0xeFcF…a117</td>
+</tr>
+<tr>
+<td>풀 위치</td>
+<td>v4 PoolManager 0x8366…0951, 훅 <code>PonsV2MemeHook</code> 0xE5e7…e044, poolFee 0 / ts 200</td>
+<td>v4, 훅 0x4e34…a544, 동적수수료 ts 8</td>
+<td>v4, 훅 <code>LaunchHook</code> 0x0310…2aCc</td>
+<td>v4, 훅 <code>BagsV4Hook</code> 0x2380…EEcC, ts 60</td>
+<td>v4, <code>PairV4Hook</code> 0x16d1…2000</td>
+</tr>
+<tr>
+<td>수수료 분배</td>
+<td>1 % → <strong>크리에이터 70 % / 프로토콜 30 %</strong> (바이백 ON 시 35/35/30) + 선택 <strong>크리에이터 세금 ≤10 %</strong> 100 % 크리에이터 (커브 구간)</td>
+<td>1.75 % → 크리에이터 0.665 % / LP 0.285 % / Bankr 0.475 % / BNKR 0.2375 % / Doppler ~0.0875 %</td>
+<td>1 % → <strong>크리에이터 50 / 플랫폼 30 / 추천인 20</strong></td>
+<td>2 % → <strong>크리에이터 1 % / 프로토콜 1 %</strong>, 최대 100 클레이머</td>
+<td>1 % → 크리에이터 70 / 프로토콜 30</td>
+</tr>
+<tr>
+<td>$1M 거래량당 크리에이터 수입</td>
+<td><strong>$7,000</strong> (+세금)</td>
+<td>$6,650</td>
+<td>$5,000</td>
+<td>$10,000</td>
+<td>$7,000</td>
+</tr>
+<tr>
+<td>생성비</td>
+<td><strong>0.0005 ETH</strong> + 가스 ≈0.0015</td>
+<td>없음 (지갑 ≥24h, ≥0.002 ETH, 3회/일)</td>
+<td>0.001 ETH</td>
+<td>온체인 0 (docs 0.02 ETH)</td>
+<td>0.0005 ETH</td>
+</tr>
+<tr>
+<td>dev-buy 규칙</td>
+<td><code>launchAndBuy</code> 라우터 원자 실행; 런처·수수료수취인 스나이프세 면제; 면제 지갑 ≤32</td>
+<td>5분간 지갑당 2 % 캡</td>
+<td>"Include Dev Buy" 기본 OFF, 원자, 1 %만 부담</td>
+<td><code>createAndBuy</code> 원자</td>
+<td>UNVERIFIED</td>
+</tr>
+<tr>
+<td>스나이퍼 방어</td>
+<td><strong>99 % → 0 지수감쇠</strong>, 온체인 3 s (docs 5 s); 세금은 수수료 풀로</td>
+<td>~10 s 감쇠 + 2 % 지갑 캡</td>
+<td><strong>99 % → 1 % 선형 20 s</strong>, 할증은 플랫폼</td>
+<td>없음</td>
+<td>UNVERIFIED</td>
+</tr>
+<tr>
+<td>클레임</td>
+<td>Pull, <code>PonsV2FeeEscrow</code> 0xd3AF…Ac9e <code>claim()</code> ≈$0.03</td>
+<td>API <code>fees/claim</code></td>
+<td>Pull, Fee Escrow 0xc544…E5EF</td>
+<td><code>BagsFeeShare.claim()</code></td>
+<td>스윕 후 클레임</td>
+</tr>
+<tr>
+<td>주소</td>
+<td>팩토리 <strong>0x7eD598BcEf8bd9Edd8C97A195C6d13f40801EC7e</strong> · 라우터 0xe33E…2948</td>
+<td><code>LongLauncher</code> 0x22e9…eeED</td>
+<td>팩토리 0xcE9C…5B0d</td>
+<td>팩토리 0xe8Cc…Cb37 (프록시)</td>
+<td>런치패드 0x8660…Ae62</td>
+</tr>
+<tr>
+<td>UI</td>
+<td>ponsfamily.com/launchpad (Explore/Analytics/Create/Profile)</td>
+<td>bankr.bot 터미널 · X @bankrbot 태그 · CLI</td>
+<td>launch.o1.exchange</td>
+<td><strong>RH UI 없음</strong> (API/viem만)</td>
+<td>pair.fund (SPA)</td>
+</tr>
+<tr>
+<td>감사</td>
+<td>3곳 진행 중 — <strong>"unaudited"로 취급</strong></td>
+<td>UNVERIFIED</td>
+<td>UNVERIFIED</td>
+<td>impl 미검증</td>
+<td>UNVERIFIED</td>
+</tr>
+<tr>
+<td>24h 활동</td>
+<td>26,711 런칭 · 708 졸업 · $161M 커브 거래량</td>
+<td>2,315 풀 · LIT $718M FDV(얇은 유동성)</td>
+<td>337 런칭 · FATCOIN $29M</td>
+<td>24 이벤트 · 60개 중 54개 진행 0 %</td>
+<td>234 풀 · par $6.3M</td>
+</tr>
+<tr>
+<td><strong>판정</strong></td>
+<td><strong>1순위</strong></td>
+<td>2순위 (주식페어·15 % 베스팅)</td>
+<td>3순위 (주식페어·추천링크)</td>
+<td>자체 오디언스 있을 때만</td>
+<td>니치</td>
+</tr>
+</tbody>
+</table>
+<h3 id="22">2.2 로빈후드 체인 — 그 외</h3>
+<table>
+<thead>
+<tr>
+<th>런치패드</th>
+<th>요지</th>
+<th>판정</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Pons V1</td>
+<td>v3 1 % 풀, 4.2 ETH, 70/30 — <code>launchEnabled()=false</code>, 09-04 모든 launchToken 리버트</td>
+<td>사용 불가</td>
+</tr>
+<tr>
+<td>NOXA Fun</td>
+<td>v3 1 % 단면, 4.2 ETH 마일스톤 — <code>launchEnabled()=false</code>, 0 런칭</td>
+<td>사용 불가</td>
+</tr>
+<tr>
+<td>pools.trade (Uniswap Labs)</td>
+<td>훅 없는 v4 0.25 %, 크리에이터 ETH측 40 % → 실효 ≈0.05 %</td>
+<td>경제성 최악</td>
+</tr>
+<tr>
+<td>LetsCash</td>
+<td>세금 1–15 % 설정형, 크리에이터 50–96.67 %, ETH/USDG</td>
+<td>세금토큰 원할 때만</td>
+</tr>
+<tr>
+<td>GIWA MARKETS (RH)</td>
+<td><code>RhPump</code> 0xbdf4…4c11 <strong>총 19 tx</strong>(08-17~08-19), 크리에이터 몫 0 (1 % → 80 % $GIWA 소각 / 20 % 트레저리)</td>
+<td><strong>사용 금지</strong> — 브랜드 혼동</td>
+</tr>
+<tr>
+<td>Clanker / Zora</td>
+<td>RH 미문서화 $1.5k/일 · 미발견</td>
+<td>무시</td>
+</tr>
+<tr>
+<td>HoodPump</td>
+<td>크리에이터 10 %, 누적 $20.72</td>
+<td>무시</td>
+</tr>
+</tbody>
+</table>
+<h3 id="23-giwa-sepolia">2.3 GIWA Sepolia (테스트넷)</h3>
+<table>
+<thead>
+<tr>
+<th>런치패드</th>
+<th>모델</th>
+<th>수수료</th>
+<th>온체인 활동 (09-05)</th>
+<th>메인넷 언급</th>
+<th>판정</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Joseon.fun</strong></td>
+<td>커브(가상 1.2 ETH / 1.0667B, 800M 판매) → 자체 V2포크 페어 + <code>PermanentLiquidityLocker</code> 0x2141…3fE6</td>
+<td>커브 2 % (70/30) · 스왑 0.3 % (50/30/20)</td>
+<td>30 런칭, 3 졸업, 최신 09-05 06:25Z</td>
+<td>"재도출·재배포", 멀티시그 선행, 스팸비 미정</td>
+<td><strong>리허설 1순위</strong></td>
+</tr>
+<tr>
+<td>GIWA MARKETS (Sepolia)</td>
+<td>pump 동일 (1B, 800M 졸업, 1 %, LP 소각) + ZERO/PROPHECY/DUEL</td>
+<td>1 % · 졸업 후 0.3 %</td>
+<td>pump 0x540e…ee43 3,853 tx, 최신 09-04 19:59Z</td>
+<td>"제네시스 블록에 발화, 날짜 없음"</td>
+<td>샌드박스만</td>
+</tr>
+<tr>
+<td>Ammora</td>
+<td>주소 비공개</td>
+<td>숫자 없음</td>
+<td>writesEnabled true (09-03 매니페스트)</td>
+<td>테스트넷 전용 문구</td>
+<td>관망</td>
+</tr>
+<tr>
+<td>Naru</td>
+<td>신원게이트 "시뮬레이션"</td>
+<td>0.3 % LP</td>
+<td>발행 07-22 이후 휴면</td>
+<td>프라이빗 메인넷 env 교체</td>
+<td>빠른 밈코인 부적합</td>
+</tr>
+<tr>
+<td>GIWATER</td>
+<td>DEX (런치패드 아님)</td>
+<td>0.01/0.05/0.3 %</td>
+<td>—</td>
+<td>"Coming Soon"</td>
+<td>졸업 후 거래처</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="3">3. 오너 질문 직답</h2>
+<h3 id="31-100-80-90">3.1 "100 % 중 80 %인가 90 %인가"</h3>
+<p><strong>둘 다 아님. 시장 규범 = "나에게 0 %, 커브/풀에 100 %"(공개 dev-buy 제외). 커브형은 71–83 %가 커브, 17–29 %가 졸업 LP로 프로토콜이 고정하며 크리에이터가 정할 수 없음. 단면 풀형은 100 %가 풀.</strong></p>
+<table>
+<thead>
+<tr>
+<th>구조</th>
+<th>t0에 크리에이터 손을 떠나는 몫</th>
+<th>결정 주체</th>
+<th>플랫폼</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>100 % 단면 잠금 풀, 팀 0</td>
+<td>100 %</td>
+<td>프로토콜</td>
+<td>Clanker v4(볼트 제외), Pons V1, o1, NOXA, HoodPump, Flaunch</td>
+</tr>
+<tr>
+<td>100 % 커브, LP 예약 17–29 %</td>
+<td>100 % (71–83 % 즉시 판매)</td>
+<td>프로토콜</td>
+<td>pump.fun 79.3/20.7 · LaunchLab 80/20 · Four.meme ~80/20 · Bags-RH 83/17 · <strong>Pons V2 71.4/28.6</strong></td>
+</tr>
+<tr>
+<td>크리에이터 베스팅 슬라이스</td>
+<td>70–99 %</td>
+<td>크리에이터/플랫폼</td>
+<td>Zora 크리에이터코인 50 % · Raydium ≤30 % · Clanker 볼트(관측 2–5 %, 7일) · <strong>Bankr 15 %</strong></td>
+</tr>
+</tbody>
+</table>
+<p>플랫폼별 분포:</p>
+<table>
+<thead>
+<tr>
+<th>플랫폼</th>
+<th>체인</th>
+<th>커브 %</th>
+<th>LP %</th>
+<th>팀 %</th>
+<th>졸업</th>
+<th>졸업 LP(quote)</th>
+<th>크리에이터 수수료</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Pons V2</strong></td>
+<td>RH</td>
+<td>71.43</td>
+<td>20.41 (+8.16 잠금)</td>
+<td>0</td>
+<td>4.2 ETH</td>
+<td>4.2 ETH ≈ $10.4k</td>
+<td>0.7 % of vol (+세금 ≤10 %)</td>
+</tr>
+<tr>
+<td>Bags-RH</td>
+<td>RH</td>
+<td>83</td>
+<td>17</td>
+<td>0</td>
+<td>5 ETH</td>
+<td>5 ETH ≈ $12.4k</td>
+<td>1 % of vol</td>
+</tr>
+<tr>
+<td>o1</td>
+<td>RH/Base</td>
+<td>— (100 % 풀)</td>
+<td>100</td>
+<td>0</td>
+<td>없음</td>
+<td>0 (구매자)</td>
+<td>0.5 % of vol</td>
+</tr>
+<tr>
+<td>Bankr</td>
+<td>RH</td>
+<td>— (85 % 풀)</td>
+<td>85</td>
+<td>15 (베스팅)</td>
+<td>없음</td>
+<td>0</td>
+<td>0.665 % of vol</td>
+</tr>
+<tr>
+<td>Pons V1 / NOXA</td>
+<td>RH</td>
+<td>— (100 % 풀)</td>
+<td>100</td>
+<td>0</td>
+<td>4.2 ETH 마일스톤</td>
+<td>4.2 ETH</td>
+<td>70 % / 100 % of 1 %</td>
+</tr>
+<tr>
+<td>pump.fun</td>
+<td>SOL</td>
+<td>79.31</td>
+<td>20.69</td>
+<td>0</td>
+<td>85 SOL</td>
+<td>85 SOL ≈ $8.8k</td>
+<td>0.30 % → 0.05 %</td>
+</tr>
+<tr>
+<td>LaunchLab/letsbonk</td>
+<td>SOL</td>
+<td>80 (51–80)</td>
+<td>20</td>
+<td>≤30 옵션</td>
+<td>85 SOL</td>
+<td>85 SOL</td>
+<td>≤0.5 %</td>
+</tr>
+<tr>
+<td>Four.meme</td>
+<td>BNB</td>
+<td>~80</td>
+<td>20</td>
+<td>0</td>
+<td>~18 BNB</td>
+<td>18 BNB ≈ $13.9k</td>
+<td>동적</td>
+</tr>
+<tr>
+<td>Clanker v4</td>
+<td>Base</td>
+<td>— (100 % 풀)</td>
+<td>100</td>
+<td>볼트 2–5 % (관측)</td>
+<td>없음</td>
+<td>0</td>
+<td>80 % of 1–3 % LP fee</td>
+</tr>
+<tr>
+<td>Joseon.fun</td>
+<td>GIWA Sep</td>
+<td>80</td>
+<td>20</td>
+<td>0</td>
+<td>~3.67 ETH</td>
+<td>3.6 WETH + 200M</td>
+<td>70 % of 2 % 커브 / 0.15 % 스왑</td>
+</tr>
+<tr>
+<td>GIWA MARKETS</td>
+<td>GIWA Sep</td>
+<td>80</td>
+<td>20</td>
+<td>0</td>
+<td>800M 판매</td>
+<td>커브 ETH 전액</td>
+<td>0 (소각/트레저리)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="32-lp-eth">3.2 "초기 LP ETH 평균"</h3>
+<ul>
+<li><strong>크리에이터가 넣는 ETH = 0</strong>. 조사한 모든 EVM 런치패드(Clanker, Flaunch, Pons V1/V2, o1, NOXA, HoodPump, Bags-RH)는 크리에이터 ETH 예치를 요구하지 않음(o1: 요구되는 설정이면 tx 중단). 풀의 ETH는 100 % 구매자 자금.</li>
+<li><strong>졸업 시 풀에 실제로 들어가는 ETH</strong>: Pons V2 <strong>4.2 ETH</strong>(1,351건 중앙값 정확히 4.2) ≈ $10.4k · Bags-RH 5 ETH ≈ $12.4k · pump.fun 85 SOL ≈ $8.8k · Four.meme 18 BNB ≈ $13.9k. 즉 <strong>졸업 밈코인의 "초기 LP" ≈ $8–15k quote + 공급 17–20 %</strong>, 졸업 FDV $42k(pump) / <strong>$51k(Pons V2)</strong> / $73k(Bags-RH).</li>
+<li><strong>진짜 손잡이는 시작 FDV</strong>: 디젠 $3–5k(o1 $4k, Pons V2 $4.2k, Bags $3.1k, Clanker 1.99 ETH 50 %) vs 시리어스 $10–25k(Flaunch $10k, Clanker 9.87 ETH 40 %).</li>
+<li><strong>dev-buy 관측(Pons V2 최근 40건, 34건 동일블록 첫 매수)</strong>: p25 0.001 · <strong>중앙값 0.02 ETH(1.16 %)</strong> · p75 0.052(2.9 %) · p90 0.125(6.9 %) · 최대 0.45(21 %). 라우터 value 관측: 0.01–0.16 ETH 다수, 0.40 ETH(커브의 ~10 %).</li>
+</ul>
+<h3 id="33">3.3 "런치패드 론칭은 보통 어떻게 구성되는가"</h3>
+<p>한 줄: <strong>고정 공급 1B(Clanker/Flaunch 100B) → 100 % 커브/풀, 팀 0 → 생성비 0–0.02 ETH → 원자 dev-buy 0.5–3 %(≤5 %) → 프로토콜 고정 졸업(4.2–5 ETH / 85 SOL / 18 BNB) → 영구 잠금 풀 → 크리에이터는 거래 수수료 0.5–1 %(quote 자산, pull 클레임)로 수익.</strong> 민트·블랙리스트·일시정지·후속 세금 없음. GMGN 휴리스틱: Top-10 &lt;30 %, 내부자 비율, 스나이퍼 보유, 99 % 매도세 = 허니팟.</p>
+<h3 id="34-1-pons-v2-eth">3.4 권장 구성 1개 (Pons V2, ETH 페어)</h3>
+<table>
+<thead>
+<tr>
+<th>항목</th>
+<th>값</th>
+<th>근거</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>런치패드</td>
+<td><strong>Pons V2</strong> 팩토리 0x7eD5…EC7e, <code>launchAndBuy</code> 라우터 0xe33E…2948</td>
+<td>체인 수수료 2위, 크리에이터 0.7 % of vol, 영구 잠금</td>
+</tr>
+<tr>
+<td>공급 배분</td>
+<td>1B · <strong>커브 100 %(71.43 % 판매 / 28.57 % 졸업 LP)</strong> · 팀 0 % · 프로토콜 고정</td>
+<td><code>getLaunchConfig(0)</code></td>
+</tr>
+<tr>
+<td>dev-buy</td>
+<td><strong>1건, 0.05–0.08 ETH (≈2.9–4.5 %), 런처 지갑 = 수수료 수취인</strong> · 면제 지갑 목록 0(번들 없음)</td>
+<td>관측 p75 0.052 ETH · GMGN "Top-10 &lt;30 %" · Pons V1 규칙 ≤5 %</td>
+</tr>
+<tr>
+<td>크리에이터 세금</td>
+<td><strong>0–2 %</strong> (졸업 토큰 41 %가 1–10 % 설정; 1–2 %가 정상) · 불변</td>
+<td>졸업 샘플 22건</td>
+</tr>
+<tr>
+<td>바이백</td>
+<td><strong>OFF</strong> (ON 시 70 % → 35 %; 졸업 22건 중 0건 사용)</td>
+<td><code>buybackBurnBps</code> 5000</td>
+</tr>
+<tr>
+<td>수수료 수취인</td>
+<td>콜드 지갑 (변경은 3일 타임락)</td>
+<td><code>CREATOR_FEE_RECIPIENT_TIMELOCK</code> 259,200 s</td>
+</tr>
+<tr>
+<td>잠금</td>
+<td>자동 — 졸업 시 4.2 ETH + 204M 토큰 → v4 풀, NFT는 <code>PonsV2LaunchLocker</code> (인출 경로 없음)</td>
+<td>NEST 트레이스</td>
+</tr>
+<tr>
+<td>페어</td>
+<td>ETH 1개 + <strong>USDG 또는 주식토큰 쌍둥이 1개</strong>(같은 밈) — 이번 주 $2M+ Pons V2 토큰 5개 중 3개가 비-ETH 페어</td>
+<td>24h 런칭 믹스 ETH 11,005 / USDG 6,496 / 주식 ≥3,867</td>
+</tr>
+<tr>
+<td>총 비용</td>
+<td>0.0005 + 가스 0.0015 + dev-buy 0.05–0.08 ≈ <strong>0.055–0.085 ETH ($135–210)</strong></td>
+<td>§4 비용표</td>
+</tr>
+<tr>
+<td>기대치 (솔직)</td>
+<td>졸업률 2.3–2.65 %, 졸업 중앙값 2분(p90 41분, 2시간 초과 0). 번들 없이 유기적 졸업은 드묾 → <strong>배포(홍보)가 전부</strong></td>
+<td>36.6h 40,854/959</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="4">4. 가장 빠른 시작법</h2>
+<h3 id="41">4.1 체크리스트</h3>
+<table>
+<thead>
+<tr>
+<th>단계</th>
+<th>항목</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>D-3</strong></td>
+<td>Upbit/Bithumb에서 ETH 매수 → 본인 EVM 지갑(이더리움 메인넷) 또는 Binance/OKX → Arbitrum One 출금</td>
+</tr>
+<tr>
+<td></td>
+<td>Rabby 설치(RH 네이티브) 또는 MetaMask 수동(4663 / rpc.mainnet.chain.robinhood.com / ETH / robinhoodchain.blockscout.com)</td>
+</tr>
+<tr>
+<td></td>
+<td>0.01 ETH 테스트 브리지 Relay Arbitrum→RH (≈$0.10, 1 s) → 본 예산 브리지; Arbitrum에 0.05 ETH 귀환 차선</td>
+</tr>
+<tr>
+<td></td>
+<td>스크립트 쓸 거면 Alchemy 키 (공용 RPC 429/"busy")</td>
+</tr>
+<tr>
+<td></td>
+<td>자산: 512×512 로고, 티커, 1줄 설명, X 계정, TG 그룹, 웹사이트 (Socials: twitter/telegram/discord/website/farcaster)</td>
+</tr>
+<tr>
+<td><strong>D-1</strong></td>
+<td>크리에이터 세금(0–2 %)·바이백(OFF) 확정 — <strong>론칭 후 불변</strong></td>
+</tr>
+<tr>
+<td></td>
+<td>수수료 수취인 = 콜드 지갑 주소 확정; 면제 지갑 목록 없음</td>
+</tr>
+<tr>
+<td></td>
+<td>팩토리 재확인: <code>launchEnabled()</code>·<code>canLaunch(내주소)</code> true, <code>launchFee()</code> 0.0005, 설정 0 = 1.68/4.2</td>
+</tr>
+<tr>
+<td></td>
+<td>Pons 감사 상태 재확인 (docs: 3곳 진행 중, unaudited 취급)</td>
+</tr>
+<tr>
+<td></td>
+<td>홍보 초안: X 스레드(EN), TG 고정글, 한국어 글(dcinside 코박갤/차트갤, fmkorea 코인게시판, GMGN Korea)</td>
+</tr>
+<tr>
+<td><strong>D-day</strong> (화–금, <strong>23:00–07:00 KST</strong>)</td>
+<td>30–60분 전 X/TG 예열; CT 리포스트 2–3건 라인업</td>
+</tr>
+<tr>
+<td></td>
+<td><code>launchAndBuy</code> (UI "initial buy") 0.05–0.08 ETH; value = buy + 0.0005; 가스 ≈0.0015</td>
+</tr>
+<tr>
+<td></td>
+<td>즉시 CA 게시 (이름/티커 유일하지 않음 — 모방 경고)</td>
+</tr>
+<tr>
+<td></td>
+<td>첫 10초 <code>Buy</code> 이벤트로 스나이프 클러스터 확인; 커브 4.2 ETH 진행 관찰; 자동 졸업 실패 시 <code>createGraduatedPool(token)</code> 직접 호출</td>
+</tr>
+<tr>
+<td></td>
+<td>졸업 후: <code>PoolGraduated</code> 이벤트·락커 NFT 확인, DexScreener 페어 링크 고정, GMGN 소셜 갱신, 부스트 구매(가격 UNVERIFIED)</td>
+</tr>
+<tr>
+<td><strong>D+1 → D+7</strong></td>
+<td>매일 <code>claim()</code> ($0.03) → 콜드 수취인; 핫월렛 론칭이면 <code>setCreatorFeeRecipient</code></td>
+</tr>
+<tr>
+<td></td>
+<td>미국 저녁 창에 계속 포스팅; Blockscout/GMGN 홀더 추적; CTO 제안(3일 타임락) 대응</td>
+</tr>
+<tr>
+<td></td>
+<td>훅 <code>PoolFeesSwept</code> 이벤트로 크리에이터 수입 vs DexScreener 거래량 대사</td>
+</tr>
+<tr>
+<td></td>
+<td>재론칭 케이던스: 졸업률 2.3 % → 복수 시도 계획, 건당 ≈0.002 ETH + dev-buy</td>
+</tr>
+</tbody>
+</table>
+<h3 id="42-eth-usd-247762">4.2 비용표 (ETH · USD @ $2,477.62)</h3>
+<table>
+<thead>
+<tr>
+<th>항목</th>
+<th>ETH</th>
+<th>USD</th>
+<th>근거</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CEX → Arbitrum One 출금 (Binance)</td>
+<td>0.00002</td>
+<td>$0.05</td>
+<td>Binance 네트워크 목록</td>
+</tr>
+<tr>
+<td>브리지 Arbitrum→RH 0.1 ETH (Relay)</td>
+<td>≈0.00004 + 가스</td>
+<td>≈$0.10</td>
+<td>Relay 견적</td>
+</tr>
+<tr>
+<td>브리지 Ethereum→RH 0.1 ETH (Across/Relay)</td>
+<td>≈0.0001 + L1 가스</td>
+<td>≈$0.25 + L1</td>
+<td>Across/Relay 견적</td>
+</tr>
+<tr>
+<td>Pons V2 launchFee</td>
+<td>0.0005</td>
+<td>$1.24</td>
+<td><code>launchFee()</code></td>
+</tr>
+<tr>
+<td>론칭 가스 (<code>launchToken</code>/<code>launchAndBuy</code>)</td>
+<td>0.0015–0.0016</td>
+<td>$3.6–4.0</td>
+<td>Blockscout tx (gasUsed 3.58–3.99M)</td>
+</tr>
+<tr>
+<td>dev-buy (관측 범위)</td>
+<td>0.01–0.40</td>
+<td>$25–990</td>
+<td>라우터 value</td>
+</tr>
+<tr>
+<td>수수료 클레임</td>
+<td>0.000013</td>
+<td>$0.03</td>
+<td>에스크로 tx</td>
+</tr>
+<tr>
+<td>수취인 변경</td>
+<td>0.00003</td>
+<td>$0.08</td>
+<td>팩토리 tx</td>
+</tr>
+<tr>
+<td>커브/v4 스왑</td>
+<td>≈0.00006–0.00015</td>
+<td>$0.15–0.37</td>
+<td><strong>추정, UNVERIFIED</strong></td>
+</tr>
+<tr>
+<td>Arbitrum 귀환 차선</td>
+<td>0.05</td>
+<td>$124</td>
+<td>권장</td>
+</tr>
+<tr>
+<td>DexScreener 부스트</td>
+<td>—</td>
+<td><strong>UNVERIFIED</strong></td>
+<td>미관측</td>
+</tr>
+<tr>
+<td><strong>최소 론칭 (홍보 없음)</strong></td>
+<td><strong>≈0.06–0.10</strong></td>
+<td><strong>$150–250</strong></td>
+<td>0.05 dev-buy + 수수료 + 가스 + 브리지</td>
+</tr>
+<tr>
+<td><strong>본격 시도</strong></td>
+<td><strong>≈0.5–1.0</strong></td>
+<td><strong>$1.2k–2.5k</strong></td>
+<td>0.2–0.4 dev-buy + 부스트 + ETH/USDG 쌍둥이</td>
+</tr>
+</tbody>
+</table>
+<h3 id="43">4.3 자금 경로·지갑·가스 요약</h3>
+<ul>
+<li>Robinhood 앱 출금: <strong>한국 불가</strong> (미국 계정 한정). CEX 직접 출금: Binance·Coinbase 없음; Upbit·OKX·Bybit UNVERIFIED.</li>
+<li>실전: CEX → Arbitrum One(또는 ETH L1) → Relay/Across → 4663. 정식 Arbitrum 브리지는 출금 7일 → 귀환 차선 필수.</li>
+<li>지갑: Rabby(네이티브) / MetaMask(수동). 하드웨어 지갑은 일반 EVM으로 동작(Ledger Live 네이티브 등재 UNVERIFIED).</li>
+<li>가스: 0.4–0.5 gwei 평시, 스파이크 ~5 gwei. 론칭 전체 &lt;$5.</li>
+<li>핵심 주소: WETH 0x0Bd7D308f8E1639FAb988df18A8011f41EAcAD73 · USDG 0x5fc5360D0400a0Fd4f2af552ADD042D716F1d168 · v4 PoolManager 0x8366a39CC670B4001A1121B8F6A443A643e40951 · PositionManager 0x58daec3116aae6D93017bAAea7749052E8a04fA7 · Permit2 0x000000000022D473030F116dDEE9F6B43aC78BA3.</li>
+</ul>
+<h3 id="44">4.4 홍보 채널</h3>
+<table>
+<thead>
+<tr>
+<th>채널</th>
+<th>관측</th>
+<th>링크</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GMGN RH 탭</td>
+<td>지배적 리테일 터미널, $2.81M/24h 수수료; 토큰 페이지 <code>gmgn.ai/robinhood/token/&amp;lt;addr&gt;</code></td>
+<td>gmgn.ai</td>
+</tr>
+<tr>
+<td>DexScreener <code>robinhood</code></td>
+<td>최근 부스트 16/30, 프로필 21/30이 RH 토큰 — 경쟁자는 돈을 씀</td>
+<td>dexscreener.com/robinhood</td>
+</tr>
+<tr>
+<td>X</td>
+<td>@ponsdotfamily · @RobinhoodCrypto · @RobinhoodApp · @gmgnai · @o1_exchange (팔로워 수 UNVERIFIED)</td>
+<td>x.com</td>
+</tr>
+<tr>
+<td>Telegram</td>
+<td>t.me/ponsfamily 13명(커뮤니티 아님) · <strong>GMGN Korea 1,736명</strong> · gmgnai 23,033명</td>
+<td>t.me/GMGN_Korea</td>
+</tr>
+<tr>
+<td>hoodscan.co</td>
+<td>비공식 Discover/Feed/Swaps</td>
+<td>hoodscan.co/discover</td>
+</tr>
+<tr>
+<td>한국</td>
+<td>Naver 블로그(09-01 "로빈후드 체인 &amp; 밈코인 트렌드", 08-27 CASHCAT) · dcinside 차트갤/코박갤 · fmkorea 코인게시판</td>
+<td>각 URL §7</td>
+</tr>
+</tbody>
+</table>
+<h3 id="45">4.5 시간대</h3>
+<ul>
+<li>요일: <strong>화–금</strong> (금 $984M 평균 &gt; 토 $534M). 지금은 추세가 요일효과를 압도 (08-23 $495M → 09-04 $1.89B 매일 상승).</li>
+<li>시간: 피크 15–22 UTC = <strong>00–07 KST</strong> (21 UTC = 06 KST 최고 221 tx/10블록); 저점 02–10 UTC = 11–19 KST. 한국 리테일 먼저면 21–23 KST 타협.</li>
+</ul>
+<hr>
+<h2 id="5-giwa">5. GIWA 병행 준비</h2>
+<h3 id="51">5.1 컨트랙트 동일성·차이</h3>
+<table>
+<thead>
+<tr>
+<th>항목</th>
+<th>Robinhood (4663)</th>
+<th>GIWA Sepolia (91342) → 메인넷 (9134 예약)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>스택</td>
+<td>Arbitrum Orbit/Nitro, FCFS 시퀀서</td>
+<td>OP Stack (op-reth), "최고 수수료 순" 시퀀서</td>
+</tr>
+<tr>
+<td>블록</td>
+<td>0.07–0.10 s</td>
+<td>1.0 s (+Flashblocks 200 ms 프리컨펌)</td>
+</tr>
+<tr>
+<td>가스</td>
+<td>0.4 gwei, L1 성분 0</td>
+<td>테스트넷 ≈무료 (createToken 4.84M gas = 0.0000049 ETH); 메인넷 EIP-1559 + L1 데이터비</td>
+</tr>
+<tr>
+<td>WETH</td>
+<td><strong>0x0Bd7…AD73</strong> (aeWETH 업그레이더블 프록시)</td>
+<td><strong>0x4200…0006</strong> 프리디플로이 (Joseon은 자체 WETH9 0x323b…0B11)</td>
+</tr>
+<tr>
+<td>DEX</td>
+<td>Uniswap <strong>V4</strong> 0x8366…0951 + V3</td>
+<td><strong>Uniswap 없음</strong> (V4 BUSL ~2027-06-15) → 런치패드 자체 AMM만</td>
+</tr>
+<tr>
+<td>락커</td>
+<td>Pons V2 0x2674…4952 / V1 0x736D…7F35</td>
+<td>Joseon <code>PermanentLiquidityLocker</code> 0x2141…3fE6</td>
+</tr>
+<tr>
+<td>브리지</td>
+<td>Arbitrum 브리지 · Relay/Across · gas.zip</td>
+<td>Superbridge(sepolia-bridge.giwa.io, 입금 1–3분, 출금 ~7일) · gas.zip outbound; <strong>메인넷 브리지 없음</strong></td>
+</tr>
+<tr>
+<td>탐색기</td>
+<td>robinhoodchain.blockscout.com · robinscan.io</td>
+<td>sepolia-explorer.giwa.io (Blockscout, 동일 API)</td>
+</tr>
+<tr>
+<td><strong>동일 주소 프리인스톨</strong></td>
+<td>Permit2 · Multicall3 · <strong>CreateX 0xba5E…a5Ed</strong> · Arachnid · EntryPoint v0.6/0.7 · Safe L2 — 양쪽 바이트코드 확인</td>
+<td>동일</td>
+</tr>
+<tr>
+<td><code>block.number</code></td>
+<td>≈L1 블록 (L2는 ArbSys) · blockhash 불안전</td>
+<td>L2 블록 그대로</td>
+</tr>
+</tbody>
+</table>
+<p><strong>같은 것</strong>: ERC-20 + CreateX 고정 salt ⇒ <strong>두 체인 동일 토큰 주소</strong> (CA 하나 공표). Foundry 프로필은 chain_id / rpc / verifier-url만 다름. 메타데이터·이미지·지갑 세트·Blockscout 검증 절차 동일.
+<strong>다른 것</strong>: 이식되는 런치패드 형태는 <strong>Pons V1/Joseon형(자체 커브 → V2/V3형 풀 + 영구 락커)</strong>. Pons V2/Bags형(V4 훅, 99 % 스나이프세, 풀 fee 0)은 GIWA에 없음. 첫 블록 전술: RH = 지연시간, GIWA = 우선수수료.</p>
+<h3 id="52-sepolia-joseonfun-09-05">5.2 Sepolia 리허설 절차 (Joseon.fun, 09-05 라이브 확인)</h3>
+<ol>
+<li>지갑: 배포자 EOA + 수수료 수취 EOA + 구매 EOA 2–3개 (메인넷과 동일 세트). 체인 91342 / sepolia-rpc.giwa.io / sepolia-explorer.giwa.io.</li>
+<li>테스트 ETH ≥4 (전체 졸업 ≈3.67 ETH): 파우셋 0.005–0.01/일로는 부족 → Ethereum Sepolia에서 대량 확보 후 sepolia-bridge.giwa.io(1–3분) 또는 gas.zip.</li>
+<li>joseon.fun 생성: 이름·심볼(온체인 불변), 이미지·설명(오프체인 수정 가능), 수수료 수취인, <strong>생성 tx 내 초기 매수</strong>(관측 0.05–2.0 ETH). <code>api.joseon.fun/api/launches</code>로 기록.</li>
+<li>커브 매수(2 % 수수료): Flashblocks <code>pending</code> 200 ms vs 1 s 포함 지연 기록.</li>
+<li>크리에이터 수수료 클레임: Portfolio → claim 또는 <code>claimCreatorFeesFor(address)</code>.</li>
+<li>졸업: 커브 소진 매수가 동일 tx에서 졸업 → 3.6 WETH + 200M → <code>MigrationManagerV3</code> 0x4D34…5c59 → 락커.</li>
+<li>잠금 검증(읽기): 락커 <code>lockedPair(token)</code> 0x2207ec87 · <code>lockedLiquidity(token)</code> 0xf3288fe3; <code>JoseonSwapFactoryV4</code> 0x9AB1…8784 페어 확인; 라우터 0xcD4B…5d3D로 스왑 1회 → 0.15 % 크리에이터 몫 적립 확인.</li>
+<li>병행: GIWA MARKETS Sepolia 패드(1B/800M/1 %, dev-buy 동일 tx, "0.01 ETH면 충분") — 다른 곡선 타이밍 연습용.</li>
+<li>폴백 리허설: <code>forge script … --verify --verifier blockscout --verifier-url https://sepolia-explorer.giwa.io/api</code>로 CreateX 토큰 배포 → RH에서 동일 명령(verifier-url만 변경) → 동일 주소 확인. V2형 페어 + 무인출 락커 자체 배포까지 15분 작업으로.</li>
+</ol>
+<h3 id="53-giwa-markets">5.3 GIWA MARKETS 이중 배포 평가 (솔직하게)</h3>
+<table>
+<thead>
+<tr>
+<th>관측</th>
+<th>함의</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RH측 자체 패드 <code>RhPump</code> 0xbdf4…4c11: <strong>총 19 tx</strong>(createToken 3 / buy 12 / sell 4), 08-17~08-19 이후 정지; <code>RhZero</code> 0 tx; <code>RhFurnace</code> 1 tx</td>
+<td>런치패드가 사실상 존재하지 않음</td>
+</tr>
+<tr>
+<td>$GIWA 0xdaB0…43b1 = <code>PonsLauncherToken</code>(Pons V1 팩토리 생성), $GAEJUKI = <code>PonsV2LauncherToken</code></td>
+<td>그들의 경제는 Pons 위에 있음 — 오너는 Pons를 직접 쓰면 됨</td>
+</tr>
+<tr>
+<td>$GIWA: FDV $451k, 유동성 $79.0k(15.23 WETH), 24h $44.0k, 홀더 957, TG 314명(최근 글 08-25)</td>
+<td>배포 채널 가치 없음</td>
+</tr>
+<tr>
+<td>"1:1 메인넷 이전"은 날짜·상대방 없는 약속; "RH 풀 유동성 인출" 문구는 Pons 락커(인출 경로 없음)와 모순</td>
+<td>실행 가능성 의심</td>
+</tr>
+<tr>
+<td>팀 스스로 "$GIWA → GMAR로 개명, 체인팀과 혼동 방지"; GIWA 공식 FAQ "자체 토큰 발행 계획 없음"; RH에 다른 "GIWA" 티커 4개</td>
+<td>브랜드 혼동 위험 상속</td>
+</tr>
+<tr>
+<td>크리에이터 수수료 0 (1 % → 80 % 소각 / 20 % 트레저리)</td>
+<td>오너 목적(크리에이터 수수료)과 정면 충돌</td>
+</tr>
+</tbody>
+</table>
+<p><strong>판정: 이중 배포 불가. RH는 Pons 직접, GIWA는 Joseon 리허설. GIWA MARKETS는 Sepolia 샌드박스로만.</strong></p>
+<h3 id="54-09-05">5.4 메인넷 임박 신호 (09-05 재확인: 전부 부재)</h3>
+<table>
+<thead>
+<tr>
+<th>신호</th>
+<th>현재</th>
+<th>폴링</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>eip155-9134.json</code> RPC 등재</td>
+<td><code>rpc: []</code>, incubating</td>
+<td>raw.githubusercontent.com/ethereum-lists/chains/…/eip155-9134.json</td>
+</tr>
+<tr>
+<td>giwa-io 레포 메인넷 커밋</td>
+<td>chain-operations = sepolia/만; node 07-13 마지막 푸시</td>
+<td>api.github.com/orgs/giwa-io/repos</td>
+</tr>
+<tr>
+<td>docs 컨트랙트 페이지 L1 주소</td>
+<td>"under development"</td>
+<td>docs.giwa.io/…/contracts.md</td>
+</tr>
+<tr>
+<td>rpc.giwa.io <code>eth_chainId = 0x23ae</code></td>
+<td>HTTP 000 (explorer/bridge도)</td>
+<td>curl</td>
+</tr>
+<tr>
+<td>Superbridge <code>/giwa</code></td>
+<td><strong>200이지만 catch-all SPA</strong> — 신호 아님</td>
+<td>체인 피커 또는 bridge.giwa.io</td>
+</tr>
+<tr>
+<td>viem <code>giwa.ts</code> / L2BEAT / DefiLlama</td>
+<td>404 / 404 / 없음</td>
+<td>각 URL</td>
+</tr>
+<tr>
+<td>Flashblocks 메인넷</td>
+<td>"Coming soon"</td>
+<td>docs.giwa.io flashblocks.md</td>
+</tr>
+<tr>
+<td>GASOK Phase 3</td>
+<td>"AUG–SEP 2026 프라이빗 메인넷 배포"; DEMODAY @ KBW 10월</td>
+<td>giwa.io/gasok</td>
+</tr>
+<tr>
+<td>KBW</td>
+<td>9/29 Upbit Institutional Summit, 9/30–10/1 본행사, 두나무 CEO 연사</td>
+<td>koreablockchainweek.com</td>
+</tr>
+<tr>
+<td>@GIWA_by_Upbit 9월 글</td>
+<td>UNVERIFIED (X 접근 불가)</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<p>판독: 가장 유력한 발표 창 = <strong>KBW 주간(9/29–10/1)</strong>, 형태 = GASOK 팀 우선 <strong>프라이빗/화이트리스트 메인넷</strong>. 트리거 2개: T1(프라이빗 + 파트너 패드 공개) / T2(공개 RPC + 브리지 → 자체 컨트랙트로 수시간 내 론칭).</p>
+<h3 id="55">5.5 '몇 시간 내 론칭' 키트 (지금 해 둘 것)</h3>
+<ol>
+<li>메타데이터 동결: 이름·심볼(≤6–8자, <strong>"GIWA/기와/Upbit/Dunamu" 문자열 금지</strong>)·1B/18dec·KO+EN 설명·링크 → JSON.</li>
+<li>이미지: 1000/512/256 PNG ≤1 MB + 배너; IPFS 핀 + HTTPS 미러.</li>
+<li>소셜 예열: X(바이오에 GIWA 없음), TG 채널+그룹, "공식 CA는 여기서 먼저" 고정글, DexScreener/GeckoTerminal 프로필 자산.</li>
+<li>지갑 세트(하드웨어, 신규): 배포자(생성 tx만) · 수수료 수취(거래 안 함) · 구매 지갑 · 운영 가스 — <strong>이더리움 L1에 지금 펀딩</strong>(제네시스에 존재할 브리지는 Superbridge 입금뿐, 1–3분). RH에도 약간 보관(gas.zip inbound 최소 0.015 ETH).</li>
+<li>브리지 플랜: bridge.giwa.io 응답 즉시 병렬 입금; <code>eth_chainId = 0x23ae</code>·L2 잔고 확인 후 패드 접촉. 체인 수동 추가(9134; RPC/탐색기 호스트 UNVERIFIED).</li>
+<li>빌드 아티팩트: Foundry <code>[profile.giwa]</code>/<code>[profile.robinhood]</code>, CreateX salt 고정, 양 체인 Sepolia/RH 검증 완료, 폴링 스크립트(eth_chainId · eip155-9134 · giwa-io 푸시 · docs 해시 · Joseon <code>/api/health</code> chainId · giwa.markets chain-*.js).</li>
+<li>첫 매수: Joseon = <strong>생성 tx 내 dev-buy</strong>(유일한 보장 체결); 후속 구매 지갑은 <strong>우선수수료 높게</strong>(GIWA는 수수료 순); Flashblocks <code>pending</code>으로 200 ms 확인. 테스트넷 수치(3.67 ETH 커브)는 메인넷 수치 아님 — 당일 재산정.</li>
+<li>폴백(T2에 패드 없음): CreateX 토큰 + V2형 페어(0x4200…0006) + 무인출 락커 자체 배포, 단면 유동성, CA+페어 공표, GIWATER/Joseon 라우터로 스왑.</li>
+<li>계측: 양 체인 Blockscout API(키 불필요), DexScreener 페어 URL(GIWA 슬러그 미정), 홀더 폴링, 패드별 클레임 명령.</li>
+</ol>
+<hr>
+<h2 id="6">6. 하지 않는 것</h2>
+<table>
+<thead>
+<tr>
+<th>항목</th>
+<th>이유 / 근거</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>워시 트레이딩 없음</strong></td>
+<td>오너 규칙. GMGN 스나이퍼/내부자/첫 70 매수자 패널이 정확히 이것을 잡음</td>
+</tr>
+<tr>
+<td><strong>번들 없음</strong></td>
+<td>오너 규칙. Pons V2 <code>snipeTaxExemptions</code>(≤32 지갑)는 팀 번들 도구 — <strong>사용 안 함</strong>(런처 = 수취인 1개만). 졸업 중앙값 2분은 번들+봇 결과이므로 유기적 졸업률은 2.3 %보다 낮게 각오</td>
+</tr>
+<tr>
+<td><strong>매집-매도 없음</strong></td>
+<td>오너 규칙. dev-buy 1건 ≤5 % 공개, 수익은 수수료 스트림(0.7 % of vol)에서만</td>
+</tr>
+<tr>
+<td>팀 배분 10–20 % 없음</td>
+<td>15개 플랫폼 중 커브형 전부 0 %; 보유분은 "프리마인"으로 읽힘</td>
+</tr>
+<tr>
+<td>크리에이터 세금 &gt;2 % 없음</td>
+<td>10 % 캡은 봇·구매자 이탈; 신뢰 비용</td>
+</tr>
+<tr>
+<td>바이백 ON 없음</td>
+<td>크리에이터 몫 70 % → 35 %; 졸업 22건 중 0건 사용</td>
+</tr>
+<tr>
+<td>Pons V1 · NOXA · pools.trade · GIWA MARKETS · Clanker(RH) 사용 없음</td>
+<td>폐쇄 / 0.05 % 실효 / 크리에이터 0 % + 브랜드 혼동 / 미문서화</td>
+</tr>
+<tr>
+<td>다중 지갑 분산 매수 없음</td>
+<td>GMGN 내부자·번들러 탐지 대상</td>
+</tr>
+<tr>
+<td>Robinhood 앱 계정 우회 시도 없음</td>
+<td>미국 전용 명시; 브리지 경로가 더 싸고 빠름</td>
+</tr>
+<tr>
+<td>손으로 만든 v4 풀(SHROOM/MEME형) 없음</td>
+<td>EOA 소유 LP는 "러그 가능"으로 읽힘(OTER 사례)</td>
+</tr>
+<tr>
+<td>정식 Arbitrum 브리지로 자금 회수 없음</td>
+<td>출금 7일; Relay/Across 귀환 차선</td>
+</tr>
+<tr>
+<td>법률·등록 항목</td>
+<td>오너 지시로 범위 밖</td>
+</tr>
+</tbody>
+</table>
+<h3 id="61-lp-burned-v2">6.1 LP 상태 체크 — "burned"는 v2 시대의 신호</h3>
+<p>2026-09-06 실측으로 신규 풀의 v4 비중이 Base 87 %(24h: v2 337 / v3 104 / v4 2,964), 로빈후드 92 %(6h: v2 142 / v3 245 / v4 4,388)다. v3/v4에는 LP 토큰이
+없으므로 "태웠나"가 아니라 <strong>"포지션 NFT를 누가 소유하고, 그 컨트랙트에 꺼내는 함수가 있는가"</strong>를 본다. 두 iPop 채널(<code>ipop_uniswap_v4</code>,
+<code>ipop_newpair_1m</code>)은 LP 상태를 전혀 표시하지 않는다(체인·런치패드 라벨·티커·MC·누적 수수료·age·CA뿐) — 후보 발견용으로만.</p>
+<p>온체인 추적 3건: <strong>NEST</strong>(Pons V2 졸업) → LP NFT 소유자 = 검증된 <code>PonsV2LaunchLocker</code>, 출금·이전 함수 없음(구조적 영구 락). <strong>SPRM</strong> → 락커에
+<code>withdrawPosition()</code>이 있고 온체인 값(<code>isPermanent=true, owner=0x0</code>)을 읽어야 영구임을 알 수 있음. <strong>OTER</strong>(MC $5.4M→$7.9M 알림) → LP NFT 소유자가
+일반 EOA, 배포자가 언제든 회수 가능.</p>
+<table>
+<thead>
+<tr>
+<th>순서</th>
+<th>확인</th>
+<th>도구</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>풀 버전·hook 주소·<code>getHookPermissions()</code>·오너 <code>set*</code> 함수</td>
+<td>Dexscreener labels, Blockscout 검증 소스</td>
+</tr>
+<tr>
+<td>2</td>
+<td>포지션 소유자 <code>ownerOf(tokenId)</code> — 허용: 0x…dead·런치패드 락커·UNCX/Team Finance; 경고: EOA·미검증</td>
+<td>v3 NPM / v4 PositionManager</td>
+</tr>
+<tr>
+<td>3</td>
+<td>소유 컨트랙트의 출금 경로(<code>withdraw/unlock/decreaseLiquidity/burn/safeTransferFrom/rescue*/sweep*</code>), 프록시, owner≠0x0, 타임락 값</td>
+<td>Blockscout ABI·storage</td>
+</tr>
+<tr>
+<td>4</td>
+<td>수수료 수취인(hook 비율, rewardRecipients, Fee Key, coin_creator); 배포자≠수취인 EOA</td>
+<td>Blockscout</td>
+</tr>
+<tr>
+<td>5</td>
+<td>토큰 권한(mint·blacklist·pause·tax·proxy·hidden owner) — 로빈후드 v4는 GoPlus 빈값 → 소스 직접</td>
+<td>GoPlus, Blockscout</td>
+</tr>
+<tr>
+<td>6</td>
+<td>보유 집중도(Top-10 &lt;30 %, 번들·내부자·스나이퍼)</td>
+<td>Bubblemaps, GMGN</td>
+</tr>
+<tr>
+<td>7</td>
+<td>배포자 자금 출처·과거 런치</td>
+<td>Blockscout, GMGN Rug History</td>
+</tr>
+<tr>
+<td>8</td>
+<td>복제 풀(같은 CA 여러 풀) — 락된 풀로 라우팅되는지</td>
+<td>Dexscreener</td>
+</tr>
+</tbody>
+</table>
+<p>솔라나: PumpSwap은 "LP tokens burnt"가 참, Raydium LaunchLab은 "fee key 달린 영구 락"이 정답(GMGN <code>Burnt %</code>). 상세: 렌즈 메모 05.</p>
+<hr>
+<h2 id="7-url">7. 출처 (URL · 관측일)</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>라벨</th>
+<th>URL</th>
+<th>관측</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>S-01</td>
+<td>DefiLlama 체인 (TVL)</td>
+<td>https://api.llama.fi/v2/chains</td>
+<td>2026-09-05 20:01 UTC</td>
+</tr>
+<tr>
+<td>S-02</td>
+<td>DefiLlama RH DEX 거래량</td>
+<td>https://api.llama.fi/overview/dexs/robinhood-chain</td>
+<td>2026-09-05 20:00</td>
+</tr>
+<tr>
+<td>S-03</td>
+<td>DefiLlama RH 수수료 순위</td>
+<td>https://api.llama.fi/overview/fees/robinhood-chain</td>
+<td>2026-09-05 20:00</td>
+</tr>
+<tr>
+<td>S-04</td>
+<td>Pons V2 일일 수수료</td>
+<td>https://api.llama.fi/summary/fees/pons-v2?dataType=dailyFees</td>
+<td>2026-09-05</td>
+</tr>
+<tr>
+<td>S-05</td>
+<td>pump.fun 등 비교 수수료</td>
+<td>https://api.llama.fi/summary/fees/{pump.fun,gmgn,o1-launchpad,noxa-fun,bags,letsbonk.fun,four.meme}</td>
+<td>2026-09-05</td>
+</tr>
+<tr>
+<td>S-06</td>
+<td>타체인 DEX 거래량</td>
+<td>https://api.llama.fi/overview/dexs/{Solana,Base,BSC,Ethereum}</td>
+<td>2026-09-05 20:00</td>
+</tr>
+<tr>
+<td>S-07</td>
+<td>ETH 가격</td>
+<td>https://coins.llama.fi/prices/current/coingecko:ethereum · https://api.coingecko.com/api/v3/simple/price</td>
+<td>2026-09-05 20:02</td>
+</tr>
+<tr>
+<td>S-08</td>
+<td>Blockscout RH stats</td>
+<td>https://robinhoodchain.blockscout.com/api/v2/stats</td>
+<td>2026-09-05 20:02</td>
+</tr>
+<tr>
+<td>S-09</td>
+<td>RH RPC (eth_call/eth_getLogs)</td>
+<td>https://rpc.mainnet.chain.robinhood.com</td>
+<td>2026-09-05 20:00–21:30</td>
+</tr>
+<tr>
+<td>S-10</td>
+<td>Pons V2 팩토리 (검증)</td>
+<td>https://robinhoodchain.blockscout.com/address/0x7eD598BcEf8bd9Edd8C97A195C6d13f40801EC7e</td>
+<td>2026-09-05</td>
+</tr>
+<tr>
+<td>S-11</td>
+<td>Pons V2 훅</td>
+<td>https://robinhoodchain.blockscout.com/api/v2/smart-contracts/0xE5e702641Ea86F4ae6cC3cDaeD2B886f976Be044</td>
+<td>2026-09-05</td>
+</tr>
+<tr>
+<td>S-12</td>
+<td>Pons V2 docs</td>
+<td>https://docs.ponsfamily.com/docs/v2 · https://docs.ponsfamily.com/v2 · https://docs.ponsfamily.com/llms.txt</td>
+<td>2026-09-05/06</td>
+</tr>
+<tr>
+<td>S-13</td>
+<td>Pons V1 docs</td>
+<td>https://docs.ponsfamily.com/docs</td>
+<td>2026-09-05/06</td>
+</tr>
+<tr>
+<td>S-14</td>
+<td>Pons UI</td>
+<td>https://www.ponsfamily.com/launchpad</td>
+<td>2026-09-05 20:05</td>
+</tr>
+<tr>
+<td>S-15</td>
+<td>Pons V2 DefiLlama 어댑터</td>
+<td>https://raw.githubusercontent.com/DefiLlama/dimension-adapters/master/fees/ponsdotfamily-v2/index.ts</td>
+<td>2026-09-05</td>
+</tr>
+<tr>
+<td>S-16</td>
+<td>Bankr docs</td>
+<td>https://docs.bankr.bot/token-launching/overview</td>
+<td>2026-09-06</td>
+</tr>
+<tr>
+<td>S-17</td>
+<td>GeckoTerminal RH</td>
+<td>https://api.geckoterminal.com/api/v2/networks/robinhood/dexes · /pools?sort=h24_volume_usd_desc</td>
+<td>2026-09-05 ~20:00</td>
+</tr>
+<tr>
+<td>S-18</td>
+<td>o1 docs</td>
+<td>https://docs.o1.exchange/launchpad/reference/live-configuration.md · …/trading/fees-referrals.md · …/reference/production-contracts.md · …/trading/liquidity.md</td>
+<td>2026-09-05/06</td>
+</tr>
+<tr>
+<td>S-19</td>
+<td>Bags RH docs</td>
+<td>https://docs.bags.fm/robinhood/overview.md · launch-token.md · claim-fees.md · contracts.md</td>
+<td>2026-09-05/06</td>
+</tr>
+<tr>
+<td>S-20</td>
+<td>Bags RH 온체인</td>
+<td>https://robinhoodchain.blockscout.com/api/v2/smart-contracts/0x7dfa0131F6c8626F199A2E33E49DfB5660e6Ef1C · …/0x419890a21711c3d3af46b58548376420b9723275</td>
+<td>2026-09-05</td>
+</tr>
+<tr>
+<td>S-21</td>
+<td>NOXA docs</td>
+<td>https://docs.noxa.fi/launchpad/chains/ · /launchpad/overview/</td>
+<td>2026-09-05/06</td>
+</tr>
+<tr>
+<td>S-22</td>
+<td>PAIR / LetsCash / pools.trade 어댑터</td>
+<td>https://raw.githubusercontent.com/DefiLlama/dimension-adapters/master/fees/pairdotfund.ts · dexs/letscash.ts · fees/pools-trade.ts</td>
+<td>2026-09-06</td>
+</tr>
+<tr>
+<td>S-23</td>
+<td>Clanker 배포 목록</td>
+<td>https://clanker.gitbook.io/documentation/references/deployed-contracts.md</td>
+<td>2026-09-06</td>
+</tr>
+<tr>
+<td>S-24</td>
+<td>Clanker v4 스펙·API</td>
+<td>https://raw.githubusercontent.com/clanker-devco/v4-contracts/main/specs/v4_0_0.md · https://www.clanker.world/api/tokens?page=1</td>
+<td>2026-09-05</td>
+</tr>
+<tr>
+<td>S-25</td>
+<td>pump.fun 프로그램 문서</td>
+<td>https://raw.githubusercontent.com/pump-fun/pump-public-docs/main/docs/PUMP_PROGRAM_README.md</td>
+<td>2026-09-05</td>
+</tr>
+<tr>
+<td>S-26</td>
+<td>Raydium LaunchLab</td>
+<td>https://docs.raydium.io/user-flows/creating-a-launchlab-token.md · /products/launchlab/global-config.md · …/lp-fee-distribution.md</td>
+<td>2026-09-05</td>
+</tr>
+<tr>
+<td>S-27</td>
+<td>Four.meme</td>
+<td>https://four-meme.gitbook.io/four.meme/guide/how-it-works</td>
+<td>2026-09-05</td>
+</tr>
+<tr>
+<td>S-28</td>
+<td>Zora / Flaunch</td>
+<td>https://docs.zora.co/coins · https://docs.flaunch.gg/community/whitepaper.md · /getting-started/flaunch-a-coin.md</td>
+<td>2026-09-05</td>
+</tr>
+<tr>
+<td>S-29</td>
+<td>GMGN 휴리스틱·수수료</td>
+<td>https://docs.gmgn.ai/index/ca-security-checks.md · /index/insider-traders-snipers-first-70-buyers.md · /index/gmgn-fees-settings</td>
+<td>2026-09-05</td>
+</tr>
+<tr>
+<td>S-30</td>
+<td>GMGN 어댑터</td>
+<td>https://raw.githubusercontent.com/DefiLlama/dimension-adapters/master/fees/gmgnai.ts</td>
+<td>2026-09-05 20:25</td>
+</tr>
+<tr>
+<td>S-31</td>
+<td>Maestro</td>
+<td>https://docs.maestrobots.com/sniper/getting-started · /sniper/monetization</td>
+<td>2026-09-06</td>
+</tr>
+<tr>
+<td>S-32</td>
+<td>DexScreener</td>
+<td>https://api.dexscreener.com/latest/dex/search?q=robinhood · /token-boosts/latest/v1 · /token-profiles/latest/v1</td>
+<td>2026-09-05 20:06–20:20</td>
+</tr>
+<tr>
+<td>S-33</td>
+<td>Robinhood 문서</td>
+<td>https://docs.robinhood.com/chain · /chain/bridging · /chain/add-network-to-wallet · /chain/gas-and-fees · /chain/protocol-contracts · /chain/connecting</td>
+<td>2026-09-05 20:05–20:35</td>
+</tr>
+<tr>
+<td>S-34</td>
+<td>Robinhood 지원 (전송·체인·지갑)</td>
+<td>https://robinhood.com/us/en/support/articles/crypto-transfers/ · …/robinhood-chain-mainnet · …/robinhood-wallet/</td>
+<td>2026-09-05 20:20–20:40</td>
+</tr>
+<tr>
+<td>S-35</td>
+<td>Relay</td>
+<td>https://api.relay.link/quote · https://relay.link/bridge/robinhood</td>
+<td>2026-09-05 20:08</td>
+</tr>
+<tr>
+<td>S-36</td>
+<td>Across</td>
+<td>https://app.across.to/api/suggested-fees · /api/available-routes?destinationChainId=4663</td>
+<td>2026-09-05 20:08</td>
+</tr>
+<tr>
+<td>S-37</td>
+<td>LI.FI</td>
+<td>https://li.quest/v1/quote · /v1/chains</td>
+<td>2026-09-05 20:08</td>
+</tr>
+<tr>
+<td>S-38</td>
+<td>Superbridge / Stargate / Transporter</td>
+<td>https://superbridge.app/robinhood · https://mainnet.stargate-api.com/v1/metadata?version=v2 · https://app.transporter.io/?to=robinhood&amp;tab=token</td>
+<td>2026-09-05 20:06–20:25</td>
+</tr>
+<tr>
+<td>S-39</td>
+<td>gas.zip</td>
+<td>https://backend.gas.zip/v2/chains</td>
+<td>2026-09-05 20:07</td>
+</tr>
+<tr>
+<td>S-40</td>
+<td>Binance / Coinbase 출금 네트워크</td>
+<td>https://www.binance.com/bapi/capital/v2/public/capital/getNetworkCoinAll · https://api.exchange.coinbase.com/currencies/ETH</td>
+<td>2026-09-05 20:06–20:20</td>
+</tr>
+<tr>
+<td>S-41</td>
+<td>Rabby 체인 목록</td>
+<td>https://api.rabby.io/v1/chain/list</td>
+<td>2026-09-05 20:25</td>
+</tr>
+<tr>
+<td>S-42</td>
+<td>chainid.network</td>
+<td>https://chainid.network/chains.json</td>
+<td>2026-09-05 20:03</td>
+</tr>
+<tr>
+<td>S-43</td>
+<td>Uniswap v4 배포</td>
+<td>https://developers.uniswap.org/docs/protocols/v4/deployments</td>
+<td>2026-09-05</td>
+</tr>
+<tr>
+<td>S-44</td>
+<td>Telegram 미리보기</td>
+<td>https://t.me/s/ponsfamily · https://t.me/GMGN_Korea · https://t.me/s/giwalaunch</td>
+<td>2026-09-05 20:25 · 09-04 · 20:02</td>
+</tr>
+<tr>
+<td>S-45</td>
+<td>hoodscan</td>
+<td>https://hoodscan.co/discover</td>
+<td>2026-09-05 20:30</td>
+</tr>
+<tr>
+<td>S-46</td>
+<td>한국 커뮤니티</td>
+<td>https://m.blog.naver.com/englandkim77/224397838354 · https://m.blog.naver.com/ucrypto/224392232277 · https://search.dcinside.com/combine/q/GMGN · https://www.fmkorea.com/search.php?mid=coin&amp;search_target=title_content&amp;search_keyword=GMGN</td>
+<td>2026-09-05 20:40 · 09-04</td>
+</tr>
+<tr>
+<td>S-47</td>
+<td>GIWA Sepolia RPC</td>
+<td>https://sepolia-rpc.giwa.io</td>
+<td>2026-09-05 20:00–20:10</td>
+</tr>
+<tr>
+<td>S-48</td>
+<td>GIWA Sepolia 탐색기</td>
+<td>https://sepolia-explorer.giwa.io/api/v2/…</td>
+<td>2026-09-05 20:09–20:13</td>
+</tr>
+<tr>
+<td>S-49</td>
+<td>GIWA docs</td>
+<td>https://docs.giwa.io (connect-to-giwa.md · flashblocks.md · faucets.md · get-started/bridging/eth.md · …/contracts.md · introduction/faq.md · foundry.md · notices/…/upgrade-19.md)</td>
+<td>2026-09-05 20:02–20:12</td>
+</tr>
+<tr>
+<td>S-50</td>
+<td>eip155-9134</td>
+<td>https://raw.githubusercontent.com/ethereum-lists/chains/master/_data/chains/eip155-9134.json</td>
+<td>2026-09-05 20:01</td>
+</tr>
+<tr>
+<td>S-51</td>
+<td>giwa-io GitHub</td>
+<td>https://api.github.com/orgs/giwa-io/repos · …/repos/giwa-io/chain-operations/contents/</td>
+<td>2026-09-05 20:01–20:11</td>
+</tr>
+<tr>
+<td>S-52</td>
+<td>GASOK / KBW</td>
+<td>https://giwa.io/gasok · https://koreablockchainweek.com/</td>
+<td>2026-09-05 20:10</td>
+</tr>
+<tr>
+<td>S-53</td>
+<td>Joseon.fun</td>
+<td>https://api.joseon.fun/api/health · /api/launches · https://docs.joseon.fun/{fees,bonding-curve,graduation,quickstart,faq,security,network,contracts}/</td>
+<td>2026-09-05 20:02–20:14</td>
+</tr>
+<tr>
+<td>S-54</td>
+<td>GIWA MARKETS 번들</td>
+<td>https://giwa.markets/assets/index-tFmx5n0z.js · chain-De4PEEMR.js · i18n-BUIJQVGU.js</td>
+<td>2026-09-05 20:01–20:12</td>
+</tr>
+<tr>
+<td>S-55</td>
+<td>GIWA MARKETS RH 컨트랙트</td>
+<td>https://robinhoodchain.blockscout.com/api/v2/addresses/0xbdf4bfa5a81f44ed6b933b120a609b77f4354c11 (RhPump) · …/0xdaB0E8CE3b999D16898709A6DfC44c953bFc43b1 ($GIWA)</td>
+<td>2026-09-05 20:04–20:13</td>
+</tr>
+<tr>
+<td>S-56</td>
+<td>$GIWA DexScreener</td>
+<td>https://api.dexscreener.com/latest/dex/pairs/robinhood/0x28f26FB95Ef30218E0090d0776A5cDF65BA44E73 · /latest/dex/search?q=GIWA</td>
+<td>2026-09-05 20:05</td>
+</tr>
+<tr>
+<td>S-57</td>
+<td>Ammora / Naru / GIWATER</td>
+<td>https://ammora-protocol.vercel.app/api/product-release · https://naru.market/docs · https://docs.giwater.finance/1-introduction/3-roadmap</td>
+<td>2026-09-05 20:02–20:12</td>
+</tr>
+<tr>
+<td>S-58</td>
+<td>Superbridge catch-all 확인</td>
+<td>https://superbridge.app/giwa · /definitely-not-a-chain-xyz123</td>
+<td>2026-09-05 20:02–20:08</td>
+</tr>
+<tr>
+<td>S-59</td>
+<td>LP 신호 (v4 훅·락커)</td>
+<td>https://developers.uniswap.org/docs/protocols/v4/concepts/hooks · https://github.com/MEADGod/pons-docs · https://docs.uncx.network/guides/for-projects/liquidity-lockers-v4.md</td>
+<td>2026-09-05/06</td>
+</tr>
+<tr>
+<td>S-60</td>
+<td>iPop 알림 채널</td>
+<td>https://t.me/s/ipop_uniswap_v4 · https://t.me/s/ipop_newpair_1m</td>
+<td>2026-09-06 05:00 KST</td>
+</tr>
+<tr>
+<td>S-61</td>
+<td>렌즈 메모 (원본)</td>
+<td>docs/launch_research_2026-09-06/01_robinhood_launchpads.md · 02_launch_structure_norms.md · 03_fastest_path_playbook.md · 04_giwa_parallel_prep.md · 05_lp_burn_signal.md</td>
+<td>2026-09-06</td>
+</tr>
+</tbody>
+</table>
+<h3 id="unverified">주요 UNVERIFIED 목록</h3>
+<p>Robinhood Wallet 한국 가용 · Upbit/OKX/Bybit RH 직접 출금 · DexScreener 부스트 가격 · Pons 생성 페이지 UI 라벨(컨트랙트 필드로 대체 검증) · v4 스왑 가스 · Bankr RH 베스팅 기본값·컨트랙트 세트 · o1 추천인 없을 때 크리에이터 몫 · PAIR 공급/스나이프 · Pons V2 감사 완료 · Stargate/Transporter RH 상태 · GIWA 메인넷 RPC/탐색기/브리지 호스트 · GIWA 시퀀서 우선수수료 메인넷 동작 · @GIWA_by_Upbit 9월 게시 · Bubblemaps RH 지원 · 솔라나 dev-buy "1–5 % 정상" 관행(1차 출처 없음).</p></article>
+    </main>
+    <footer>
+      <span>research_only=true</span>
+      <span>strategy_consumption_allowed=false</span>
+      <span>order_input=false</span>
+    </footer>
+  </body>
+</html>

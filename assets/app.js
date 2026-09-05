@@ -476,6 +476,71 @@ function bindInteractions() {
   });
 }
 
+function renderLaunch(catalog) {
+  const lp = catalog.launch_prep;
+  const headline = $("#launch-headline");
+  if (!headline) return;
+  if (!lp) {
+    headline.textContent = "론칭 준비 데이터가 아직 생성되지 않았습니다.";
+    return;
+  }
+  headline.textContent = lp.headline || "";
+  $("#launch-asof").textContent = `as of ${lp.as_of || "—"}`;
+  const rh = lp.robinhood || {};
+  $("#launch-chain-id").textContent = `chain ${rh.chain_id ?? "—"}`;
+  $("#launch-stats").innerHTML = (rh.stats || []).map((item) => `
+    <div><dt>${escapeHtml(item.label)}</dt><dd>${escapeHtml(item.value)}</dd></div>`).join("") || "<div><dt>Status</dt><dd>Not catalogued</dd></div>";
+  $("#launch-stat-links").innerHTML = (rh.stats || []).filter((item) => item.source).map((item) => `
+    <a href="${safeHref(item.source)}" target="_blank" rel="noopener noreferrer">${escapeHtml(item.label)} ↗</a>`).join("");
+  $("#launch-funding").innerHTML = (rh.funding_paths || []).map((item, index) => `
+    <li data-state="${escapeHtml(item.state || "unverified")}">
+      <span>${String(index + 1).padStart(2, "0")}</span>
+      <div><strong>${escapeHtml(item.label)}</strong><small>${escapeHtml(item.detail)}</small></div>
+    </li>`).join("") || "<li>자금 경로가 등록되지 않았습니다.</li>";
+  $("#launch-tools").innerHTML = (rh.bots_and_tools || []).map((tool) => `
+    <a href="${safeHref(tool.url)}" target="_blank" rel="noopener noreferrer" title="${escapeHtml(tool.detail || "")}">${escapeHtml(tool.name)} ↗</a>`).join("");
+
+  const cell = (value) => `<td>${escapeHtml(value || "—")}</td>`;
+  $("#launch-pads").innerHTML = (lp.launchpads || []).map((pad) => `
+    <tr>
+      <td class="project-cell"><strong>${escapeHtml(pad.name)}</strong>${pad.url ? `<br><a class="text-link" href="${safeHref(pad.url)}" target="_blank" rel="noopener noreferrer">docs ↗</a>` : ""}</td>
+      ${cell(pad.chain)}${cell(pad.supply_split)}${cell(pad.virtual_liquidity)}${cell(pad.graduation)}${cell(pad.lp_at_graduation)}${cell(pad.lp_lock)}${cell(pad.pool)}${cell(pad.fees)}${cell(pad.creation_fee)}${cell(pad.dev_buy)}${cell(pad.anti_snipe)}${cell(pad.activity)}
+      <td><span class="status-text">${escapeHtml(pad.verdict || "—")}</span></td>
+    </tr>`).join("") || '<tr class="loading-row"><td colspan="14">등록된 런치패드가 없습니다.</td></tr>';
+
+  $("#launch-norms").innerHTML = (lp.norms || []).map((row) => `
+    <tr>
+      <td class="project-cell"><strong>${escapeHtml(row.platform)}</strong>${row.url ? `<br><a class="text-link" href="${safeHref(row.url)}" target="_blank" rel="noopener noreferrer">source ↗</a>` : ""}</td>
+      ${cell(row.chain)}${cell(row.curve_percent)}${cell(row.lp_percent)}${cell(row.team_percent)}${cell(row.graduation)}${cell(row.lp_quote_at_graduation)}${cell(row.creator_fee)}
+    </tr>`).join("") || '<tr class="loading-row"><td colspan="8">등록된 규범이 없습니다.</td></tr>';
+
+  const rc = lp.recommended_composition || {};
+  const notes = (rc.notes || []).map((note) => escapeHtml(note)).join(" · ");
+  $("#launch-composition").innerHTML = rc.supply_split
+    ? `공급 배분 <strong>${escapeHtml(rc.supply_split)}</strong> · dev-buy <strong>${escapeHtml(rc.dev_buy || "—")}</strong> · 수수료 <strong>${escapeHtml(rc.fee_option || "—")}</strong> · LP <strong>${escapeHtml(rc.lp_lock || "—")}</strong>${notes ? `<br><small>${notes}</small>` : ""}`
+    : "권장 구성이 아직 없습니다.";
+
+  $("#launch-playbook").innerHTML = (lp.playbook || []).map((phase) => `
+    <article class="flow-card">
+      <h4>${escapeHtml(phase.phase)}</h4>
+      <ol>${(phase.steps || []).map((step) => `<li><span>${escapeHtml(step)}</span></li>`).join("")}</ol>
+    </article>`).join("");
+
+  $("#launch-costs").innerHTML = (lp.costs || []).map((item) => `
+    <div><dt>${escapeHtml(item.item)}</dt><dd>${escapeHtml(item.eth || "—")}${item.usd ? ` · ${escapeHtml(item.usd)}` : ""}${item.note ? `<br><small>${escapeHtml(item.note)}</small>` : ""}</dd></div>`).join("") || "<div><dt>Costs</dt><dd>Not catalogued</dd></div>";
+
+  const giwa = lp.giwa_parallel || {};
+  const listBlock = (label, items) => (items && items.length) ? `<div><dt>${escapeHtml(label)}</dt><dd><ul>${items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul></dd></div>` : "";
+  $("#launch-giwa").innerHTML = [
+    listBlock("같은 것", giwa.same), listBlock("다른 것", giwa.different), listBlock("Sepolia 리허설", giwa.rehearsal_steps),
+    listBlock("메인넷 임박 신호", giwa.mainnet_signals), listBlock("론칭 키트", giwa.launch_kit),
+  ].join("") || "<div><dt>GIWA</dt><dd>Not catalogued</dd></div>";
+
+  $("#launch-not-doing").textContent = (lp.not_doing || []).join(" · ") || "—";
+  $("#launch-sources").innerHTML = (lp.sources || []).map((source) => `
+    <a href="${safeHref(source.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(source.label)}${source.observed ? ` · ${escapeHtml(source.observed)}` : ""} ↗</a>`).join("");
+}
+
 async function init() {
   bindInteractions();
   try {
@@ -490,6 +555,7 @@ async function init() {
     renderBuildTracks(state.catalog);
     renderResearch(state.catalog);
     renderGates(state.catalog);
+    renderLaunch(state.catalog);
   } catch (error) {
     renderError(error);
   }

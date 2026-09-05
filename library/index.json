@@ -159,22 +159,27 @@
     {
       "path": "dashboard/assets/app.css",
       "url": "./library/dashboard/assets/app.css.html",
-      "sha256": "b16d28154a9ec65abcfe8bc0e6c6f3f9756bae01afba68d1e712e7012e56d308"
+      "sha256": "d07fa8fac1d64a756e01c93d7f391495a20ed64d5b48ae0f2e0ac4ed27fbced3"
     },
     {
       "path": "dashboard/assets/app.js",
       "url": "./library/dashboard/assets/app.js.html",
-      "sha256": "85acc2cf266b1a5724e3023aa98ccda28d0e7fea953732d74a56d730d9bf4e14"
+      "sha256": "9cf0a0f2ede062214e6716f846c666a8d3aaf4c8d3ba835d9a7c7d16e17af20b"
     },
     {
       "path": "dashboard/index.html",
       "url": "./library/dashboard/index.html.html",
-      "sha256": "42c0a0f5c2b91905bdb81f18fba496a97df76d65c7d677cdd41d9dc83fff7f4c"
+      "sha256": "8fe11447045b6591717b7f62941f937be1aeb54f7ea6a3cf3d2356c308f9d7b9"
     },
     {
       "path": "data/ecosystem.json",
       "url": "./library/data/ecosystem.json.html",
       "sha256": "b9fe1867008aa00b0432c91ea30a0565c89670b9196770bfe9a48c4ba11bfbcf"
+    },
+    {
+      "path": "data/launch_prep.json",
+      "url": "./library/data/launch_prep.json.html",
+      "sha256": "e160be8bbdc949699bd3acdd21ed6105fce7e8da7e36587ea2d8939d352d87f0"
     },
     {
       "path": "docs/BOUNDARIES.md",
@@ -194,12 +199,17 @@
     {
       "path": "docs/FEE_CAPTURE_DECISION_2026-09-04.md",
       "url": "./library/docs/FEE_CAPTURE_DECISION_2026-09-04.md.html",
-      "sha256": "42690fd2197e0a9f15cb78eeddc97133d9db7d6ebebdf9b3cfb70ba064bd3999"
+      "sha256": "deb9e964e2bf67f9b30972ef2c0382e06db0a0513a969a0c4de213db2fa9b588"
     },
     {
       "path": "docs/FEE_PROJECT_PROPOSAL_2026-09-03.md",
       "url": "./library/docs/FEE_PROJECT_PROPOSAL_2026-09-03.md.html",
       "sha256": "e22fb26436d13cbe84cc8e60a4836c15a6b66e9ea84efd1583a72000379e5f65"
+    },
+    {
+      "path": "docs/LAUNCH_PREP_2026-09-06.md",
+      "url": "./library/docs/LAUNCH_PREP_2026-09-06.md.html",
+      "sha256": "e5cf52d110a5a2db7c889ccb1f7a53e0c9ebd3359d90d856761c5d03bb8ec69a"
     },
     {
       "path": "docs/MAINNET_GATES.md",
@@ -222,6 +232,36 @@
       "sha256": "e89bfe90aa0c691bfa90421239f335bd194ecc4606f9a21b5fd79f3e54b02c22"
     },
     {
+      "path": "docs/launch_research_2026-09-06/01_robinhood_launchpads.md",
+      "url": "./library/docs/launch_research_2026-09-06/01_robinhood_launchpads.md.html",
+      "sha256": "fcb79039e60f1431a7f4034059a1a1337fe0c99e8e15384c452dc719a2b7cf0c"
+    },
+    {
+      "path": "docs/launch_research_2026-09-06/02_launch_structure_norms.md",
+      "url": "./library/docs/launch_research_2026-09-06/02_launch_structure_norms.md.html",
+      "sha256": "6cd30d1d7d74f58395ab5fc6e72f2dda26128eb736126f0f9552a7bcdf05c0f6"
+    },
+    {
+      "path": "docs/launch_research_2026-09-06/03_fastest_path_playbook.md",
+      "url": "./library/docs/launch_research_2026-09-06/03_fastest_path_playbook.md.html",
+      "sha256": "8e4b2b29e3e734474c32a04f3cf28afb55bf864ff44f6b485da5a0cc6905b542"
+    },
+    {
+      "path": "docs/launch_research_2026-09-06/04_giwa_parallel_prep.md",
+      "url": "./library/docs/launch_research_2026-09-06/04_giwa_parallel_prep.md.html",
+      "sha256": "4258a29f71a2b227136ca27688720596a603bcb95122d2ccefbadfc49ccc3ddd"
+    },
+    {
+      "path": "docs/launch_research_2026-09-06/05_lp_burn_signal.md",
+      "url": "./library/docs/launch_research_2026-09-06/05_lp_burn_signal.md.html",
+      "sha256": "4788d7df6b610057f340a045f1fb18420bdd32ccc248929fe4d124eb3d4ff69c"
+    },
+    {
+      "path": "docs/launch_research_2026-09-06/README.md",
+      "url": "./library/docs/launch_research_2026-09-06/README.md.html",
+      "sha256": "c7dd42df6b27a2bd4d9b1d4afb56a33a8348aef25738aa87eb1ddbc00c5a9647"
+    },
+    {
       "path": "schemas/ecosystem.schema.json",
       "url": "./library/schemas/ecosystem.schema.json.html",
       "sha256": "bd0fc958a7534a73a5cae0a77a52dd7e472fdb3f03178757198dab9d13384c57"
@@ -229,7 +269,7 @@
     {
       "path": "scripts/build_dashboard_catalog.py",
       "url": "./library/scripts/build_dashboard_catalog.py.html",
-      "sha256": "1154c03394f0bea82dfc196aa3737e502c2238fc7655f119de53b0f27f22d11e"
+      "sha256": "1e2fc3638fae4c3219d755433780a5bf5b777434713385cba8b692da0cfc0ed0"
     },
     {
       "path": "src/giwa_lab/constants.py",
