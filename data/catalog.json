@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "catalog_revision": "98d748525138",
+  "catalog_revision": "04a519b688f8",
   "as_of": "2026-09-06",
   "project": {
     "title": "GIWA · Robinhood Launchpad Control Room",
@@ -1341,7 +1341,40 @@
       "strategy_consumption_allowed": false,
       "order_input": false
     },
-    "headline": "지금은 Pons V2(로빈후드) 1순위: 공급 100 % 커브(프로토콜 고정 71.43 % 판매 / 28.57 % 졸업 LP), 팀 0 %, 공개 dev-buy 1건 0.05–0.08 ETH(≤5 %), 크리에이터 세금 0–2 %, 바이백 OFF, 4.2 ETH 자동 졸업 → 영구 잠금 v4 풀, 크리에이터 수입 = 거래량의 0.7 %. 자금은 CEX → Arbitrum → Relay/Across(Robinhood 앱은 미국 전용). GIWA는 메인넷 부재 → Joseon.fun Sepolia 리허설 + CreateX 동일 주소 키트만 준비. GIWA MARKETS는 사용 금지."
+    "headline": "지금은 Pons V2(로빈후드) 1순위: 공급 100 % 커브(프로토콜 고정 71.43 % 판매 / 28.57 % 졸업 LP), 팀 0 %, 공개 dev-buy 1건 0.05–0.08 ETH(≤5 %), 크리에이터 세금 0–2 %, 바이백 OFF, 4.2 ETH 자동 졸업 → 영구 잠금 v4 풀, 크리에이터 수입 = 거래량의 0.7 %. 자금은 CEX → Arbitrum → Relay/Across(Robinhood 앱은 미국 전용). GIWA는 메인넷 부재 → Joseon.fun Sepolia 리허설 + CreateX 동일 주소 키트만 준비. GIWA MARKETS는 사용 금지.",
+    "decision": {
+      "market_read": {
+        "title": "시장 판독 — 불장은 로빈후드 체인 국지 과열, 창은 몇 주",
+        "points": [
+          "로빈후드 DEX 일거래량 $1.89B(주간 +105 %, 월간 +263 %) — 솔라나 일거래량과 동급",
+          "Pons V2 수수료 2주 만에 34배($254k → $8.75M/일), 하루 26,711 런칭 · 708 졸업",
+          "솔라나·베이스·이더리움 DEX는 주간 −11~−27 %; pump.fun 수수료 $0.93M/일 — 밈 전체가 아니라 로빈후드만 뜨겁다",
+          "이런 램프는 3~6주 안에 식는다(베이스 2023: 1주→3주 −77 %; 로빈후드 7월 런칭 후 주간 −27 %) → 지금이 창",
+          "최적 창: 화–금 23:00–07:00 KST(15–22 UTC)"
+        ]
+      },
+      "do_now": {
+        "title": "지금 할 일(이번 주) — Pons V2에서 크리에이터로 론칭",
+        "points": [
+          "1B 커브 100 %, 팀 0 %, dev-buy 0.05–0.08 ETH(≤5 %) 1건, 크리에이터 세금 0–2 %, 바이백 OFF, 수취인 콜드 지갑",
+          "자금: Upbit/Bithumb → ETH L1 → Relay/Across → 4663 (Robinhood 앱은 미국 전용); 지갑 Rabby",
+          "수입 = 거래량의 0.7 %: 누적 $10M → $70k, 주간 톱10급($20–50M FDV) → $100k+",
+          "졸업률 2.6 %·중앙값 2분은 번들·봇 결과 — 번들 없이 가면 배포(홍보)가 전부; 복수 시도 전제(시도당 ≈ 0.06–0.09 ETH)",
+          "ETH 페어 + USDG/주식토큰 쌍둥이 1개 동시 론칭(이번 주 $2M+ 5개 중 3개가 비-ETH 페어)"
+        ]
+      },
+      "product": {
+        "title": "만들 제품 — 우리 런치패드: 로빈후드 먼저, GIWA 메인넷 day-1 이식",
+        "points": [
+          "구조 = Pons V2와 동일: 자체 커브 → 캐노니컬 Uniswap v4 풀 + 우리 훅(1 % 수수료 분배·스나이퍼 감쇠) + 영구 락커(인출 함수 없음) + launchAndBuy 라우터. v4 훅은 Clanker v4·Zora·Flaunch·Pons처럼 캐노니컬 배포 위에서 쓰는 것이라 라이선스 문제 없음",
+          "GIWA에는 v4가 없으므로 같은 코드에 V3형 풀 + 락커 어댑터(Joseon 형태); CreateX 고정 salt로 두 체인 같은 CA — 'GIWA day-1 런치패드' 선점",
+          "차별점: ① 한국어·한국 커뮤니티 퍼스트(Pons는 한국어 0, TG 13명) ② 크리에이터 80/20(Pons 70/30) ③ 깨끗한 론칭을 코드로 강제(면제 지갑 0·dev-buy 상한·락커 인출 불가·토큰 페이지에 LP 체크 내장 = Pool Passport) ④ 로빈후드+GIWA 이중 체인",
+          "경제성: 로빈후드 런치 흐름 3 % 점유 시 수수료 ≈ $260k/일, 프로토콜 몫 20 % ≈ $52k/일(현재 볼륨, 감쇠 전제); 10 %면 ≈ $175k/일",
+          "일정: W0 Pons 론칭으로 오디언스·현금흐름 → W1–3 로빈후드 런치패드 v1(커브·훅·락커·팩토리·KO/EN 프런트·Ponder 인덱서, Robinhood 테스트넷 46630 → 메인넷, 1주 리뷰 또는 $25–60k 컨테스트 감사) → W4–6 GIWA 어댑터(Sepolia)·CreateX 동일 주소·KBW(9/29–10/1) 신호 대기",
+          "운영 원칙(오너 결정): 법인·FIU 없음, 관리자 키·pause·fee switch 없음, 수수료 파라미터·수취 주소는 배포 전 확정 후 불변"
+        ]
+      }
+    }
   },
   "metrics": {
     "ecosystem_entries": 16,

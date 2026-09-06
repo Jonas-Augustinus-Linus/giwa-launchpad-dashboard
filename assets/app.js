@@ -486,6 +486,9 @@ function renderLaunch(catalog) {
   }
   headline.textContent = lp.headline || "";
   $("#launch-asof").textContent = `as of ${lp.as_of || "—"}`;
+  const decision = lp.decision || {};
+  const decisionCard = (block, cls) => block ? `<article class="decision-card ${cls}"><h4>${escapeHtml(block.title)}</h4><ol>${(block.points || []).map((point) => `<li>${escapeHtml(point)}</li>`).join("")}</ol></article>` : "";
+  $("#launch-decision").innerHTML = [decisionCard(decision.market_read, "is-market"), decisionCard(decision.do_now, "is-now"), decisionCard(decision.product, "is-product")].join("");
   const rh = lp.robinhood || {};
   $("#launch-chain-id").textContent = `chain ${rh.chain_id ?? "—"}`;
   $("#launch-stats").innerHTML = (rh.stats || []).map((item) => `
@@ -501,12 +504,16 @@ function renderLaunch(catalog) {
     <a href="${safeHref(tool.url)}" target="_blank" rel="noopener noreferrer" title="${escapeHtml(tool.detail || "")}">${escapeHtml(tool.name)} ↗</a>`).join("");
 
   const cell = (value) => `<td>${escapeHtml(value || "—")}</td>`;
-  $("#launch-pads").innerHTML = (lp.launchpads || []).map((pad) => `
-    <tr>
-      <td class="project-cell"><strong>${escapeHtml(pad.name)}</strong>${pad.url ? `<br><a class="text-link" href="${safeHref(pad.url)}" target="_blank" rel="noopener noreferrer">docs ↗</a>` : ""}</td>
-      ${cell(pad.chain)}${cell(pad.supply_split)}${cell(pad.virtual_liquidity)}${cell(pad.graduation)}${cell(pad.lp_at_graduation)}${cell(pad.lp_lock)}${cell(pad.pool)}${cell(pad.fees)}${cell(pad.creation_fee)}${cell(pad.dev_buy)}${cell(pad.anti_snipe)}${cell(pad.activity)}
-      <td><span class="status-text">${escapeHtml(pad.verdict || "—")}</span></td>
-    </tr>`).join("") || '<tr class="loading-row"><td colspan="14">등록된 런치패드가 없습니다.</td></tr>';
+  const FACTS = [["공급 배분", "supply_split"], ["가상 유동성", "virtual_liquidity"], ["졸업 조건", "graduation"], ["졸업 시 LP", "lp_at_graduation"], ["LP 잠금", "lp_lock"], ["풀", "pool"], ["수수료", "fees"], ["생성비", "creation_fee"], ["dev-buy", "dev_buy"], ["스나이퍼 방어", "anti_snipe"], ["활동", "activity"]];
+  $("#launch-pads").innerHTML = (lp.launchpads || []).map((pad, index) => `
+    <article class="pad-card${index === 0 ? " is-first" : ""}">
+      <div class="pad-card-head">
+        <div><h4>${escapeHtml(pad.name)}</h4><small>${escapeHtml(pad.chain || "")}</small></div>
+        <span class="pad-verdict">${escapeHtml(pad.verdict || "—")}</span>
+      </div>
+      <dl class="pad-facts">${FACTS.map(([label, key]) => pad[key] ? `<div><dt>${escapeHtml(label)}</dt><dd>${escapeHtml(pad[key])}</dd></div>` : "").join("")}</dl>
+      ${pad.url ? `<a class="text-link" href="${safeHref(pad.url)}" target="_blank" rel="noopener noreferrer">문서 ↗</a>` : ""}
+    </article>`).join("") || '<div class="empty-state"><strong>등록된 런치패드가 없습니다.</strong></div>';
 
   $("#launch-norms").innerHTML = (lp.norms || []).map((row) => `
     <tr>
@@ -530,13 +537,13 @@ function renderLaunch(catalog) {
     <div><dt>${escapeHtml(item.item)}</dt><dd>${escapeHtml(item.eth || "—")}${item.usd ? ` · ${escapeHtml(item.usd)}` : ""}${item.note ? `<br><small>${escapeHtml(item.note)}</small>` : ""}</dd></div>`).join("") || "<div><dt>Costs</dt><dd>Not catalogued</dd></div>";
 
   const giwa = lp.giwa_parallel || {};
-  const listBlock = (label, items) => (items && items.length) ? `<div><dt>${escapeHtml(label)}</dt><dd><ul>${items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul></dd></div>` : "";
+  const listBlock = (label, items) => (items && items.length) ? `<section><h4>${escapeHtml(label)}</h4><ul>${items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul></section>` : "";
   $("#launch-giwa").innerHTML = [
     listBlock("같은 것", giwa.same), listBlock("다른 것", giwa.different), listBlock("Sepolia 리허설", giwa.rehearsal_steps),
     listBlock("메인넷 임박 신호", giwa.mainnet_signals), listBlock("론칭 키트", giwa.launch_kit),
-  ].join("") || "<div><dt>GIWA</dt><dd>Not catalogued</dd></div>";
+  ].join("") || "<section><h4>GIWA</h4><ul><li>Not catalogued</li></ul></section>";
 
-  $("#launch-not-doing").textContent = (lp.not_doing || []).join(" · ") || "—";
+  $("#launch-not-doing").innerHTML = (lp.not_doing || []).map((item) => `<li>${escapeHtml(item)}</li>`).join("") || "<li>—</li>";
   $("#launch-sources").innerHTML = (lp.sources || []).map((source) => `
     <a href="${safeHref(source.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(source.label)}${source.observed ? ` · ${escapeHtml(source.observed)}` : ""} ↗</a>`).join("");
 }

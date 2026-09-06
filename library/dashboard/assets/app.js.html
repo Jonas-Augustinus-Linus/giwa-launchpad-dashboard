@@ -22,7 +22,7 @@
     <main id="document" class="document-shell">
       <div class="document-meta">
         <span>SOURCE CODE</span>
-        <span>SHA256 9cf0a0f2ede0</span>
+        <span>SHA256 0a7ff6cfad94</span>
       </div>
       <h1>app.js</h1>
       <p class="source-path">dashboard/assets/app.js</p>
@@ -514,82 +514,89 @@
 <span class="code-line"><i>486</i><code>  }</code></span>
 <span class="code-line"><i>487</i><code>  headline.textContent = lp.headline || &quot;&quot;;</code></span>
 <span class="code-line"><i>488</i><code>  $(&quot;#launch-asof&quot;).textContent = `as of ${lp.as_of || &quot;—&quot;}`;</code></span>
-<span class="code-line"><i>489</i><code>  const rh = lp.robinhood || {};</code></span>
-<span class="code-line"><i>490</i><code>  $(&quot;#launch-chain-id&quot;).textContent = `chain ${rh.chain_id ?? &quot;—&quot;}`;</code></span>
-<span class="code-line"><i>491</i><code>  $(&quot;#launch-stats&quot;).innerHTML = (rh.stats || []).map((item) =&gt; `</code></span>
-<span class="code-line"><i>492</i><code>    &lt;div&gt;&lt;dt&gt;${escapeHtml(item.label)}&lt;/dt&gt;&lt;dd&gt;${escapeHtml(item.value)}&lt;/dd&gt;&lt;/div&gt;`).join(&quot;&quot;) || &quot;&lt;div&gt;&lt;dt&gt;Status&lt;/dt&gt;&lt;dd&gt;Not catalogued&lt;/dd&gt;&lt;/div&gt;&quot;;</code></span>
-<span class="code-line"><i>493</i><code>  $(&quot;#launch-stat-links&quot;).innerHTML = (rh.stats || []).filter((item) =&gt; item.source).map((item) =&gt; `</code></span>
-<span class="code-line"><i>494</i><code>    &lt;a href=&quot;${safeHref(item.source)}&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;${escapeHtml(item.label)} ↗&lt;/a&gt;`).join(&quot;&quot;);</code></span>
-<span class="code-line"><i>495</i><code>  $(&quot;#launch-funding&quot;).innerHTML = (rh.funding_paths || []).map((item, index) =&gt; `</code></span>
-<span class="code-line"><i>496</i><code>    &lt;li data-state=&quot;${escapeHtml(item.state || &quot;unverified&quot;)}&quot;&gt;</code></span>
-<span class="code-line"><i>497</i><code>      &lt;span&gt;${String(index + 1).padStart(2, &quot;0&quot;)}&lt;/span&gt;</code></span>
-<span class="code-line"><i>498</i><code>      &lt;div&gt;&lt;strong&gt;${escapeHtml(item.label)}&lt;/strong&gt;&lt;small&gt;${escapeHtml(item.detail)}&lt;/small&gt;&lt;/div&gt;</code></span>
-<span class="code-line"><i>499</i><code>    &lt;/li&gt;`).join(&quot;&quot;) || &quot;&lt;li&gt;자금 경로가 등록되지 않았습니다.&lt;/li&gt;&quot;;</code></span>
-<span class="code-line"><i>500</i><code>  $(&quot;#launch-tools&quot;).innerHTML = (rh.bots_and_tools || []).map((tool) =&gt; `</code></span>
-<span class="code-line"><i>501</i><code>    &lt;a href=&quot;${safeHref(tool.url)}&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot; title=&quot;${escapeHtml(tool.detail || &quot;&quot;)}&quot;&gt;${escapeHtml(tool.name)} ↗&lt;/a&gt;`).join(&quot;&quot;);</code></span>
-<span class="code-line"><i>502</i><code></code></span>
-<span class="code-line"><i>503</i><code>  const cell = (value) =&gt; `&lt;td&gt;${escapeHtml(value || &quot;—&quot;)}&lt;/td&gt;`;</code></span>
-<span class="code-line"><i>504</i><code>  $(&quot;#launch-pads&quot;).innerHTML = (lp.launchpads || []).map((pad) =&gt; `</code></span>
-<span class="code-line"><i>505</i><code>    &lt;tr&gt;</code></span>
-<span class="code-line"><i>506</i><code>      &lt;td class=&quot;project-cell&quot;&gt;&lt;strong&gt;${escapeHtml(pad.name)}&lt;/strong&gt;${pad.url ? `&lt;br&gt;&lt;a class=&quot;text-link&quot; href=&quot;${safeHref(pad.url)}&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;docs ↗&lt;/a&gt;` : &quot;&quot;}&lt;/td&gt;</code></span>
-<span class="code-line"><i>507</i><code>      ${cell(pad.chain)}${cell(pad.supply_split)}${cell(pad.virtual_liquidity)}${cell(pad.graduation)}${cell(pad.lp_at_graduation)}${cell(pad.lp_lock)}${cell(pad.pool)}${cell(pad.fees)}${cell(pad.creation_fee)}${cell(pad.dev_buy)}${cell(pad.anti_snipe)}${cell(pad.activity)}</code></span>
-<span class="code-line"><i>508</i><code>      &lt;td&gt;&lt;span class=&quot;status-text&quot;&gt;${escapeHtml(pad.verdict || &quot;—&quot;)}&lt;/span&gt;&lt;/td&gt;</code></span>
-<span class="code-line"><i>509</i><code>    &lt;/tr&gt;`).join(&quot;&quot;) || &#x27;&lt;tr class=&quot;loading-row&quot;&gt;&lt;td colspan=&quot;14&quot;&gt;등록된 런치패드가 없습니다.&lt;/td&gt;&lt;/tr&gt;&#x27;;</code></span>
-<span class="code-line"><i>510</i><code></code></span>
-<span class="code-line"><i>511</i><code>  $(&quot;#launch-norms&quot;).innerHTML = (lp.norms || []).map((row) =&gt; `</code></span>
-<span class="code-line"><i>512</i><code>    &lt;tr&gt;</code></span>
-<span class="code-line"><i>513</i><code>      &lt;td class=&quot;project-cell&quot;&gt;&lt;strong&gt;${escapeHtml(row.platform)}&lt;/strong&gt;${row.url ? `&lt;br&gt;&lt;a class=&quot;text-link&quot; href=&quot;${safeHref(row.url)}&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;source ↗&lt;/a&gt;` : &quot;&quot;}&lt;/td&gt;</code></span>
-<span class="code-line"><i>514</i><code>      ${cell(row.chain)}${cell(row.curve_percent)}${cell(row.lp_percent)}${cell(row.team_percent)}${cell(row.graduation)}${cell(row.lp_quote_at_graduation)}${cell(row.creator_fee)}</code></span>
-<span class="code-line"><i>515</i><code>    &lt;/tr&gt;`).join(&quot;&quot;) || &#x27;&lt;tr class=&quot;loading-row&quot;&gt;&lt;td colspan=&quot;8&quot;&gt;등록된 규범이 없습니다.&lt;/td&gt;&lt;/tr&gt;&#x27;;</code></span>
-<span class="code-line"><i>516</i><code></code></span>
-<span class="code-line"><i>517</i><code>  const rc = lp.recommended_composition || {};</code></span>
-<span class="code-line"><i>518</i><code>  const notes = (rc.notes || []).map((note) =&gt; escapeHtml(note)).join(&quot; · &quot;);</code></span>
-<span class="code-line"><i>519</i><code>  $(&quot;#launch-composition&quot;).innerHTML = rc.supply_split</code></span>
-<span class="code-line"><i>520</i><code>    ? `공급 배분 &lt;strong&gt;${escapeHtml(rc.supply_split)}&lt;/strong&gt; · dev-buy &lt;strong&gt;${escapeHtml(rc.dev_buy || &quot;—&quot;)}&lt;/strong&gt; · 수수료 &lt;strong&gt;${escapeHtml(rc.fee_option || &quot;—&quot;)}&lt;/strong&gt; · LP &lt;strong&gt;${escapeHtml(rc.lp_lock || &quot;—&quot;)}&lt;/strong&gt;${notes ? `&lt;br&gt;&lt;small&gt;${notes}&lt;/small&gt;` : &quot;&quot;}`</code></span>
-<span class="code-line"><i>521</i><code>    : &quot;권장 구성이 아직 없습니다.&quot;;</code></span>
-<span class="code-line"><i>522</i><code></code></span>
-<span class="code-line"><i>523</i><code>  $(&quot;#launch-playbook&quot;).innerHTML = (lp.playbook || []).map((phase) =&gt; `</code></span>
-<span class="code-line"><i>524</i><code>    &lt;article class=&quot;flow-card&quot;&gt;</code></span>
-<span class="code-line"><i>525</i><code>      &lt;h4&gt;${escapeHtml(phase.phase)}&lt;/h4&gt;</code></span>
-<span class="code-line"><i>526</i><code>      &lt;ol&gt;${(phase.steps || []).map((step) =&gt; `&lt;li&gt;&lt;span&gt;${escapeHtml(step)}&lt;/span&gt;&lt;/li&gt;`).join(&quot;&quot;)}&lt;/ol&gt;</code></span>
-<span class="code-line"><i>527</i><code>    &lt;/article&gt;`).join(&quot;&quot;);</code></span>
-<span class="code-line"><i>528</i><code></code></span>
-<span class="code-line"><i>529</i><code>  $(&quot;#launch-costs&quot;).innerHTML = (lp.costs || []).map((item) =&gt; `</code></span>
-<span class="code-line"><i>530</i><code>    &lt;div&gt;&lt;dt&gt;${escapeHtml(item.item)}&lt;/dt&gt;&lt;dd&gt;${escapeHtml(item.eth || &quot;—&quot;)}${item.usd ? ` · ${escapeHtml(item.usd)}` : &quot;&quot;}${item.note ? `&lt;br&gt;&lt;small&gt;${escapeHtml(item.note)}&lt;/small&gt;` : &quot;&quot;}&lt;/dd&gt;&lt;/div&gt;`).join(&quot;&quot;) || &quot;&lt;div&gt;&lt;dt&gt;Costs&lt;/dt&gt;&lt;dd&gt;Not catalogued&lt;/dd&gt;&lt;/div&gt;&quot;;</code></span>
-<span class="code-line"><i>531</i><code></code></span>
-<span class="code-line"><i>532</i><code>  const giwa = lp.giwa_parallel || {};</code></span>
-<span class="code-line"><i>533</i><code>  const listBlock = (label, items) =&gt; (items &amp;&amp; items.length) ? `&lt;div&gt;&lt;dt&gt;${escapeHtml(label)}&lt;/dt&gt;&lt;dd&gt;&lt;ul&gt;${items.map((item) =&gt; `&lt;li&gt;${escapeHtml(item)}&lt;/li&gt;`).join(&quot;&quot;)}&lt;/ul&gt;&lt;/dd&gt;&lt;/div&gt;` : &quot;&quot;;</code></span>
-<span class="code-line"><i>534</i><code>  $(&quot;#launch-giwa&quot;).innerHTML = [</code></span>
-<span class="code-line"><i>535</i><code>    listBlock(&quot;같은 것&quot;, giwa.same), listBlock(&quot;다른 것&quot;, giwa.different), listBlock(&quot;Sepolia 리허설&quot;, giwa.rehearsal_steps),</code></span>
-<span class="code-line"><i>536</i><code>    listBlock(&quot;메인넷 임박 신호&quot;, giwa.mainnet_signals), listBlock(&quot;론칭 키트&quot;, giwa.launch_kit),</code></span>
-<span class="code-line"><i>537</i><code>  ].join(&quot;&quot;) || &quot;&lt;div&gt;&lt;dt&gt;GIWA&lt;/dt&gt;&lt;dd&gt;Not catalogued&lt;/dd&gt;&lt;/div&gt;&quot;;</code></span>
+<span class="code-line"><i>489</i><code>  const decision = lp.decision || {};</code></span>
+<span class="code-line"><i>490</i><code>  const decisionCard = (block, cls) =&gt; block ? `&lt;article class=&quot;decision-card ${cls}&quot;&gt;&lt;h4&gt;${escapeHtml(block.title)}&lt;/h4&gt;&lt;ol&gt;${(block.points || []).map((point) =&gt; `&lt;li&gt;${escapeHtml(point)}&lt;/li&gt;`).join(&quot;&quot;)}&lt;/ol&gt;&lt;/article&gt;` : &quot;&quot;;</code></span>
+<span class="code-line"><i>491</i><code>  $(&quot;#launch-decision&quot;).innerHTML = [decisionCard(decision.market_read, &quot;is-market&quot;), decisionCard(decision.do_now, &quot;is-now&quot;), decisionCard(decision.product, &quot;is-product&quot;)].join(&quot;&quot;);</code></span>
+<span class="code-line"><i>492</i><code>  const rh = lp.robinhood || {};</code></span>
+<span class="code-line"><i>493</i><code>  $(&quot;#launch-chain-id&quot;).textContent = `chain ${rh.chain_id ?? &quot;—&quot;}`;</code></span>
+<span class="code-line"><i>494</i><code>  $(&quot;#launch-stats&quot;).innerHTML = (rh.stats || []).map((item) =&gt; `</code></span>
+<span class="code-line"><i>495</i><code>    &lt;div&gt;&lt;dt&gt;${escapeHtml(item.label)}&lt;/dt&gt;&lt;dd&gt;${escapeHtml(item.value)}&lt;/dd&gt;&lt;/div&gt;`).join(&quot;&quot;) || &quot;&lt;div&gt;&lt;dt&gt;Status&lt;/dt&gt;&lt;dd&gt;Not catalogued&lt;/dd&gt;&lt;/div&gt;&quot;;</code></span>
+<span class="code-line"><i>496</i><code>  $(&quot;#launch-stat-links&quot;).innerHTML = (rh.stats || []).filter((item) =&gt; item.source).map((item) =&gt; `</code></span>
+<span class="code-line"><i>497</i><code>    &lt;a href=&quot;${safeHref(item.source)}&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;${escapeHtml(item.label)} ↗&lt;/a&gt;`).join(&quot;&quot;);</code></span>
+<span class="code-line"><i>498</i><code>  $(&quot;#launch-funding&quot;).innerHTML = (rh.funding_paths || []).map((item, index) =&gt; `</code></span>
+<span class="code-line"><i>499</i><code>    &lt;li data-state=&quot;${escapeHtml(item.state || &quot;unverified&quot;)}&quot;&gt;</code></span>
+<span class="code-line"><i>500</i><code>      &lt;span&gt;${String(index + 1).padStart(2, &quot;0&quot;)}&lt;/span&gt;</code></span>
+<span class="code-line"><i>501</i><code>      &lt;div&gt;&lt;strong&gt;${escapeHtml(item.label)}&lt;/strong&gt;&lt;small&gt;${escapeHtml(item.detail)}&lt;/small&gt;&lt;/div&gt;</code></span>
+<span class="code-line"><i>502</i><code>    &lt;/li&gt;`).join(&quot;&quot;) || &quot;&lt;li&gt;자금 경로가 등록되지 않았습니다.&lt;/li&gt;&quot;;</code></span>
+<span class="code-line"><i>503</i><code>  $(&quot;#launch-tools&quot;).innerHTML = (rh.bots_and_tools || []).map((tool) =&gt; `</code></span>
+<span class="code-line"><i>504</i><code>    &lt;a href=&quot;${safeHref(tool.url)}&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot; title=&quot;${escapeHtml(tool.detail || &quot;&quot;)}&quot;&gt;${escapeHtml(tool.name)} ↗&lt;/a&gt;`).join(&quot;&quot;);</code></span>
+<span class="code-line"><i>505</i><code></code></span>
+<span class="code-line"><i>506</i><code>  const cell = (value) =&gt; `&lt;td&gt;${escapeHtml(value || &quot;—&quot;)}&lt;/td&gt;`;</code></span>
+<span class="code-line"><i>507</i><code>  const FACTS = [[&quot;공급 배분&quot;, &quot;supply_split&quot;], [&quot;가상 유동성&quot;, &quot;virtual_liquidity&quot;], [&quot;졸업 조건&quot;, &quot;graduation&quot;], [&quot;졸업 시 LP&quot;, &quot;lp_at_graduation&quot;], [&quot;LP 잠금&quot;, &quot;lp_lock&quot;], [&quot;풀&quot;, &quot;pool&quot;], [&quot;수수료&quot;, &quot;fees&quot;], [&quot;생성비&quot;, &quot;creation_fee&quot;], [&quot;dev-buy&quot;, &quot;dev_buy&quot;], [&quot;스나이퍼 방어&quot;, &quot;anti_snipe&quot;], [&quot;활동&quot;, &quot;activity&quot;]];</code></span>
+<span class="code-line"><i>508</i><code>  $(&quot;#launch-pads&quot;).innerHTML = (lp.launchpads || []).map((pad, index) =&gt; `</code></span>
+<span class="code-line"><i>509</i><code>    &lt;article class=&quot;pad-card${index === 0 ? &quot; is-first&quot; : &quot;&quot;}&quot;&gt;</code></span>
+<span class="code-line"><i>510</i><code>      &lt;div class=&quot;pad-card-head&quot;&gt;</code></span>
+<span class="code-line"><i>511</i><code>        &lt;div&gt;&lt;h4&gt;${escapeHtml(pad.name)}&lt;/h4&gt;&lt;small&gt;${escapeHtml(pad.chain || &quot;&quot;)}&lt;/small&gt;&lt;/div&gt;</code></span>
+<span class="code-line"><i>512</i><code>        &lt;span class=&quot;pad-verdict&quot;&gt;${escapeHtml(pad.verdict || &quot;—&quot;)}&lt;/span&gt;</code></span>
+<span class="code-line"><i>513</i><code>      &lt;/div&gt;</code></span>
+<span class="code-line"><i>514</i><code>      &lt;dl class=&quot;pad-facts&quot;&gt;${FACTS.map(([label, key]) =&gt; pad[key] ? `&lt;div&gt;&lt;dt&gt;${escapeHtml(label)}&lt;/dt&gt;&lt;dd&gt;${escapeHtml(pad[key])}&lt;/dd&gt;&lt;/div&gt;` : &quot;&quot;).join(&quot;&quot;)}&lt;/dl&gt;</code></span>
+<span class="code-line"><i>515</i><code>      ${pad.url ? `&lt;a class=&quot;text-link&quot; href=&quot;${safeHref(pad.url)}&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;문서 ↗&lt;/a&gt;` : &quot;&quot;}</code></span>
+<span class="code-line"><i>516</i><code>    &lt;/article&gt;`).join(&quot;&quot;) || &#x27;&lt;div class=&quot;empty-state&quot;&gt;&lt;strong&gt;등록된 런치패드가 없습니다.&lt;/strong&gt;&lt;/div&gt;&#x27;;</code></span>
+<span class="code-line"><i>517</i><code></code></span>
+<span class="code-line"><i>518</i><code>  $(&quot;#launch-norms&quot;).innerHTML = (lp.norms || []).map((row) =&gt; `</code></span>
+<span class="code-line"><i>519</i><code>    &lt;tr&gt;</code></span>
+<span class="code-line"><i>520</i><code>      &lt;td class=&quot;project-cell&quot;&gt;&lt;strong&gt;${escapeHtml(row.platform)}&lt;/strong&gt;${row.url ? `&lt;br&gt;&lt;a class=&quot;text-link&quot; href=&quot;${safeHref(row.url)}&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;source ↗&lt;/a&gt;` : &quot;&quot;}&lt;/td&gt;</code></span>
+<span class="code-line"><i>521</i><code>      ${cell(row.chain)}${cell(row.curve_percent)}${cell(row.lp_percent)}${cell(row.team_percent)}${cell(row.graduation)}${cell(row.lp_quote_at_graduation)}${cell(row.creator_fee)}</code></span>
+<span class="code-line"><i>522</i><code>    &lt;/tr&gt;`).join(&quot;&quot;) || &#x27;&lt;tr class=&quot;loading-row&quot;&gt;&lt;td colspan=&quot;8&quot;&gt;등록된 규범이 없습니다.&lt;/td&gt;&lt;/tr&gt;&#x27;;</code></span>
+<span class="code-line"><i>523</i><code></code></span>
+<span class="code-line"><i>524</i><code>  const rc = lp.recommended_composition || {};</code></span>
+<span class="code-line"><i>525</i><code>  const notes = (rc.notes || []).map((note) =&gt; escapeHtml(note)).join(&quot; · &quot;);</code></span>
+<span class="code-line"><i>526</i><code>  $(&quot;#launch-composition&quot;).innerHTML = rc.supply_split</code></span>
+<span class="code-line"><i>527</i><code>    ? `공급 배분 &lt;strong&gt;${escapeHtml(rc.supply_split)}&lt;/strong&gt; · dev-buy &lt;strong&gt;${escapeHtml(rc.dev_buy || &quot;—&quot;)}&lt;/strong&gt; · 수수료 &lt;strong&gt;${escapeHtml(rc.fee_option || &quot;—&quot;)}&lt;/strong&gt; · LP &lt;strong&gt;${escapeHtml(rc.lp_lock || &quot;—&quot;)}&lt;/strong&gt;${notes ? `&lt;br&gt;&lt;small&gt;${notes}&lt;/small&gt;` : &quot;&quot;}`</code></span>
+<span class="code-line"><i>528</i><code>    : &quot;권장 구성이 아직 없습니다.&quot;;</code></span>
+<span class="code-line"><i>529</i><code></code></span>
+<span class="code-line"><i>530</i><code>  $(&quot;#launch-playbook&quot;).innerHTML = (lp.playbook || []).map((phase) =&gt; `</code></span>
+<span class="code-line"><i>531</i><code>    &lt;article class=&quot;flow-card&quot;&gt;</code></span>
+<span class="code-line"><i>532</i><code>      &lt;h4&gt;${escapeHtml(phase.phase)}&lt;/h4&gt;</code></span>
+<span class="code-line"><i>533</i><code>      &lt;ol&gt;${(phase.steps || []).map((step) =&gt; `&lt;li&gt;&lt;span&gt;${escapeHtml(step)}&lt;/span&gt;&lt;/li&gt;`).join(&quot;&quot;)}&lt;/ol&gt;</code></span>
+<span class="code-line"><i>534</i><code>    &lt;/article&gt;`).join(&quot;&quot;);</code></span>
+<span class="code-line"><i>535</i><code></code></span>
+<span class="code-line"><i>536</i><code>  $(&quot;#launch-costs&quot;).innerHTML = (lp.costs || []).map((item) =&gt; `</code></span>
+<span class="code-line"><i>537</i><code>    &lt;div&gt;&lt;dt&gt;${escapeHtml(item.item)}&lt;/dt&gt;&lt;dd&gt;${escapeHtml(item.eth || &quot;—&quot;)}${item.usd ? ` · ${escapeHtml(item.usd)}` : &quot;&quot;}${item.note ? `&lt;br&gt;&lt;small&gt;${escapeHtml(item.note)}&lt;/small&gt;` : &quot;&quot;}&lt;/dd&gt;&lt;/div&gt;`).join(&quot;&quot;) || &quot;&lt;div&gt;&lt;dt&gt;Costs&lt;/dt&gt;&lt;dd&gt;Not catalogued&lt;/dd&gt;&lt;/div&gt;&quot;;</code></span>
 <span class="code-line"><i>538</i><code></code></span>
-<span class="code-line"><i>539</i><code>  $(&quot;#launch-not-doing&quot;).textContent = (lp.not_doing || []).join(&quot; · &quot;) || &quot;—&quot;;</code></span>
-<span class="code-line"><i>540</i><code>  $(&quot;#launch-sources&quot;).innerHTML = (lp.sources || []).map((source) =&gt; `</code></span>
-<span class="code-line"><i>541</i><code>    &lt;a href=&quot;${safeHref(source.url)}&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;${escapeHtml(source.label)}${source.observed ? ` · ${escapeHtml(source.observed)}` : &quot;&quot;} ↗&lt;/a&gt;`).join(&quot;&quot;);</code></span>
-<span class="code-line"><i>542</i><code>}</code></span>
-<span class="code-line"><i>543</i><code></code></span>
-<span class="code-line"><i>544</i><code>async function init() {</code></span>
-<span class="code-line"><i>545</i><code>  bindInteractions();</code></span>
-<span class="code-line"><i>546</i><code>  try {</code></span>
-<span class="code-line"><i>547</i><code>    const response = await fetch(CATALOG_URL, { cache: &quot;no-store&quot; });</code></span>
-<span class="code-line"><i>548</i><code>    if (!response.ok) throw new Error(`catalog fetch failed: ${response.status}`);</code></span>
-<span class="code-line"><i>549</i><code>    state.catalog = await response.json();</code></span>
-<span class="code-line"><i>550</i><code>    renderOverview(state.catalog);</code></span>
-<span class="code-line"><i>551</i><code>    renderEcosystem();</code></span>
-<span class="code-line"><i>552</i><code>    renderOfficialResources(state.catalog);</code></span>
-<span class="code-line"><i>553</i><code>    renderInfrastructure(state.catalog);</code></span>
-<span class="code-line"><i>554</i><code>    renderRevenue(state.catalog);</code></span>
-<span class="code-line"><i>555</i><code>    renderBuildTracks(state.catalog);</code></span>
-<span class="code-line"><i>556</i><code>    renderResearch(state.catalog);</code></span>
-<span class="code-line"><i>557</i><code>    renderGates(state.catalog);</code></span>
-<span class="code-line"><i>558</i><code>    renderLaunch(state.catalog);</code></span>
-<span class="code-line"><i>559</i><code>  } catch (error) {</code></span>
-<span class="code-line"><i>560</i><code>    renderError(error);</code></span>
-<span class="code-line"><i>561</i><code>  }</code></span>
-<span class="code-line"><i>562</i><code>}</code></span>
-<span class="code-line"><i>563</i><code></code></span>
-<span class="code-line"><i>564</i><code>init();</code></span></pre></article>
+<span class="code-line"><i>539</i><code>  const giwa = lp.giwa_parallel || {};</code></span>
+<span class="code-line"><i>540</i><code>  const listBlock = (label, items) =&gt; (items &amp;&amp; items.length) ? `&lt;section&gt;&lt;h4&gt;${escapeHtml(label)}&lt;/h4&gt;&lt;ul&gt;${items.map((item) =&gt; `&lt;li&gt;${escapeHtml(item)}&lt;/li&gt;`).join(&quot;&quot;)}&lt;/ul&gt;&lt;/section&gt;` : &quot;&quot;;</code></span>
+<span class="code-line"><i>541</i><code>  $(&quot;#launch-giwa&quot;).innerHTML = [</code></span>
+<span class="code-line"><i>542</i><code>    listBlock(&quot;같은 것&quot;, giwa.same), listBlock(&quot;다른 것&quot;, giwa.different), listBlock(&quot;Sepolia 리허설&quot;, giwa.rehearsal_steps),</code></span>
+<span class="code-line"><i>543</i><code>    listBlock(&quot;메인넷 임박 신호&quot;, giwa.mainnet_signals), listBlock(&quot;론칭 키트&quot;, giwa.launch_kit),</code></span>
+<span class="code-line"><i>544</i><code>  ].join(&quot;&quot;) || &quot;&lt;section&gt;&lt;h4&gt;GIWA&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;Not catalogued&lt;/li&gt;&lt;/ul&gt;&lt;/section&gt;&quot;;</code></span>
+<span class="code-line"><i>545</i><code></code></span>
+<span class="code-line"><i>546</i><code>  $(&quot;#launch-not-doing&quot;).innerHTML = (lp.not_doing || []).map((item) =&gt; `&lt;li&gt;${escapeHtml(item)}&lt;/li&gt;`).join(&quot;&quot;) || &quot;&lt;li&gt;—&lt;/li&gt;&quot;;</code></span>
+<span class="code-line"><i>547</i><code>  $(&quot;#launch-sources&quot;).innerHTML = (lp.sources || []).map((source) =&gt; `</code></span>
+<span class="code-line"><i>548</i><code>    &lt;a href=&quot;${safeHref(source.url)}&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;${escapeHtml(source.label)}${source.observed ? ` · ${escapeHtml(source.observed)}` : &quot;&quot;} ↗&lt;/a&gt;`).join(&quot;&quot;);</code></span>
+<span class="code-line"><i>549</i><code>}</code></span>
+<span class="code-line"><i>550</i><code></code></span>
+<span class="code-line"><i>551</i><code>async function init() {</code></span>
+<span class="code-line"><i>552</i><code>  bindInteractions();</code></span>
+<span class="code-line"><i>553</i><code>  try {</code></span>
+<span class="code-line"><i>554</i><code>    const response = await fetch(CATALOG_URL, { cache: &quot;no-store&quot; });</code></span>
+<span class="code-line"><i>555</i><code>    if (!response.ok) throw new Error(`catalog fetch failed: ${response.status}`);</code></span>
+<span class="code-line"><i>556</i><code>    state.catalog = await response.json();</code></span>
+<span class="code-line"><i>557</i><code>    renderOverview(state.catalog);</code></span>
+<span class="code-line"><i>558</i><code>    renderEcosystem();</code></span>
+<span class="code-line"><i>559</i><code>    renderOfficialResources(state.catalog);</code></span>
+<span class="code-line"><i>560</i><code>    renderInfrastructure(state.catalog);</code></span>
+<span class="code-line"><i>561</i><code>    renderRevenue(state.catalog);</code></span>
+<span class="code-line"><i>562</i><code>    renderBuildTracks(state.catalog);</code></span>
+<span class="code-line"><i>563</i><code>    renderResearch(state.catalog);</code></span>
+<span class="code-line"><i>564</i><code>    renderGates(state.catalog);</code></span>
+<span class="code-line"><i>565</i><code>    renderLaunch(state.catalog);</code></span>
+<span class="code-line"><i>566</i><code>  } catch (error) {</code></span>
+<span class="code-line"><i>567</i><code>    renderError(error);</code></span>
+<span class="code-line"><i>568</i><code>  }</code></span>
+<span class="code-line"><i>569</i><code>}</code></span>
+<span class="code-line"><i>570</i><code></code></span>
+<span class="code-line"><i>571</i><code>init();</code></span></pre></article>
     </main>
     <footer>
       <span>research_only=true</span>

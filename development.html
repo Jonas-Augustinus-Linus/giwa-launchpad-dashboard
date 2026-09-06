@@ -162,13 +162,13 @@
             <span class="quality-badge quality-caution"><i></i> creator role · no execution here</span>
           </div>
 
-          <div class="infra-verdict">
-            <div>
-              <p class="mini-label">ANSWER</p>
-              <h3 id="launch-headline">론칭 준비 데이터를 불러오는 중…</h3>
-            </div>
+          <div class="launch-answer">
+            <p class="mini-label">ANSWER · 한 줄 결론</p>
+            <p id="launch-headline">론칭 준비 데이터를 불러오는 중…</p>
             <span class="status-pill status-live" id="launch-asof">—</span>
           </div>
+
+          <div class="decision-grid" id="launch-decision"></div>
 
           <div class="infra-grid">
             <article class="infra-card">
@@ -187,19 +187,14 @@
             <div class="subsection-heading">
               <div><p class="mini-label">LAUNCHPADS</p><h3>런치패드 비교 — 공급 배분·초기 LP·졸업·수수료</h3></div>
             </div>
-            <div class="table-frame">
-              <table class="data-table blueprint-table launch-table">
-                <thead><tr><th scope="col">런치패드</th><th scope="col">체인</th><th scope="col">공급 배분</th><th scope="col">가상 유동성</th><th scope="col">졸업</th><th scope="col">졸업 시 LP</th><th scope="col">LP 잠금</th><th scope="col">풀</th><th scope="col">수수료</th><th scope="col">생성비</th><th scope="col">dev-buy</th><th scope="col">스나이퍼 방어</th><th scope="col">활동</th><th scope="col">판정</th></tr></thead>
-                <tbody id="launch-pads"><tr class="loading-row"><td colspan="14">런치패드 데이터를 불러오는 중…</td></tr></tbody>
-              </table>
-            </div>
+            <div class="pad-grid" id="launch-pads"><div class="empty-state"><strong>런치패드 데이터를 불러오는 중…</strong></div></div>
 
             <div class="subsection-heading">
               <div><p class="mini-label">NORMS</p><h3>100 % 중 몇 %를 론칭하나 — 플랫폼별 분포와 졸업 시 LP</h3></div>
             </div>
             <div class="table-frame">
-              <table class="data-table launch-table">
-                <thead><tr><th scope="col">플랫폼</th><th scope="col">체인</th><th scope="col">curve / public</th><th scope="col">LP 예약</th><th scope="col">팀 배분</th><th scope="col">졸업 조건</th><th scope="col">졸업 시 quote LP</th><th scope="col">creator fee</th></tr></thead>
+              <table class="data-table norms-table">
+                <thead><tr><th scope="col">플랫폼</th><th scope="col">체인</th><th scope="col">커브·공개 판매</th><th scope="col">졸업 LP 예약</th><th scope="col">팀 배분</th><th scope="col">졸업 조건</th><th scope="col">졸업 시 풀에 들어가는 quote</th><th scope="col">크리에이터 수수료</th></tr></thead>
                 <tbody id="launch-norms"><tr class="loading-row"><td colspan="8">플랫폼 규범을 불러오는 중…</td></tr></tbody>
               </table>
             </div>
@@ -218,16 +213,16 @@
             </article>
             <article class="infra-card">
               <div class="card-title-row"><div><p class="mini-label">GIWA PARALLEL</p><h3>GIWA 병행 준비</h3></div><span>same contracts · different chain</span></div>
-              <dl class="spec-list" id="launch-giwa"><div><dt>Loading</dt><dd>—</dd></div></dl>
+              <div class="launch-lists" id="launch-giwa"><section><h4>Loading</h4></section></div>
             </article>
           </div>
 
-          <div class="attention-strip" role="note">
-            <strong>하지 않는 것</strong>
-            <p id="launch-not-doing">—</p>
-            <span>owner rule</span>
+          <div class="infra-card launch-notdoing">
+            <div class="card-title-row"><div><p class="mini-label">OWNER RULE</p><h3>하지 않는 것</h3></div></div>
+            <ul id="launch-not-doing"><li>—</li></ul>
           </div>
-          <div class="source-row" id="launch-sources"></div>
+          <div class="subsection-heading"><div><p class="mini-label">SOURCES</p><h3>출처 (URL · 관측일)</h3></div></div>
+          <div class="source-row launch-sources" id="launch-sources"></div>
         </section>
 
         <section id="ecosystem" class="section" aria-labelledby="ecosystem-title">
