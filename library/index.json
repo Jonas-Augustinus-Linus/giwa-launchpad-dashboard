@@ -159,27 +159,27 @@
     {
       "path": "dashboard/assets/app.css",
       "url": "./library/dashboard/assets/app.css.html",
-      "sha256": "9c3e168a0ea803727da17e29b456f977dd0b85292e5f41e2e7973299830af37c"
+      "sha256": "927eac94244f7b56cbcf436c9f131152e4c14631f7ce5dda9c30331448d9fe6c"
     },
     {
       "path": "dashboard/assets/app.js",
       "url": "./library/dashboard/assets/app.js.html",
-      "sha256": "0a7ff6cfad941ba529b6194fc2797d60f39c81c4cb5fed09a41930176f45fc8c"
+      "sha256": "74b4d600278b04fb5aa752a1073eedffc6ba560383ff1d92ff727a1e6ad3b4ee"
     },
     {
       "path": "dashboard/index.html",
       "url": "./library/dashboard/index.html.html",
-      "sha256": "c25fa140c300b8dd9807589983ef6a7fbe53e2fc7f0ecae9d9a73930ad448d08"
+      "sha256": "232d7a0089d699be69ab9bf98d7b79b48ffc69beeb36b4ca9869cc643d03a250"
     },
     {
       "path": "data/ecosystem.json",
       "url": "./library/data/ecosystem.json.html",
-      "sha256": "b9fe1867008aa00b0432c91ea30a0565c89670b9196770bfe9a48c4ba11bfbcf"
+      "sha256": "3495210951e087e19b310266c4aef6179a4978010dda10f0f0acc7f1e20ecfa5"
     },
     {
       "path": "data/launch_prep.json",
       "url": "./library/data/launch_prep.json.html",
-      "sha256": "2c3a3c786827671bdfbd614b57cc32cd0a48b9f9e86a4962edfaad619f948d79"
+      "sha256": "adf0870ca3e02aae2d6556c4187c71f588d431df8ac011a41a5bee97c2b2a610"
     },
     {
       "path": "docs/BOUNDARIES.md",
@@ -214,7 +214,7 @@
     {
       "path": "docs/MAINNET_GATES.md",
       "url": "./library/docs/MAINNET_GATES.md.html",
-      "sha256": "b6b52bc5e115b579a5e5ffd1c8331e726b4f8ac09f8af33437db6939b85aad2f"
+      "sha256": "466ef6018b4febd738e2c28f1c83b870c45664ca9f2d87d2514639889b6214ac"
     },
     {
       "path": "docs/PUMP_PLATFORM.md",
@@ -269,7 +269,7 @@
     {
       "path": "scripts/build_dashboard_catalog.py",
       "url": "./library/scripts/build_dashboard_catalog.py.html",
-      "sha256": "1e2fc3638fae4c3219d755433780a5bf5b777434713385cba8b692da0cfc0ed0"
+      "sha256": "9f364f21346ae6ac337e43fbc817ded588f23c7c539758b6378e3da26db9b581"
     },
     {
       "path": "src/giwa_lab/constants.py",

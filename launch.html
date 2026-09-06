@@ -81,9 +81,8 @@
             <div class="decision-copy">
               <div class="section-kicker"><span>NOW</span> CURRENT DECISION</div>
               <h2 id="overview-title">근거는 쌓고, 실행 권한은 잠근다.</h2>
-              <p id="project-decision">
-                Public mainnet과 canonical quote asset이 확인될 때까지 research/testnet 상태를 유지한다.
-              </p>
+              <p id="project-decision">결정을 불러오는 중…</p>
+              <ul class="decision-points" id="decision-points"></ul>
               <div class="decision-tags" aria-label="현재 제품 방향">
                 <span id="product-hypothesis">v3-compatible venue</span>
                 <span id="fee-policy">fee switch off</span>
@@ -217,6 +216,9 @@
             </article>
           </div>
 
+          <div class="subsection-heading"><div><p class="mini-label">WORDS</p><h3>용어 한 줄 설명</h3></div></div>
+          <div class="glossary-grid" id="launch-glossary"></div>
+
           <div class="infra-card launch-notdoing">
             <div class="card-title-row"><div><p class="mini-label">OWNER RULE</p><h3>하지 않는 것</h3></div></div>
             <ul id="launch-not-doing"><li>—</li></ul>
@@ -287,6 +289,16 @@
           </div>
         </section>
 
+        <section id="glossary-overview" class="section glossary-section" aria-labelledby="glossary-overview-title">
+          <div class="section-heading">
+            <div>
+              <div class="section-kicker"><span>WORDS</span> 용어 한 줄 설명</div>
+              <h2 id="glossary-overview-title">이 대시보드에 나오는 말들</h2>
+            </div>
+          </div>
+          <div class="glossary-grid" id="glossary-tabs"></div>
+        </section>
+
         <section id="nodes" class="section" aria-labelledby="nodes-title">
           <div class="section-heading">
             <div>
@@ -343,12 +355,7 @@
               <p id="pool-notice">제3자 테스트넷 코드는 공식·감사·출시 준비를 의미하지 않습니다.</p>
               <span>read-only</span>
             </div>
-            <div class="table-frame">
-              <table class="data-table blueprint-table">
-                <thead><tr><th scope="col">구성요소</th><th scope="col">층</th><th scope="col">역할</th><th scope="col">외부 근거</th><th scope="col">로컬 코드</th><th scope="col">다음 게이트</th></tr></thead>
-                <tbody id="pool-components"><tr class="loading-row"><td colspan="6">풀 구조를 불러오는 중…</td></tr></tbody>
-              </table>
-            </div>
+            <div class="pool-cards" id="pool-components"><div class="empty-state"><strong>풀 구조를 불러오는 중…</strong></div></div>
             <div class="flow-grid" id="pool-flows"></div>
           </div>
         </section>
@@ -401,12 +408,7 @@
               <div><p class="mini-label">TRANSFERABLE EVIDENCE</p><h3>Ethereum · Base · Solana · Robinhood 사례</h3></div>
               <span id="revenue-as-of">As of —</span>
             </div>
-            <div class="table-frame">
-              <table class="data-table case-table">
-                <thead><tr><th scope="col">사례</th><th scope="col">초기 론칭 장치</th><th scope="col">후속 성장 장치</th><th scope="col">수익 귀속</th><th scope="col">성공 근거 / 경계</th><th scope="col">원문</th></tr></thead>
-                <tbody id="case-studies"><tr class="loading-row"><td colspan="6">사례를 불러오는 중…</td></tr></tbody>
-              </table>
-            </div>
+            <div class="case-cards" id="case-studies"><div class="empty-state"><strong>사례를 불러오는 중…</strong></div></div>
           </div>
         </section>
 
@@ -431,9 +433,9 @@
               <p>현재 저장소에는 signer·broadcast·deployment 경로가 없습니다. 개발은 Phase 1 local-only 경계에서 시작합니다.</p>
             </div>
             <ol>
-              <li><span>01</span><div><strong>Decision memo</strong><small>제품 가설과 중단선을 먼저 확인</small></div></li>
-              <li><span>02</span><div><strong>Contract specs</strong><small>구현 전에 invariant와 권한 모델 확정</small></div></li>
-              <li><span>03</span><div><strong>Local tests</strong><small>체인 연결 없는 결정론적 테스트부터</small></div></li>
+              <li><span>01</span><div><strong>결정 메모 읽기</strong><small>무엇을 만들고 어디서 멈추는지 먼저 확인</small></div></li>
+              <li><span>02</span><div><strong>컨트랙트 사양 확정</strong><small>구현 전에 불변식(깨지면 안 되는 규칙)과 권한 모델 확정</small></div></li>
+              <li><span>03</span><div><strong>로컬 테스트</strong><small>체인 연결 없이 결과가 항상 같은 테스트부터</small></div></li>
             </ol>
           </div>
         </section>
@@ -477,8 +479,8 @@
           <div class="final-lock">
             <span class="lock-icon" aria-hidden="true"></span>
             <div>
-              <strong>Human authority required</strong>
-              <p>정확한 revision, chain, address, parameter, role, funding과 launch window를 지정한 별도 승인이 마지막 조건입니다.</p>
+              <strong>사람의 승인이 마지막 조건</strong>
+              <p>정확한 코드 리비전 · 체인 · 주소 · 파라미터 · 역할 · 자금 · 출시 시점을 지정한 별도 승인이 있어야 합니다.</p>
             </div>
           </div>
         </section>

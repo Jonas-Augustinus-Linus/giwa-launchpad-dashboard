@@ -22,7 +22,7 @@
     <main id="document" class="document-shell">
       <div class="document-meta">
         <span>SOURCE CODE</span>
-        <span>SHA256 0a7ff6cfad94</span>
+        <span>SHA256 74b4d600278b</span>
       </div>
       <h1>app.js</h1>
       <p class="source-path">dashboard/assets/app.js</p>
@@ -162,441 +162,461 @@
 <span class="code-line"><i>134</i><code>  }</code></span>
 <span class="code-line"><i>135</i><code>}</code></span>
 <span class="code-line"><i>136</i><code></code></span>
-<span class="code-line"><i>137</i><code>function renderOverview(catalog) {</code></span>
-<span class="code-line"><i>138</i><code>  const { project, metrics, safety, network_observation: observation } = catalog;</code></span>
-<span class="code-line"><i>139</i><code>  $(&quot;#project-decision&quot;).textContent = project.decision;</code></span>
-<span class="code-line"><i>140</i><code>  $(&quot;#product-hypothesis&quot;).textContent = project.product_hypothesis;</code></span>
-<span class="code-line"><i>141</i><code>  $(&quot;#fee-policy&quot;).textContent = project.fee_policy;</code></span>
-<span class="code-line"><i>142</i><code>  $(&quot;#safety-notice&quot;).textContent = safety.notice;</code></span>
-<span class="code-line"><i>143</i><code></code></span>
-<span class="code-line"><i>144</i><code>  $(&quot;#metric-sources&quot;).textContent = number(metrics.registered_sources);</code></span>
-<span class="code-line"><i>145</i><code>  $(&quot;#metric-research&quot;).innerHTML = `&lt;i class=&quot;signal-up&quot;&gt;&lt;/i&gt; ${number(metrics.research_sessions)} strict research sessions`;</code></span>
-<span class="code-line"><i>146</i><code>  $(&quot;#metric-verified&quot;).textContent = number(metrics.verified_claims);</code></span>
-<span class="code-line"><i>147</i><code>  $(&quot;#metric-open-claims&quot;).textContent = `${number(metrics.unresolved_claims)} unresolved · ${number(metrics.refuted_claims)} refuted`;</code></span>
-<span class="code-line"><i>148</i><code>  $(&quot;#metric-ecosystem&quot;).textContent = number(metrics.ecosystem_entries);</code></span>
-<span class="code-line"><i>149</i><code>  $(&quot;#metric-official&quot;).textContent = `${metrics.official_entries} official · ${metrics.third_party_entries} third-party`;</code></span>
-<span class="code-line"><i>150</i><code>  $(&quot;#metric-build&quot;).textContent = `${metrics.implemented_tracks}/${metrics.total_tracks}`;</code></span>
-<span class="code-line"><i>151</i><code>  $(&quot;#catalog-revision&quot;).textContent = `Catalog ${catalog.catalog_revision} · ${catalog.as_of}`;</code></span>
-<span class="code-line"><i>152</i><code></code></span>
-<span class="code-line"><i>153</i><code>  if (observation) {</code></span>
-<span class="code-line"><i>154</i><code>    $(&quot;#network-chain-id&quot;).textContent = number(observation.chain_id);</code></span>
-<span class="code-line"><i>155</i><code>    $(&quot;#network-block&quot;).textContent = `#${number(observation.block_number)}`;</code></span>
-<span class="code-line"><i>156</i><code>    $(&quot;#network-client&quot;).textContent = String(observation.client_version || &quot;—&quot;).split(&quot;/&quot;)[0];</code></span>
-<span class="code-line"><i>157</i><code>    $(&quot;#network-client&quot;).title = observation.client_version || &quot;&quot;;</code></span>
-<span class="code-line"><i>158</i><code>    $(&quot;#network-observed&quot;).textContent = shortDate(observation.observed_at);</code></span>
-<span class="code-line"><i>159</i><code>  }</code></span>
-<span class="code-line"><i>160</i><code>  $(&quot;#official-check-date&quot;).textContent = `Checked ${catalog.as_of}`;</code></span>
-<span class="code-line"><i>161</i><code>}</code></span>
-<span class="code-line"><i>162</i><code></code></span>
-<span class="code-line"><i>163</i><code>function filteredEcosystem() {</code></span>
-<span class="code-line"><i>164</i><code>  const entries = state.catalog?.ecosystem || [];</code></span>
-<span class="code-line"><i>165</i><code>  const query = state.query.trim().toLocaleLowerCase(&quot;ko-KR&quot;);</code></span>
-<span class="code-line"><i>166</i><code>  return entries.filter((entry) =&gt; {</code></span>
-<span class="code-line"><i>167</i><code>    const inFilter = state.filter === &quot;all&quot; || entry.officiality === state.filter;</code></span>
-<span class="code-line"><i>168</i><code>    const haystack = [entry.name, entry.category, entry.status, entry.summary, entry.code_state, ...(entry.limitations || [])]</code></span>
-<span class="code-line"><i>169</i><code>      .join(&quot; &quot;)</code></span>
-<span class="code-line"><i>170</i><code>      .toLocaleLowerCase(&quot;ko-KR&quot;);</code></span>
-<span class="code-line"><i>171</i><code>    return inFilter &amp;&amp; (!query || haystack.includes(query));</code></span>
-<span class="code-line"><i>172</i><code>  });</code></span>
-<span class="code-line"><i>173</i><code>}</code></span>
-<span class="code-line"><i>174</i><code></code></span>
-<span class="code-line"><i>175</i><code>function renderEcosystem() {</code></span>
-<span class="code-line"><i>176</i><code>  const entries = filteredEcosystem();</code></span>
-<span class="code-line"><i>177</i><code>  const body = $(&quot;#ecosystem-rows&quot;);</code></span>
-<span class="code-line"><i>178</i><code>  const empty = $(&quot;#ecosystem-empty&quot;);</code></span>
-<span class="code-line"><i>179</i><code>  body.hidden = entries.length === 0;</code></span>
-<span class="code-line"><i>180</i><code>  empty.hidden = entries.length &gt; 0;</code></span>
-<span class="code-line"><i>181</i><code>  $(&quot;#ecosystem-count&quot;).textContent = `${number(entries.length)} / ${number(state.catalog.ecosystem.length)} records`;</code></span>
-<span class="code-line"><i>182</i><code>  body.innerHTML = entries.map((entry) =&gt; {</code></span>
-<span class="code-line"><i>183</i><code>    const [codeClass, codeLabel] = codePresentation(entry.code_state);</code></span>
-<span class="code-line"><i>184</i><code>    return `</code></span>
-<span class="code-line"><i>185</i><code>      &lt;tr tabindex=&quot;0&quot; data-entry-id=&quot;${escapeHtml(entry.id)}&quot; aria-label=&quot;${escapeHtml(entry.name)} 상세 보기&quot;&gt;</code></span>
-<span class="code-line"><i>186</i><code>        &lt;td class=&quot;project-cell&quot;&gt;&lt;strong&gt;${escapeHtml(entry.name)}&lt;/strong&gt;&lt;small&gt;${escapeHtml(entry.summary)}&lt;/small&gt;&lt;/td&gt;</code></span>
-<span class="code-line"><i>187</i><code>        &lt;td&gt;&lt;span class=&quot;table-tag ${officialityClass[entry.officiality] || &quot;&quot;}&quot;&gt;&lt;i&gt;&lt;/i&gt;${escapeHtml(officialityLabel[entry.officiality] || entry.officiality)}&lt;/span&gt;&lt;/td&gt;</code></span>
-<span class="code-line"><i>188</i><code>        &lt;td&gt;&lt;span class=&quot;status-text&quot;&gt;${escapeHtml(entry.status.replaceAll(&quot;_&quot;, &quot; &quot;))}&lt;/span&gt;&lt;/td&gt;</code></span>
-<span class="code-line"><i>189</i><code>        &lt;td&gt;&lt;span class=&quot;code-tag ${codeClass}&quot;&gt;&lt;i&gt;&lt;/i&gt;${escapeHtml(codeLabel)}&lt;/span&gt;&lt;/td&gt;</code></span>
-<span class="code-line"><i>190</i><code>        &lt;td&gt;&lt;span class=&quot;evidence-count&quot;&gt;${number(entry.source_count)}&lt;/span&gt;&lt;/td&gt;</code></span>
-<span class="code-line"><i>191</i><code>        &lt;td&gt;&lt;span class=&quot;row-arrow&quot; aria-hidden=&quot;true&quot;&gt;↗&lt;/span&gt;&lt;/td&gt;</code></span>
-<span class="code-line"><i>192</i><code>      &lt;/tr&gt;`;</code></span>
-<span class="code-line"><i>193</i><code>  }).join(&quot;&quot;);</code></span>
-<span class="code-line"><i>194</i><code>}</code></span>
-<span class="code-line"><i>195</i><code></code></span>
-<span class="code-line"><i>196</i><code>function openDrawer(entryId, trigger) {</code></span>
-<span class="code-line"><i>197</i><code>  const entry = state.catalog.ecosystem.find((item) =&gt; item.id === entryId);</code></span>
-<span class="code-line"><i>198</i><code>  if (!entry) return;</code></span>
-<span class="code-line"><i>199</i><code>  state.lastFocused = trigger || document.activeElement;</code></span>
-<span class="code-line"><i>200</i><code>  const [codeClass, codeLabel] = codePresentation(entry.code_state);</code></span>
-<span class="code-line"><i>201</i><code>  const contracts = (entry.contracts || []).map((address) =&gt; `&lt;li&gt;&lt;code class=&quot;contract-address&quot; title=&quot;${escapeHtml(address)}&quot;&gt;${escapeHtml(address)}&lt;/code&gt;&lt;/li&gt;`).join(&quot;&quot;);</code></span>
-<span class="code-line"><i>202</i><code>  const limitations = (entry.limitations || []).map((item) =&gt; `&lt;li&gt;${escapeHtml(item)}&lt;/li&gt;`).join(&quot;&quot;);</code></span>
-<span class="code-line"><i>203</i><code>  const links = (entry.links || []).map((link) =&gt; `&lt;a href=&quot;${safeHref(link.url)}&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;${escapeHtml(link.label)} ↗&lt;/a&gt;`).join(&quot;&quot;);</code></span>
-<span class="code-line"><i>204</i><code>  $(&quot;#drawer-content&quot;).innerHTML = `</code></span>
-<span class="code-line"><i>205</i><code>    &lt;div class=&quot;drawer-title-row&quot;&gt;</code></span>
-<span class="code-line"><i>206</i><code>      &lt;div&gt;&lt;h2 id=&quot;drawer-title&quot;&gt;${escapeHtml(entry.name)}&lt;/h2&gt;&lt;p class=&quot;drawer-subtitle&quot;&gt;${escapeHtml(entry.summary)}&lt;/p&gt;&lt;/div&gt;</code></span>
-<span class="code-line"><i>207</i><code>    &lt;/div&gt;</code></span>
-<span class="code-line"><i>208</i><code>    &lt;dl class=&quot;drawer-meta&quot;&gt;</code></span>
-<span class="code-line"><i>209</i><code>      &lt;div&gt;&lt;dt&gt;Officiality&lt;/dt&gt;&lt;dd&gt;${escapeHtml(officialityLabel[entry.officiality] || entry.officiality)}&lt;/dd&gt;&lt;/div&gt;</code></span>
-<span class="code-line"><i>210</i><code>      &lt;div&gt;&lt;dt&gt;Category&lt;/dt&gt;&lt;dd&gt;${escapeHtml(entry.category)}&lt;/dd&gt;&lt;/div&gt;</code></span>
-<span class="code-line"><i>211</i><code>      &lt;div&gt;&lt;dt&gt;Status&lt;/dt&gt;&lt;dd&gt;${escapeHtml(entry.status.replaceAll(&quot;_&quot;, &quot; &quot;))}&lt;/dd&gt;&lt;/div&gt;</code></span>
-<span class="code-line"><i>212</i><code>      &lt;div&gt;&lt;dt&gt;Code&lt;/dt&gt;&lt;dd&gt;&lt;span class=&quot;code-tag ${codeClass}&quot;&gt;&lt;i&gt;&lt;/i&gt;${escapeHtml(codeLabel)}&lt;/span&gt;&lt;/dd&gt;&lt;/div&gt;</code></span>
-<span class="code-line"><i>213</i><code>      &lt;div&gt;&lt;dt&gt;Evidence&lt;/dt&gt;&lt;dd&gt;${number(entry.source_count)} source IDs&lt;/dd&gt;&lt;/div&gt;</code></span>
-<span class="code-line"><i>214</i><code>      &lt;div&gt;&lt;dt&gt;Addresses&lt;/dt&gt;&lt;dd&gt;${number(entry.contract_count)} catalogued&lt;/dd&gt;&lt;/div&gt;</code></span>
-<span class="code-line"><i>215</i><code>      &lt;div&gt;&lt;dt&gt;Address state&lt;/dt&gt;&lt;dd&gt;${escapeHtml((entry.address_state || &quot;unknown&quot;).replaceAll(&quot;_&quot;, &quot; &quot;))}&lt;/dd&gt;&lt;/div&gt;</code></span>
-<span class="code-line"><i>216</i><code>    &lt;/dl&gt;</code></span>
-<span class="code-line"><i>217</i><code>    &lt;div class=&quot;drawer-block&quot;&gt;&lt;h3&gt;Known limitations&lt;/h3&gt;&lt;ul&gt;${limitations || &quot;&lt;li&gt;등록된 제한사항 없음&lt;/li&gt;&quot;}&lt;/ul&gt;&lt;/div&gt;</code></span>
-<span class="code-line"><i>218</i><code>    ${contracts ? `&lt;div class=&quot;drawer-block&quot;&gt;&lt;h3&gt;Catalogued addresses · not re-verified here&lt;/h3&gt;&lt;ul&gt;${contracts}&lt;/ul&gt;&lt;/div&gt;` : &quot;&quot;}</code></span>
-<span class="code-line"><i>219</i><code>    &lt;div class=&quot;drawer-block&quot;&gt;&lt;h3&gt;Primary links&lt;/h3&gt;&lt;div class=&quot;drawer-links&quot;&gt;${links || &quot;&lt;span class=&#x27;status-text&#x27;&gt;직접 링크 미등록&lt;/span&gt;&quot;}&lt;/div&gt;&lt;/div&gt;</code></span>
-<span class="code-line"><i>220</i><code>    &lt;div class=&quot;safety-lock&quot;&gt;research_only=true · strategy_consumption_allowed=false · order_input=false&lt;/div&gt;`;</code></span>
-<span class="code-line"><i>221</i><code>  const drawer = $(&quot;#detail-drawer&quot;);</code></span>
-<span class="code-line"><i>222</i><code>  drawer.classList.add(&quot;is-open&quot;);</code></span>
-<span class="code-line"><i>223</i><code>  drawer.setAttribute(&quot;aria-hidden&quot;, &quot;false&quot;);</code></span>
-<span class="code-line"><i>224</i><code>  document.body.style.overflow = &quot;hidden&quot;;</code></span>
-<span class="code-line"><i>225</i><code>  $(&quot;[data-close-drawer]&quot;, drawer).focus();</code></span>
-<span class="code-line"><i>226</i><code>}</code></span>
-<span class="code-line"><i>227</i><code></code></span>
-<span class="code-line"><i>228</i><code>function closeDrawer() {</code></span>
+<span class="code-line"><i>137</i><code>function renderGlossary(items) {</code></span>
+<span class="code-line"><i>138</i><code>  return (items || []).map((item) =&gt; `&lt;div&gt;&lt;dt&gt;${escapeHtml(item.term)}&lt;/dt&gt;&lt;dd&gt;${escapeHtml(item.meaning)}&lt;/dd&gt;&lt;/div&gt;`).join(&quot;&quot;) || &quot;&quot;;</code></span>
+<span class="code-line"><i>139</i><code>}</code></span>
+<span class="code-line"><i>140</i><code></code></span>
+<span class="code-line"><i>141</i><code>function renderOverview(catalog) {</code></span>
+<span class="code-line"><i>142</i><code>  const { project, metrics, safety, network_observation: observation } = catalog;</code></span>
+<span class="code-line"><i>143</i><code>  $(&quot;#project-decision&quot;).textContent = project.decision_headline || project.decision;</code></span>
+<span class="code-line"><i>144</i><code>  const pointsHost = $(&quot;#decision-points&quot;);</code></span>
+<span class="code-line"><i>145</i><code>  if (pointsHost) pointsHost.innerHTML = (project.decision_points || []).map((point) =&gt; `&lt;li&gt;${escapeHtml(point)}&lt;/li&gt;`).join(&quot;&quot;);</code></span>
+<span class="code-line"><i>146</i><code>  const glossaryHost = $(&quot;#glossary-tabs&quot;);</code></span>
+<span class="code-line"><i>147</i><code>  if (glossaryHost) glossaryHost.innerHTML = renderGlossary(catalog.glossary || []);</code></span>
+<span class="code-line"><i>148</i><code>  $(&quot;#product-hypothesis&quot;).textContent = project.product_hypothesis;</code></span>
+<span class="code-line"><i>149</i><code>  $(&quot;#fee-policy&quot;).textContent = project.fee_policy;</code></span>
+<span class="code-line"><i>150</i><code>  $(&quot;#safety-notice&quot;).textContent = safety.notice;</code></span>
+<span class="code-line"><i>151</i><code></code></span>
+<span class="code-line"><i>152</i><code>  $(&quot;#metric-sources&quot;).textContent = number(metrics.registered_sources);</code></span>
+<span class="code-line"><i>153</i><code>  $(&quot;#metric-research&quot;).innerHTML = `&lt;i class=&quot;signal-up&quot;&gt;&lt;/i&gt; ${number(metrics.research_sessions)} strict research sessions`;</code></span>
+<span class="code-line"><i>154</i><code>  $(&quot;#metric-verified&quot;).textContent = number(metrics.verified_claims);</code></span>
+<span class="code-line"><i>155</i><code>  $(&quot;#metric-open-claims&quot;).textContent = `${number(metrics.unresolved_claims)} unresolved · ${number(metrics.refuted_claims)} refuted`;</code></span>
+<span class="code-line"><i>156</i><code>  $(&quot;#metric-ecosystem&quot;).textContent = number(metrics.ecosystem_entries);</code></span>
+<span class="code-line"><i>157</i><code>  $(&quot;#metric-official&quot;).textContent = `${metrics.official_entries} official · ${metrics.third_party_entries} third-party`;</code></span>
+<span class="code-line"><i>158</i><code>  $(&quot;#metric-build&quot;).textContent = `${metrics.implemented_tracks}/${metrics.total_tracks}`;</code></span>
+<span class="code-line"><i>159</i><code>  $(&quot;#catalog-revision&quot;).textContent = `Catalog ${catalog.catalog_revision} · ${catalog.as_of}`;</code></span>
+<span class="code-line"><i>160</i><code></code></span>
+<span class="code-line"><i>161</i><code>  if (observation) {</code></span>
+<span class="code-line"><i>162</i><code>    $(&quot;#network-chain-id&quot;).textContent = number(observation.chain_id);</code></span>
+<span class="code-line"><i>163</i><code>    $(&quot;#network-block&quot;).textContent = `#${number(observation.block_number)}`;</code></span>
+<span class="code-line"><i>164</i><code>    $(&quot;#network-client&quot;).textContent = String(observation.client_version || &quot;—&quot;).split(&quot;/&quot;)[0];</code></span>
+<span class="code-line"><i>165</i><code>    $(&quot;#network-client&quot;).title = observation.client_version || &quot;&quot;;</code></span>
+<span class="code-line"><i>166</i><code>    $(&quot;#network-observed&quot;).textContent = shortDate(observation.observed_at);</code></span>
+<span class="code-line"><i>167</i><code>  }</code></span>
+<span class="code-line"><i>168</i><code>  $(&quot;#official-check-date&quot;).textContent = `Checked ${catalog.as_of}`;</code></span>
+<span class="code-line"><i>169</i><code>}</code></span>
+<span class="code-line"><i>170</i><code></code></span>
+<span class="code-line"><i>171</i><code>function filteredEcosystem() {</code></span>
+<span class="code-line"><i>172</i><code>  const entries = state.catalog?.ecosystem || [];</code></span>
+<span class="code-line"><i>173</i><code>  const query = state.query.trim().toLocaleLowerCase(&quot;ko-KR&quot;);</code></span>
+<span class="code-line"><i>174</i><code>  return entries.filter((entry) =&gt; {</code></span>
+<span class="code-line"><i>175</i><code>    const inFilter = state.filter === &quot;all&quot; || entry.officiality === state.filter;</code></span>
+<span class="code-line"><i>176</i><code>    const haystack = [entry.name, entry.category, entry.status, entry.summary, entry.code_state, ...(entry.limitations || [])]</code></span>
+<span class="code-line"><i>177</i><code>      .join(&quot; &quot;)</code></span>
+<span class="code-line"><i>178</i><code>      .toLocaleLowerCase(&quot;ko-KR&quot;);</code></span>
+<span class="code-line"><i>179</i><code>    return inFilter &amp;&amp; (!query || haystack.includes(query));</code></span>
+<span class="code-line"><i>180</i><code>  });</code></span>
+<span class="code-line"><i>181</i><code>}</code></span>
+<span class="code-line"><i>182</i><code></code></span>
+<span class="code-line"><i>183</i><code>function renderEcosystem() {</code></span>
+<span class="code-line"><i>184</i><code>  const entries = filteredEcosystem();</code></span>
+<span class="code-line"><i>185</i><code>  const body = $(&quot;#ecosystem-rows&quot;);</code></span>
+<span class="code-line"><i>186</i><code>  const empty = $(&quot;#ecosystem-empty&quot;);</code></span>
+<span class="code-line"><i>187</i><code>  body.hidden = entries.length === 0;</code></span>
+<span class="code-line"><i>188</i><code>  empty.hidden = entries.length &gt; 0;</code></span>
+<span class="code-line"><i>189</i><code>  $(&quot;#ecosystem-count&quot;).textContent = `${number(entries.length)} / ${number(state.catalog.ecosystem.length)} records`;</code></span>
+<span class="code-line"><i>190</i><code>  body.innerHTML = entries.map((entry) =&gt; {</code></span>
+<span class="code-line"><i>191</i><code>    const [codeClass, codeLabel] = codePresentation(entry.code_state);</code></span>
+<span class="code-line"><i>192</i><code>    return `</code></span>
+<span class="code-line"><i>193</i><code>      &lt;tr tabindex=&quot;0&quot; data-entry-id=&quot;${escapeHtml(entry.id)}&quot; aria-label=&quot;${escapeHtml(entry.name)} 상세 보기&quot;&gt;</code></span>
+<span class="code-line"><i>194</i><code>        &lt;td class=&quot;project-cell&quot;&gt;&lt;strong&gt;${escapeHtml(entry.name)}&lt;/strong&gt;&lt;small&gt;${escapeHtml(entry.summary)}&lt;/small&gt;&lt;/td&gt;</code></span>
+<span class="code-line"><i>195</i><code>        &lt;td&gt;&lt;span class=&quot;table-tag ${officialityClass[entry.officiality] || &quot;&quot;}&quot;&gt;&lt;i&gt;&lt;/i&gt;${escapeHtml(officialityLabel[entry.officiality] || entry.officiality)}&lt;/span&gt;&lt;/td&gt;</code></span>
+<span class="code-line"><i>196</i><code>        &lt;td&gt;&lt;span class=&quot;status-text&quot;&gt;${escapeHtml(entry.status.replaceAll(&quot;_&quot;, &quot; &quot;))}&lt;/span&gt;&lt;/td&gt;</code></span>
+<span class="code-line"><i>197</i><code>        &lt;td&gt;&lt;span class=&quot;code-tag ${codeClass}&quot;&gt;&lt;i&gt;&lt;/i&gt;${escapeHtml(codeLabel)}&lt;/span&gt;&lt;/td&gt;</code></span>
+<span class="code-line"><i>198</i><code>        &lt;td&gt;&lt;span class=&quot;evidence-count&quot;&gt;${number(entry.source_count)}&lt;/span&gt;&lt;/td&gt;</code></span>
+<span class="code-line"><i>199</i><code>        &lt;td&gt;&lt;span class=&quot;row-arrow&quot; aria-hidden=&quot;true&quot;&gt;↗&lt;/span&gt;&lt;/td&gt;</code></span>
+<span class="code-line"><i>200</i><code>      &lt;/tr&gt;`;</code></span>
+<span class="code-line"><i>201</i><code>  }).join(&quot;&quot;);</code></span>
+<span class="code-line"><i>202</i><code>}</code></span>
+<span class="code-line"><i>203</i><code></code></span>
+<span class="code-line"><i>204</i><code>function openDrawer(entryId, trigger) {</code></span>
+<span class="code-line"><i>205</i><code>  const entry = state.catalog.ecosystem.find((item) =&gt; item.id === entryId);</code></span>
+<span class="code-line"><i>206</i><code>  if (!entry) return;</code></span>
+<span class="code-line"><i>207</i><code>  state.lastFocused = trigger || document.activeElement;</code></span>
+<span class="code-line"><i>208</i><code>  const [codeClass, codeLabel] = codePresentation(entry.code_state);</code></span>
+<span class="code-line"><i>209</i><code>  const contracts = (entry.contracts || []).map((address) =&gt; `&lt;li&gt;&lt;code class=&quot;contract-address&quot; title=&quot;${escapeHtml(address)}&quot;&gt;${escapeHtml(address)}&lt;/code&gt;&lt;/li&gt;`).join(&quot;&quot;);</code></span>
+<span class="code-line"><i>210</i><code>  const limitations = (entry.limitations || []).map((item) =&gt; `&lt;li&gt;${escapeHtml(item)}&lt;/li&gt;`).join(&quot;&quot;);</code></span>
+<span class="code-line"><i>211</i><code>  const links = (entry.links || []).map((link) =&gt; `&lt;a href=&quot;${safeHref(link.url)}&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;${escapeHtml(link.label)} ↗&lt;/a&gt;`).join(&quot;&quot;);</code></span>
+<span class="code-line"><i>212</i><code>  $(&quot;#drawer-content&quot;).innerHTML = `</code></span>
+<span class="code-line"><i>213</i><code>    &lt;div class=&quot;drawer-title-row&quot;&gt;</code></span>
+<span class="code-line"><i>214</i><code>      &lt;div&gt;&lt;h2 id=&quot;drawer-title&quot;&gt;${escapeHtml(entry.name)}&lt;/h2&gt;&lt;p class=&quot;drawer-subtitle&quot;&gt;${escapeHtml(entry.summary)}&lt;/p&gt;&lt;/div&gt;</code></span>
+<span class="code-line"><i>215</i><code>    &lt;/div&gt;</code></span>
+<span class="code-line"><i>216</i><code>    &lt;dl class=&quot;drawer-meta&quot;&gt;</code></span>
+<span class="code-line"><i>217</i><code>      &lt;div&gt;&lt;dt&gt;Officiality&lt;/dt&gt;&lt;dd&gt;${escapeHtml(officialityLabel[entry.officiality] || entry.officiality)}&lt;/dd&gt;&lt;/div&gt;</code></span>
+<span class="code-line"><i>218</i><code>      &lt;div&gt;&lt;dt&gt;Category&lt;/dt&gt;&lt;dd&gt;${escapeHtml(entry.category)}&lt;/dd&gt;&lt;/div&gt;</code></span>
+<span class="code-line"><i>219</i><code>      &lt;div&gt;&lt;dt&gt;Status&lt;/dt&gt;&lt;dd&gt;${escapeHtml(entry.status.replaceAll(&quot;_&quot;, &quot; &quot;))}&lt;/dd&gt;&lt;/div&gt;</code></span>
+<span class="code-line"><i>220</i><code>      &lt;div&gt;&lt;dt&gt;Code&lt;/dt&gt;&lt;dd&gt;&lt;span class=&quot;code-tag ${codeClass}&quot;&gt;&lt;i&gt;&lt;/i&gt;${escapeHtml(codeLabel)}&lt;/span&gt;&lt;/dd&gt;&lt;/div&gt;</code></span>
+<span class="code-line"><i>221</i><code>      &lt;div&gt;&lt;dt&gt;Evidence&lt;/dt&gt;&lt;dd&gt;${number(entry.source_count)} source IDs&lt;/dd&gt;&lt;/div&gt;</code></span>
+<span class="code-line"><i>222</i><code>      &lt;div&gt;&lt;dt&gt;Addresses&lt;/dt&gt;&lt;dd&gt;${number(entry.contract_count)} catalogued&lt;/dd&gt;&lt;/div&gt;</code></span>
+<span class="code-line"><i>223</i><code>      &lt;div&gt;&lt;dt&gt;Address state&lt;/dt&gt;&lt;dd&gt;${escapeHtml((entry.address_state || &quot;unknown&quot;).replaceAll(&quot;_&quot;, &quot; &quot;))}&lt;/dd&gt;&lt;/div&gt;</code></span>
+<span class="code-line"><i>224</i><code>    &lt;/dl&gt;</code></span>
+<span class="code-line"><i>225</i><code>    &lt;div class=&quot;drawer-block&quot;&gt;&lt;h3&gt;Known limitations&lt;/h3&gt;&lt;ul&gt;${limitations || &quot;&lt;li&gt;등록된 제한사항 없음&lt;/li&gt;&quot;}&lt;/ul&gt;&lt;/div&gt;</code></span>
+<span class="code-line"><i>226</i><code>    ${contracts ? `&lt;div class=&quot;drawer-block&quot;&gt;&lt;h3&gt;Catalogued addresses · not re-verified here&lt;/h3&gt;&lt;ul&gt;${contracts}&lt;/ul&gt;&lt;/div&gt;` : &quot;&quot;}</code></span>
+<span class="code-line"><i>227</i><code>    &lt;div class=&quot;drawer-block&quot;&gt;&lt;h3&gt;Primary links&lt;/h3&gt;&lt;div class=&quot;drawer-links&quot;&gt;${links || &quot;&lt;span class=&#x27;status-text&#x27;&gt;직접 링크 미등록&lt;/span&gt;&quot;}&lt;/div&gt;&lt;/div&gt;</code></span>
+<span class="code-line"><i>228</i><code>    &lt;div class=&quot;safety-lock&quot;&gt;research_only=true · strategy_consumption_allowed=false · order_input=false&lt;/div&gt;`;</code></span>
 <span class="code-line"><i>229</i><code>  const drawer = $(&quot;#detail-drawer&quot;);</code></span>
-<span class="code-line"><i>230</i><code>  if (!drawer.classList.contains(&quot;is-open&quot;)) return;</code></span>
-<span class="code-line"><i>231</i><code>  drawer.classList.remove(&quot;is-open&quot;);</code></span>
-<span class="code-line"><i>232</i><code>  drawer.setAttribute(&quot;aria-hidden&quot;, &quot;true&quot;);</code></span>
-<span class="code-line"><i>233</i><code>  document.body.style.overflow = &quot;&quot;;</code></span>
-<span class="code-line"><i>234</i><code>  state.lastFocused?.focus?.();</code></span>
-<span class="code-line"><i>235</i><code>}</code></span>
-<span class="code-line"><i>236</i><code></code></span>
-<span class="code-line"><i>237</i><code>function renderOfficialResources(catalog) {</code></span>
-<span class="code-line"><i>238</i><code>  $(&quot;#official-resource-grid&quot;).innerHTML = catalog.official_resources.map((resource) =&gt; {</code></span>
-<span class="code-line"><i>239</i><code>    const [, codeLabel] = codePresentation(resource.code_state);</code></span>
-<span class="code-line"><i>240</i><code>    return `</code></span>
-<span class="code-line"><i>241</i><code>      &lt;article class=&quot;resource-card&quot;&gt;</code></span>
-<span class="code-line"><i>242</i><code>        &lt;div class=&quot;resource-card-top&quot;&gt;&lt;span&gt;&lt;i&gt;&lt;/i&gt;${escapeHtml(resource.type.replaceAll(&quot;_&quot;, &quot; &quot;))}&lt;/span&gt;&lt;span&gt;${escapeHtml(codeLabel)}&lt;/span&gt;&lt;/div&gt;</code></span>
-<span class="code-line"><i>243</i><code>        &lt;h4&gt;${escapeHtml(resource.name)}&lt;/h4&gt;</code></span>
-<span class="code-line"><i>244</i><code>        &lt;p&gt;${escapeHtml(resource.note)}&lt;/p&gt;</code></span>
-<span class="code-line"><i>245</i><code>        &lt;a class=&quot;evidence-link&quot; href=&quot;${safeHref(resource.url)}&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;외부 원문 근거 ↗&lt;/a&gt;</code></span>
-<span class="code-line"><i>246</i><code>      &lt;/article&gt;`;</code></span>
-<span class="code-line"><i>247</i><code>  }).join(&quot;&quot;);</code></span>
-<span class="code-line"><i>248</i><code>}</code></span>
-<span class="code-line"><i>249</i><code></code></span>
-<span class="code-line"><i>250</i><code>function renderInfrastructure(catalog) {</code></span>
-<span class="code-line"><i>251</i><code>  const infra = catalog.infrastructure || {};</code></span>
-<span class="code-line"><i>252</i><code>  const pool = catalog.pool_blueprint || {};</code></span>
-<span class="code-line"><i>253</i><code>  $(&quot;#infra-headline&quot;).textContent = infra.headline || &quot;노드 근거가 등록되지 않았습니다.&quot;;</code></span>
-<span class="code-line"><i>254</i><code>  $(&quot;#node-profile&quot;).innerHTML = (infra.profile || []).map((item) =&gt; `</code></span>
-<span class="code-line"><i>255</i><code>    &lt;div data-state=&quot;${escapeHtml(item.state)}&quot;&gt;</code></span>
-<span class="code-line"><i>256</i><code>      &lt;dt&gt;${escapeHtml(item.label)}&lt;/dt&gt;</code></span>
-<span class="code-line"><i>257</i><code>      &lt;dd&gt;${escapeHtml(item.value)}&lt;/dd&gt;</code></span>
-<span class="code-line"><i>258</i><code>    &lt;/div&gt;`).join(&quot;&quot;) || &quot;&lt;div&gt;&lt;dt&gt;Status&lt;/dt&gt;&lt;dd&gt;Not catalogued&lt;/dd&gt;&lt;/div&gt;&quot;;</code></span>
-<span class="code-line"><i>259</i><code>  $(&quot;#infra-links&quot;).innerHTML = (infra.links || []).map((link) =&gt; `</code></span>
-<span class="code-line"><i>260</i><code>    &lt;a href=&quot;${safeHref(link.url)}&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;${escapeHtml(link.label)} ↗&lt;/a&gt;`).join(&quot;&quot;);</code></span>
-<span class="code-line"><i>261</i><code>  $(&quot;#node-topology&quot;).innerHTML = (infra.topology || []).map((item, index) =&gt; `</code></span>
-<span class="code-line"><i>262</i><code>    &lt;li data-state=&quot;${escapeHtml(item.state)}&quot;&gt;</code></span>
-<span class="code-line"><i>263</i><code>      &lt;span&gt;${String(index + 1).padStart(2, &quot;0&quot;)}&lt;/span&gt;</code></span>
-<span class="code-line"><i>264</i><code>      &lt;div&gt;&lt;strong&gt;${escapeHtml(item.label)}&lt;/strong&gt;&lt;small&gt;${escapeHtml(item.detail)}&lt;/small&gt;&lt;/div&gt;</code></span>
-<span class="code-line"><i>265</i><code>    &lt;/li&gt;`).join(&quot;&quot;) || &quot;&lt;li&gt;Topology not catalogued&lt;/li&gt;&quot;;</code></span>
-<span class="code-line"><i>266</i><code></code></span>
-<span class="code-line"><i>267</i><code>  $(&quot;#pool-headline&quot;).textContent = pool.headline || &quot;풀 구조가 등록되지 않았습니다.&quot;;</code></span>
-<span class="code-line"><i>268</i><code>  $(&quot;#pool-notice&quot;).textContent = pool.observed_notice || &quot;테스트넷 관찰은 공식성 또는 안전성을 증명하지 않습니다.&quot;;</code></span>
-<span class="code-line"><i>269</i><code>  $(&quot;#pool-components&quot;).innerHTML = (pool.components || []).map((item) =&gt; `</code></span>
-<span class="code-line"><i>270</i><code>    &lt;tr&gt;</code></span>
-<span class="code-line"><i>271</i><code>      &lt;td class=&quot;project-cell&quot;&gt;&lt;strong&gt;${escapeHtml(item.name)}&lt;/strong&gt;&lt;/td&gt;</code></span>
-<span class="code-line"><i>272</i><code>      &lt;td&gt;&lt;span class=&quot;table-tag layer-tag&quot;&gt;${escapeHtml(item.layer)}&lt;/span&gt;&lt;/td&gt;</code></span>
-<span class="code-line"><i>273</i><code>      &lt;td&gt;${escapeHtml(item.role)}&lt;/td&gt;</code></span>
-<span class="code-line"><i>274</i><code>      &lt;td&gt;&lt;span class=&quot;status-text&quot;&gt;${escapeHtml(item.external_evidence.replaceAll(&quot;_&quot;, &quot; &quot;))}&lt;/span&gt;&lt;/td&gt;</code></span>
-<span class="code-line"><i>275</i><code>      &lt;td&gt;&lt;span class=&quot;code-tag ${item.local_state === &quot;not_implemented&quot; || item.local_state === &quot;blocked&quot; ? &quot;code-rejected&quot; : &quot;code-docs&quot;}&quot;&gt;&lt;i&gt;&lt;/i&gt;${escapeHtml(item.local_state.replaceAll(&quot;_&quot;, &quot; &quot;))}&lt;/span&gt;&lt;/td&gt;</code></span>
-<span class="code-line"><i>276</i><code>      &lt;td&gt;${escapeHtml(item.gate)}&lt;/td&gt;</code></span>
-<span class="code-line"><i>277</i><code>    &lt;/tr&gt;`).join(&quot;&quot;) || &#x27;&lt;tr class=&quot;loading-row&quot;&gt;&lt;td colspan=&quot;6&quot;&gt;등록된 구성요소가 없습니다.&lt;/td&gt;&lt;/tr&gt;&#x27;;</code></span>
-<span class="code-line"><i>278</i><code>  $(&quot;#pool-flows&quot;).innerHTML = (pool.flows || []).map((flow) =&gt; `</code></span>
-<span class="code-line"><i>279</i><code>    &lt;article class=&quot;flow-card&quot;&gt;</code></span>
-<span class="code-line"><i>280</i><code>      &lt;h4&gt;${escapeHtml(flow.name)}&lt;/h4&gt;</code></span>
-<span class="code-line"><i>281</i><code>      &lt;ol&gt;${flow.steps.map((step) =&gt; `&lt;li&gt;&lt;span&gt;${escapeHtml(step)}&lt;/span&gt;&lt;/li&gt;`).join(&quot;&quot;)}&lt;/ol&gt;</code></span>
-<span class="code-line"><i>282</i><code>    &lt;/article&gt;`).join(&quot;&quot;);</code></span>
-<span class="code-line"><i>283</i><code>}</code></span>
-<span class="code-line"><i>284</i><code></code></span>
-<span class="code-line"><i>285</i><code>function calculatorValues() {</code></span>
-<span class="code-line"><i>286</i><code>  const volume = Math.max(0, Number($(&quot;#calc-volume&quot;).value) || 0);</code></span>
-<span class="code-line"><i>287</i><code>  const feeBps = Math.max(0, Number($(&quot;#calc-fee&quot;).value) || 0);</code></span>
-<span class="code-line"><i>288</i><code>  const share = Math.min(100, Math.max(0, Number($(&quot;#calc-share&quot;).value) || 0));</code></span>
-<span class="code-line"><i>289</i><code>  const cost = Math.max(0, Number($(&quot;#calc-cost&quot;).value) || 0);</code></span>
-<span class="code-line"><i>290</i><code>  const gross = volume * feeBps / 10000;</code></span>
-<span class="code-line"><i>291</i><code>  const recipient = gross * share / 100;</code></span>
-<span class="code-line"><i>292</i><code>  const net = recipient - cost;</code></span>
-<span class="code-line"><i>293</i><code>  const takeRate = feeBps / 10000 * share / 100;</code></span>
-<span class="code-line"><i>294</i><code>  const breakEven = takeRate &gt; 0 ? cost / takeRate : 0;</code></span>
-<span class="code-line"><i>295</i><code>  return { gross, recipient, net, breakEven };</code></span>
-<span class="code-line"><i>296</i><code>}</code></span>
-<span class="code-line"><i>297</i><code></code></span>
-<span class="code-line"><i>298</i><code>function renderCalculator() {</code></span>
-<span class="code-line"><i>299</i><code>  const { gross, recipient, net, breakEven } = calculatorValues();</code></span>
-<span class="code-line"><i>300</i><code>  $(&quot;#calc-gross&quot;).textContent = money(gross);</code></span>
-<span class="code-line"><i>301</i><code>  $(&quot;#calc-recipient&quot;).textContent = money(recipient);</code></span>
-<span class="code-line"><i>302</i><code>  $(&quot;#calc-net&quot;).textContent = money(net);</code></span>
-<span class="code-line"><i>303</i><code>  $(&quot;#calc-net&quot;).classList.toggle(&quot;is-negative&quot;, net &lt; 0);</code></span>
-<span class="code-line"><i>304</i><code>  $(&quot;#calc-break-even&quot;).textContent = breakEven ? money(breakEven) : &quot;—&quot;;</code></span>
-<span class="code-line"><i>305</i><code>}</code></span>
-<span class="code-line"><i>306</i><code></code></span>
-<span class="code-line"><i>307</i><code>function applyPreset(preset) {</code></span>
-<span class="code-line"><i>308</i><code>  $(&quot;#calc-fee&quot;).value = preset.fee_bps;</code></span>
-<span class="code-line"><i>309</i><code>  $(&quot;#calc-share&quot;).value = preset.recipient_share_percent;</code></span>
-<span class="code-line"><i>310</i><code>  $(&quot;#calc-recipient-label&quot;).textContent = `${preset.recipient} 총액`;</code></span>
-<span class="code-line"><i>311</i><code>  renderCalculator();</code></span>
-<span class="code-line"><i>312</i><code>  showToast(`${preset.label} 공개 산식을 적용했습니다. 권고값은 아닙니다.`);</code></span>
-<span class="code-line"><i>313</i><code>}</code></span>
-<span class="code-line"><i>314</i><code></code></span>
-<span class="code-line"><i>315</i><code>function renderRevenue(catalog) {</code></span>
-<span class="code-line"><i>316</i><code>  const revenue = catalog.revenue;</code></span>
-<span class="code-line"><i>317</i><code>  if (!revenue) {</code></span>
-<span class="code-line"><i>318</i><code>    $(&quot;#revenue-thesis&quot;).innerHTML = &#x27;&lt;div&gt;&lt;p class=&quot;mini-label&quot;&gt;RESEARCH IN PROGRESS&lt;/p&gt;&lt;h3&gt;검증된 수익모델 데이터가 아직 생성되지 않았습니다.&lt;/h3&gt;&lt;p&gt;완료 전 숫자를 제품 판단에 사용하지 않습니다.&lt;/p&gt;&lt;/div&gt;&#x27;;</code></span>
-<span class="code-line"><i>319</i><code>    $(&quot;#revenue-models&quot;).innerHTML = &#x27;&lt;div class=&quot;empty-state&quot;&gt;&lt;strong&gt;수익모델 리서치 진행 중&lt;/strong&gt;&lt;/div&gt;&#x27;;</code></span>
-<span class="code-line"><i>320</i><code>    $(&quot;#case-studies&quot;).innerHTML = &#x27;&lt;tr class=&quot;loading-row&quot;&gt;&lt;td colspan=&quot;6&quot;&gt;검증 완료 후 사례가 표시됩니다.&lt;/td&gt;&lt;/tr&gt;&#x27;;</code></span>
-<span class="code-line"><i>321</i><code>    renderCalculator();</code></span>
-<span class="code-line"><i>322</i><code>    return;</code></span>
-<span class="code-line"><i>323</i><code>  }</code></span>
-<span class="code-line"><i>324</i><code></code></span>
-<span class="code-line"><i>325</i><code>  const thesis = revenue.recommendation || {};</code></span>
-<span class="code-line"><i>326</i><code>  $(&quot;#revenue-thesis&quot;).innerHTML = `</code></span>
-<span class="code-line"><i>327</i><code>    &lt;div&gt;&lt;p class=&quot;mini-label&quot;&gt;RECOMMENDATION · ${escapeHtml(thesis.confidence || &quot;&quot;)}&lt;/p&gt;&lt;h3&gt;${escapeHtml(thesis.headline)}&lt;/h3&gt;&lt;p&gt;${escapeHtml(thesis.summary)}&lt;/p&gt;&lt;/div&gt;</code></span>
-<span class="code-line"><i>328</i><code>    &lt;div class=&quot;thesis-tags&quot;&gt;${(thesis.tags || []).map((tag) =&gt; `&lt;span&gt;${escapeHtml(tag)}&lt;/span&gt;`).join(&quot;&quot;)}&lt;/div&gt;`;</code></span>
-<span class="code-line"><i>329</i><code></code></span>
-<span class="code-line"><i>330</i><code>  $(&quot;#revenue-models&quot;).innerHTML = (revenue.models || []).map((model) =&gt; `</code></span>
-<span class="code-line"><i>331</i><code>    &lt;article class=&quot;revenue-card&quot; data-priority=&quot;${escapeHtml(model.priority)}&quot;&gt;</code></span>
-<span class="code-line"><i>332</i><code>      &lt;div class=&quot;revenue-card-head&quot;&gt;&lt;span&gt;${escapeHtml(model.category)}&lt;/span&gt;&lt;span class=&quot;priority-tag&quot;&gt;${escapeHtml(model.priority)}&lt;/span&gt;&lt;/div&gt;</code></span>
-<span class="code-line"><i>333</i><code>      &lt;h3&gt;${escapeHtml(model.name)}&lt;/h3&gt;</code></span>
-<span class="code-line"><i>334</i><code>      &lt;p&gt;${escapeHtml(model.verdict)}&lt;/p&gt;</code></span>
-<span class="code-line"><i>335</i><code>      &lt;dl&gt;</code></span>
-<span class="code-line"><i>336</i><code>        &lt;div&gt;&lt;dt&gt;Payer&lt;/dt&gt;&lt;dd&gt;${escapeHtml(model.payer)}&lt;/dd&gt;&lt;/div&gt;</code></span>
-<span class="code-line"><i>337</i><code>        &lt;div&gt;&lt;dt&gt;Operator earns&lt;/dt&gt;&lt;dd&gt;${escapeHtml(model.operator_revenue)}&lt;/dd&gt;&lt;/div&gt;</code></span>
-<span class="code-line"><i>338</i><code>        &lt;div&gt;&lt;dt&gt;Formula&lt;/dt&gt;&lt;dd&gt;&lt;code&gt;${escapeHtml(model.formula)}&lt;/code&gt;&lt;/dd&gt;&lt;/div&gt;</code></span>
-<span class="code-line"><i>339</i><code>        &lt;div&gt;&lt;dt&gt;Hard gate&lt;/dt&gt;&lt;dd&gt;${escapeHtml(model.hard_gate)}&lt;/dd&gt;&lt;/div&gt;</code></span>
-<span class="code-line"><i>340</i><code>      &lt;/dl&gt;</code></span>
-<span class="code-line"><i>341</i><code>      &lt;div class=&quot;risk-line&quot;&gt;&lt;strong&gt;RISK&lt;/strong&gt;&lt;span&gt;${escapeHtml(model.primary_risk)}&lt;/span&gt;&lt;/div&gt;</code></span>
-<span class="code-line"><i>342</i><code>      &lt;div class=&quot;benchmark-links&quot;&gt;${(model.links || []).map((link) =&gt; `&lt;a href=&quot;${safeHref(link.url)}&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;${escapeHtml(link.label)} ↗&lt;/a&gt;`).join(&quot;&quot;)}&lt;/div&gt;</code></span>
-<span class="code-line"><i>343</i><code>    &lt;/article&gt;`).join(&quot;&quot;);</code></span>
-<span class="code-line"><i>344</i><code></code></span>
-<span class="code-line"><i>345</i><code>  $(&quot;#calculator-presets&quot;).innerHTML = (revenue.calculator_presets || []).map((preset, index) =&gt; `</code></span>
-<span class="code-line"><i>346</i><code>    &lt;button type=&quot;button&quot; data-preset-index=&quot;${index}&quot; title=&quot;${escapeHtml(preset.basis)}&quot;&gt;${escapeHtml(preset.label)}&lt;/button&gt;`).join(&quot;&quot;);</code></span>
-<span class="code-line"><i>347</i><code>  $$(&#x27;[data-preset-index]&#x27;, $(&quot;#calculator-presets&quot;)).forEach((button) =&gt; button.addEventListener(&quot;click&quot;, () =&gt; {</code></span>
-<span class="code-line"><i>348</i><code>    applyPreset(revenue.calculator_presets[Number(button.dataset.presetIndex)]);</code></span>
-<span class="code-line"><i>349</i><code>  }));</code></span>
-<span class="code-line"><i>350</i><code></code></span>
-<span class="code-line"><i>351</i><code>  $(&quot;#revenue-sequence&quot;).innerHTML = (revenue.sequence || []).map((item) =&gt; `</code></span>
-<span class="code-line"><i>352</i><code>    &lt;li data-status=&quot;${escapeHtml(item.status)}&quot;&gt;&lt;span&gt;${escapeHtml(item.phase)}&lt;/span&gt;&lt;div&gt;&lt;strong&gt;${escapeHtml(item.name)}&lt;/strong&gt;&lt;p&gt;${escapeHtml(item.action)}&lt;/p&gt;&lt;small&gt;GATE · ${escapeHtml(item.gate)}&lt;/small&gt;&lt;/div&gt;&lt;/li&gt;`).join(&quot;&quot;);</code></span>
-<span class="code-line"><i>353</i><code></code></span>
-<span class="code-line"><i>354</i><code>  $(&quot;#case-studies&quot;).innerHTML = (revenue.case_studies || []).map((item) =&gt; `</code></span>
-<span class="code-line"><i>355</i><code>    &lt;tr&gt;</code></span>
-<span class="code-line"><i>356</i><code>      &lt;td class=&quot;project-cell&quot;&gt;&lt;strong&gt;${escapeHtml(item.name)}&lt;/strong&gt;&lt;small&gt;${escapeHtml(item.network)} · ${escapeHtml(item.period)}&lt;/small&gt;&lt;/td&gt;</code></span>
-<span class="code-line"><i>357</i><code>      &lt;td&gt;${escapeHtml(item.launch_mechanism)}&lt;/td&gt;</code></span>
-<span class="code-line"><i>358</i><code>      &lt;td&gt;${escapeHtml(item.follow_on)}&lt;/td&gt;</code></span>
-<span class="code-line"><i>359</i><code>      &lt;td&gt;${escapeHtml(item.revenue_capture)}&lt;/td&gt;</code></span>
-<span class="code-line"><i>360</i><code>      &lt;td&gt;&lt;strong class=&quot;case-evidence&quot;&gt;${escapeHtml(item.evidence)}&lt;/strong&gt;&lt;small class=&quot;case-boundary&quot;&gt;${escapeHtml(item.boundary)}&lt;/small&gt;&lt;/td&gt;</code></span>
-<span class="code-line"><i>361</i><code>      &lt;td&gt;&lt;div class=&quot;case-links&quot;&gt;${(item.links || []).map((link) =&gt; `&lt;a href=&quot;${safeHref(link.url)}&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot; aria-label=&quot;${escapeHtml(item.name)} ${escapeHtml(link.label)}&quot;&gt;↗&lt;/a&gt;`).join(&quot;&quot;)}&lt;/div&gt;&lt;/td&gt;</code></span>
-<span class="code-line"><i>362</i><code>    &lt;/tr&gt;`).join(&quot;&quot;);</code></span>
-<span class="code-line"><i>363</i><code>  $(&quot;#revenue-as-of&quot;).textContent = `As of ${revenue.as_of}`;</code></span>
-<span class="code-line"><i>364</i><code>  renderCalculator();</code></span>
-<span class="code-line"><i>365</i><code>}</code></span>
-<span class="code-line"><i>366</i><code></code></span>
-<span class="code-line"><i>367</i><code>function renderBuildTracks(catalog) {</code></span>
-<span class="code-line"><i>368</i><code>  const icon = { implemented: &quot;✓&quot;, spec_only: &quot;◇&quot;, blocked: &quot;×&quot; };</code></span>
-<span class="code-line"><i>369</i><code>  $(&quot;#build-board&quot;).innerHTML = catalog.build_tracks.map((track) =&gt; {</code></span>
-<span class="code-line"><i>370</i><code>    const files = track.files.map((file) =&gt; `</code></span>
-<span class="code-line"><i>371</i><code>      &lt;a class=&quot;file-link ${file.exists ? &quot;&quot; : &quot;is-missing&quot;}&quot; href=&quot;${safeHref(file.url)}&quot; title=&quot;${escapeHtml(file.path)}&quot;&gt;</code></span>
-<span class="code-line"><i>372</i><code>        &lt;span&gt;${escapeHtml(file.label)}&lt;/span&gt;&lt;b aria-hidden=&quot;true&quot;&gt;↗&lt;/b&gt;</code></span>
-<span class="code-line"><i>373</i><code>      &lt;/a&gt;`).join(&quot;&quot;);</code></span>
-<span class="code-line"><i>374</i><code>    return `</code></span>
-<span class="code-line"><i>375</i><code>      &lt;article class=&quot;build-track&quot; data-status=&quot;${escapeHtml(track.status)}&quot;&gt;</code></span>
-<span class="code-line"><i>376</i><code>        &lt;div class=&quot;track-name&quot;&gt;</code></span>
-<span class="code-line"><i>377</i><code>          &lt;span class=&quot;track-state ${escapeHtml(track.status)}&quot;&gt;${icon[track.status] || &quot;?&quot;}&lt;/span&gt;</code></span>
-<span class="code-line"><i>378</i><code>          &lt;div&gt;&lt;strong&gt;${escapeHtml(track.name)}&lt;/strong&gt;&lt;small&gt;${escapeHtml(statusLabel[track.status] || track.status)}&lt;/small&gt;&lt;/div&gt;</code></span>
-<span class="code-line"><i>379</i><code>        &lt;/div&gt;</code></span>
-<span class="code-line"><i>380</i><code>        &lt;div class=&quot;track-summary&quot;&gt;&lt;p&gt;${escapeHtml(track.summary)}&lt;/p&gt;&lt;div class=&quot;progress-line&quot;&gt;&lt;i style=&quot;width:${Math.max(0, Math.min(100, track.progress))}%&quot;&gt;&lt;/i&gt;&lt;/div&gt;&lt;/div&gt;</code></span>
-<span class="code-line"><i>381</i><code>        &lt;div class=&quot;track-links&quot;&gt;${files}&lt;/div&gt;</code></span>
-<span class="code-line"><i>382</i><code>        &lt;div class=&quot;track-next&quot;&gt;&lt;strong&gt;NEXT&lt;/strong&gt;&lt;span&gt;${escapeHtml(track.next)}&lt;/span&gt;&lt;/div&gt;</code></span>
-<span class="code-line"><i>383</i><code>      &lt;/article&gt;`;</code></span>
-<span class="code-line"><i>384</i><code>  }).join(&quot;&quot;);</code></span>
-<span class="code-line"><i>385</i><code>}</code></span>
-<span class="code-line"><i>386</i><code></code></span>
-<span class="code-line"><i>387</i><code>function renderResearch(catalog) {</code></span>
-<span class="code-line"><i>388</i><code>  $(&quot;#research-grid&quot;).innerHTML = catalog.research.map((session) =&gt; {</code></span>
-<span class="code-line"><i>389</i><code>    const links = session.links.filter((link) =&gt; link.exists).map((link) =&gt; `&lt;a href=&quot;${safeHref(link.url)}&quot;&gt;${escapeHtml(link.label)} →&lt;/a&gt;`).join(&quot;&quot;);</code></span>
-<span class="code-line"><i>390</i><code>    const verdict = session.verdict || &quot;NOT_EVALUATED&quot;;</code></span>
-<span class="code-line"><i>391</i><code>    const verdictState = verdict === &quot;PASS&quot; ? &quot;pass&quot; : verdict === &quot;FAIL&quot; ? &quot;fail&quot; : &quot;pending&quot;;</code></span>
-<span class="code-line"><i>392</i><code>    return `</code></span>
-<span class="code-line"><i>393</i><code>      &lt;article class=&quot;research-card&quot;&gt;</code></span>
-<span class="code-line"><i>394</i><code>        &lt;div class=&quot;research-card-head&quot;&gt;&lt;span class=&quot;research-date&quot;&gt;${escapeHtml(dateOnly(session.updated_at))}&lt;/span&gt;&lt;span class=&quot;verdict&quot; data-verdict=&quot;${verdictState}&quot;&gt;${escapeHtml(verdict)}&lt;/span&gt;&lt;/div&gt;</code></span>
-<span class="code-line"><i>395</i><code>        &lt;h3&gt;${escapeHtml(session.title)}&lt;/h3&gt;</code></span>
-<span class="code-line"><i>396</i><code>        &lt;p&gt;${escapeHtml(session.description)}&lt;/p&gt;</code></span>
-<span class="code-line"><i>397</i><code>        &lt;div class=&quot;research-stats&quot;&gt;</code></span>
-<span class="code-line"><i>398</i><code>          &lt;div&gt;&lt;strong&gt;${number(session.source_count)}&lt;/strong&gt;&lt;span&gt;Sources&lt;/span&gt;&lt;/div&gt;</code></span>
-<span class="code-line"><i>399</i><code>          &lt;div&gt;&lt;strong&gt;${number(session.verified_count)}&lt;/strong&gt;&lt;span&gt;Verified&lt;/span&gt;&lt;/div&gt;</code></span>
-<span class="code-line"><i>400</i><code>          &lt;div&gt;&lt;strong&gt;${number(session.unresolved_count)}&lt;/strong&gt;&lt;span&gt;Open&lt;/span&gt;&lt;/div&gt;</code></span>
-<span class="code-line"><i>401</i><code>        &lt;/div&gt;</code></span>
-<span class="code-line"><i>402</i><code>        &lt;div class=&quot;research-links&quot;&gt;${links}&lt;/div&gt;</code></span>
-<span class="code-line"><i>403</i><code>      &lt;/article&gt;`;</code></span>
-<span class="code-line"><i>404</i><code>  }).join(&quot;&quot;);</code></span>
-<span class="code-line"><i>405</i><code></code></span>
-<span class="code-line"><i>406</i><code>  $(&quot;#document-groups&quot;).innerHTML = catalog.document_groups.map((group) =&gt; {</code></span>
-<span class="code-line"><i>407</i><code>    const files = group.files.map((file) =&gt; `&lt;li&gt;&lt;a href=&quot;${safeHref(file.url)}&quot;&gt;&lt;span&gt;${escapeHtml(file.label)}&lt;/span&gt;&lt;span aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;`).join(&quot;&quot;);</code></span>
-<span class="code-line"><i>408</i><code>    return `&lt;article class=&quot;document-group&quot;&gt;&lt;h4&gt;${escapeHtml(group.name)}&lt;/h4&gt;&lt;p&gt;${escapeHtml(group.description)}&lt;/p&gt;&lt;ul&gt;${files}&lt;/ul&gt;&lt;/article&gt;`;</code></span>
-<span class="code-line"><i>409</i><code>  }).join(&quot;&quot;);</code></span>
-<span class="code-line"><i>410</i><code>}</code></span>
-<span class="code-line"><i>411</i><code></code></span>
-<span class="code-line"><i>412</i><code>function renderGates(catalog) {</code></span>
-<span class="code-line"><i>413</i><code>  $(&quot;#gate-score&quot;).textContent = `0 / ${catalog.mainnet_gates.length}`;</code></span>
-<span class="code-line"><i>414</i><code>  $(&quot;#gate-list&quot;).innerHTML = catalog.mainnet_gates.map((gate) =&gt; `</code></span>
-<span class="code-line"><i>415</i><code>    &lt;li class=&quot;gate-item&quot;&gt;&lt;div&gt;&lt;strong&gt;${escapeHtml(gate.text)}&lt;/strong&gt;&lt;span&gt;${escapeHtml(gate.state)} · evidence required&lt;/span&gt;&lt;/div&gt;&lt;/li&gt;`).join(&quot;&quot;);</code></span>
-<span class="code-line"><i>416</i><code>}</code></span>
-<span class="code-line"><i>417</i><code></code></span>
-<span class="code-line"><i>418</i><code>function renderError(error) {</code></span>
-<span class="code-line"><i>419</i><code>  console.error(error);</code></span>
-<span class="code-line"><i>420</i><code>  $(&quot;#ecosystem-rows&quot;).innerHTML = &#x27;&lt;tr class=&quot;loading-row&quot;&gt;&lt;td colspan=&quot;6&quot;&gt;데이터를 불러오지 못했습니다. GitHub Pages 경로 또는 catalog.json을 확인해 주세요.&lt;/td&gt;&lt;/tr&gt;&#x27;;</code></span>
-<span class="code-line"><i>421</i><code>  $(&quot;#build-board&quot;).innerHTML = &#x27;&lt;div class=&quot;empty-state&quot;&gt;&lt;strong&gt;개발 보드를 불러오지 못했습니다.&lt;/strong&gt;&lt;/div&gt;&#x27;;</code></span>
-<span class="code-line"><i>422</i><code>  $(&quot;#research-grid&quot;).innerHTML = &#x27;&lt;div class=&quot;empty-state&quot;&gt;&lt;strong&gt;리서치 인덱스를 불러오지 못했습니다.&lt;/strong&gt;&lt;/div&gt;&#x27;;</code></span>
-<span class="code-line"><i>423</i><code>}</code></span>
-<span class="code-line"><i>424</i><code></code></span>
-<span class="code-line"><i>425</i><code>function bindInteractions() {</code></span>
-<span class="code-line"><i>426</i><code>  $(&quot;#copy-probe&quot;).addEventListener(&quot;click&quot;, () =&gt; copyText(PROBE_COMMAND, &quot;읽기 전용 프로브 명령을 복사했습니다.&quot;));</code></span>
-<span class="code-line"><i>427</i><code>  $(&quot;#copy-checks&quot;).addEventListener(&quot;click&quot;, () =&gt; copyText(CHECK_COMMANDS, &quot;전체 검증 명령을 복사했습니다.&quot;));</code></span>
-<span class="code-line"><i>428</i><code>  [&quot;#calc-volume&quot;, &quot;#calc-fee&quot;, &quot;#calc-share&quot;, &quot;#calc-cost&quot;].forEach((selector) =&gt; {</code></span>
-<span class="code-line"><i>429</i><code>    $(selector).addEventListener(&quot;input&quot;, renderCalculator);</code></span>
-<span class="code-line"><i>430</i><code>  });</code></span>
-<span class="code-line"><i>431</i><code></code></span>
-<span class="code-line"><i>432</i><code>  $(&quot;#ecosystem-search&quot;).addEventListener(&quot;input&quot;, (event) =&gt; {</code></span>
-<span class="code-line"><i>433</i><code>    state.query = event.target.value;</code></span>
-<span class="code-line"><i>434</i><code>    renderEcosystem();</code></span>
-<span class="code-line"><i>435</i><code>  });</code></span>
-<span class="code-line"><i>436</i><code></code></span>
-<span class="code-line"><i>437</i><code>  $$(&quot;.filter-chip&quot;).forEach((button) =&gt; button.addEventListener(&quot;click&quot;, () =&gt; {</code></span>
-<span class="code-line"><i>438</i><code>    state.filter = button.dataset.filter;</code></span>
-<span class="code-line"><i>439</i><code>    $$(&quot;.filter-chip&quot;).forEach((item) =&gt; item.classList.toggle(&quot;is-active&quot;, item === button));</code></span>
-<span class="code-line"><i>440</i><code>    renderEcosystem();</code></span>
-<span class="code-line"><i>441</i><code>  }));</code></span>
-<span class="code-line"><i>442</i><code></code></span>
-<span class="code-line"><i>443</i><code>  $(&quot;#ecosystem-rows&quot;).addEventListener(&quot;click&quot;, (event) =&gt; {</code></span>
-<span class="code-line"><i>444</i><code>    const row = event.target.closest(&quot;[data-entry-id]&quot;);</code></span>
-<span class="code-line"><i>445</i><code>    if (row) openDrawer(row.dataset.entryId, row);</code></span>
-<span class="code-line"><i>446</i><code>  });</code></span>
-<span class="code-line"><i>447</i><code>  $(&quot;#ecosystem-rows&quot;).addEventListener(&quot;keydown&quot;, (event) =&gt; {</code></span>
-<span class="code-line"><i>448</i><code>    const row = event.target.closest(&quot;[data-entry-id]&quot;);</code></span>
-<span class="code-line"><i>449</i><code>    if (row &amp;&amp; [&quot;Enter&quot;, &quot; &quot;].includes(event.key)) {</code></span>
-<span class="code-line"><i>450</i><code>      event.preventDefault();</code></span>
-<span class="code-line"><i>451</i><code>      openDrawer(row.dataset.entryId, row);</code></span>
-<span class="code-line"><i>452</i><code>    }</code></span>
-<span class="code-line"><i>453</i><code>  });</code></span>
-<span class="code-line"><i>454</i><code></code></span>
-<span class="code-line"><i>455</i><code>  $$(&#x27;[data-close-drawer]&#x27;).forEach((button) =&gt; button.addEventListener(&quot;click&quot;, closeDrawer));</code></span>
-<span class="code-line"><i>456</i><code>  document.addEventListener(&quot;keydown&quot;, (event) =&gt; {</code></span>
-<span class="code-line"><i>457</i><code>    if (event.key === &quot;Escape&quot;) closeDrawer();</code></span>
-<span class="code-line"><i>458</i><code>    if ((event.metaKey || event.ctrlKey) &amp;&amp; event.key.toLowerCase() === &quot;k&quot;) {</code></span>
-<span class="code-line"><i>459</i><code>      event.preventDefault();</code></span>
-<span class="code-line"><i>460</i><code>      if (document.body.dataset.page !== &quot;research&quot;) {</code></span>
-<span class="code-line"><i>461</i><code>        window.location.assign(&quot;./research.html#ecosystem&quot;);</code></span>
-<span class="code-line"><i>462</i><code>        return;</code></span>
-<span class="code-line"><i>463</i><code>      }</code></span>
-<span class="code-line"><i>464</i><code>      $(&quot;#ecosystem-search&quot;).focus();</code></span>
-<span class="code-line"><i>465</i><code>      $(&quot;#ecosystem&quot;).scrollIntoView({ behavior: &quot;smooth&quot;, block: &quot;start&quot; });</code></span>
-<span class="code-line"><i>466</i><code>    }</code></span>
-<span class="code-line"><i>467</i><code>  });</code></span>
-<span class="code-line"><i>468</i><code></code></span>
-<span class="code-line"><i>469</i><code>  const navLinks = $$(&quot;.nav-link&quot;);</code></span>
-<span class="code-line"><i>470</i><code>  const currentPage = document.body.dataset.page || &quot;overview&quot;;</code></span>
-<span class="code-line"><i>471</i><code>  navLinks.forEach((link) =&gt; {</code></span>
-<span class="code-line"><i>472</i><code>    const active = link.dataset.pageLink === currentPage;</code></span>
-<span class="code-line"><i>473</i><code>    link.classList.toggle(&quot;is-active&quot;, active);</code></span>
-<span class="code-line"><i>474</i><code>    if (active) link.setAttribute(&quot;aria-current&quot;, &quot;page&quot;);</code></span>
-<span class="code-line"><i>475</i><code>    else link.removeAttribute(&quot;aria-current&quot;);</code></span>
-<span class="code-line"><i>476</i><code>  });</code></span>
-<span class="code-line"><i>477</i><code>}</code></span>
-<span class="code-line"><i>478</i><code></code></span>
-<span class="code-line"><i>479</i><code>function renderLaunch(catalog) {</code></span>
-<span class="code-line"><i>480</i><code>  const lp = catalog.launch_prep;</code></span>
-<span class="code-line"><i>481</i><code>  const headline = $(&quot;#launch-headline&quot;);</code></span>
-<span class="code-line"><i>482</i><code>  if (!headline) return;</code></span>
-<span class="code-line"><i>483</i><code>  if (!lp) {</code></span>
-<span class="code-line"><i>484</i><code>    headline.textContent = &quot;론칭 준비 데이터가 아직 생성되지 않았습니다.&quot;;</code></span>
-<span class="code-line"><i>485</i><code>    return;</code></span>
-<span class="code-line"><i>486</i><code>  }</code></span>
-<span class="code-line"><i>487</i><code>  headline.textContent = lp.headline || &quot;&quot;;</code></span>
-<span class="code-line"><i>488</i><code>  $(&quot;#launch-asof&quot;).textContent = `as of ${lp.as_of || &quot;—&quot;}`;</code></span>
-<span class="code-line"><i>489</i><code>  const decision = lp.decision || {};</code></span>
-<span class="code-line"><i>490</i><code>  const decisionCard = (block, cls) =&gt; block ? `&lt;article class=&quot;decision-card ${cls}&quot;&gt;&lt;h4&gt;${escapeHtml(block.title)}&lt;/h4&gt;&lt;ol&gt;${(block.points || []).map((point) =&gt; `&lt;li&gt;${escapeHtml(point)}&lt;/li&gt;`).join(&quot;&quot;)}&lt;/ol&gt;&lt;/article&gt;` : &quot;&quot;;</code></span>
-<span class="code-line"><i>491</i><code>  $(&quot;#launch-decision&quot;).innerHTML = [decisionCard(decision.market_read, &quot;is-market&quot;), decisionCard(decision.do_now, &quot;is-now&quot;), decisionCard(decision.product, &quot;is-product&quot;)].join(&quot;&quot;);</code></span>
-<span class="code-line"><i>492</i><code>  const rh = lp.robinhood || {};</code></span>
-<span class="code-line"><i>493</i><code>  $(&quot;#launch-chain-id&quot;).textContent = `chain ${rh.chain_id ?? &quot;—&quot;}`;</code></span>
-<span class="code-line"><i>494</i><code>  $(&quot;#launch-stats&quot;).innerHTML = (rh.stats || []).map((item) =&gt; `</code></span>
-<span class="code-line"><i>495</i><code>    &lt;div&gt;&lt;dt&gt;${escapeHtml(item.label)}&lt;/dt&gt;&lt;dd&gt;${escapeHtml(item.value)}&lt;/dd&gt;&lt;/div&gt;`).join(&quot;&quot;) || &quot;&lt;div&gt;&lt;dt&gt;Status&lt;/dt&gt;&lt;dd&gt;Not catalogued&lt;/dd&gt;&lt;/div&gt;&quot;;</code></span>
-<span class="code-line"><i>496</i><code>  $(&quot;#launch-stat-links&quot;).innerHTML = (rh.stats || []).filter((item) =&gt; item.source).map((item) =&gt; `</code></span>
-<span class="code-line"><i>497</i><code>    &lt;a href=&quot;${safeHref(item.source)}&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;${escapeHtml(item.label)} ↗&lt;/a&gt;`).join(&quot;&quot;);</code></span>
-<span class="code-line"><i>498</i><code>  $(&quot;#launch-funding&quot;).innerHTML = (rh.funding_paths || []).map((item, index) =&gt; `</code></span>
-<span class="code-line"><i>499</i><code>    &lt;li data-state=&quot;${escapeHtml(item.state || &quot;unverified&quot;)}&quot;&gt;</code></span>
-<span class="code-line"><i>500</i><code>      &lt;span&gt;${String(index + 1).padStart(2, &quot;0&quot;)}&lt;/span&gt;</code></span>
-<span class="code-line"><i>501</i><code>      &lt;div&gt;&lt;strong&gt;${escapeHtml(item.label)}&lt;/strong&gt;&lt;small&gt;${escapeHtml(item.detail)}&lt;/small&gt;&lt;/div&gt;</code></span>
-<span class="code-line"><i>502</i><code>    &lt;/li&gt;`).join(&quot;&quot;) || &quot;&lt;li&gt;자금 경로가 등록되지 않았습니다.&lt;/li&gt;&quot;;</code></span>
-<span class="code-line"><i>503</i><code>  $(&quot;#launch-tools&quot;).innerHTML = (rh.bots_and_tools || []).map((tool) =&gt; `</code></span>
-<span class="code-line"><i>504</i><code>    &lt;a href=&quot;${safeHref(tool.url)}&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot; title=&quot;${escapeHtml(tool.detail || &quot;&quot;)}&quot;&gt;${escapeHtml(tool.name)} ↗&lt;/a&gt;`).join(&quot;&quot;);</code></span>
-<span class="code-line"><i>505</i><code></code></span>
-<span class="code-line"><i>506</i><code>  const cell = (value) =&gt; `&lt;td&gt;${escapeHtml(value || &quot;—&quot;)}&lt;/td&gt;`;</code></span>
-<span class="code-line"><i>507</i><code>  const FACTS = [[&quot;공급 배분&quot;, &quot;supply_split&quot;], [&quot;가상 유동성&quot;, &quot;virtual_liquidity&quot;], [&quot;졸업 조건&quot;, &quot;graduation&quot;], [&quot;졸업 시 LP&quot;, &quot;lp_at_graduation&quot;], [&quot;LP 잠금&quot;, &quot;lp_lock&quot;], [&quot;풀&quot;, &quot;pool&quot;], [&quot;수수료&quot;, &quot;fees&quot;], [&quot;생성비&quot;, &quot;creation_fee&quot;], [&quot;dev-buy&quot;, &quot;dev_buy&quot;], [&quot;스나이퍼 방어&quot;, &quot;anti_snipe&quot;], [&quot;활동&quot;, &quot;activity&quot;]];</code></span>
-<span class="code-line"><i>508</i><code>  $(&quot;#launch-pads&quot;).innerHTML = (lp.launchpads || []).map((pad, index) =&gt; `</code></span>
-<span class="code-line"><i>509</i><code>    &lt;article class=&quot;pad-card${index === 0 ? &quot; is-first&quot; : &quot;&quot;}&quot;&gt;</code></span>
-<span class="code-line"><i>510</i><code>      &lt;div class=&quot;pad-card-head&quot;&gt;</code></span>
-<span class="code-line"><i>511</i><code>        &lt;div&gt;&lt;h4&gt;${escapeHtml(pad.name)}&lt;/h4&gt;&lt;small&gt;${escapeHtml(pad.chain || &quot;&quot;)}&lt;/small&gt;&lt;/div&gt;</code></span>
-<span class="code-line"><i>512</i><code>        &lt;span class=&quot;pad-verdict&quot;&gt;${escapeHtml(pad.verdict || &quot;—&quot;)}&lt;/span&gt;</code></span>
-<span class="code-line"><i>513</i><code>      &lt;/div&gt;</code></span>
-<span class="code-line"><i>514</i><code>      &lt;dl class=&quot;pad-facts&quot;&gt;${FACTS.map(([label, key]) =&gt; pad[key] ? `&lt;div&gt;&lt;dt&gt;${escapeHtml(label)}&lt;/dt&gt;&lt;dd&gt;${escapeHtml(pad[key])}&lt;/dd&gt;&lt;/div&gt;` : &quot;&quot;).join(&quot;&quot;)}&lt;/dl&gt;</code></span>
-<span class="code-line"><i>515</i><code>      ${pad.url ? `&lt;a class=&quot;text-link&quot; href=&quot;${safeHref(pad.url)}&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;문서 ↗&lt;/a&gt;` : &quot;&quot;}</code></span>
-<span class="code-line"><i>516</i><code>    &lt;/article&gt;`).join(&quot;&quot;) || &#x27;&lt;div class=&quot;empty-state&quot;&gt;&lt;strong&gt;등록된 런치패드가 없습니다.&lt;/strong&gt;&lt;/div&gt;&#x27;;</code></span>
-<span class="code-line"><i>517</i><code></code></span>
-<span class="code-line"><i>518</i><code>  $(&quot;#launch-norms&quot;).innerHTML = (lp.norms || []).map((row) =&gt; `</code></span>
-<span class="code-line"><i>519</i><code>    &lt;tr&gt;</code></span>
-<span class="code-line"><i>520</i><code>      &lt;td class=&quot;project-cell&quot;&gt;&lt;strong&gt;${escapeHtml(row.platform)}&lt;/strong&gt;${row.url ? `&lt;br&gt;&lt;a class=&quot;text-link&quot; href=&quot;${safeHref(row.url)}&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;source ↗&lt;/a&gt;` : &quot;&quot;}&lt;/td&gt;</code></span>
-<span class="code-line"><i>521</i><code>      ${cell(row.chain)}${cell(row.curve_percent)}${cell(row.lp_percent)}${cell(row.team_percent)}${cell(row.graduation)}${cell(row.lp_quote_at_graduation)}${cell(row.creator_fee)}</code></span>
-<span class="code-line"><i>522</i><code>    &lt;/tr&gt;`).join(&quot;&quot;) || &#x27;&lt;tr class=&quot;loading-row&quot;&gt;&lt;td colspan=&quot;8&quot;&gt;등록된 규범이 없습니다.&lt;/td&gt;&lt;/tr&gt;&#x27;;</code></span>
-<span class="code-line"><i>523</i><code></code></span>
-<span class="code-line"><i>524</i><code>  const rc = lp.recommended_composition || {};</code></span>
-<span class="code-line"><i>525</i><code>  const notes = (rc.notes || []).map((note) =&gt; escapeHtml(note)).join(&quot; · &quot;);</code></span>
-<span class="code-line"><i>526</i><code>  $(&quot;#launch-composition&quot;).innerHTML = rc.supply_split</code></span>
-<span class="code-line"><i>527</i><code>    ? `공급 배분 &lt;strong&gt;${escapeHtml(rc.supply_split)}&lt;/strong&gt; · dev-buy &lt;strong&gt;${escapeHtml(rc.dev_buy || &quot;—&quot;)}&lt;/strong&gt; · 수수료 &lt;strong&gt;${escapeHtml(rc.fee_option || &quot;—&quot;)}&lt;/strong&gt; · LP &lt;strong&gt;${escapeHtml(rc.lp_lock || &quot;—&quot;)}&lt;/strong&gt;${notes ? `&lt;br&gt;&lt;small&gt;${notes}&lt;/small&gt;` : &quot;&quot;}`</code></span>
-<span class="code-line"><i>528</i><code>    : &quot;권장 구성이 아직 없습니다.&quot;;</code></span>
-<span class="code-line"><i>529</i><code></code></span>
-<span class="code-line"><i>530</i><code>  $(&quot;#launch-playbook&quot;).innerHTML = (lp.playbook || []).map((phase) =&gt; `</code></span>
-<span class="code-line"><i>531</i><code>    &lt;article class=&quot;flow-card&quot;&gt;</code></span>
-<span class="code-line"><i>532</i><code>      &lt;h4&gt;${escapeHtml(phase.phase)}&lt;/h4&gt;</code></span>
-<span class="code-line"><i>533</i><code>      &lt;ol&gt;${(phase.steps || []).map((step) =&gt; `&lt;li&gt;&lt;span&gt;${escapeHtml(step)}&lt;/span&gt;&lt;/li&gt;`).join(&quot;&quot;)}&lt;/ol&gt;</code></span>
-<span class="code-line"><i>534</i><code>    &lt;/article&gt;`).join(&quot;&quot;);</code></span>
+<span class="code-line"><i>230</i><code>  drawer.classList.add(&quot;is-open&quot;);</code></span>
+<span class="code-line"><i>231</i><code>  drawer.setAttribute(&quot;aria-hidden&quot;, &quot;false&quot;);</code></span>
+<span class="code-line"><i>232</i><code>  document.body.style.overflow = &quot;hidden&quot;;</code></span>
+<span class="code-line"><i>233</i><code>  $(&quot;[data-close-drawer]&quot;, drawer).focus();</code></span>
+<span class="code-line"><i>234</i><code>}</code></span>
+<span class="code-line"><i>235</i><code></code></span>
+<span class="code-line"><i>236</i><code>function closeDrawer() {</code></span>
+<span class="code-line"><i>237</i><code>  const drawer = $(&quot;#detail-drawer&quot;);</code></span>
+<span class="code-line"><i>238</i><code>  if (!drawer.classList.contains(&quot;is-open&quot;)) return;</code></span>
+<span class="code-line"><i>239</i><code>  drawer.classList.remove(&quot;is-open&quot;);</code></span>
+<span class="code-line"><i>240</i><code>  drawer.setAttribute(&quot;aria-hidden&quot;, &quot;true&quot;);</code></span>
+<span class="code-line"><i>241</i><code>  document.body.style.overflow = &quot;&quot;;</code></span>
+<span class="code-line"><i>242</i><code>  state.lastFocused?.focus?.();</code></span>
+<span class="code-line"><i>243</i><code>}</code></span>
+<span class="code-line"><i>244</i><code></code></span>
+<span class="code-line"><i>245</i><code>function renderOfficialResources(catalog) {</code></span>
+<span class="code-line"><i>246</i><code>  $(&quot;#official-resource-grid&quot;).innerHTML = catalog.official_resources.map((resource) =&gt; {</code></span>
+<span class="code-line"><i>247</i><code>    const [, codeLabel] = codePresentation(resource.code_state);</code></span>
+<span class="code-line"><i>248</i><code>    return `</code></span>
+<span class="code-line"><i>249</i><code>      &lt;article class=&quot;resource-card&quot;&gt;</code></span>
+<span class="code-line"><i>250</i><code>        &lt;div class=&quot;resource-card-top&quot;&gt;&lt;span&gt;&lt;i&gt;&lt;/i&gt;${escapeHtml(resource.type.replaceAll(&quot;_&quot;, &quot; &quot;))}&lt;/span&gt;&lt;span&gt;${escapeHtml(codeLabel)}&lt;/span&gt;&lt;/div&gt;</code></span>
+<span class="code-line"><i>251</i><code>        &lt;h4&gt;${escapeHtml(resource.name)}&lt;/h4&gt;</code></span>
+<span class="code-line"><i>252</i><code>        &lt;p&gt;${escapeHtml(resource.note)}&lt;/p&gt;</code></span>
+<span class="code-line"><i>253</i><code>        &lt;a class=&quot;evidence-link&quot; href=&quot;${safeHref(resource.url)}&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;외부 원문 근거 ↗&lt;/a&gt;</code></span>
+<span class="code-line"><i>254</i><code>      &lt;/article&gt;`;</code></span>
+<span class="code-line"><i>255</i><code>  }).join(&quot;&quot;);</code></span>
+<span class="code-line"><i>256</i><code>}</code></span>
+<span class="code-line"><i>257</i><code></code></span>
+<span class="code-line"><i>258</i><code>function renderInfrastructure(catalog) {</code></span>
+<span class="code-line"><i>259</i><code>  const infra = catalog.infrastructure || {};</code></span>
+<span class="code-line"><i>260</i><code>  const pool = catalog.pool_blueprint || {};</code></span>
+<span class="code-line"><i>261</i><code>  $(&quot;#infra-headline&quot;).textContent = infra.headline || &quot;노드 근거가 등록되지 않았습니다.&quot;;</code></span>
+<span class="code-line"><i>262</i><code>  $(&quot;#node-profile&quot;).innerHTML = (infra.profile || []).map((item) =&gt; `</code></span>
+<span class="code-line"><i>263</i><code>    &lt;div data-state=&quot;${escapeHtml(item.state)}&quot;&gt;</code></span>
+<span class="code-line"><i>264</i><code>      &lt;dt&gt;${escapeHtml(item.label)}&lt;/dt&gt;</code></span>
+<span class="code-line"><i>265</i><code>      &lt;dd&gt;${escapeHtml(item.value)}&lt;/dd&gt;</code></span>
+<span class="code-line"><i>266</i><code>    &lt;/div&gt;`).join(&quot;&quot;) || &quot;&lt;div&gt;&lt;dt&gt;Status&lt;/dt&gt;&lt;dd&gt;Not catalogued&lt;/dd&gt;&lt;/div&gt;&quot;;</code></span>
+<span class="code-line"><i>267</i><code>  $(&quot;#infra-links&quot;).innerHTML = (infra.links || []).map((link) =&gt; `</code></span>
+<span class="code-line"><i>268</i><code>    &lt;a href=&quot;${safeHref(link.url)}&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;${escapeHtml(link.label)} ↗&lt;/a&gt;`).join(&quot;&quot;);</code></span>
+<span class="code-line"><i>269</i><code>  $(&quot;#node-topology&quot;).innerHTML = (infra.topology || []).map((item, index) =&gt; `</code></span>
+<span class="code-line"><i>270</i><code>    &lt;li data-state=&quot;${escapeHtml(item.state)}&quot;&gt;</code></span>
+<span class="code-line"><i>271</i><code>      &lt;span&gt;${String(index + 1).padStart(2, &quot;0&quot;)}&lt;/span&gt;</code></span>
+<span class="code-line"><i>272</i><code>      &lt;div&gt;&lt;strong&gt;${escapeHtml(item.label)}&lt;/strong&gt;&lt;small&gt;${escapeHtml(item.detail)}&lt;/small&gt;&lt;/div&gt;</code></span>
+<span class="code-line"><i>273</i><code>    &lt;/li&gt;`).join(&quot;&quot;) || &quot;&lt;li&gt;Topology not catalogued&lt;/li&gt;&quot;;</code></span>
+<span class="code-line"><i>274</i><code></code></span>
+<span class="code-line"><i>275</i><code>  $(&quot;#pool-headline&quot;).textContent = pool.headline || &quot;풀 구조가 등록되지 않았습니다.&quot;;</code></span>
+<span class="code-line"><i>276</i><code>  $(&quot;#pool-notice&quot;).textContent = pool.observed_notice || &quot;테스트넷 관찰은 공식성 또는 안전성을 증명하지 않습니다.&quot;;</code></span>
+<span class="code-line"><i>277</i><code>  const evidenceLabel = { partial_observation: &quot;일부 관찰됨&quot;, router_only_mock_assets: &quot;라우터만 · 모의 자산&quot;, testnet_conflict: &quot;테스트넷 정보 충돌&quot;, requirements_only: &quot;요구사항만&quot;, blockscout_only: &quot;탐색기 기록만&quot;, unverified_candidates: &quot;미검증 후보&quot;, none: &quot;없음&quot; };</code></span>
+<span class="code-line"><i>278</i><code>  const localLabel = { not_implemented: &quot;미구현&quot;, spec_only: &quot;사양만&quot;, blocked: &quot;차단&quot;, implemented: &quot;구현됨&quot; };</code></span>
+<span class="code-line"><i>279</i><code>  const layerLabel = { core: &quot;핵심&quot;, periphery: &quot;주변&quot;, asset: &quot;자산&quot;, trust: &quot;신뢰&quot;, data: &quot;데이터&quot;, operations: &quot;운영&quot;, assurance: &quot;검증&quot; };</code></span>
+<span class="code-line"><i>280</i><code>  $(&quot;#pool-components&quot;).innerHTML = (pool.components || []).map((item) =&gt; `</code></span>
+<span class="code-line"><i>281</i><code>    &lt;article class=&quot;pool-card&quot; data-state=&quot;${escapeHtml(item.local_state)}&quot;&gt;</code></span>
+<span class="code-line"><i>282</i><code>      &lt;div class=&quot;pool-card-head&quot;&gt;&lt;strong&gt;${escapeHtml(item.name)}&lt;/strong&gt;&lt;span class=&quot;table-tag layer-tag&quot;&gt;${escapeHtml(layerLabel[item.layer] || item.layer)}&lt;/span&gt;&lt;/div&gt;</code></span>
+<span class="code-line"><i>283</i><code>      &lt;dl&gt;</code></span>
+<span class="code-line"><i>284</i><code>        &lt;div&gt;&lt;dt&gt;역할&lt;/dt&gt;&lt;dd&gt;${escapeHtml(item.role)}&lt;/dd&gt;&lt;/div&gt;</code></span>
+<span class="code-line"><i>285</i><code>        &lt;div&gt;&lt;dt&gt;외부 근거&lt;/dt&gt;&lt;dd&gt;${escapeHtml(evidenceLabel[item.external_evidence] || item.external_evidence.replaceAll(&quot;_&quot;, &quot; &quot;))}&lt;/dd&gt;&lt;/div&gt;</code></span>
+<span class="code-line"><i>286</i><code>        &lt;div&gt;&lt;dt&gt;우리 코드&lt;/dt&gt;&lt;dd&gt;&lt;span class=&quot;code-tag ${item.local_state === &quot;not_implemented&quot; || item.local_state === &quot;blocked&quot; ? &quot;code-rejected&quot; : &quot;code-docs&quot;}&quot;&gt;&lt;i&gt;&lt;/i&gt;${escapeHtml(localLabel[item.local_state] || item.local_state)}&lt;/span&gt;&lt;/dd&gt;&lt;/div&gt;</code></span>
+<span class="code-line"><i>287</i><code>        &lt;div&gt;&lt;dt&gt;다음 게이트&lt;/dt&gt;&lt;dd&gt;${escapeHtml(item.gate)}&lt;/dd&gt;&lt;/div&gt;</code></span>
+<span class="code-line"><i>288</i><code>      &lt;/dl&gt;</code></span>
+<span class="code-line"><i>289</i><code>    &lt;/article&gt;`).join(&quot;&quot;) || &#x27;&lt;div class=&quot;empty-state&quot;&gt;&lt;strong&gt;등록된 구성요소가 없습니다.&lt;/strong&gt;&lt;/div&gt;&#x27;;</code></span>
+<span class="code-line"><i>290</i><code>  $(&quot;#pool-flows&quot;).innerHTML = (pool.flows || []).map((flow) =&gt; `</code></span>
+<span class="code-line"><i>291</i><code>    &lt;article class=&quot;flow-card&quot;&gt;</code></span>
+<span class="code-line"><i>292</i><code>      &lt;h4&gt;${escapeHtml(flow.name)}&lt;/h4&gt;</code></span>
+<span class="code-line"><i>293</i><code>      &lt;ol&gt;${flow.steps.map((step) =&gt; `&lt;li&gt;&lt;span&gt;${escapeHtml(step)}&lt;/span&gt;&lt;/li&gt;`).join(&quot;&quot;)}&lt;/ol&gt;</code></span>
+<span class="code-line"><i>294</i><code>    &lt;/article&gt;`).join(&quot;&quot;);</code></span>
+<span class="code-line"><i>295</i><code>}</code></span>
+<span class="code-line"><i>296</i><code></code></span>
+<span class="code-line"><i>297</i><code>function calculatorValues() {</code></span>
+<span class="code-line"><i>298</i><code>  const volume = Math.max(0, Number($(&quot;#calc-volume&quot;).value) || 0);</code></span>
+<span class="code-line"><i>299</i><code>  const feeBps = Math.max(0, Number($(&quot;#calc-fee&quot;).value) || 0);</code></span>
+<span class="code-line"><i>300</i><code>  const share = Math.min(100, Math.max(0, Number($(&quot;#calc-share&quot;).value) || 0));</code></span>
+<span class="code-line"><i>301</i><code>  const cost = Math.max(0, Number($(&quot;#calc-cost&quot;).value) || 0);</code></span>
+<span class="code-line"><i>302</i><code>  const gross = volume * feeBps / 10000;</code></span>
+<span class="code-line"><i>303</i><code>  const recipient = gross * share / 100;</code></span>
+<span class="code-line"><i>304</i><code>  const net = recipient - cost;</code></span>
+<span class="code-line"><i>305</i><code>  const takeRate = feeBps / 10000 * share / 100;</code></span>
+<span class="code-line"><i>306</i><code>  const breakEven = takeRate &gt; 0 ? cost / takeRate : 0;</code></span>
+<span class="code-line"><i>307</i><code>  return { gross, recipient, net, breakEven };</code></span>
+<span class="code-line"><i>308</i><code>}</code></span>
+<span class="code-line"><i>309</i><code></code></span>
+<span class="code-line"><i>310</i><code>function renderCalculator() {</code></span>
+<span class="code-line"><i>311</i><code>  const { gross, recipient, net, breakEven } = calculatorValues();</code></span>
+<span class="code-line"><i>312</i><code>  $(&quot;#calc-gross&quot;).textContent = money(gross);</code></span>
+<span class="code-line"><i>313</i><code>  $(&quot;#calc-recipient&quot;).textContent = money(recipient);</code></span>
+<span class="code-line"><i>314</i><code>  $(&quot;#calc-net&quot;).textContent = money(net);</code></span>
+<span class="code-line"><i>315</i><code>  $(&quot;#calc-net&quot;).classList.toggle(&quot;is-negative&quot;, net &lt; 0);</code></span>
+<span class="code-line"><i>316</i><code>  $(&quot;#calc-break-even&quot;).textContent = breakEven ? money(breakEven) : &quot;—&quot;;</code></span>
+<span class="code-line"><i>317</i><code>}</code></span>
+<span class="code-line"><i>318</i><code></code></span>
+<span class="code-line"><i>319</i><code>function applyPreset(preset) {</code></span>
+<span class="code-line"><i>320</i><code>  $(&quot;#calc-fee&quot;).value = preset.fee_bps;</code></span>
+<span class="code-line"><i>321</i><code>  $(&quot;#calc-share&quot;).value = preset.recipient_share_percent;</code></span>
+<span class="code-line"><i>322</i><code>  $(&quot;#calc-recipient-label&quot;).textContent = `${preset.recipient} 총액`;</code></span>
+<span class="code-line"><i>323</i><code>  renderCalculator();</code></span>
+<span class="code-line"><i>324</i><code>  showToast(`${preset.label} 공개 산식을 적용했습니다. 권고값은 아닙니다.`);</code></span>
+<span class="code-line"><i>325</i><code>}</code></span>
+<span class="code-line"><i>326</i><code></code></span>
+<span class="code-line"><i>327</i><code>function renderRevenue(catalog) {</code></span>
+<span class="code-line"><i>328</i><code>  const revenue = catalog.revenue;</code></span>
+<span class="code-line"><i>329</i><code>  if (!revenue) {</code></span>
+<span class="code-line"><i>330</i><code>    $(&quot;#revenue-thesis&quot;).innerHTML = &#x27;&lt;div&gt;&lt;p class=&quot;mini-label&quot;&gt;RESEARCH IN PROGRESS&lt;/p&gt;&lt;h3&gt;검증된 수익모델 데이터가 아직 생성되지 않았습니다.&lt;/h3&gt;&lt;p&gt;완료 전 숫자를 제품 판단에 사용하지 않습니다.&lt;/p&gt;&lt;/div&gt;&#x27;;</code></span>
+<span class="code-line"><i>331</i><code>    $(&quot;#revenue-models&quot;).innerHTML = &#x27;&lt;div class=&quot;empty-state&quot;&gt;&lt;strong&gt;수익모델 리서치 진행 중&lt;/strong&gt;&lt;/div&gt;&#x27;;</code></span>
+<span class="code-line"><i>332</i><code>    $(&quot;#case-studies&quot;).innerHTML = &#x27;&lt;div class=&quot;empty-state&quot;&gt;&lt;strong&gt;검증 완료 후 사례가 표시됩니다.&lt;/strong&gt;&lt;/div&gt;&#x27;;</code></span>
+<span class="code-line"><i>333</i><code>    renderCalculator();</code></span>
+<span class="code-line"><i>334</i><code>    return;</code></span>
+<span class="code-line"><i>335</i><code>  }</code></span>
+<span class="code-line"><i>336</i><code></code></span>
+<span class="code-line"><i>337</i><code>  const thesis = revenue.recommendation || {};</code></span>
+<span class="code-line"><i>338</i><code>  const labels = (catalog.revenue_labels || {}).dt || {};</code></span>
+<span class="code-line"><i>339</i><code>  const priorityLabels = (catalog.revenue_labels || {}).priority || {};</code></span>
+<span class="code-line"><i>340</i><code>  $(&quot;#revenue-thesis&quot;).innerHTML = `</code></span>
+<span class="code-line"><i>341</i><code>    &lt;div&gt;&lt;p class=&quot;mini-label&quot;&gt;RECOMMENDATION · ${escapeHtml(thesis.confidence || &quot;&quot;)}&lt;/p&gt;&lt;h3&gt;${escapeHtml(thesis.headline)}&lt;/h3&gt;&lt;p&gt;${escapeHtml(thesis.summary)}&lt;/p&gt;&lt;/div&gt;</code></span>
+<span class="code-line"><i>342</i><code>    &lt;div class=&quot;thesis-tags&quot;&gt;${(thesis.tags || []).map((tag) =&gt; `&lt;span&gt;${escapeHtml(tag)}&lt;/span&gt;`).join(&quot;&quot;)}&lt;/div&gt;`;</code></span>
+<span class="code-line"><i>343</i><code></code></span>
+<span class="code-line"><i>344</i><code>  $(&quot;#revenue-models&quot;).innerHTML = (revenue.models || []).map((model) =&gt; `</code></span>
+<span class="code-line"><i>345</i><code>    &lt;article class=&quot;revenue-card&quot; data-priority=&quot;${escapeHtml(model.priority)}&quot;&gt;</code></span>
+<span class="code-line"><i>346</i><code>      &lt;div class=&quot;revenue-card-head&quot;&gt;&lt;span&gt;${escapeHtml(model.category)}&lt;/span&gt;&lt;span class=&quot;priority-tag&quot;&gt;${escapeHtml(priorityLabels[model.priority] || model.priority)}&lt;/span&gt;&lt;/div&gt;</code></span>
+<span class="code-line"><i>347</i><code>      &lt;h3&gt;${escapeHtml(model.name)}&lt;/h3&gt;</code></span>
+<span class="code-line"><i>348</i><code>      &lt;p&gt;${escapeHtml(model.verdict)}&lt;/p&gt;</code></span>
+<span class="code-line"><i>349</i><code>      &lt;dl&gt;</code></span>
+<span class="code-line"><i>350</i><code>        &lt;div&gt;&lt;dt&gt;${escapeHtml(labels.payer || &quot;누가 내나&quot;)}&lt;/dt&gt;&lt;dd&gt;${escapeHtml(model.payer)}&lt;/dd&gt;&lt;/div&gt;</code></span>
+<span class="code-line"><i>351</i><code>        &lt;div&gt;&lt;dt&gt;${escapeHtml(labels.operator_revenue || &quot;우리 수입&quot;)}&lt;/dt&gt;&lt;dd&gt;${escapeHtml(model.operator_revenue)}&lt;/dd&gt;&lt;/div&gt;</code></span>
+<span class="code-line"><i>352</i><code>        &lt;div&gt;&lt;dt&gt;${escapeHtml(labels.formula || &quot;산식&quot;)}&lt;/dt&gt;&lt;dd&gt;&lt;code&gt;${escapeHtml(model.formula)}&lt;/code&gt;&lt;/dd&gt;&lt;/div&gt;</code></span>
+<span class="code-line"><i>353</i><code>        &lt;div&gt;&lt;dt&gt;${escapeHtml(labels.hard_gate || &quot;필수 조건&quot;)}&lt;/dt&gt;&lt;dd&gt;${escapeHtml(model.hard_gate)}&lt;/dd&gt;&lt;/div&gt;</code></span>
+<span class="code-line"><i>354</i><code>      &lt;/dl&gt;</code></span>
+<span class="code-line"><i>355</i><code>      &lt;div class=&quot;risk-line&quot;&gt;&lt;strong&gt;${escapeHtml(labels.risk || &quot;위험&quot;)}&lt;/strong&gt;&lt;span&gt;${escapeHtml(model.primary_risk)}&lt;/span&gt;&lt;/div&gt;</code></span>
+<span class="code-line"><i>356</i><code>      &lt;div class=&quot;benchmark-links&quot;&gt;${(model.links || []).map((link) =&gt; `&lt;a href=&quot;${safeHref(link.url)}&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;${escapeHtml(link.label)} ↗&lt;/a&gt;`).join(&quot;&quot;)}&lt;/div&gt;</code></span>
+<span class="code-line"><i>357</i><code>    &lt;/article&gt;`).join(&quot;&quot;);</code></span>
+<span class="code-line"><i>358</i><code></code></span>
+<span class="code-line"><i>359</i><code>  $(&quot;#calculator-presets&quot;).innerHTML = (revenue.calculator_presets || []).map((preset, index) =&gt; `</code></span>
+<span class="code-line"><i>360</i><code>    &lt;button type=&quot;button&quot; data-preset-index=&quot;${index}&quot; title=&quot;${escapeHtml(preset.basis)}&quot;&gt;${escapeHtml(preset.label)}&lt;/button&gt;`).join(&quot;&quot;);</code></span>
+<span class="code-line"><i>361</i><code>  $$(&#x27;[data-preset-index]&#x27;, $(&quot;#calculator-presets&quot;)).forEach((button) =&gt; button.addEventListener(&quot;click&quot;, () =&gt; {</code></span>
+<span class="code-line"><i>362</i><code>    applyPreset(revenue.calculator_presets[Number(button.dataset.presetIndex)]);</code></span>
+<span class="code-line"><i>363</i><code>  }));</code></span>
+<span class="code-line"><i>364</i><code></code></span>
+<span class="code-line"><i>365</i><code>  $(&quot;#revenue-sequence&quot;).innerHTML = (revenue.sequence || []).map((item) =&gt; `</code></span>
+<span class="code-line"><i>366</i><code>    &lt;li data-status=&quot;${escapeHtml(item.status)}&quot;&gt;&lt;span&gt;${escapeHtml(item.phase)}&lt;/span&gt;&lt;div&gt;&lt;strong&gt;${escapeHtml(item.name)}&lt;/strong&gt;&lt;p&gt;${escapeHtml(item.action)}&lt;/p&gt;&lt;small&gt;조건 · ${escapeHtml(item.gate)}&lt;/small&gt;&lt;/div&gt;&lt;/li&gt;`).join(&quot;&quot;);</code></span>
+<span class="code-line"><i>367</i><code></code></span>
+<span class="code-line"><i>368</i><code>  $(&quot;#case-studies&quot;).innerHTML = (revenue.case_studies || []).map((item) =&gt; `</code></span>
+<span class="code-line"><i>369</i><code>    &lt;article class=&quot;case-card&quot;&gt;</code></span>
+<span class="code-line"><i>370</i><code>      &lt;div class=&quot;case-card-head&quot;&gt;&lt;strong&gt;${escapeHtml(item.name)}&lt;/strong&gt;&lt;span&gt;${escapeHtml(item.network)} · ${escapeHtml(item.period)}&lt;/span&gt;&lt;/div&gt;</code></span>
+<span class="code-line"><i>371</i><code>      &lt;dl&gt;</code></span>
+<span class="code-line"><i>372</i><code>        &lt;div&gt;&lt;dt&gt;초기 론칭 장치&lt;/dt&gt;&lt;dd&gt;${escapeHtml(item.launch_mechanism)}&lt;/dd&gt;&lt;/div&gt;</code></span>
+<span class="code-line"><i>373</i><code>        &lt;div&gt;&lt;dt&gt;후속 성장 장치&lt;/dt&gt;&lt;dd&gt;${escapeHtml(item.follow_on)}&lt;/dd&gt;&lt;/div&gt;</code></span>
+<span class="code-line"><i>374</i><code>        &lt;div&gt;&lt;dt&gt;수익이 누구에게&lt;/dt&gt;&lt;dd&gt;${escapeHtml(item.revenue_capture)}&lt;/dd&gt;&lt;/div&gt;</code></span>
+<span class="code-line"><i>375</i><code>        &lt;div&gt;&lt;dt&gt;근거&lt;/dt&gt;&lt;dd&gt;${escapeHtml(item.evidence)}&lt;/dd&gt;&lt;/div&gt;</code></span>
+<span class="code-line"><i>376</i><code>        &lt;div&gt;&lt;dt&gt;주의&lt;/dt&gt;&lt;dd class=&quot;case-boundary&quot;&gt;${escapeHtml(item.boundary)}&lt;/dd&gt;&lt;/div&gt;</code></span>
+<span class="code-line"><i>377</i><code>      &lt;/dl&gt;</code></span>
+<span class="code-line"><i>378</i><code>      &lt;div class=&quot;case-links&quot;&gt;${(item.links || []).map((link) =&gt; `&lt;a href=&quot;${safeHref(link.url)}&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;${escapeHtml(link.label)} ↗&lt;/a&gt;`).join(&quot;&quot;)}&lt;/div&gt;</code></span>
+<span class="code-line"><i>379</i><code>    &lt;/article&gt;`).join(&quot;&quot;);</code></span>
+<span class="code-line"><i>380</i><code>  $(&quot;#revenue-as-of&quot;).textContent = `기준일 ${revenue.as_of}`;</code></span>
+<span class="code-line"><i>381</i><code>  renderCalculator();</code></span>
+<span class="code-line"><i>382</i><code>}</code></span>
+<span class="code-line"><i>383</i><code></code></span>
+<span class="code-line"><i>384</i><code>function renderBuildTracks(catalog) {</code></span>
+<span class="code-line"><i>385</i><code>  const icon = { implemented: &quot;✓&quot;, spec_only: &quot;◇&quot;, blocked: &quot;×&quot; };</code></span>
+<span class="code-line"><i>386</i><code>  $(&quot;#build-board&quot;).innerHTML = catalog.build_tracks.map((track) =&gt; {</code></span>
+<span class="code-line"><i>387</i><code>    const files = track.files.map((file) =&gt; `</code></span>
+<span class="code-line"><i>388</i><code>      &lt;a class=&quot;file-link ${file.exists ? &quot;&quot; : &quot;is-missing&quot;}&quot; href=&quot;${safeHref(file.url)}&quot; title=&quot;${escapeHtml(file.path)}&quot;&gt;</code></span>
+<span class="code-line"><i>389</i><code>        &lt;span&gt;${escapeHtml(file.label)}&lt;/span&gt;&lt;b aria-hidden=&quot;true&quot;&gt;↗&lt;/b&gt;</code></span>
+<span class="code-line"><i>390</i><code>      &lt;/a&gt;`).join(&quot;&quot;);</code></span>
+<span class="code-line"><i>391</i><code>    return `</code></span>
+<span class="code-line"><i>392</i><code>      &lt;article class=&quot;build-track&quot; data-status=&quot;${escapeHtml(track.status)}&quot;&gt;</code></span>
+<span class="code-line"><i>393</i><code>        &lt;div class=&quot;track-name&quot;&gt;</code></span>
+<span class="code-line"><i>394</i><code>          &lt;span class=&quot;track-state ${escapeHtml(track.status)}&quot;&gt;${icon[track.status] || &quot;?&quot;}&lt;/span&gt;</code></span>
+<span class="code-line"><i>395</i><code>          &lt;div&gt;&lt;strong&gt;${escapeHtml(track.name)}&lt;/strong&gt;&lt;small&gt;${escapeHtml(statusLabel[track.status] || track.status)}&lt;/small&gt;&lt;/div&gt;</code></span>
+<span class="code-line"><i>396</i><code>        &lt;/div&gt;</code></span>
+<span class="code-line"><i>397</i><code>        &lt;div class=&quot;track-summary&quot;&gt;&lt;p&gt;${escapeHtml(track.summary)}&lt;/p&gt;&lt;div class=&quot;progress-line&quot;&gt;&lt;i style=&quot;width:${Math.max(0, Math.min(100, track.progress))}%&quot;&gt;&lt;/i&gt;&lt;/div&gt;&lt;/div&gt;</code></span>
+<span class="code-line"><i>398</i><code>        &lt;div class=&quot;track-links&quot;&gt;${files}&lt;/div&gt;</code></span>
+<span class="code-line"><i>399</i><code>        &lt;div class=&quot;track-next&quot;&gt;&lt;strong&gt;다음&lt;/strong&gt;&lt;span&gt;${escapeHtml(track.next)}&lt;/span&gt;&lt;/div&gt;</code></span>
+<span class="code-line"><i>400</i><code>      &lt;/article&gt;`;</code></span>
+<span class="code-line"><i>401</i><code>  }).join(&quot;&quot;);</code></span>
+<span class="code-line"><i>402</i><code>}</code></span>
+<span class="code-line"><i>403</i><code></code></span>
+<span class="code-line"><i>404</i><code>function renderResearch(catalog) {</code></span>
+<span class="code-line"><i>405</i><code>  $(&quot;#research-grid&quot;).innerHTML = catalog.research.map((session) =&gt; {</code></span>
+<span class="code-line"><i>406</i><code>    const links = session.links.filter((link) =&gt; link.exists).map((link) =&gt; `&lt;a href=&quot;${safeHref(link.url)}&quot;&gt;${escapeHtml(link.label)} →&lt;/a&gt;`).join(&quot;&quot;);</code></span>
+<span class="code-line"><i>407</i><code>    const verdict = session.verdict || &quot;NOT_EVALUATED&quot;;</code></span>
+<span class="code-line"><i>408</i><code>    const verdictState = verdict === &quot;PASS&quot; ? &quot;pass&quot; : verdict === &quot;FAIL&quot; ? &quot;fail&quot; : &quot;pending&quot;;</code></span>
+<span class="code-line"><i>409</i><code>    return `</code></span>
+<span class="code-line"><i>410</i><code>      &lt;article class=&quot;research-card&quot;&gt;</code></span>
+<span class="code-line"><i>411</i><code>        &lt;div class=&quot;research-card-head&quot;&gt;&lt;span class=&quot;research-date&quot;&gt;${escapeHtml(dateOnly(session.updated_at))}&lt;/span&gt;&lt;span class=&quot;verdict&quot; data-verdict=&quot;${verdictState}&quot;&gt;${escapeHtml(verdict)}&lt;/span&gt;&lt;/div&gt;</code></span>
+<span class="code-line"><i>412</i><code>        &lt;h3&gt;${escapeHtml(session.title)}&lt;/h3&gt;</code></span>
+<span class="code-line"><i>413</i><code>        &lt;p&gt;${escapeHtml(session.description)}&lt;/p&gt;</code></span>
+<span class="code-line"><i>414</i><code>        &lt;div class=&quot;research-stats&quot;&gt;</code></span>
+<span class="code-line"><i>415</i><code>          &lt;div&gt;&lt;strong&gt;${number(session.source_count)}&lt;/strong&gt;&lt;span&gt;출처&lt;/span&gt;&lt;/div&gt;</code></span>
+<span class="code-line"><i>416</i><code>          &lt;div&gt;&lt;strong&gt;${number(session.verified_count)}&lt;/strong&gt;&lt;span&gt;검증됨&lt;/span&gt;&lt;/div&gt;</code></span>
+<span class="code-line"><i>417</i><code>          &lt;div&gt;&lt;strong&gt;${number(session.unresolved_count)}&lt;/strong&gt;&lt;span&gt;미결&lt;/span&gt;&lt;/div&gt;</code></span>
+<span class="code-line"><i>418</i><code>        &lt;/div&gt;</code></span>
+<span class="code-line"><i>419</i><code>        &lt;div class=&quot;research-links&quot;&gt;${links}&lt;/div&gt;</code></span>
+<span class="code-line"><i>420</i><code>      &lt;/article&gt;`;</code></span>
+<span class="code-line"><i>421</i><code>  }).join(&quot;&quot;);</code></span>
+<span class="code-line"><i>422</i><code></code></span>
+<span class="code-line"><i>423</i><code>  $(&quot;#document-groups&quot;).innerHTML = catalog.document_groups.map((group) =&gt; {</code></span>
+<span class="code-line"><i>424</i><code>    const files = group.files.map((file) =&gt; `&lt;li&gt;&lt;a href=&quot;${safeHref(file.url)}&quot;&gt;&lt;span&gt;${escapeHtml(file.label)}&lt;/span&gt;&lt;span aria-hidden=&quot;true&quot;&gt;→&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;`).join(&quot;&quot;);</code></span>
+<span class="code-line"><i>425</i><code>    return `&lt;article class=&quot;document-group&quot;&gt;&lt;h4&gt;${escapeHtml(group.name)}&lt;/h4&gt;&lt;p&gt;${escapeHtml(group.description)}&lt;/p&gt;&lt;ul&gt;${files}&lt;/ul&gt;&lt;/article&gt;`;</code></span>
+<span class="code-line"><i>426</i><code>  }).join(&quot;&quot;);</code></span>
+<span class="code-line"><i>427</i><code>}</code></span>
+<span class="code-line"><i>428</i><code></code></span>
+<span class="code-line"><i>429</i><code>function renderGates(catalog) {</code></span>
+<span class="code-line"><i>430</i><code>  $(&quot;#gate-score&quot;).textContent = `0 / ${catalog.mainnet_gates.length}`;</code></span>
+<span class="code-line"><i>431</i><code>  $(&quot;#gate-list&quot;).innerHTML = catalog.mainnet_gates.map((gate) =&gt; `</code></span>
+<span class="code-line"><i>432</i><code>    &lt;li class=&quot;gate-item&quot;&gt;&lt;div&gt;&lt;strong&gt;${escapeHtml(gate.text)}&lt;/strong&gt;&lt;span&gt;${escapeHtml(gate.state)} · 근거 필요&lt;/span&gt;&lt;/div&gt;&lt;/li&gt;`).join(&quot;&quot;);</code></span>
+<span class="code-line"><i>433</i><code>}</code></span>
+<span class="code-line"><i>434</i><code></code></span>
+<span class="code-line"><i>435</i><code>function renderError(error) {</code></span>
+<span class="code-line"><i>436</i><code>  console.error(error);</code></span>
+<span class="code-line"><i>437</i><code>  $(&quot;#ecosystem-rows&quot;).innerHTML = &#x27;&lt;tr class=&quot;loading-row&quot;&gt;&lt;td colspan=&quot;6&quot;&gt;데이터를 불러오지 못했습니다. GitHub Pages 경로 또는 catalog.json을 확인해 주세요.&lt;/td&gt;&lt;/tr&gt;&#x27;;</code></span>
+<span class="code-line"><i>438</i><code>  $(&quot;#build-board&quot;).innerHTML = &#x27;&lt;div class=&quot;empty-state&quot;&gt;&lt;strong&gt;개발 보드를 불러오지 못했습니다.&lt;/strong&gt;&lt;/div&gt;&#x27;;</code></span>
+<span class="code-line"><i>439</i><code>  $(&quot;#research-grid&quot;).innerHTML = &#x27;&lt;div class=&quot;empty-state&quot;&gt;&lt;strong&gt;리서치 인덱스를 불러오지 못했습니다.&lt;/strong&gt;&lt;/div&gt;&#x27;;</code></span>
+<span class="code-line"><i>440</i><code>}</code></span>
+<span class="code-line"><i>441</i><code></code></span>
+<span class="code-line"><i>442</i><code>function bindInteractions() {</code></span>
+<span class="code-line"><i>443</i><code>  $(&quot;#copy-probe&quot;).addEventListener(&quot;click&quot;, () =&gt; copyText(PROBE_COMMAND, &quot;읽기 전용 프로브 명령을 복사했습니다.&quot;));</code></span>
+<span class="code-line"><i>444</i><code>  $(&quot;#copy-checks&quot;).addEventListener(&quot;click&quot;, () =&gt; copyText(CHECK_COMMANDS, &quot;전체 검증 명령을 복사했습니다.&quot;));</code></span>
+<span class="code-line"><i>445</i><code>  [&quot;#calc-volume&quot;, &quot;#calc-fee&quot;, &quot;#calc-share&quot;, &quot;#calc-cost&quot;].forEach((selector) =&gt; {</code></span>
+<span class="code-line"><i>446</i><code>    $(selector).addEventListener(&quot;input&quot;, renderCalculator);</code></span>
+<span class="code-line"><i>447</i><code>  });</code></span>
+<span class="code-line"><i>448</i><code></code></span>
+<span class="code-line"><i>449</i><code>  $(&quot;#ecosystem-search&quot;).addEventListener(&quot;input&quot;, (event) =&gt; {</code></span>
+<span class="code-line"><i>450</i><code>    state.query = event.target.value;</code></span>
+<span class="code-line"><i>451</i><code>    renderEcosystem();</code></span>
+<span class="code-line"><i>452</i><code>  });</code></span>
+<span class="code-line"><i>453</i><code></code></span>
+<span class="code-line"><i>454</i><code>  $$(&quot;.filter-chip&quot;).forEach((button) =&gt; button.addEventListener(&quot;click&quot;, () =&gt; {</code></span>
+<span class="code-line"><i>455</i><code>    state.filter = button.dataset.filter;</code></span>
+<span class="code-line"><i>456</i><code>    $$(&quot;.filter-chip&quot;).forEach((item) =&gt; item.classList.toggle(&quot;is-active&quot;, item === button));</code></span>
+<span class="code-line"><i>457</i><code>    renderEcosystem();</code></span>
+<span class="code-line"><i>458</i><code>  }));</code></span>
+<span class="code-line"><i>459</i><code></code></span>
+<span class="code-line"><i>460</i><code>  $(&quot;#ecosystem-rows&quot;).addEventListener(&quot;click&quot;, (event) =&gt; {</code></span>
+<span class="code-line"><i>461</i><code>    const row = event.target.closest(&quot;[data-entry-id]&quot;);</code></span>
+<span class="code-line"><i>462</i><code>    if (row) openDrawer(row.dataset.entryId, row);</code></span>
+<span class="code-line"><i>463</i><code>  });</code></span>
+<span class="code-line"><i>464</i><code>  $(&quot;#ecosystem-rows&quot;).addEventListener(&quot;keydown&quot;, (event) =&gt; {</code></span>
+<span class="code-line"><i>465</i><code>    const row = event.target.closest(&quot;[data-entry-id]&quot;);</code></span>
+<span class="code-line"><i>466</i><code>    if (row &amp;&amp; [&quot;Enter&quot;, &quot; &quot;].includes(event.key)) {</code></span>
+<span class="code-line"><i>467</i><code>      event.preventDefault();</code></span>
+<span class="code-line"><i>468</i><code>      openDrawer(row.dataset.entryId, row);</code></span>
+<span class="code-line"><i>469</i><code>    }</code></span>
+<span class="code-line"><i>470</i><code>  });</code></span>
+<span class="code-line"><i>471</i><code></code></span>
+<span class="code-line"><i>472</i><code>  $$(&#x27;[data-close-drawer]&#x27;).forEach((button) =&gt; button.addEventListener(&quot;click&quot;, closeDrawer));</code></span>
+<span class="code-line"><i>473</i><code>  document.addEventListener(&quot;keydown&quot;, (event) =&gt; {</code></span>
+<span class="code-line"><i>474</i><code>    if (event.key === &quot;Escape&quot;) closeDrawer();</code></span>
+<span class="code-line"><i>475</i><code>    if ((event.metaKey || event.ctrlKey) &amp;&amp; event.key.toLowerCase() === &quot;k&quot;) {</code></span>
+<span class="code-line"><i>476</i><code>      event.preventDefault();</code></span>
+<span class="code-line"><i>477</i><code>      if (document.body.dataset.page !== &quot;research&quot;) {</code></span>
+<span class="code-line"><i>478</i><code>        window.location.assign(&quot;./research.html#ecosystem&quot;);</code></span>
+<span class="code-line"><i>479</i><code>        return;</code></span>
+<span class="code-line"><i>480</i><code>      }</code></span>
+<span class="code-line"><i>481</i><code>      $(&quot;#ecosystem-search&quot;).focus();</code></span>
+<span class="code-line"><i>482</i><code>      $(&quot;#ecosystem&quot;).scrollIntoView({ behavior: &quot;smooth&quot;, block: &quot;start&quot; });</code></span>
+<span class="code-line"><i>483</i><code>    }</code></span>
+<span class="code-line"><i>484</i><code>  });</code></span>
+<span class="code-line"><i>485</i><code></code></span>
+<span class="code-line"><i>486</i><code>  const navLinks = $$(&quot;.nav-link&quot;);</code></span>
+<span class="code-line"><i>487</i><code>  const currentPage = document.body.dataset.page || &quot;overview&quot;;</code></span>
+<span class="code-line"><i>488</i><code>  navLinks.forEach((link) =&gt; {</code></span>
+<span class="code-line"><i>489</i><code>    const active = link.dataset.pageLink === currentPage;</code></span>
+<span class="code-line"><i>490</i><code>    link.classList.toggle(&quot;is-active&quot;, active);</code></span>
+<span class="code-line"><i>491</i><code>    if (active) link.setAttribute(&quot;aria-current&quot;, &quot;page&quot;);</code></span>
+<span class="code-line"><i>492</i><code>    else link.removeAttribute(&quot;aria-current&quot;);</code></span>
+<span class="code-line"><i>493</i><code>  });</code></span>
+<span class="code-line"><i>494</i><code>}</code></span>
+<span class="code-line"><i>495</i><code></code></span>
+<span class="code-line"><i>496</i><code>function renderLaunch(catalog) {</code></span>
+<span class="code-line"><i>497</i><code>  const lp = catalog.launch_prep;</code></span>
+<span class="code-line"><i>498</i><code>  const headline = $(&quot;#launch-headline&quot;);</code></span>
+<span class="code-line"><i>499</i><code>  if (!headline) return;</code></span>
+<span class="code-line"><i>500</i><code>  if (!lp) {</code></span>
+<span class="code-line"><i>501</i><code>    headline.textContent = &quot;론칭 준비 데이터가 아직 생성되지 않았습니다.&quot;;</code></span>
+<span class="code-line"><i>502</i><code>    return;</code></span>
+<span class="code-line"><i>503</i><code>  }</code></span>
+<span class="code-line"><i>504</i><code>  headline.textContent = lp.headline || &quot;&quot;;</code></span>
+<span class="code-line"><i>505</i><code>  $(&quot;#launch-asof&quot;).textContent = `as of ${lp.as_of || &quot;—&quot;}`;</code></span>
+<span class="code-line"><i>506</i><code>  const decision = lp.decision || {};</code></span>
+<span class="code-line"><i>507</i><code>  const decisionCard = (block, cls) =&gt; block ? `&lt;article class=&quot;decision-card ${cls}&quot;&gt;&lt;h4&gt;${escapeHtml(block.title)}&lt;/h4&gt;&lt;ol&gt;${(block.points || []).map((point) =&gt; `&lt;li&gt;${escapeHtml(point)}&lt;/li&gt;`).join(&quot;&quot;)}&lt;/ol&gt;&lt;/article&gt;` : &quot;&quot;;</code></span>
+<span class="code-line"><i>508</i><code>  $(&quot;#launch-decision&quot;).innerHTML = [decisionCard(decision.market_read, &quot;is-market&quot;), decisionCard(decision.do_now, &quot;is-now&quot;), decisionCard(decision.product, &quot;is-product&quot;)].join(&quot;&quot;);</code></span>
+<span class="code-line"><i>509</i><code>  const rh = lp.robinhood || {};</code></span>
+<span class="code-line"><i>510</i><code>  $(&quot;#launch-chain-id&quot;).textContent = `chain ${rh.chain_id ?? &quot;—&quot;}`;</code></span>
+<span class="code-line"><i>511</i><code>  $(&quot;#launch-stats&quot;).innerHTML = (rh.stats || []).map((item) =&gt; `</code></span>
+<span class="code-line"><i>512</i><code>    &lt;div&gt;&lt;dt&gt;${escapeHtml(item.label)}&lt;/dt&gt;&lt;dd&gt;${escapeHtml(item.value)}&lt;/dd&gt;&lt;/div&gt;`).join(&quot;&quot;) || &quot;&lt;div&gt;&lt;dt&gt;Status&lt;/dt&gt;&lt;dd&gt;Not catalogued&lt;/dd&gt;&lt;/div&gt;&quot;;</code></span>
+<span class="code-line"><i>513</i><code>  $(&quot;#launch-stat-links&quot;).innerHTML = (rh.stats || []).filter((item) =&gt; item.source).map((item) =&gt; `</code></span>
+<span class="code-line"><i>514</i><code>    &lt;a href=&quot;${safeHref(item.source)}&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;${escapeHtml(item.label)} ↗&lt;/a&gt;`).join(&quot;&quot;);</code></span>
+<span class="code-line"><i>515</i><code>  $(&quot;#launch-funding&quot;).innerHTML = (rh.funding_paths || []).map((item, index) =&gt; `</code></span>
+<span class="code-line"><i>516</i><code>    &lt;li data-state=&quot;${escapeHtml(item.state || &quot;unverified&quot;)}&quot;&gt;</code></span>
+<span class="code-line"><i>517</i><code>      &lt;span&gt;${String(index + 1).padStart(2, &quot;0&quot;)}&lt;/span&gt;</code></span>
+<span class="code-line"><i>518</i><code>      &lt;div&gt;&lt;strong&gt;${escapeHtml(item.label)}&lt;/strong&gt;&lt;small&gt;${escapeHtml(item.detail)}&lt;/small&gt;&lt;/div&gt;</code></span>
+<span class="code-line"><i>519</i><code>    &lt;/li&gt;`).join(&quot;&quot;) || &quot;&lt;li&gt;자금 경로가 등록되지 않았습니다.&lt;/li&gt;&quot;;</code></span>
+<span class="code-line"><i>520</i><code>  $(&quot;#launch-tools&quot;).innerHTML = (rh.bots_and_tools || []).map((tool) =&gt; `</code></span>
+<span class="code-line"><i>521</i><code>    &lt;a href=&quot;${safeHref(tool.url)}&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot; title=&quot;${escapeHtml(tool.detail || &quot;&quot;)}&quot;&gt;${escapeHtml(tool.name)} ↗&lt;/a&gt;`).join(&quot;&quot;);</code></span>
+<span class="code-line"><i>522</i><code></code></span>
+<span class="code-line"><i>523</i><code>  const cell = (value) =&gt; `&lt;td&gt;${escapeHtml(value || &quot;—&quot;)}&lt;/td&gt;`;</code></span>
+<span class="code-line"><i>524</i><code>  const FACTS = [[&quot;공급 배분&quot;, &quot;supply_split&quot;], [&quot;가상 유동성&quot;, &quot;virtual_liquidity&quot;], [&quot;졸업 조건&quot;, &quot;graduation&quot;], [&quot;졸업 시 LP&quot;, &quot;lp_at_graduation&quot;], [&quot;LP 잠금&quot;, &quot;lp_lock&quot;], [&quot;풀&quot;, &quot;pool&quot;], [&quot;수수료&quot;, &quot;fees&quot;], [&quot;생성비&quot;, &quot;creation_fee&quot;], [&quot;dev-buy&quot;, &quot;dev_buy&quot;], [&quot;스나이퍼 방어&quot;, &quot;anti_snipe&quot;], [&quot;활동&quot;, &quot;activity&quot;]];</code></span>
+<span class="code-line"><i>525</i><code>  $(&quot;#launch-pads&quot;).innerHTML = (lp.launchpads || []).map((pad, index) =&gt; `</code></span>
+<span class="code-line"><i>526</i><code>    &lt;article class=&quot;pad-card${index === 0 ? &quot; is-first&quot; : &quot;&quot;}&quot;&gt;</code></span>
+<span class="code-line"><i>527</i><code>      &lt;div class=&quot;pad-card-head&quot;&gt;</code></span>
+<span class="code-line"><i>528</i><code>        &lt;div&gt;&lt;h4&gt;${escapeHtml(pad.name)}&lt;/h4&gt;&lt;small&gt;${escapeHtml(pad.chain || &quot;&quot;)}&lt;/small&gt;&lt;/div&gt;</code></span>
+<span class="code-line"><i>529</i><code>        &lt;span class=&quot;pad-verdict&quot;&gt;${escapeHtml(pad.verdict || &quot;—&quot;)}&lt;/span&gt;</code></span>
+<span class="code-line"><i>530</i><code>      &lt;/div&gt;</code></span>
+<span class="code-line"><i>531</i><code>      &lt;dl class=&quot;pad-facts&quot;&gt;${FACTS.map(([label, key]) =&gt; pad[key] ? `&lt;div&gt;&lt;dt&gt;${escapeHtml(label)}&lt;/dt&gt;&lt;dd&gt;${escapeHtml(pad[key])}&lt;/dd&gt;&lt;/div&gt;` : &quot;&quot;).join(&quot;&quot;)}&lt;/dl&gt;</code></span>
+<span class="code-line"><i>532</i><code>      ${pad.note ? `&lt;p class=&quot;pad-note&quot;&gt;${escapeHtml(pad.note)}&lt;/p&gt;` : &quot;&quot;}</code></span>
+<span class="code-line"><i>533</i><code>      ${pad.url ? `&lt;a class=&quot;text-link&quot; href=&quot;${safeHref(pad.url)}&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;문서 ↗&lt;/a&gt;` : &quot;&quot;}</code></span>
+<span class="code-line"><i>534</i><code>    &lt;/article&gt;`).join(&quot;&quot;) || &#x27;&lt;div class=&quot;empty-state&quot;&gt;&lt;strong&gt;등록된 런치패드가 없습니다.&lt;/strong&gt;&lt;/div&gt;&#x27;;</code></span>
 <span class="code-line"><i>535</i><code></code></span>
-<span class="code-line"><i>536</i><code>  $(&quot;#launch-costs&quot;).innerHTML = (lp.costs || []).map((item) =&gt; `</code></span>
-<span class="code-line"><i>537</i><code>    &lt;div&gt;&lt;dt&gt;${escapeHtml(item.item)}&lt;/dt&gt;&lt;dd&gt;${escapeHtml(item.eth || &quot;—&quot;)}${item.usd ? ` · ${escapeHtml(item.usd)}` : &quot;&quot;}${item.note ? `&lt;br&gt;&lt;small&gt;${escapeHtml(item.note)}&lt;/small&gt;` : &quot;&quot;}&lt;/dd&gt;&lt;/div&gt;`).join(&quot;&quot;) || &quot;&lt;div&gt;&lt;dt&gt;Costs&lt;/dt&gt;&lt;dd&gt;Not catalogued&lt;/dd&gt;&lt;/div&gt;&quot;;</code></span>
-<span class="code-line"><i>538</i><code></code></span>
-<span class="code-line"><i>539</i><code>  const giwa = lp.giwa_parallel || {};</code></span>
-<span class="code-line"><i>540</i><code>  const listBlock = (label, items) =&gt; (items &amp;&amp; items.length) ? `&lt;section&gt;&lt;h4&gt;${escapeHtml(label)}&lt;/h4&gt;&lt;ul&gt;${items.map((item) =&gt; `&lt;li&gt;${escapeHtml(item)}&lt;/li&gt;`).join(&quot;&quot;)}&lt;/ul&gt;&lt;/section&gt;` : &quot;&quot;;</code></span>
-<span class="code-line"><i>541</i><code>  $(&quot;#launch-giwa&quot;).innerHTML = [</code></span>
-<span class="code-line"><i>542</i><code>    listBlock(&quot;같은 것&quot;, giwa.same), listBlock(&quot;다른 것&quot;, giwa.different), listBlock(&quot;Sepolia 리허설&quot;, giwa.rehearsal_steps),</code></span>
-<span class="code-line"><i>543</i><code>    listBlock(&quot;메인넷 임박 신호&quot;, giwa.mainnet_signals), listBlock(&quot;론칭 키트&quot;, giwa.launch_kit),</code></span>
-<span class="code-line"><i>544</i><code>  ].join(&quot;&quot;) || &quot;&lt;section&gt;&lt;h4&gt;GIWA&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;Not catalogued&lt;/li&gt;&lt;/ul&gt;&lt;/section&gt;&quot;;</code></span>
-<span class="code-line"><i>545</i><code></code></span>
-<span class="code-line"><i>546</i><code>  $(&quot;#launch-not-doing&quot;).innerHTML = (lp.not_doing || []).map((item) =&gt; `&lt;li&gt;${escapeHtml(item)}&lt;/li&gt;`).join(&quot;&quot;) || &quot;&lt;li&gt;—&lt;/li&gt;&quot;;</code></span>
-<span class="code-line"><i>547</i><code>  $(&quot;#launch-sources&quot;).innerHTML = (lp.sources || []).map((source) =&gt; `</code></span>
-<span class="code-line"><i>548</i><code>    &lt;a href=&quot;${safeHref(source.url)}&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;${escapeHtml(source.label)}${source.observed ? ` · ${escapeHtml(source.observed)}` : &quot;&quot;} ↗&lt;/a&gt;`).join(&quot;&quot;);</code></span>
-<span class="code-line"><i>549</i><code>}</code></span>
-<span class="code-line"><i>550</i><code></code></span>
-<span class="code-line"><i>551</i><code>async function init() {</code></span>
-<span class="code-line"><i>552</i><code>  bindInteractions();</code></span>
-<span class="code-line"><i>553</i><code>  try {</code></span>
-<span class="code-line"><i>554</i><code>    const response = await fetch(CATALOG_URL, { cache: &quot;no-store&quot; });</code></span>
-<span class="code-line"><i>555</i><code>    if (!response.ok) throw new Error(`catalog fetch failed: ${response.status}`);</code></span>
-<span class="code-line"><i>556</i><code>    state.catalog = await response.json();</code></span>
-<span class="code-line"><i>557</i><code>    renderOverview(state.catalog);</code></span>
-<span class="code-line"><i>558</i><code>    renderEcosystem();</code></span>
-<span class="code-line"><i>559</i><code>    renderOfficialResources(state.catalog);</code></span>
-<span class="code-line"><i>560</i><code>    renderInfrastructure(state.catalog);</code></span>
-<span class="code-line"><i>561</i><code>    renderRevenue(state.catalog);</code></span>
-<span class="code-line"><i>562</i><code>    renderBuildTracks(state.catalog);</code></span>
-<span class="code-line"><i>563</i><code>    renderResearch(state.catalog);</code></span>
-<span class="code-line"><i>564</i><code>    renderGates(state.catalog);</code></span>
-<span class="code-line"><i>565</i><code>    renderLaunch(state.catalog);</code></span>
-<span class="code-line"><i>566</i><code>  } catch (error) {</code></span>
-<span class="code-line"><i>567</i><code>    renderError(error);</code></span>
-<span class="code-line"><i>568</i><code>  }</code></span>
+<span class="code-line"><i>536</i><code>  $(&quot;#launch-norms&quot;).innerHTML = (lp.norms || []).map((row) =&gt; `</code></span>
+<span class="code-line"><i>537</i><code>    &lt;tr&gt;</code></span>
+<span class="code-line"><i>538</i><code>      &lt;td class=&quot;project-cell&quot;&gt;&lt;strong&gt;${escapeHtml(row.platform)}&lt;/strong&gt;${row.url ? `&lt;br&gt;&lt;a class=&quot;text-link&quot; href=&quot;${safeHref(row.url)}&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;source ↗&lt;/a&gt;` : &quot;&quot;}&lt;/td&gt;</code></span>
+<span class="code-line"><i>539</i><code>      ${cell(row.chain)}${cell(row.curve_percent)}${cell(row.lp_percent)}${cell(row.team_percent)}${cell(row.graduation)}${cell(row.lp_quote_at_graduation)}${cell(row.creator_fee)}</code></span>
+<span class="code-line"><i>540</i><code>    &lt;/tr&gt;`).join(&quot;&quot;) || &#x27;&lt;tr class=&quot;loading-row&quot;&gt;&lt;td colspan=&quot;8&quot;&gt;등록된 규범이 없습니다.&lt;/td&gt;&lt;/tr&gt;&#x27;;</code></span>
+<span class="code-line"><i>541</i><code></code></span>
+<span class="code-line"><i>542</i><code>  const rc = lp.recommended_composition || {};</code></span>
+<span class="code-line"><i>543</i><code>  const notes = (rc.notes || []).map((note) =&gt; escapeHtml(note)).join(&quot; · &quot;);</code></span>
+<span class="code-line"><i>544</i><code>  $(&quot;#launch-composition&quot;).innerHTML = rc.supply_split</code></span>
+<span class="code-line"><i>545</i><code>    ? `공급 배분 &lt;strong&gt;${escapeHtml(rc.supply_split)}&lt;/strong&gt; · dev-buy &lt;strong&gt;${escapeHtml(rc.dev_buy || &quot;—&quot;)}&lt;/strong&gt; · 수수료 &lt;strong&gt;${escapeHtml(rc.fee_option || &quot;—&quot;)}&lt;/strong&gt; · LP &lt;strong&gt;${escapeHtml(rc.lp_lock || &quot;—&quot;)}&lt;/strong&gt;${notes ? `&lt;br&gt;&lt;small&gt;${notes}&lt;/small&gt;` : &quot;&quot;}`</code></span>
+<span class="code-line"><i>546</i><code>    : &quot;권장 구성이 아직 없습니다.&quot;;</code></span>
+<span class="code-line"><i>547</i><code></code></span>
+<span class="code-line"><i>548</i><code>  $(&quot;#launch-playbook&quot;).innerHTML = (lp.playbook || []).map((phase) =&gt; `</code></span>
+<span class="code-line"><i>549</i><code>    &lt;article class=&quot;flow-card&quot;&gt;</code></span>
+<span class="code-line"><i>550</i><code>      &lt;h4&gt;${escapeHtml(phase.phase)}&lt;/h4&gt;</code></span>
+<span class="code-line"><i>551</i><code>      &lt;ol&gt;${(phase.steps || []).map((step) =&gt; `&lt;li&gt;&lt;span&gt;${escapeHtml(step)}&lt;/span&gt;&lt;/li&gt;`).join(&quot;&quot;)}&lt;/ol&gt;</code></span>
+<span class="code-line"><i>552</i><code>    &lt;/article&gt;`).join(&quot;&quot;);</code></span>
+<span class="code-line"><i>553</i><code></code></span>
+<span class="code-line"><i>554</i><code>  $(&quot;#launch-costs&quot;).innerHTML = (lp.costs || []).map((item) =&gt; `</code></span>
+<span class="code-line"><i>555</i><code>    &lt;div&gt;&lt;dt&gt;${escapeHtml(item.item)}&lt;/dt&gt;&lt;dd&gt;${escapeHtml(item.eth || &quot;—&quot;)}${item.usd ? ` · ${escapeHtml(item.usd)}` : &quot;&quot;}${item.note ? `&lt;br&gt;&lt;small&gt;${escapeHtml(item.note)}&lt;/small&gt;` : &quot;&quot;}&lt;/dd&gt;&lt;/div&gt;`).join(&quot;&quot;) || &quot;&lt;div&gt;&lt;dt&gt;Costs&lt;/dt&gt;&lt;dd&gt;Not catalogued&lt;/dd&gt;&lt;/div&gt;&quot;;</code></span>
+<span class="code-line"><i>556</i><code></code></span>
+<span class="code-line"><i>557</i><code>  const giwa = lp.giwa_parallel || {};</code></span>
+<span class="code-line"><i>558</i><code>  const listBlock = (label, items) =&gt; (items &amp;&amp; items.length) ? `&lt;section&gt;&lt;h4&gt;${escapeHtml(label)}&lt;/h4&gt;&lt;ul&gt;${items.map((item) =&gt; `&lt;li&gt;${escapeHtml(item)}&lt;/li&gt;`).join(&quot;&quot;)}&lt;/ul&gt;&lt;/section&gt;` : &quot;&quot;;</code></span>
+<span class="code-line"><i>559</i><code>  $(&quot;#launch-giwa&quot;).innerHTML = [</code></span>
+<span class="code-line"><i>560</i><code>    listBlock(&quot;같은 것&quot;, giwa.same), listBlock(&quot;다른 것&quot;, giwa.different), listBlock(&quot;Sepolia 리허설&quot;, giwa.rehearsal_steps),</code></span>
+<span class="code-line"><i>561</i><code>    listBlock(&quot;메인넷 임박 신호&quot;, giwa.mainnet_signals), listBlock(&quot;론칭 키트&quot;, giwa.launch_kit),</code></span>
+<span class="code-line"><i>562</i><code>  ].join(&quot;&quot;) || &quot;&lt;section&gt;&lt;h4&gt;GIWA&lt;/h4&gt;&lt;ul&gt;&lt;li&gt;Not catalogued&lt;/li&gt;&lt;/ul&gt;&lt;/section&gt;&quot;;</code></span>
+<span class="code-line"><i>563</i><code></code></span>
+<span class="code-line"><i>564</i><code>  const launchGlossary = $(&quot;#launch-glossary&quot;);</code></span>
+<span class="code-line"><i>565</i><code>  if (launchGlossary) launchGlossary.innerHTML = renderGlossary(lp.glossary || []);</code></span>
+<span class="code-line"><i>566</i><code>  $(&quot;#launch-not-doing&quot;).innerHTML = (lp.not_doing || []).map((item) =&gt; `&lt;li&gt;${escapeHtml(item)}&lt;/li&gt;`).join(&quot;&quot;) || &quot;&lt;li&gt;—&lt;/li&gt;&quot;;</code></span>
+<span class="code-line"><i>567</i><code>  $(&quot;#launch-sources&quot;).innerHTML = (lp.sources || []).map((source) =&gt; `</code></span>
+<span class="code-line"><i>568</i><code>    &lt;a href=&quot;${safeHref(source.url)}&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;${escapeHtml(source.label)}${source.observed ? ` · ${escapeHtml(source.observed)}` : &quot;&quot;} ↗&lt;/a&gt;`).join(&quot;&quot;);</code></span>
 <span class="code-line"><i>569</i><code>}</code></span>
 <span class="code-line"><i>570</i><code></code></span>
-<span class="code-line"><i>571</i><code>init();</code></span></pre></article>
+<span class="code-line"><i>571</i><code>async function init() {</code></span>
+<span class="code-line"><i>572</i><code>  bindInteractions();</code></span>
+<span class="code-line"><i>573</i><code>  try {</code></span>
+<span class="code-line"><i>574</i><code>    const response = await fetch(CATALOG_URL, { cache: &quot;no-store&quot; });</code></span>
+<span class="code-line"><i>575</i><code>    if (!response.ok) throw new Error(`catalog fetch failed: ${response.status}`);</code></span>
+<span class="code-line"><i>576</i><code>    state.catalog = await response.json();</code></span>
+<span class="code-line"><i>577</i><code>    renderOverview(state.catalog);</code></span>
+<span class="code-line"><i>578</i><code>    renderEcosystem();</code></span>
+<span class="code-line"><i>579</i><code>    renderOfficialResources(state.catalog);</code></span>
+<span class="code-line"><i>580</i><code>    renderInfrastructure(state.catalog);</code></span>
+<span class="code-line"><i>581</i><code>    renderRevenue(state.catalog);</code></span>
+<span class="code-line"><i>582</i><code>    renderBuildTracks(state.catalog);</code></span>
+<span class="code-line"><i>583</i><code>    renderResearch(state.catalog);</code></span>
+<span class="code-line"><i>584</i><code>    renderGates(state.catalog);</code></span>
+<span class="code-line"><i>585</i><code>    renderLaunch(state.catalog);</code></span>
+<span class="code-line"><i>586</i><code>  } catch (error) {</code></span>
+<span class="code-line"><i>587</i><code>    renderError(error);</code></span>
+<span class="code-line"><i>588</i><code>  }</code></span>
+<span class="code-line"><i>589</i><code>}</code></span>
+<span class="code-line"><i>590</i><code></code></span>
+<span class="code-line"><i>591</i><code>init();</code></span></pre></article>
     </main>
     <footer>
       <span>research_only=true</span>

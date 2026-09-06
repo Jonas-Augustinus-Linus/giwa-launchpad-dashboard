@@ -134,9 +134,17 @@ async function copyText(text, confirmation) {
   }
 }
 
+function renderGlossary(items) {
+  return (items || []).map((item) => `<div><dt>${escapeHtml(item.term)}</dt><dd>${escapeHtml(item.meaning)}</dd></div>`).join("") || "";
+}
+
 function renderOverview(catalog) {
   const { project, metrics, safety, network_observation: observation } = catalog;
-  $("#project-decision").textContent = project.decision;
+  $("#project-decision").textContent = project.decision_headline || project.decision;
+  const pointsHost = $("#decision-points");
+  if (pointsHost) pointsHost.innerHTML = (project.decision_points || []).map((point) => `<li>${escapeHtml(point)}</li>`).join("");
+  const glossaryHost = $("#glossary-tabs");
+  if (glossaryHost) glossaryHost.innerHTML = renderGlossary(catalog.glossary || []);
   $("#product-hypothesis").textContent = project.product_hypothesis;
   $("#fee-policy").textContent = project.fee_policy;
   $("#safety-notice").textContent = safety.notice;
@@ -266,15 +274,19 @@ function renderInfrastructure(catalog) {
 
   $("#pool-headline").textContent = pool.headline || "풀 구조가 등록되지 않았습니다.";
   $("#pool-notice").textContent = pool.observed_notice || "테스트넷 관찰은 공식성 또는 안전성을 증명하지 않습니다.";
+  const evidenceLabel = { partial_observation: "일부 관찰됨", router_only_mock_assets: "라우터만 · 모의 자산", testnet_conflict: "테스트넷 정보 충돌", requirements_only: "요구사항만", blockscout_only: "탐색기 기록만", unverified_candidates: "미검증 후보", none: "없음" };
+  const localLabel = { not_implemented: "미구현", spec_only: "사양만", blocked: "차단", implemented: "구현됨" };
+  const layerLabel = { core: "핵심", periphery: "주변", asset: "자산", trust: "신뢰", data: "데이터", operations: "운영", assurance: "검증" };
   $("#pool-components").innerHTML = (pool.components || []).map((item) => `
-    <tr>
-      <td class="project-cell"><strong>${escapeHtml(item.name)}</strong></td>
-      <td><span class="table-tag layer-tag">${escapeHtml(item.layer)}</span></td>
-      <td>${escapeHtml(item.role)}</td>
-      <td><span class="status-text">${escapeHtml(item.external_evidence.replaceAll("_", " "))}</span></td>
-      <td><span class="code-tag ${item.local_state === "not_implemented" || item.local_state === "blocked" ? "code-rejected" : "code-docs"}"><i></i>${escapeHtml(item.local_state.replaceAll("_", " "))}</span></td>
-      <td>${escapeHtml(item.gate)}</td>
-    </tr>`).join("") || '<tr class="loading-row"><td colspan="6">등록된 구성요소가 없습니다.</td></tr>';
+    <article class="pool-card" data-state="${escapeHtml(item.local_state)}">
+      <div class="pool-card-head"><strong>${escapeHtml(item.name)}</strong><span class="table-tag layer-tag">${escapeHtml(layerLabel[item.layer] || item.layer)}</span></div>
+      <dl>
+        <div><dt>역할</dt><dd>${escapeHtml(item.role)}</dd></div>
+        <div><dt>외부 근거</dt><dd>${escapeHtml(evidenceLabel[item.external_evidence] || item.external_evidence.replaceAll("_", " "))}</dd></div>
+        <div><dt>우리 코드</dt><dd><span class="code-tag ${item.local_state === "not_implemented" || item.local_state === "blocked" ? "code-rejected" : "code-docs"}"><i></i>${escapeHtml(localLabel[item.local_state] || item.local_state)}</span></dd></div>
+        <div><dt>다음 게이트</dt><dd>${escapeHtml(item.gate)}</dd></div>
+      </dl>
+    </article>`).join("") || '<div class="empty-state"><strong>등록된 구성요소가 없습니다.</strong></div>';
   $("#pool-flows").innerHTML = (pool.flows || []).map((flow) => `
     <article class="flow-card">
       <h4>${escapeHtml(flow.name)}</h4>
@@ -317,28 +329,30 @@ function renderRevenue(catalog) {
   if (!revenue) {
     $("#revenue-thesis").innerHTML = '<div><p class="mini-label">RESEARCH IN PROGRESS</p><h3>검증된 수익모델 데이터가 아직 생성되지 않았습니다.</h3><p>완료 전 숫자를 제품 판단에 사용하지 않습니다.</p></div>';
     $("#revenue-models").innerHTML = '<div class="empty-state"><strong>수익모델 리서치 진행 중</strong></div>';
-    $("#case-studies").innerHTML = '<tr class="loading-row"><td colspan="6">검증 완료 후 사례가 표시됩니다.</td></tr>';
+    $("#case-studies").innerHTML = '<div class="empty-state"><strong>검증 완료 후 사례가 표시됩니다.</strong></div>';
     renderCalculator();
     return;
   }
 
   const thesis = revenue.recommendation || {};
+  const labels = (catalog.revenue_labels || {}).dt || {};
+  const priorityLabels = (catalog.revenue_labels || {}).priority || {};
   $("#revenue-thesis").innerHTML = `
     <div><p class="mini-label">RECOMMENDATION · ${escapeHtml(thesis.confidence || "")}</p><h3>${escapeHtml(thesis.headline)}</h3><p>${escapeHtml(thesis.summary)}</p></div>
     <div class="thesis-tags">${(thesis.tags || []).map((tag) => `<span>${escapeHtml(tag)}</span>`).join("")}</div>`;
 
   $("#revenue-models").innerHTML = (revenue.models || []).map((model) => `
     <article class="revenue-card" data-priority="${escapeHtml(model.priority)}">
-      <div class="revenue-card-head"><span>${escapeHtml(model.category)}</span><span class="priority-tag">${escapeHtml(model.priority)}</span></div>
+      <div class="revenue-card-head"><span>${escapeHtml(model.category)}</span><span class="priority-tag">${escapeHtml(priorityLabels[model.priority] || model.priority)}</span></div>
       <h3>${escapeHtml(model.name)}</h3>
       <p>${escapeHtml(model.verdict)}</p>
       <dl>
-        <div><dt>Payer</dt><dd>${escapeHtml(model.payer)}</dd></div>
-        <div><dt>Operator earns</dt><dd>${escapeHtml(model.operator_revenue)}</dd></div>
-        <div><dt>Formula</dt><dd><code>${escapeHtml(model.formula)}</code></dd></div>
-        <div><dt>Hard gate</dt><dd>${escapeHtml(model.hard_gate)}</dd></div>
+        <div><dt>${escapeHtml(labels.payer || "누가 내나")}</dt><dd>${escapeHtml(model.payer)}</dd></div>
+        <div><dt>${escapeHtml(labels.operator_revenue || "우리 수입")}</dt><dd>${escapeHtml(model.operator_revenue)}</dd></div>
+        <div><dt>${escapeHtml(labels.formula || "산식")}</dt><dd><code>${escapeHtml(model.formula)}</code></dd></div>
+        <div><dt>${escapeHtml(labels.hard_gate || "필수 조건")}</dt><dd>${escapeHtml(model.hard_gate)}</dd></div>
       </dl>
-      <div class="risk-line"><strong>RISK</strong><span>${escapeHtml(model.primary_risk)}</span></div>
+      <div class="risk-line"><strong>${escapeHtml(labels.risk || "위험")}</strong><span>${escapeHtml(model.primary_risk)}</span></div>
       <div class="benchmark-links">${(model.links || []).map((link) => `<a href="${safeHref(link.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(link.label)} ↗</a>`).join("")}</div>
     </article>`).join("");
 
@@ -349,18 +363,21 @@ function renderRevenue(catalog) {
   }));
 
   $("#revenue-sequence").innerHTML = (revenue.sequence || []).map((item) => `
-    <li data-status="${escapeHtml(item.status)}"><span>${escapeHtml(item.phase)}</span><div><strong>${escapeHtml(item.name)}</strong><p>${escapeHtml(item.action)}</p><small>GATE · ${escapeHtml(item.gate)}</small></div></li>`).join("");
+    <li data-status="${escapeHtml(item.status)}"><span>${escapeHtml(item.phase)}</span><div><strong>${escapeHtml(item.name)}</strong><p>${escapeHtml(item.action)}</p><small>조건 · ${escapeHtml(item.gate)}</small></div></li>`).join("");
 
   $("#case-studies").innerHTML = (revenue.case_studies || []).map((item) => `
-    <tr>
-      <td class="project-cell"><strong>${escapeHtml(item.name)}</strong><small>${escapeHtml(item.network)} · ${escapeHtml(item.period)}</small></td>
-      <td>${escapeHtml(item.launch_mechanism)}</td>
-      <td>${escapeHtml(item.follow_on)}</td>
-      <td>${escapeHtml(item.revenue_capture)}</td>
-      <td><strong class="case-evidence">${escapeHtml(item.evidence)}</strong><small class="case-boundary">${escapeHtml(item.boundary)}</small></td>
-      <td><div class="case-links">${(item.links || []).map((link) => `<a href="${safeHref(link.url)}" target="_blank" rel="noopener noreferrer" aria-label="${escapeHtml(item.name)} ${escapeHtml(link.label)}">↗</a>`).join("")}</div></td>
-    </tr>`).join("");
-  $("#revenue-as-of").textContent = `As of ${revenue.as_of}`;
+    <article class="case-card">
+      <div class="case-card-head"><strong>${escapeHtml(item.name)}</strong><span>${escapeHtml(item.network)} · ${escapeHtml(item.period)}</span></div>
+      <dl>
+        <div><dt>초기 론칭 장치</dt><dd>${escapeHtml(item.launch_mechanism)}</dd></div>
+        <div><dt>후속 성장 장치</dt><dd>${escapeHtml(item.follow_on)}</dd></div>
+        <div><dt>수익이 누구에게</dt><dd>${escapeHtml(item.revenue_capture)}</dd></div>
+        <div><dt>근거</dt><dd>${escapeHtml(item.evidence)}</dd></div>
+        <div><dt>주의</dt><dd class="case-boundary">${escapeHtml(item.boundary)}</dd></div>
+      </dl>
+      <div class="case-links">${(item.links || []).map((link) => `<a href="${safeHref(link.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(link.label)} ↗</a>`).join("")}</div>
+    </article>`).join("");
+  $("#revenue-as-of").textContent = `기준일 ${revenue.as_of}`;
   renderCalculator();
 }
 
@@ -379,7 +396,7 @@ function renderBuildTracks(catalog) {
         </div>
         <div class="track-summary"><p>${escapeHtml(track.summary)}</p><div class="progress-line"><i style="width:${Math.max(0, Math.min(100, track.progress))}%"></i></div></div>
         <div class="track-links">${files}</div>
-        <div class="track-next"><strong>NEXT</strong><span>${escapeHtml(track.next)}</span></div>
+        <div class="track-next"><strong>다음</strong><span>${escapeHtml(track.next)}</span></div>
       </article>`;
   }).join("");
 }
@@ -395,9 +412,9 @@ function renderResearch(catalog) {
         <h3>${escapeHtml(session.title)}</h3>
         <p>${escapeHtml(session.description)}</p>
         <div class="research-stats">
-          <div><strong>${number(session.source_count)}</strong><span>Sources</span></div>
-          <div><strong>${number(session.verified_count)}</strong><span>Verified</span></div>
-          <div><strong>${number(session.unresolved_count)}</strong><span>Open</span></div>
+          <div><strong>${number(session.source_count)}</strong><span>출처</span></div>
+          <div><strong>${number(session.verified_count)}</strong><span>검증됨</span></div>
+          <div><strong>${number(session.unresolved_count)}</strong><span>미결</span></div>
         </div>
         <div class="research-links">${links}</div>
       </article>`;
@@ -412,7 +429,7 @@ function renderResearch(catalog) {
 function renderGates(catalog) {
   $("#gate-score").textContent = `0 / ${catalog.mainnet_gates.length}`;
   $("#gate-list").innerHTML = catalog.mainnet_gates.map((gate) => `
-    <li class="gate-item"><div><strong>${escapeHtml(gate.text)}</strong><span>${escapeHtml(gate.state)} · evidence required</span></div></li>`).join("");
+    <li class="gate-item"><div><strong>${escapeHtml(gate.text)}</strong><span>${escapeHtml(gate.state)} · 근거 필요</span></div></li>`).join("");
 }
 
 function renderError(error) {
@@ -512,6 +529,7 @@ function renderLaunch(catalog) {
         <span class="pad-verdict">${escapeHtml(pad.verdict || "—")}</span>
       </div>
       <dl class="pad-facts">${FACTS.map(([label, key]) => pad[key] ? `<div><dt>${escapeHtml(label)}</dt><dd>${escapeHtml(pad[key])}</dd></div>` : "").join("")}</dl>
+      ${pad.note ? `<p class="pad-note">${escapeHtml(pad.note)}</p>` : ""}
       ${pad.url ? `<a class="text-link" href="${safeHref(pad.url)}" target="_blank" rel="noopener noreferrer">문서 ↗</a>` : ""}
     </article>`).join("") || '<div class="empty-state"><strong>등록된 런치패드가 없습니다.</strong></div>';
 
@@ -543,6 +561,8 @@ function renderLaunch(catalog) {
     listBlock("메인넷 임박 신호", giwa.mainnet_signals), listBlock("론칭 키트", giwa.launch_kit),
   ].join("") || "<section><h4>GIWA</h4><ul><li>Not catalogued</li></ul></section>";
 
+  const launchGlossary = $("#launch-glossary");
+  if (launchGlossary) launchGlossary.innerHTML = renderGlossary(lp.glossary || []);
   $("#launch-not-doing").innerHTML = (lp.not_doing || []).map((item) => `<li>${escapeHtml(item)}</li>`).join("") || "<li>—</li>";
   $("#launch-sources").innerHTML = (lp.sources || []).map((source) => `
     <a href="${safeHref(source.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(source.label)}${source.observed ? ` · ${escapeHtml(source.observed)}` : ""} ↗</a>`).join("");

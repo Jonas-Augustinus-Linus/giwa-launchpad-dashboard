@@ -1,16 +1,25 @@
 {
   "schema_version": 1,
-  "catalog_revision": "04a519b688f8",
+  "catalog_revision": "acad868215e1",
   "as_of": "2026-09-06",
   "project": {
     "title": "GIWA · Robinhood Launchpad Control Room",
-    "subtitle": "로빈후드 체인 즉시 론칭과 GIWA 메인넷 리허설 — 근거에서 발사대까지 한 화면에서",
-    "network": "GIWA Sepolia · Robinhood Chain (observation)",
+    "subtitle": "로빈후드 즉시 론칭 + GIWA 메인넷 리허설 — 근거부터 발사대까지 한 화면",
+    "network": "GIWA Sepolia · 로빈후드 체인(관찰)",
     "mode": "research_only",
     "decision": "오너 방향(2026-09-06): 로빈후드 체인(라이브 메인넷, DEX ≈ $1.9B/일)에서 Pons V2로 크리에이터 역할로 즉시 론칭하고, GIWA는 메인넷 부재이므로 Joseon.fun Sepolia 리허설과 CreateX 동일 주소 키트로 병행 준비한다(두 체인 모두 ETH 기본통화, 컨트랙트 구조 동일). 법인·FIU·법령해석 경로는 추진하지 않는다(2026-09-04 결정 유지). 공유 엔진 읽기 계층과 불변 풀 계층·락커 런처(fee=0) 준비는 계속한다.",
-    "product_hypothesis": "creator launches on Robinhood (Pons V2) now → GIWA rehearsal kit → operator-less immutable pool layer + locker launcher when GIWA mainnet opens",
-    "fee_policy": "no interface/router/protocol fee switch; v3 factory owner renounced; launcher fee parameters immutable at deploy (0 on Sepolia); no admin key, pause, upgrade or treasury role; legal/FIU gates recorded as research only (owner decision 2026-09-04)",
+    "product_hypothesis": "로빈후드 창작자 론칭 → GIWA 리허설 키트 → 메인넷 열리면 불변 풀 + 락커 런처",
+    "fee_policy": "1 % 거래 수수료 → 창작자 80 / 프로토콜 20 · Sepolia는 0 · 스위치·관리자 키 없음 · 배포 전 확정 후 불변",
     "default_branch": "main",
+    "decision_headline": "지금은 로빈후드 체인 Pons V2에서 창작자로 론칭하고, GIWA 메인넷은 리허설로 준비한다.",
+    "decision_points": [
+      "지금: 로빈후드 체인(DEX $1.89B/일) Pons V2에서 창작자로 론칭 · 수입 = 거래량의 0.7 %",
+      "다음(W1–3): 우리 런치패드 v1을 로빈후드에 · 1 % 수수료 → 창작자 80 / 프로토콜 20",
+      "GIWA(W4–6): 메인넷 없음 → Joseon.fun Sepolia 리허설 + CreateX 동일 주소 키트",
+      "두 체인 모두 ETH가 기본 통화 · 컨트랙트 구조 동일 → 코드 1벌로 두 체인",
+      "원칙: 관리자 키·일시정지·수수료 스위치 없음 · 수수료는 배포 전 확정, 배포 후 불변",
+      "하지 않음: 법인·FIU 신고 · 워시트레이딩·번들·매집-매도 · 관리자 권한이 남는 설계"
+    ],
     "content_ref": "main"
   },
   "publication": {
@@ -42,247 +51,248 @@
           "source": "https://api.llama.fi/v2/chains"
         },
         {
-          "label": "DEX volume 24h",
-          "value": "$1.89B (+12% d/d)",
+          "label": "DEX 거래량 24h",
+          "value": "$1.89B · 전일 대비 +12 %",
           "source": "https://api.llama.fi/overview/dexs/robinhood-chain"
         },
         {
-          "label": "DEX volume 7d",
-          "value": "$10.73B (+105% w/w)",
+          "label": "DEX 거래량 7d",
+          "value": "$10.73B · 전주 대비 +105 %",
           "source": "https://api.llama.fi/overview/dexs/robinhood-chain"
         },
         {
-          "label": "DEX volume 30d",
-          "value": "$23.09B (+263% m/m)",
+          "label": "DEX 거래량 30d",
+          "value": "$23.09B · 전월 대비 +263 %",
           "source": "https://api.llama.fi/overview/dexs/robinhood-chain"
         },
         {
-          "label": "Chain fees 24h / 7d / 30d",
+          "label": "체인 수수료 24h / 7d / 30d",
           "value": "$24.51M / $112.2M / $182.1M",
           "source": "https://api.llama.fi/overview/fees/robinhood-chain"
         },
         {
-          "label": "Uniswap V4 fees 24h",
+          "label": "Uniswap V4 수수료 24h",
           "value": "$8.82M",
           "source": "https://api.llama.fi/overview/fees/robinhood-chain"
         },
         {
-          "label": "Pons V2 fees 24h / 7d / 30d",
+          "label": "Pons V2 수수료 24h / 7d / 30d",
           "value": "$8.75M / $37.31M / $47.41M",
           "source": "https://api.llama.fi/summary/fees/pons-v2?dataType=dailyFees"
         },
         {
-          "label": "Pons V2 fee ramp",
-          "value": "08-22 $254k -> 09-04 $8.75M (34x)",
+          "label": "Pons V2 수수료 증가",
+          "value": "08-22 $254k → 09-04 $8.75M (34×)",
           "source": "https://api.llama.fi/summary/fees/pons-v2?dataType=dailyFees"
         },
         {
-          "label": "GMGN fees 24h (RH)",
-          "value": "$2.81M, vol $641.7M",
+          "label": "GMGN 수수료 24h (RH)",
+          "value": "$2.81M · 거래량 $641.7M",
           "source": "https://api.llama.fi/overview/dexs/robinhood-chain"
         },
         {
-          "label": "o1 Launchpad fees 24h",
+          "label": "o1 Launchpad 수수료 24h",
           "value": "$236k",
           "source": "https://api.llama.fi/overview/fees/robinhood-chain"
         },
         {
-          "label": "Pons V2 launches / graduations 24h",
-          "value": "26,711 / 708 (2.65%)",
+          "label": "Pons V2 런칭 / 졸업 24h",
+          "value": "26,711 / 708 (2.65 %)",
           "source": "https://rpc.mainnet.chain.robinhood.com"
         },
         {
-          "label": "Pons V2 36.6h",
-          "value": "40,854 launches / 959 grads (2.3%)",
+          "label": "Pons V2 36.6h 누적",
+          "value": "40,854 런칭 / 959 졸업 (2.3 %)",
           "source": "https://rpc.mainnet.chain.robinhood.com"
         },
         {
-          "label": "Time to graduation (n=22)",
-          "value": "median 2.0 min, p90 41 min, none >2h",
+          "label": "졸업 소요 시간 (n=22)",
+          "value": "중앙값 2.0분 · p90 41분 · 2h 초과 0건",
           "source": "https://rpc.mainnet.chain.robinhood.com"
         },
         {
-          "label": "Bankr pools 24h",
+          "label": "Bankr 풀 24h",
           "value": "2,315",
           "source": "https://rpc.mainnet.chain.robinhood.com"
         },
         {
-          "label": "Txs 24h / addresses",
+          "label": "트랜잭션 24h / 주소 수",
           "value": "13.98M / 19.37M",
           "source": "https://robinhoodchain.blockscout.com/api/v2/stats"
         },
         {
-          "label": "Block time",
-          "value": "0.101 s",
+          "label": "블록 시간",
+          "value": "0.101초",
           "source": "https://robinhoodchain.blockscout.com/api/v2/stats"
         },
         {
-          "label": "Gas price",
-          "value": "0.405 gwei (7d range 0.10-5.27)",
+          "label": "가스 가격",
+          "value": "0.405 gwei (7일 범위 0.10–5.27)",
           "source": "https://rpc.mainnet.chain.robinhood.com"
         },
         {
-          "label": "ETH price used",
-          "value": "$2,476-2,478",
+          "label": "ETH 환산 가격",
+          "value": "$2,476–2,478",
           "source": "https://coins.llama.fi/prices/current/coingecko:ethereum"
         },
         {
-          "label": "Best weekday / worst",
-          "value": "Fri $984M / Sat $534M",
+          "label": "최고 / 최저 요일",
+          "value": "금 $984M / 토 $534M",
           "source": "https://api.llama.fi/overview/dexs/robinhood-chain"
         },
         {
-          "label": "Peak hours",
-          "value": "15-22 UTC = 00-07 KST",
+          "label": "피크 시간대",
+          "value": "15–22 UTC = 00–07 KST",
           "source": "https://rpc.mainnet.chain.robinhood.com"
         },
         {
-          "label": "Solana DEX 24h (compare)",
-          "value": "$1.88B, 7d -27%",
+          "label": "솔라나 DEX 24h (비교)",
+          "value": "$1.88B · 7d −27 %",
           "source": "https://api.llama.fi/overview/dexs/Solana"
         },
         {
-          "label": "pump.fun fees 24h (compare)",
-          "value": "$0.93M (7d 0.9x)",
+          "label": "pump.fun 수수료 24h (비교)",
+          "value": "$0.93M (7d 0.9×)",
           "source": "https://api.llama.fi/summary/fees/pump.fun"
         }
       ],
       "funding_paths": [
         {
-          "label": "Robinhood app -> RH Chain",
-          "detail": "US accounts only (NY excluded); not usable from Korea",
+          "label": "Robinhood 앱 → RH 체인",
+          "detail": "미국 계정 전용 (NY 제외) · 한국에서 사용 불가",
           "state": "verified"
         },
         {
-          "label": "Robinhood Wallet (self-custody)",
-          "detail": "RH Chain built in; Korea app-store availability unknown",
+          "label": "Robinhood Wallet (셀프커스터디)",
+          "detail": "RH 체인 내장 · 한국 앱스토어 가용 여부 미확인",
           "state": "unverified"
         },
         {
-          "label": "Relay Arbitrum -> RH",
-          "detail": "0.1 ETH: $0.103 + gas, 1 s",
+          "label": "Relay · Arbitrum → RH",
+          "detail": "0.1 ETH 기준 $0.103 + 가스 · 1초",
           "state": "verified"
         },
         {
-          "label": "Relay Ethereum -> RH",
-          "detail": "0.1 ETH: $0.080 + $0.014 gas, 1 s",
+          "label": "Relay · Ethereum → RH",
+          "detail": "0.1 ETH 기준 $0.080 + 가스 $0.014 · 1초",
           "state": "verified"
         },
         {
-          "label": "Across Arbitrum -> RH",
-          "detail": "0.104% ~ $0.26, 1 s; min 0.000377 ETH",
+          "label": "Across · Arbitrum → RH",
+          "detail": "0.104 % ≈ $0.26 · 1초 · 최소 0.000377 ETH",
           "state": "verified"
         },
         {
-          "label": "Across Ethereum -> RH",
-          "detail": "0.101% ~ $0.25, 2 s",
+          "label": "Across · Ethereum → RH",
+          "detail": "0.101 % ≈ $0.25 · 2초",
           "state": "verified"
         },
         {
-          "label": "LI.FI / Jumper Arbitrum -> RH",
-          "detail": "$0.62 fixed + ~$0.13, 1 s",
+          "label": "LI.FI / Jumper · Arbitrum → RH",
+          "detail": "고정 $0.62 + ≈$0.13 · 1초",
           "state": "verified"
         },
         {
-          "label": "Canonical Arbitrum bridge (L1)",
-          "detail": "deposit ~10 min, withdrawal 7 days",
+          "label": "Arbitrum 공식 브리지 (L1)",
+          "detail": "입금 ≈10분 · 출금 7일",
           "state": "verified"
         },
         {
-          "label": "gas.zip -> 4663",
-          "detail": "inbound on, min 0.015 ETH",
+          "label": "gas.zip → 4663",
+          "detail": "입금 지원 · 최소 0.015 ETH",
           "state": "verified"
         },
         {
           "label": "Superbridge /robinhood",
-          "detail": "page live; fee/time not extracted",
+          "detail": "페이지 운영 중 · 수수료·소요시간 미추출",
           "state": "unverified"
         },
         {
           "label": "Stargate / Transporter",
-          "detail": "no RH in Stargate metadata; Transporter page only",
+          "detail": "Stargate 메타데이터에 RH 없음 · Transporter 페이지만",
           "state": "unverified"
         },
         {
-          "label": "Binance direct",
-          "detail": "no RH network; Arbitrum One 0.00002 ETH",
+          "label": "Binance 직접 출금",
+          "detail": "RH 네트워크 없음 · Arbitrum One 0.00002 ETH",
           "state": "verified"
         },
         {
-          "label": "Coinbase direct",
-          "detail": "no RH network",
+          "label": "Coinbase 직접 출금",
+          "detail": "RH 네트워크 없음",
           "state": "verified"
         },
         {
-          "label": "Upbit / OKX / Bybit direct",
-          "detail": "auth-gated APIs; unknown",
+          "label": "Upbit / OKX / Bybit 직접 출금",
+          "detail": "인증 필요 API · 미확인",
           "state": "unverified"
         },
         {
-          "label": "Recommended KR path",
-          "detail": "Upbit/Bithumb -> ETH L1 -> Relay/Across -> RH; or Binance/OKX -> Arbitrum -> Relay",
-          "state": "verified"
+          "label": "권장 한국 경로",
+          "detail": "Upbit/Bithumb → ETH L1 → Relay/Across → RH",
+          "state": "verified",
+          "note": "대안: Binance/OKX → Arbitrum → Relay → RH"
         },
         {
-          "label": "Wallet",
-          "detail": "Rabby native (hood/4663) or MetaMask manual",
+          "label": "지갑",
+          "detail": "Rabby 기본 지원 (hood/4663) · MetaMask 수동 추가",
           "state": "verified"
         }
       ],
       "bots_and_tools": [
         {
           "name": "GMGN",
-          "detail": "RH tab since 2026-07-03; 1%/trade; $2.81M fees/24h; dominant retail terminal",
+          "detail": "RH 탭 2026-07-03부터 · 거래당 1 % · $2.81M/일 · 주력 리테일 터미널",
           "url": "https://gmgn.ai"
         },
         {
           "name": "Maestro",
-          "detail": "RH among 12 chains; 1% fee; $95.8k/24h",
+          "detail": "RH 포함 12체인 · 수수료 1 % · $95.8k/일",
           "url": "https://docs.maestrobots.com/sniper/getting-started"
         },
         {
           "name": "Trojan/Photon/Axiom/BullX/Banana/Sigma/Bloom",
-          "detail": "no RH evidence in docs",
+          "detail": "문서에 RH 지원 근거 없음",
           "url": "https://docs.axiom.trade"
         },
         {
           "name": "DexScreener",
-          "detail": "slug robinhood; 16/30 latest boosts are RH tokens",
+          "detail": "슬러그 robinhood · 최신 부스트 30건 중 16건이 RH 토큰",
           "url": "https://dexscreener.com/robinhood"
         },
         {
           "name": "GeckoTerminal",
-          "detail": "network robinhood, 39+ dexes (pons-v2, bankr-robinhood, o1-launchpad-robinhood)",
+          "detail": "네트워크 robinhood · DEX 39+ (pons-v2·bankr·o1 등)",
           "url": "https://api.geckoterminal.com/api/v2/networks/robinhood/dexes"
         },
         {
           "name": "Blockscout",
-          "detail": "robinhoodchain.blockscout.com / robinscan.io; verified Pons/Bags/o1 ABIs; intermittent 500",
+          "detail": "robinscan.io 미러 · Pons·Bags·o1 ABI 검증됨 · 간헐 500 오류",
           "url": "https://robinhoodchain.blockscout.com"
         },
         {
           "name": "hoodscan.co",
-          "detail": "unofficial Discover/Feed/Swaps",
+          "detail": "비공식 · Discover/Feed/Swaps",
           "url": "https://hoodscan.co/discover"
         },
         {
           "name": "Pons app",
-          "detail": "Explore/Analytics/Create/Profile (fee claims)",
+          "detail": "Explore/Analytics/Create/Profile (수수료 클레임)",
           "url": "https://www.ponsfamily.com/launchpad"
         },
         {
           "name": "GMGN Korea TG",
-          "detail": "1,736 members (09-04)",
+          "detail": "멤버 1,736명 (09-04)",
           "url": "https://t.me/GMGN_Korea"
         },
         {
           "name": "DexTools",
-          "detail": "Cloudflare-gated; unverified",
+          "detail": "Cloudflare 차단 · 미확인",
           "url": "https://www.dextools.io"
         },
         {
           "name": "Bubblemaps",
-          "detail": "robinhood chain icon; API support unverified",
+          "detail": "robinhood 체인 아이콘 있음 · API 지원 미확인",
           "url": "https://bubblemaps.io"
         }
       ]
@@ -290,418 +300,424 @@
     "launchpads": [
       {
         "name": "Pons V2",
-        "chain": "Robinhood Chain",
-        "supply_split": "1B; 71.43% curve / 28.57% held (20.41% pool + 8.16% locked); team 0",
-        "virtual_liquidity": "phantom 1.68 ETH -> FDV ~$4.2k",
-        "graduation": "4.2 ETH (8,090 USDG / stock pairs)",
-        "lp_at_graduation": "4.2 ETH + 204.08M tokens; FDV ~$51k",
-        "lp_lock": "permanent, PonsV2LaunchLocker 0x2674...4952 (no withdraw)",
-        "pool": "Uniswap v4, hook PonsV2MemeHook 0xE5e7...e044, poolFee 0",
-        "fees": "1% -> creator 70 / protocol 30 (35/35/30 buyback on); creator tax <=10% to creator",
-        "creation_fee": "0.0005 ETH + gas ~0.0015",
-        "dev_buy": "launchAndBuy router atomic; launcher exempt; <=32 exempt wallets",
-        "anti_snipe": "99% -> 0 exp decay, 3 s onchain (5 s docs); tax joins fee split",
-        "activity": "26,711 launches / 708 grads per 24h; $8.75M fees",
-        "verdict": "1st choice",
+        "chain": "로빈후드 체인",
+        "supply_split": "1B · 커브 71.4 % · 풀 20.4 % · 락커 8.2 % · 팀 0 %",
+        "virtual_liquidity": "1.68 ETH · 시작 FDV $4.2k",
+        "graduation": "4.2 ETH 모금 시 · USDG·주식페어 8,090 USDG",
+        "lp_at_graduation": "4.2 ETH + 2.04억 개 · FDV $51k",
+        "lp_lock": "영구 잠금 · 인출 함수 없음 · 0x2674...4952",
+        "pool": "Uniswap v4 · 자체 훅 0xE5e7...e044 · 풀 수수료 0",
+        "fees": "1 % → 창작자 70 / 프로토콜 30",
+        "creation_fee": "0.0005 ETH + 가스 ≈ $4",
+        "dev_buy": "원자 실행 (launchAndBuy) · 런처 면제 · 면제 지갑 ≤32",
+        "anti_snipe": "99 % → 0 · 3초 지수감쇠 · 세금은 수수료 풀로",
+        "activity": "26,711 런칭 · 708 졸업 · $8.75M 수수료 (일)",
+        "verdict": "1순위",
+        "note": "바이백 ON 시 35/35/30 · 창작자 세금 ≤10 % 전액 창작자 · 감쇠 문서상 5초 · 생성 가스 ≈0.0015 ETH",
         "url": "https://docs.ponsfamily.com/docs/v2"
       },
       {
         "name": "Bankr",
-        "chain": "Robinhood Chain",
-        "supply_split": "100B; 85% v4 pool / 15% creator vest (1y, 30d cliff, optional)",
-        "virtual_liquidity": "single-sided dynamic-fee pool",
-        "graduation": "none",
-        "lp_at_graduation": "0 ETH (buyers)",
-        "lp_lock": "hook-owned; details unverified",
-        "pool": "Uniswap v4, hook 0x4e34...a544, ts 8",
-        "fees": "1.75% -> creator 0.665 / LP 0.285 / Bankr 0.475 / BNKR 0.2375 / Doppler ~0.0875",
-        "creation_fee": "none; wallet >=24h, >=0.002 ETH, 3/day",
-        "dev_buy": "2%/wallet cap 5 min",
-        "anti_snipe": "~10 s fee decay + 2% cap",
-        "activity": "2,315 pools/24h; LIT $718M FDV thin liq",
-        "verdict": "2nd (stock pairs, vest)",
+        "chain": "로빈후드 체인",
+        "supply_split": "100B · 풀 85 % · 창작자 베스팅 15 %",
+        "virtual_liquidity": "커브 없음 · 단면 풀 · 동적 수수료",
+        "graduation": "없음 · 즉시 풀",
+        "lp_at_graduation": "0 ETH · 풀 ETH는 구매자 자금",
+        "lp_lock": "훅 소유 · 상세 미확인",
+        "pool": "Uniswap v4 · 훅 0x4e34...a544 · 틱 간격 8",
+        "fees": "1.75 % → 창작자 0.665 / LP 0.285 / Bankr 0.475",
+        "creation_fee": "0 ETH · 지갑 ≥24h · ≥0.002 ETH · 3회/일",
+        "dev_buy": "≤2 %/지갑 · 첫 5분",
+        "anti_snipe": "≈10초 수수료 감쇠 + 지갑당 2 % 캡",
+        "activity": "2,315 풀/일 · LIT FDV $718M (얇은 유동성)",
+        "verdict": "2순위 (주식페어·베스팅)",
+        "note": "수수료 나머지 BNKR 0.2375 % · Doppler ≈0.0875 % · 베스팅 1년·30일 클리프·선택형",
         "url": "https://docs.bankr.bot/token-launching/overview"
       },
       {
         "name": "o1 Launchpad",
-        "chain": "Robinhood Chain",
-        "supply_split": "1B; 100% single-sided pool; team 0",
-        "virtual_liquidity": "opening FDV ~$4,000",
-        "graduation": "none",
-        "lp_at_graduation": "0 ETH (buyers)",
-        "lp_lock": "removal permanently disabled",
-        "pool": "Uniswap v4, LaunchHook 0x0310...2aCc",
-        "fees": "1% -> creator 50 / platform 30 / referrer 20",
+        "chain": "로빈후드 체인",
+        "supply_split": "1B · 풀 100 % 단면 · 팀 0 %",
+        "virtual_liquidity": "커브 없음 · 시작 FDV ≈ $4k",
+        "graduation": "없음 · 즉시 풀",
+        "lp_at_graduation": "0 ETH · 풀 ETH는 구매자 자금",
+        "lp_lock": "영구 · LP 제거 기능 비활성",
+        "pool": "Uniswap v4 · LaunchHook 0x0310...2aCc",
+        "fees": "1 % → 창작자 50 / 플랫폼 30 / 추천인 20",
         "creation_fee": "0.001 ETH",
-        "dev_buy": "toggle off by default; atomic; pays 1% only",
-        "anti_snipe": "99% -> 1% linear 20 s; surcharge to platform",
-        "activity": "337 launches/24h; $236k fees; 194 stock pairs",
-        "verdict": "3rd (stock pairs, referral)",
+        "dev_buy": "기본 OFF · 원자 실행 · 1 %만 부담",
+        "anti_snipe": "99 % → 1 % · 20초 선형감쇠",
+        "activity": "337 런칭/일 · $236k 수수료 · 주식페어 194",
+        "verdict": "3순위 (주식페어·추천인)",
+        "note": "dev-buy는 스나이퍼 할증 없이 기본 1 %만 · 할증분은 플랫폼 귀속",
         "url": "https://docs.o1.exchange/launchpad/reference/live-configuration.md"
       },
       {
         "name": "Bags",
-        "chain": "Robinhood Chain",
-        "supply_split": "1B; 83% curve / 17% LP; team 0",
-        "virtual_liquidity": "vETH 1.288 / vT 1.044B -> FDV ~$3.1k",
-        "graduation": "5 ETH",
-        "lp_at_graduation": "5 ETH + 170M; FDV ~$73k",
-        "lp_lock": "permanent (docs)",
-        "pool": "Uniswap v4, BagsV4Hook 0x2380...EEcC, ts 60",
-        "fees": "2% -> creator 1% / protocol 1%; <=100 claimers",
-        "creation_fee": "onchain 0 (docs 0.02 ETH)",
-        "dev_buy": "createAndBuy atomic",
-        "anti_snipe": "none",
-        "activity": "24 events/24h; $9k fees; no RH UI",
-        "verdict": "only with own audience",
+        "chain": "로빈후드 체인",
+        "supply_split": "1B · 커브 83 % · LP 17 % · 팀 0 %",
+        "virtual_liquidity": "1.288 ETH · 시작 FDV ≈ $3.1k",
+        "graduation": "5 ETH 모금 시",
+        "lp_at_graduation": "5 ETH + 1.7억 개 · FDV ≈ $73k",
+        "lp_lock": "영구 잠금 (문서 기준)",
+        "pool": "Uniswap v4 · 훅 0x2380...EEcC · 틱 간격 60",
+        "fees": "2 % → 창작자 1 % / 프로토콜 1 %",
+        "creation_fee": "0 ETH 온체인 (문서 0.02 ETH)",
+        "dev_buy": "원자 실행 (createAndBuy)",
+        "anti_snipe": "없음",
+        "activity": "24 이벤트/일 · $9k 수수료 · RH UI 없음",
+        "verdict": "자체 오디언스 있을 때만",
+        "note": "훅 BagsV4Hook · 가상 토큰 1.044B · 클레임 지갑 ≤100",
         "url": "https://docs.bags.fm/robinhood/overview.md"
       },
       {
         "name": "PAIR",
-        "chain": "Robinhood Chain",
-        "supply_split": "unverified",
-        "virtual_liquidity": "unverified",
-        "graduation": "none",
+        "chain": "로빈후드 체인",
+        "supply_split": "미확인",
+        "virtual_liquidity": "미확인",
+        "graduation": "없음 · 즉시 풀",
         "lp_at_graduation": "0 ETH",
-        "lp_lock": "permanent locker 0xeFcF...a117",
-        "pool": "Uniswap v4, PairV4Hook 0x16d1...2000",
-        "fees": "1% -> creator 70 / protocol 30",
+        "lp_lock": "영구 락커 0xeFcF...a117",
+        "pool": "Uniswap v4 · PairV4Hook 0x16d1...2000",
+        "fees": "1 % → 창작자 70 / 프로토콜 30",
         "creation_fee": "0.0005 ETH",
-        "dev_buy": "unverified",
-        "anti_snipe": "unverified",
-        "activity": "234 pools/24h; $74k fees",
-        "verdict": "niche",
+        "dev_buy": "미확인",
+        "anti_snipe": "미확인",
+        "activity": "234 풀/일 · $74k 수수료",
+        "verdict": "틈새",
         "url": "https://raw.githubusercontent.com/DefiLlama/dimension-adapters/master/fees/pairdotfund.ts"
       },
       {
         "name": "LetsCash",
-        "chain": "Robinhood Chain",
-        "supply_split": "config; tax token",
-        "virtual_liquidity": "unverified",
-        "graduation": "none",
+        "chain": "로빈후드 체인",
+        "supply_split": "설정형 · 세금 토큰",
+        "virtual_liquidity": "미확인",
+        "graduation": "없음 · 즉시 풀",
         "lp_at_graduation": "0 ETH",
-        "lp_lock": "locked v4",
-        "pool": "Uniswap v4, hook 0x75a5...2aec; ETH or USDG",
-        "fees": "tax 1-15% -> creator 50-96.67%",
-        "creation_fee": "unverified",
-        "dev_buy": "unverified",
-        "anti_snipe": "unverified",
-        "activity": "108 launches/24h; $21k fees",
-        "verdict": "tax-token niche",
+        "lp_lock": "v4 잠금",
+        "pool": "Uniswap v4 · 훅 0x75a5...2aec · ETH/USDG 페어",
+        "fees": "세금 1–15 % → 창작자 50–96.67 %",
+        "creation_fee": "미확인",
+        "dev_buy": "미확인",
+        "anti_snipe": "미확인",
+        "activity": "108 런칭/일 · $21k 수수료",
+        "verdict": "세금 토큰 틈새",
         "url": "https://raw.githubusercontent.com/DefiLlama/dimension-adapters/master/dexs/letscash.ts"
       },
       {
         "name": "pools.trade",
-        "chain": "Robinhood Chain",
-        "supply_split": "100% pool (instant) or LBP",
-        "virtual_liquidity": "n/a",
-        "graduation": "LBP mode only",
+        "chain": "로빈후드 체인",
+        "supply_split": "풀 100 % 즉시 또는 LBP",
+        "virtual_liquidity": "해당 없음",
+        "graduation": "LBP 모드만",
         "lp_at_graduation": "0 ETH",
-        "lp_lock": "FeeSplitter / locker permanent",
-        "pool": "Uniswap v4 hookless 0.25%, ts 25",
-        "fees": "0.25%; creator 40% of ETH side -> ~0.05% of vol",
-        "creation_fee": "0",
-        "dev_buy": "unverified",
-        "anti_snipe": "none",
-        "activity": "276 tokens/24h; $47k fees",
-        "verdict": "avoid (economics)",
+        "lp_lock": "영구 (FeeSplitter / 락커)",
+        "pool": "Uniswap v4 · 훅 없음 · 0.25 % · 틱 간격 25",
+        "fees": "0.25 % · 창작자 ETH측 40 % ≈ 거래량 0.05 %",
+        "creation_fee": "0 ETH",
+        "dev_buy": "미확인",
+        "anti_snipe": "없음",
+        "activity": "276 토큰/일 · $47k 수수료",
+        "verdict": "사용 금지 (경제성)",
         "url": "https://raw.githubusercontent.com/DefiLlama/dimension-adapters/master/fees/pools-trade.ts"
       },
       {
         "name": "Pons V1",
-        "chain": "Robinhood Chain",
-        "supply_split": "1B; 100% single-sided v3",
-        "virtual_liquidity": "not published",
-        "graduation": "4.2 ETH milestone",
-        "lp_at_graduation": "4.2 ETH paired",
-        "lp_lock": "locker 0x736D...7F35",
-        "pool": "Uniswap v3 1%",
-        "fees": "1% -> creator 70 / protocol 30",
+        "chain": "로빈후드 체인",
+        "supply_split": "1B · 풀 100 % 단면 (v3)",
+        "virtual_liquidity": "미공개",
+        "graduation": "4.2 ETH 마일스톤",
+        "lp_at_graduation": "4.2 ETH 페어링",
+        "lp_lock": "락커 잠금 0x736D...7F35",
+        "pool": "Uniswap v3 · 수수료 1 %",
+        "fees": "1 % → 창작자 70 / 프로토콜 30",
         "creation_fee": "0.0005 ETH",
-        "dev_buy": "block-0 creator only",
-        "anti_snipe": "blocks 1-2: <=5% hold / <=5.5% buy",
-        "activity": "launchEnabled()=false; launches revert",
-        "verdict": "closed",
+        "dev_buy": "블록 0 · 창작자만",
+        "anti_snipe": "블록 1–2 · 보유 ≤5 % · 매수 ≤5.5 %",
+        "activity": "폐쇄 · 런칭 tx 리버트 (launchEnabled()=false)",
+        "verdict": "폐쇄",
         "url": "https://docs.ponsfamily.com/docs"
       },
       {
         "name": "NOXA Fun",
-        "chain": "Robinhood Chain",
-        "supply_split": "100% single-sided v3",
-        "virtual_liquidity": "not published",
-        "graduation": "4.2 ETH milestone",
+        "chain": "로빈후드 체인",
+        "supply_split": "풀 100 % 단면 (v3)",
+        "virtual_liquidity": "미공개",
+        "graduation": "4.2 ETH 마일스톤",
         "lp_at_graduation": "4.2 ETH",
-        "lp_lock": "locker forever",
-        "pool": "Uniswap v3 1%",
-        "fees": "100% creator (DefiLlama)",
+        "lp_lock": "영구 락커",
+        "pool": "Uniswap v3 · 수수료 1 %",
+        "fees": "창작자 100 % (DefiLlama 기준)",
         "creation_fee": "0.0005 ETH",
-        "dev_buy": "optional initial buy",
-        "anti_snipe": "maxTx 2%, 366 blocks",
-        "activity": "launchEnabled()=false; 0 launches",
-        "verdict": "closed",
+        "dev_buy": "선택형 초기 매수",
+        "anti_snipe": "tx당 최대 2 % · 366블록",
+        "activity": "0 런칭 · 폐쇄 (launchEnabled()=false)",
+        "verdict": "폐쇄",
         "url": "https://docs.noxa.fi/launchpad/chains/"
       },
       {
         "name": "GIWA MARKETS (RH)",
-        "chain": "Robinhood Chain",
-        "supply_split": "curve -> v3; 0.01 ETH commit = first buy",
-        "virtual_liquidity": "unverified",
-        "graduation": "unverified",
-        "lp_at_graduation": "unverified",
-        "lp_lock": "LP no withdraw (claim)",
-        "pool": "Uniswap v3 1%",
-        "fees": "1% -> 80% burn $GIWA / 20% treasury; creator 0",
-        "creation_fee": "0.01 ETH commit",
-        "dev_buy": "commit = first buy",
-        "anti_snipe": "none stated",
-        "activity": "RhPump 19 txs total, silent since 08-19",
-        "verdict": "do not use (brand confusion, 0 creator fee)",
+        "chain": "로빈후드 체인",
+        "supply_split": "커브 → v3 · 0.01 ETH 커밋 = 첫 매수",
+        "virtual_liquidity": "미확인",
+        "graduation": "미확인",
+        "lp_at_graduation": "미확인",
+        "lp_lock": "LP 인출 불가 · 클레임만",
+        "pool": "Uniswap v3 · 수수료 1 %",
+        "fees": "1 % → $GIWA 소각 80 / 트레저리 20 · 창작자 0",
+        "creation_fee": "0.01 ETH 커밋",
+        "dev_buy": "커밋 = 첫 매수",
+        "anti_snipe": "명시 없음",
+        "activity": "19 tx 누적 · 08-19 이후 무활동 (RhPump)",
+        "verdict": "사용 금지 (브랜드 혼동)",
+        "note": "창작자 수수료 0 %",
         "url": "https://giwa.markets/assets/i18n-BUIJQVGU.js"
       },
       {
         "name": "Clanker (RH)",
-        "chain": "Robinhood Chain",
-        "supply_split": "100B; 100% pool (vault optional)",
-        "virtual_liquidity": "start mcap 1.99-9.87 ETH (Base sample)",
-        "graduation": "none",
+        "chain": "로빈후드 체인",
+        "supply_split": "100B · 풀 100 % · 볼트 선택형",
+        "virtual_liquidity": "1.99–9.87 ETH 시작 시총 (Base 표본)",
+        "graduation": "없음 · 즉시 풀",
         "lp_at_graduation": "0 ETH",
-        "lp_lock": "locker per token",
+        "lp_lock": "토큰별 락커",
         "pool": "Uniswap v4",
-        "fees": "1-3% LP fee, Clanker +20%",
-        "creation_fee": "gas",
-        "dev_buy": "ClankerUniv4EthDevBuy",
-        "anti_snipe": "MEV modules",
-        "activity": "$1.5k fees/24h; RH not in deployed list",
-        "verdict": "ignore",
+        "fees": "LP 수수료 1–3 % · Clanker 몫 20 %",
+        "creation_fee": "가스만",
+        "dev_buy": "지원 (ClankerUniv4EthDevBuy)",
+        "anti_snipe": "MEV 모듈",
+        "activity": "$1.5k 수수료/일 · RH 공식 배포 목록 없음",
+        "verdict": "무시",
         "url": "https://clanker.gitbook.io/documentation/references/deployed-contracts.md"
       },
       {
         "name": "Joseon.fun",
         "chain": "GIWA Sepolia",
-        "supply_split": "1B; 800M curve / 200M pool; team 0",
-        "virtual_liquidity": "1.2 ETH / 1.0667B -> FDV ~1.125 ETH",
-        "graduation": "~3.67 ETH gross",
-        "lp_at_graduation": "3.6 WETH + 200M; FDV 18 ETH",
-        "lp_lock": "PermanentLiquidityLocker 0x2141...3fE6",
-        "pool": "JoseonSwap V2-fork factory 0x9AB1...8784",
-        "fees": "curve 2% (70/30); swap 0.3% (50/30/20)",
-        "creation_fee": "gas ~0.000005 ETH (testnet)",
-        "dev_buy": "inside creation tx (0.05-2.0 ETH observed)",
-        "anti_snipe": "none; fee-ordered sequencer",
-        "activity": "30 launches, 3 graduated, newest 09-05",
-        "verdict": "rehearsal #1; mainnet redeploy promised",
+        "supply_split": "1B · 커브 8억 개 · 풀 2억 개 · 팀 0 %",
+        "virtual_liquidity": "1.2 ETH · 시작 FDV ≈ 1.125 ETH",
+        "graduation": "≈3.67 ETH 모금 시 (총액)",
+        "lp_at_graduation": "3.6 WETH + 2억 개 · FDV 18 ETH",
+        "lp_lock": "영구 락커 0x2141...3fE6",
+        "pool": "JoseonSwap V2 포크 · 팩토리 0x9AB1...8784",
+        "fees": "커브 2 % (70/30) · 스왑 0.3 % (50/30/20)",
+        "creation_fee": "가스 ≈0.000005 ETH (테스트넷)",
+        "dev_buy": "생성 tx 내 · 관측 0.05–2.0 ETH",
+        "anti_snipe": "없음 · 수수료순 시퀀서",
+        "activity": "30 런칭 · 3 졸업 · 최신 09-05",
+        "verdict": "리허설 1순위 (메인넷 재배포 예고)",
+        "note": "가상 토큰 1.0667B · 락커 PermanentLiquidityLocker",
         "url": "https://docs.joseon.fun/fees/"
       },
       {
         "name": "GIWA MARKETS (Sepolia)",
         "chain": "GIWA Sepolia",
-        "supply_split": "1B; 800M curve / 200M pool; team 0",
-        "virtual_liquidity": "unverified",
-        "graduation": "800M sold",
-        "lp_at_graduation": "all curve ETH + 200M; LP burned",
-        "lp_lock": "burned",
-        "pool": "own AMM",
-        "fees": "1% curve; 0.3% post; 70% burn / 30% dev",
-        "creation_fee": "~0.01 ETH incl dev buy",
-        "dev_buy": "same tx",
-        "anti_snipe": "none",
-        "activity": "pump 0x540e...ee43 3,853 txs; latest 09-04",
-        "verdict": "sandbox only",
+        "supply_split": "1B · 커브 8억 개 · 풀 2억 개 · 팀 0 %",
+        "virtual_liquidity": "미확인",
+        "graduation": "8억 개 판매 시",
+        "lp_at_graduation": "커브 ETH 전액 + 2억 개 · LP 소각",
+        "lp_lock": "소각",
+        "pool": "자체 AMM",
+        "fees": "커브 1 % · 졸업 후 0.3 % · 소각 70 / 개발 30",
+        "creation_fee": "≈0.01 ETH (dev-buy 포함)",
+        "dev_buy": "생성 tx 내",
+        "anti_snipe": "없음",
+        "activity": "3,853 tx · 최신 09-04 (pump 0x540e...ee43)",
+        "verdict": "샌드박스 전용",
         "url": "https://giwa.markets/launch"
       },
       {
         "name": "Ammora",
         "chain": "GIWA Sepolia",
-        "supply_split": "unverified",
-        "virtual_liquidity": "unverified",
-        "graduation": "unverified",
-        "lp_at_graduation": "unverified",
-        "lp_lock": "unverified",
-        "pool": "unverified",
-        "fees": "no numbers published",
-        "creation_fee": "unverified",
-        "dev_buy": "unverified",
-        "anti_snipe": "unverified",
-        "activity": "writesEnabled true (09-03 manifest)",
-        "verdict": "watch",
+        "supply_split": "미확인",
+        "virtual_liquidity": "미확인",
+        "graduation": "미확인",
+        "lp_at_graduation": "미확인",
+        "lp_lock": "미확인",
+        "pool": "미확인",
+        "fees": "수치 미공개",
+        "creation_fee": "미확인",
+        "dev_buy": "미확인",
+        "anti_snipe": "미확인",
+        "activity": "쓰기 활성 (09-03 매니페스트)",
+        "verdict": "관망",
         "url": "https://ammora-protocol.vercel.app/api/product-release"
       },
       {
         "name": "Naru",
         "chain": "GIWA Sepolia",
-        "supply_split": "identity-gated issuance",
-        "virtual_liquidity": "unverified",
-        "graduation": "n/a",
-        "lp_at_graduation": "unverified",
-        "lp_lock": "unverified",
-        "pool": "V2 fork 0xD51d...0C47",
-        "fees": "0.3% all to LP",
-        "creation_fee": "unverified",
-        "dev_buy": "unverified",
-        "anti_snipe": "unverified",
-        "activity": "dormant since 2026-07-22",
-        "verdict": "not for fast memecoin",
+        "supply_split": "신원 게이트 발행",
+        "virtual_liquidity": "미확인",
+        "graduation": "해당 없음",
+        "lp_at_graduation": "미확인",
+        "lp_lock": "미확인",
+        "pool": "V2 포크 0xD51d...0C47",
+        "fees": "0.3 % → LP 100 %",
+        "creation_fee": "미확인",
+        "dev_buy": "미확인",
+        "anti_snipe": "미확인",
+        "activity": "07-22 이후 휴면",
+        "verdict": "빠른 밈코인 부적합",
         "url": "https://naru.market/docs"
       }
     ],
     "norms": [
       {
         "platform": "Pons V2",
-        "chain": "Robinhood",
-        "curve_percent": "71.43",
-        "lp_percent": "20.41 (+8.16 locked)",
-        "team_percent": "0",
+        "chain": "로빈후드",
+        "curve_percent": "71.4 %",
+        "lp_percent": "20.4 % (+8.2 % 락커)",
+        "team_percent": "0 %",
         "graduation": "4.2 ETH",
-        "lp_quote_at_graduation": "4.2 ETH ~ $10.4k",
-        "creator_fee": "0.7% of vol (+tax <=10%)",
+        "lp_quote_at_graduation": "4.2 ETH ≈ $10.4k",
+        "creator_fee": "0.7 % of 거래량 (+세금 ≤10 %)",
         "url": "https://docs.ponsfamily.com/docs/v2"
       },
       {
         "platform": "Bags-RH",
-        "chain": "Robinhood",
-        "curve_percent": "83",
-        "lp_percent": "17",
-        "team_percent": "0",
+        "chain": "로빈후드",
+        "curve_percent": "83 %",
+        "lp_percent": "17 %",
+        "team_percent": "0 %",
         "graduation": "5 ETH",
-        "lp_quote_at_graduation": "5 ETH ~ $12.4k",
-        "creator_fee": "1% of vol",
+        "lp_quote_at_graduation": "5 ETH ≈ $12.4k",
+        "creator_fee": "1 % of 거래량",
         "url": "https://docs.bags.fm/robinhood/overview.md"
       },
       {
         "platform": "o1 Launchpad",
-        "chain": "Robinhood/Base",
-        "curve_percent": "0 (100% pool)",
-        "lp_percent": "100",
-        "team_percent": "0",
-        "graduation": "none",
-        "lp_quote_at_graduation": "0 (buyers)",
-        "creator_fee": "0.5% of vol",
+        "chain": "로빈후드/Base",
+        "curve_percent": "0 % (풀 100 %)",
+        "lp_percent": "100 %",
+        "team_percent": "0 %",
+        "graduation": "없음",
+        "lp_quote_at_graduation": "0 (구매자 자금)",
+        "creator_fee": "0.5 % of 거래량",
         "url": "https://docs.o1.exchange/launchpad/trading/liquidity.md"
       },
       {
         "platform": "Bankr",
-        "chain": "Robinhood",
-        "curve_percent": "0 (85% pool)",
-        "lp_percent": "85",
-        "team_percent": "15 vest",
-        "graduation": "none",
+        "chain": "로빈후드",
+        "curve_percent": "0 % (풀 85 %)",
+        "lp_percent": "85 %",
+        "team_percent": "15 % 베스팅",
+        "graduation": "없음",
         "lp_quote_at_graduation": "0",
-        "creator_fee": "0.665% of vol",
+        "creator_fee": "0.665 % of 거래량",
         "url": "https://docs.bankr.bot/token-launching/overview"
       },
       {
         "platform": "Pons V1 / NOXA",
-        "chain": "Robinhood",
-        "curve_percent": "0 (100% pool)",
-        "lp_percent": "100",
-        "team_percent": "0",
-        "graduation": "4.2 ETH milestone",
+        "chain": "로빈후드",
+        "curve_percent": "0 % (풀 100 %)",
+        "lp_percent": "100 %",
+        "team_percent": "0 %",
+        "graduation": "4.2 ETH 마일스톤",
         "lp_quote_at_graduation": "4.2 ETH",
-        "creator_fee": "70% / 100% of 1%",
+        "creator_fee": "1 % 중 70 % / 100 %",
         "url": "https://docs.ponsfamily.com/docs"
       },
       {
         "platform": "pump.fun",
-        "chain": "Solana",
-        "curve_percent": "79.31",
-        "lp_percent": "20.69",
-        "team_percent": "0",
-        "graduation": "~85 SOL",
-        "lp_quote_at_graduation": "85 SOL ~ $8.8k",
-        "creator_fee": "0.30% -> 0.05%",
+        "chain": "솔라나",
+        "curve_percent": "79.3 %",
+        "lp_percent": "20.7 %",
+        "team_percent": "0 %",
+        "graduation": "≈85 SOL",
+        "lp_quote_at_graduation": "85 SOL ≈ $8.8k",
+        "creator_fee": "0.3 % → 0.05 %",
         "url": "https://raw.githubusercontent.com/pump-fun/pump-public-docs/main/docs/PUMP_PROGRAM_README.md"
       },
       {
         "platform": "LaunchLab / letsbonk",
-        "chain": "Solana",
-        "curve_percent": "80 (51-80)",
-        "lp_percent": "20",
-        "team_percent": "0 (<=30 vest opt)",
+        "chain": "솔라나",
+        "curve_percent": "80 % (51–80 %)",
+        "lp_percent": "20 %",
+        "team_percent": "0 % (≤30 % 베스팅 선택)",
         "graduation": "85 SOL",
         "lp_quote_at_graduation": "85 SOL",
-        "creator_fee": "<=0.5%",
+        "creator_fee": "≤0.5 %",
         "url": "https://docs.raydium.io/user-flows/creating-a-launchlab-token.md"
       },
       {
         "platform": "Four.meme",
         "chain": "BNB",
-        "curve_percent": "~80",
-        "lp_percent": "20",
-        "team_percent": "0",
-        "graduation": "~18 BNB",
-        "lp_quote_at_graduation": "18 BNB ~ $13.9k",
-        "creator_fee": "dynamic",
+        "curve_percent": "≈80 %",
+        "lp_percent": "20 %",
+        "team_percent": "0 %",
+        "graduation": "≈18 BNB",
+        "lp_quote_at_graduation": "18 BNB ≈ $13.9k",
+        "creator_fee": "가변",
         "url": "https://four-meme.gitbook.io/four.meme/guide/how-it-works"
       },
       {
         "platform": "Clanker v4",
         "chain": "Base",
-        "curve_percent": "0 (100% pool)",
-        "lp_percent": "100",
-        "team_percent": "vault 2-5% (7d) observed",
-        "graduation": "none",
+        "curve_percent": "0 % (풀 100 %)",
+        "lp_percent": "100 %",
+        "team_percent": "볼트 2–5 % (7일, 관측)",
+        "graduation": "없음",
         "lp_quote_at_graduation": "0",
-        "creator_fee": "80% of 1-3% LP fee",
+        "creator_fee": "LP 수수료 1–3 %의 80 %",
         "url": "https://raw.githubusercontent.com/clanker-devco/v4-contracts/main/specs/v4_0_0.md"
       },
       {
         "platform": "Zora creator coin",
         "chain": "Base",
-        "curve_percent": "0 (50% pool)",
-        "lp_percent": "50",
-        "team_percent": "50 (5y vest)",
-        "graduation": "none",
+        "curve_percent": "0 % (풀 50 %)",
+        "lp_percent": "50 %",
+        "team_percent": "50 % (5년 베스팅)",
+        "graduation": "없음",
         "lp_quote_at_graduation": "0",
-        "creator_fee": "50% of 1%",
+        "creator_fee": "1 % 중 50 %",
         "url": "https://docs.zora.co/coins"
       },
       {
         "platform": "Flaunch",
         "chain": "Base",
-        "curve_percent": "1-69 fair launch",
-        "lp_percent": "rest full-range",
-        "team_percent": "premine <= fair launch",
-        "graduation": "none",
+        "curve_percent": "1–69 % 페어런치",
+        "lp_percent": "나머지 전구간",
+        "team_percent": "프리마인 ≤ 페어런치",
+        "graduation": "없음",
         "lp_quote_at_graduation": "0",
-        "creator_fee": "80% default",
+        "creator_fee": "기본 80 %",
         "url": "https://docs.flaunch.gg/community/whitepaper.md"
       },
       {
         "platform": "Joseon.fun",
         "chain": "GIWA Sepolia",
-        "curve_percent": "80",
-        "lp_percent": "20",
-        "team_percent": "0",
-        "graduation": "~3.67 ETH",
+        "curve_percent": "80 %",
+        "lp_percent": "20 %",
+        "team_percent": "0 %",
+        "graduation": "≈3.67 ETH",
         "lp_quote_at_graduation": "3.6 WETH",
-        "creator_fee": "70% of 2% curve; 0.15% swap",
+        "creator_fee": "커브 2 % 중 70 % · 스왑 0.15 %",
         "url": "https://docs.joseon.fun/fees/"
       },
       {
         "platform": "GIWA MARKETS",
         "chain": "GIWA Sepolia",
-        "curve_percent": "80",
-        "lp_percent": "20",
-        "team_percent": "0",
-        "graduation": "800M sold",
-        "lp_quote_at_graduation": "all curve ETH",
-        "creator_fee": "0",
+        "curve_percent": "80 %",
+        "lp_percent": "20 %",
+        "team_percent": "0 %",
+        "graduation": "8억 개 판매",
+        "lp_quote_at_graduation": "커브 ETH 전액",
+        "creator_fee": "0 %",
         "url": "https://giwa.markets/assets/i18n-BUIJQVGU.js"
       }
     ],
     "recommended_composition": {
-      "supply_split": "1B; 100% to Pons V2 curve (71.43% sellable / 28.57% protocol-fixed LP); team 0%",
-      "dev_buy": "one atomic buy 0.05-0.08 ETH (~2.9-4.5%), launcher wallet = fee recipient, no exempt list",
-      "fee_option": "1% base -> creator 70%; creator tax 0-2%; buyback OFF",
-      "lp_lock": "automatic permanent: 4.2 ETH + 204M tokens -> v4 pool, NFT in PonsV2LaunchLocker",
+      "supply_split": "1B · Pons V2 커브 100 % (판매 71.4 % / 고정 LP 28.6 %) · 팀 0 %",
+      "dev_buy": "원자 매수 1건 0.05–0.08 ETH (≈2.9–4.5 %) · 런처 = 수취인 · 면제 목록 없음",
+      "fee_option": "기본 1 % → 창작자 70 % · 창작자 세금 0–2 % · 바이백 OFF",
+      "lp_lock": "자동 영구 잠금: 4.2 ETH + 2.04억 개 → v4 풀 · NFT는 PonsV2LaunchLocker",
       "notes": [
-        "Pair: 1x ETH + 1x USDG or stock-token twin (3 of 5 Pons V2 tokens >$2M this week were non-ETH pairs)",
-        "Fee recipient = cold wallet; change has 3-day timelock",
-        "Tax and buyback are immutable after launch",
-        "41% of graduated tokens set 1-10% tax; 0 of 22 used buyback",
-        "Graduation 2.3-2.65%, median 2 min; without bundles expect organic graduation to be rarer",
-        "Total cost ~0.055-0.085 ETH ($135-210) per attempt",
-        "Pons V2 audits in progress: treat as unaudited"
+        "페어: ETH 1개 + USDG 또는 주식토큰 쌍둥이 1개 (이번 주 $2M+ 5개 중 3개 비-ETH)",
+        "수수료 수취인 = 콜드 지갑 · 변경은 3일 타임락",
+        "세금·바이백은 론칭 후 변경 불가",
+        "졸업 토큰 41 %가 세금 1–10 % 설정 · 22건 중 바이백 0건",
+        "졸업률 2.3–2.65 % · 중앙값 2분 · 번들 없이는 유기적 졸업 더 드묾",
+        "시도당 총비용 ≈0.055–0.085 ETH ($135–210)",
+        "Pons V2 감사 진행 중 → 미감사로 간주"
       ]
     },
     "playbook": [
@@ -763,151 +779,169 @@
     ],
     "costs": [
       {
-        "item": "CEX -> Arbitrum One withdrawal (Binance)",
+        "item": "CEX → Arbitrum One 출금 (Binance)",
         "eth": "0.00002",
         "usd": "$0.05",
-        "note": "Binance network list"
+        "note": "Binance 네트워크 목록"
       },
       {
-        "item": "Bridge Arbitrum -> RH 0.1 ETH (Relay)",
+        "item": "브리지 Arbitrum → RH 0.1 ETH (Relay)",
         "eth": "~0.00004 + gas",
         "usd": "~$0.10",
-        "note": "Relay quote, 1 s"
+        "note": "Relay 견적 · 1초"
       },
       {
-        "item": "Bridge Ethereum -> RH 0.1 ETH (Across/Relay)",
+        "item": "브리지 Ethereum → RH 0.1 ETH (Across/Relay)",
         "eth": "~0.0001 + L1 gas",
         "usd": "~$0.25 + L1",
-        "note": "Across/Relay quotes"
+        "note": "Across/Relay 견적"
       },
       {
-        "item": "Pons V2 launchFee",
+        "item": "Pons V2 생성비 (launchFee)",
         "eth": "0.0005",
         "usd": "$1.24",
-        "note": "launchFee()"
+        "note": "launchFee() 조회값"
       },
       {
-        "item": "Launch gas (launchToken/launchAndBuy)",
+        "item": "런칭 가스 (launchToken/launchAndBuy)",
         "eth": "0.0015-0.0016",
         "usd": "$3.6-4.0",
-        "note": "Blockscout txs, 3.58-3.99M gas"
+        "note": "Blockscout tx · 3.58–3.99M 가스"
       },
       {
-        "item": "Dev buy (observed range)",
+        "item": "dev-buy (관측 범위)",
         "eth": "0.01-0.40",
         "usd": "$25-990",
-        "note": "router value fields; recommended 0.05-0.08"
+        "note": "라우터 value 값 · 권장 0.05–0.08"
       },
       {
-        "item": "Fee claim",
+        "item": "수수료 클레임",
         "eth": "0.000013",
         "usd": "$0.03",
-        "note": "escrow txs"
+        "note": "에스크로 tx"
       },
       {
-        "item": "Change fee recipient",
+        "item": "수수료 수취인 변경",
         "eth": "0.00003",
         "usd": "$0.08",
-        "note": "factory txs"
+        "note": "팩토리 tx"
       },
       {
-        "item": "Curve / v4 swap",
+        "item": "커브 / v4 스왑",
         "eth": "~0.00006-0.00015",
         "usd": "$0.15-0.37",
-        "note": "estimate, UNVERIFIED"
+        "note": "추정치 · 미확인"
       },
       {
-        "item": "Return lane on Arbitrum",
+        "item": "Arbitrum 복귀 예비금",
         "eth": "0.05",
         "usd": "$124",
-        "note": "recommendation"
+        "note": "권장"
       },
       {
-        "item": "DexScreener boost",
+        "item": "DexScreener 부스트",
         "eth": "-",
-        "usd": "UNVERIFIED",
-        "note": "not observed"
+        "usd": "미확인",
+        "note": "관측 안 됨"
       },
       {
-        "item": "Minimum viable launch",
+        "item": "최소 실행 가능 론칭",
         "eth": "~0.06-0.10",
         "usd": "$150-250",
-        "note": "0.05 dev buy + fees + gas + bridge"
+        "note": "dev-buy 0.05 + 수수료·가스·브리지"
       },
       {
-        "item": "Serious attempt",
+        "item": "본격 시도",
         "eth": "~0.5-1.0",
         "usd": "$1.2k-2.5k",
-        "note": "0.2-0.4 dev buy + boosts + ETH/USDG twin"
+        "note": "dev-buy 0.2–0.4 + 부스트 + 쌍둥이"
       }
     ],
     "giwa_parallel": {
       "same": [
-        "ETH gas, Solidity >=0.8 cancun, Blockscout verification (same API, solc to 0.8.36)",
-        "Identical addresses with bytecode on both: Permit2, Multicall3, CreateX 0xba5E...a5Ed, Arachnid, EntryPoint v0.6/v0.7, Safe L2",
-        "ERC-20 + CreateX fixed salt => same token address on 4663 and 9134",
-        "Metadata, images, wallet set, Foundry project (only chain_id/rpc/verifier-url differ)",
-        "Launch shape: 1B supply, 100% curve, 0 team, atomic dev buy, permanent lock, creator fee stream"
+        "ETH 가스 · Solidity ≥0.8 cancun · 검증 API 동일 (solc ≤0.8.36)",
+        "동일 주소·바이트코드: Permit2 · Multicall3 · CreateX 0xba5E...a5Ed",
+        "동일 주소·바이트코드: Arachnid · EntryPoint v0.6/v0.7 · Safe L2",
+        "ERC-20 + CreateX 고정 salt → 4663·9134 동일 토큰 주소",
+        "메타·이미지·지갑·Foundry 동일 (chain_id/rpc/verifier-url만 다름)",
+        "론칭 형태 동일: 1B 공급·커브 100 %·팀 0·원자 dev-buy·영구 잠금·창작자 수수료"
       ],
       "different": [
-        "Chain id 4663 vs 91342 (testnet) / 9134 (mainnet reserved, no RPC)",
-        "WETH 0x0Bd7...AD73 (aeWETH proxy) vs 0x4200...0006 predeploy (Joseon own WETH9 0x323b...0B11)",
-        "DEX: Uniswap V4 + V3 on RH; no Uniswap on GIWA (V4 BUSL to 2027-06-15) -> launchpad-owned AMM",
-        "Locker: Pons V2 0x2674...4952 vs Joseon PermanentLiquidityLocker 0x2141...3fE6",
-        "Bridge: Arbitrum/Relay/Across/gas.zip vs Superbridge only (1-3 min in, ~7 d out); no mainnet bridge yet",
-        "Block time 0.07-0.10 s (FCFS) vs 1.0 s (fee-ordered sequencer, Flashblocks 200 ms)",
-        "Portable pad shape = Pons V1/Joseon (curve -> V2/V3 pool + locker), not Pons V2/Bags (V4 hook)",
-        "First-block tactic: latency on RH, priority fee on GIWA",
-        "block.number = L1 estimate on RH; L2 block on GIWA"
+        "체인 ID 4663 vs 91342 (테스트넷) / 9134 (메인넷 예약 · RPC 없음)",
+        "WETH 0x0Bd7...AD73 (aeWETH 프록시) vs 0x4200...0006 프리디플로이",
+        "Joseon은 자체 WETH9 0x323b...0B11 사용",
+        "RH Uniswap v4+v3 · GIWA는 없음 (v4 BUSL 2027-06-15) → 자체 AMM",
+        "락커: Pons V2 0x2674...4952 vs Joseon 영구 락커 0x2141...3fE6",
+        "브리지: Arbitrum·Relay·Across·gas.zip vs Superbridge만",
+        "GIWA 브리지 입금 1–3분 · 출금 ≈7일 · 메인넷 브리지 아직 없음",
+        "블록 0.07–0.10초 (선착순) vs 1.0초 (수수료순 · Flashblocks 200 ms)",
+        "이식 가능 형태 = Pons V1/Joseon형 (커브 → V2/V3 풀 + 락커) · V4 훅형 아님",
+        "첫 블록 전술: RH = 지연시간 · GIWA = 우선수수료",
+        "block.number: RH = L1 추정치 · GIWA = L2 블록"
       ],
       "rehearsal_steps": [
-        "Wallets: deployer + fee recipient + 2-3 buyers; add 91342 / sepolia-rpc.giwa.io / sepolia-explorer.giwa.io",
-        "Test ETH >=4 (full graduation ~3.67 ETH): bulk on Ethereum Sepolia -> sepolia-bridge.giwa.io (1-3 min) or gas.zip",
-        "joseon.fun create: name/symbol on-chain, image/desc off-chain, fee recipient, initial buy inside creation tx",
-        "Curve buys from buyer wallets (2% fee); log Flashblocks pending (200 ms) vs 1 s inclusion",
-        "Claim creator fees: Portfolio -> claim or claimCreatorFeesFor(address)",
-        "Graduate: sell-out buy triggers same-tx migration 3.6 WETH + 200M via MigrationManagerV3 0x4D34...5c59",
-        "Verify lock: locker lockedPair(token) 0x2207ec87 / lockedLiquidity 0xf3288fe3; pair on JoseonSwapFactoryV4 0x9AB1...8784; swap via router 0xcD4B...5d3D; confirm 0.15% creator accrual",
-        "Optional: GIWA MARKETS Sepolia pad (1B/800M/1%, dev buy same tx) for a second curve shape",
-        "Fallback drill: forge script --verify --verifier blockscout on Sepolia then RH; confirm identical CreateX address; own V2 pair + no-withdraw locker in 15 min"
+        "지갑: 배포자·수취인·구매자 2–3개 · 체인 91342 (sepolia-rpc.giwa.io)",
+        "테스트 ETH ≥4: Sepolia → sepolia-bridge.giwa.io 1–3분 / gas.zip",
+        "joseon.fun 생성: 이름·심볼 온체인, 이미지·설명 오프체인, 수취인, 생성 tx 내 초기 매수",
+        "구매 지갑 커브 매수 (수수료 2 %) · Flashblocks pending 200 ms vs 1초 기록",
+        "수수료 클레임: Portfolio → claim / claimCreatorFeesFor(address)",
+        "졸업: 매진 매수 → 같은 tx에서 이전 3.6 WETH + 2억 개",
+        "이전 컨트랙트 MigrationManagerV3 0x4D34...5c59",
+        "잠금 검증: lockedPair 0x2207ec87 · lockedLiquidity 0xf3288fe3",
+        "페어 확인: JoseonSwapFactoryV4 0x9AB1...8784",
+        "라우터 0xcD4B...5d3D로 스왑 1회 → 창작자 0.15 % 적립 확인",
+        "선택: GIWA MARKETS Sepolia(1B/8억/1 %·dev-buy 동일 tx) 두 번째 커브 연습",
+        "폴백: forge script --verify --verifier blockscout Sepolia→RH",
+        "CreateX 동일 주소 확인 · 자체 V2 페어 + 무인출 락커 배포 15분 내"
       ],
       "mainnet_signals": [
-        "eip155-9134.json gains rpc/explorer (now rpc: [], incubating)",
-        "giwa-io/chain-operations gets a mainnet dir (now sepolia/ only; node last push 07-13)",
-        "docs.giwa.io contracts page lists L1 mainnet addresses (now 'under development')",
-        "rpc.giwa.io answers eth_chainId 0x23ae (now HTTP 000; explorer/bridge too)",
-        "Superbridge chain picker or bridge.giwa.io live (superbridge.app/giwa 200 is a catch-all SPA, not a signal)",
-        "viem giwa.ts / L2BEAT / DefiLlama chain entry (now 404/404/absent)",
-        "Flashblocks mainnet endpoint (now 'Coming soon')",
-        "GASOK Phase 3 'private mainnet Aug-Sep 2026'; DEMODAY @ KBW Oct; KBW Sep 29 - Oct 1 (Dunamu CEO speaker)",
-        "@GIWA_by_Upbit posts (Sept unverified); Upbit GIWA net_type; GIWA Wallet in app stores",
-        "Joseon /api/health chainId != 91342; giwa.markets chain-*.js non-91342 GIWA entry"
+        "eip155-9134.json에 rpc/explorer 등장 (현재 rpc: [] · incubating)",
+        "chain-operations 레포에 mainnet 폴더 (현재 sepolia/만 · 최종 푸시 07-13)",
+        "docs.giwa.io contracts에 L1 메인넷 주소 (현재 'under development')",
+        "rpc.giwa.io eth_chainId 0x23ae 응답 (현재 HTTP 000, 탐색기·브리지도)",
+        "Superbridge 체인 선택기 또는 bridge.giwa.io 가동",
+        "superbridge.app/giwa 200은 캐치올 SPA · 신호 아님",
+        "viem giwa.ts / L2BEAT / DefiLlama 체인 항목 (현재 404/404/없음)",
+        "Flashblocks 메인넷 엔드포인트 (현재 'Coming soon')",
+        "GASOK 3단계: '프라이빗 메인넷 2026-08~09' · DEMODAY @ KBW 10월",
+        "KBW 9/29–10/1 · Dunamu CEO 연사",
+        "@GIWA_by_Upbit 9월 게시 (미확인) · Upbit net_type · GIWA Wallet 앱",
+        "Joseon /api/health chainId ≠ 91342",
+        "giwa.markets chain-*.js에 91342 아닌 GIWA 항목"
       ],
       "launch_kit": [
-        "Metadata frozen as JSON: name, symbol (<=6-8 chars, no GIWA/Upbit/Dunamu strings), 1B/18dec, KO+EN desc, links",
-        "Images 1000/512/256 PNG <=1 MB + banner; IPFS pin + HTTPS mirror",
-        "Socials pre-warmed: X, TG channel+group, 'official CA posted here first' pin, DexScreener/GeckoTerminal assets",
-        "Wallet set (hardware, fresh) funded on Ethereum L1 now: deployer, fee recipient, buyers, ops gas; some ETH on RH too",
-        "Bridge plan: parallel Superbridge deposits when bridge.giwa.io answers; verify eth_chainId 0x23ae + L2 balances first",
-        "Foundry profiles [giwa]/[robinhood], CreateX salt fixed, verified on Sepolia + RH; polling script for signals",
-        "First buy: inside creation tx (Joseon); follow-up buyers with high priority fee; Flashblocks pending confirm; re-size on mainnet params",
-        "Fallback T2 with no pad: CreateX token + V2 pair vs 0x4200...0006 + no-withdraw locker; route via GIWATER/Joseon router",
-        "Instrumentation: Blockscout APIs both chains, DexScreener pair URL (GIWA slug unknown), holder poll, claim commands per pad"
+        "메타데이터 JSON 고정: 이름 · 심볼 ≤6–8자 · 1B/18dec · KO+EN 설명 · 링크",
+        "심볼에 GIWA/Upbit/Dunamu 문자열 금지",
+        "이미지 1000/512/256 PNG ≤1 MB + 배너 · IPFS 핀 + HTTPS 미러",
+        "소셜 사전 가동: X · TG 채널+그룹 · '공식 CA는 여기 먼저' 고정글",
+        "DexScreener/GeckoTerminal 토큰 자산 사전 준비",
+        "지갑 세트(하드웨어·신규) ETH L1에 지금 입금: 배포자·수취인·구매자·운영 가스 · RH에도 일부",
+        "브리지: bridge.giwa.io 열리면 Superbridge 병렬 입금",
+        "입금 전 eth_chainId 0x23ae + L2 잔액 확인",
+        "Foundry 프로필 [giwa]/[robinhood] · CreateX salt 고정",
+        "Sepolia+RH 양쪽 검증 완료 · 신호 폴링 스크립트",
+        "첫 매수: 생성 tx 내 (Joseon) · 후속 구매자는 우선수수료 높게",
+        "Flashblocks pending으로 확인 · 메인넷 파라미터로 수량 재산정",
+        "T2 폴백(패드 없음): CreateX 토큰 + V2 페어(vs 0x4200...0006) + 무인출 락커",
+        "T2 폴백 스왑 경로: GIWATER/Joseon 라우터",
+        "계측: 양 체인 Blockscout API · DexScreener 페어 URL (GIWA 슬러그 미확인)",
+        "계측: 보유자 폴링 · 패드별 클레임 명령"
       ]
     },
     "not_doing": [
-      "No wash trading (owner rule; GMGN sniper/insider/first-70 panels catch it)",
-      "No bundles: snipeTaxExemptions list stays empty; launcher = fee recipient only",
-      "No accumulate-and-dump: one disclosed dev buy <=5%; income only from 0.7% fee stream",
-      "No team allocation 10-20% (0% is the norm on every curve pad; kept supply reads as premine)",
-      "No creator tax >2% (10% cap drives buyers/bots away)",
-      "No buyback ON (creator share 70% -> 35%; 0 of 22 graduates use it)",
-      "No Pons V1 / NOXA / pools.trade / GIWA MARKETS / Clanker-RH (closed / 0.05% take / 0% creator + brand risk / undocumented)",
-      "No multi-wallet split buys (insider/bundler detectors)",
-      "No Robinhood-app workaround (US-only; bridge path is cheaper and faster)",
-      "No hand-made v4 pools with EOA-owned LP (reads as rug-able, OTER case)",
-      "No canonical Arbitrum bridge withdrawals (7 days); use Relay/Across return lane",
-      "No legal/registration topics (out of scope by owner instruction)"
+      "워시 트레이딩 금지 (오너 규칙 · GMGN 스나이퍼/내부자/첫 70 매수 패널이 포착)",
+      "번들 금지: snipeTaxExemptions 목록 비움 · 런처 = 수수료 수취인만",
+      "매집-매도 금지: 공개 dev-buy 1건 ≤5 % · 수입은 0.7 % 수수료 흐름만",
+      "팀 배분 10–20 % 금지 (모든 커브 패드 규범 0 % · 보유 물량은 프리마인으로 읽힘)",
+      "창작자 세금 >2 % 금지 (10 % 상한은 구매자·봇 이탈)",
+      "바이백 ON 금지 (창작자 몫 70 % → 35 % · 졸업 22건 중 0건 사용)",
+      "Pons V1·NOXA·pools.trade·GIWA MARKETS·Clanker-RH 사용 금지",
+      "사유: 폐쇄 / 실효 0.05 % / 창작자 0 %+브랜드 혼동 / 미문서화",
+      "다중 지갑 분할 매수 금지 (내부자·번들러 탐지기에 걸림)",
+      "Robinhood 앱 우회 금지 (미국 전용 · 브리지가 더 싸고 빠름)",
+      "EOA 소유 LP의 수제 v4 풀 금지 (러그 가능으로 읽힘 · OTER 사례)",
+      "Arbitrum 공식 브리지 출금 금지 (7일) · Relay/Across 복귀 경로 사용",
+      "법률·등록 주제 없음 (오너 지시로 범위 밖)"
     ],
     "sources": [
       {
@@ -1341,7 +1375,57 @@
       "strategy_consumption_allowed": false,
       "order_input": false
     },
-    "headline": "지금은 Pons V2(로빈후드) 1순위: 공급 100 % 커브(프로토콜 고정 71.43 % 판매 / 28.57 % 졸업 LP), 팀 0 %, 공개 dev-buy 1건 0.05–0.08 ETH(≤5 %), 크리에이터 세금 0–2 %, 바이백 OFF, 4.2 ETH 자동 졸업 → 영구 잠금 v4 풀, 크리에이터 수입 = 거래량의 0.7 %. 자금은 CEX → Arbitrum → Relay/Across(Robinhood 앱은 미국 전용). GIWA는 메인넷 부재 → Joseon.fun Sepolia 리허설 + CreateX 동일 주소 키트만 준비. GIWA MARKETS는 사용 금지.",
+    "headline": "Pons V2(로빈후드) 1순위 — 커브 100 %·팀 0 %·dev-buy ≤5 %·세금 0–2 %·바이백 OFF·4.2 ETH 졸업 → 영구 잠금; 자금은 CEX → Arbitrum → Relay/Across; GIWA는 Sepolia 리허설만.",
+    "glossary": [
+      {
+        "term": "커브 (본딩 커브)",
+        "meaning": "매수량에 따라 가격이 자동 상승하는 초기 판매 곡선 · 풀 이전 단계"
+      },
+      {
+        "term": "가상 유동성",
+        "meaning": "실제 예치 없이 시작 가격을 정하는 가상의 ETH 수량"
+      },
+      {
+        "term": "졸업",
+        "meaning": "커브 모금 목표(예: 4.2 ETH) 달성 → DEX 풀로 자동 이전"
+      },
+      {
+        "term": "졸업 LP",
+        "meaning": "졸업 시 풀에 들어가는 ETH + 토큰 · 실제 초기 유동성"
+      },
+      {
+        "term": "영구 잠금 / 락커",
+        "meaning": "LP 포지션을 인출 함수 없는 컨트랙트에 넣어 러그 차단"
+      },
+      {
+        "term": "훅 (Uniswap v4 hook)",
+        "meaning": "풀의 스왑 전후에 실행되는 커스텀 코드 · 수수료 분배·스나이퍼세 구현"
+      },
+      {
+        "term": "dev-buy",
+        "meaning": "창작자가 생성과 같은 tx에서 하는 첫 매수 · 물량 공개"
+      },
+      {
+        "term": "스나이퍼세",
+        "meaning": "출시 직후 몇 초간 매수에 붙는 고율 수수료 · 봇 선매 억제"
+      },
+      {
+        "term": "창작자 수수료",
+        "meaning": "거래마다 창작자에게 가는 몫 (예: 1 % 중 70 % = 거래량의 0.7 %)"
+      },
+      {
+        "term": "프로토콜 수수료",
+        "meaning": "거래 수수료 중 런치패드 운영측 몫 (예: 1 % 중 30 %)"
+      },
+      {
+        "term": "FDV",
+        "meaning": "완전 희석 시가총액 = 가격 × 총 공급량"
+      },
+      {
+        "term": "생성비",
+        "meaning": "토큰 생성 시 런치패드에 내는 고정 요금 (가스 별도)"
+      }
+    ],
     "decision": {
       "market_read": {
         "title": "시장 판독 — 불장은 로빈후드 체인 국지 과열, 창은 몇 주",
@@ -1374,6 +1458,62 @@
           "운영 원칙(오너 결정): 법인·FIU 없음, 관리자 키·pause·fee switch 없음, 수수료 파라미터·수취 주소는 배포 전 확정 후 불변"
         ]
       }
+    }
+  },
+  "glossary": [
+    {
+      "term": "reorg(리오그)",
+      "meaning": "이미 나온 블록이 되돌려져 체인 기록이 바뀌는 일"
+    },
+    {
+      "term": "finality(확정도)",
+      "meaning": "unsafe(미확정) → safe(안전) → finalized(최종) 3단계"
+    },
+    {
+      "term": "indexer(인덱서)",
+      "meaning": "체인 기록을 빠르게 조회하도록 정리해 두는 DB"
+    },
+    {
+      "term": "Flashblocks",
+      "meaning": "약 200ms마다 나오는 미리보기 블록 · 최종 확정 아님"
+    },
+    {
+      "term": "Pool Passport",
+      "meaning": "풀·토큰의 코드·관리자·수수료·LP 권한을 담은 신분증"
+    },
+    {
+      "term": "Permit2",
+      "meaning": "서명 1번으로 토큰 사용 승인을 처리하는 유니스왑 컨트랙트"
+    },
+    {
+      "term": "canonical(캐노니컬)",
+      "meaning": "공식·기준이 되는 것 · 자산·배포·체인에 붙여 씀"
+    },
+    {
+      "term": "research_only 플래그",
+      "meaning": "리서치 전용 표시 · 거래·전략 입력으로 쓰지 않음"
+    },
+    {
+      "term": "VASP(가상자산사업자)",
+      "meaning": "특금법상 신고 수리를 받아야 하는 가상자산 사업자"
+    },
+    {
+      "term": "MRR",
+      "meaning": "월 반복 매출 · 구독처럼 매달 들어오는 돈"
+    }
+  ],
+  "revenue_labels": {
+    "priority": {
+      "BUILD_NOW": "지금 만든다",
+      "GATED": "조건 충족 후",
+      "LAST": "맨 마지막"
+    },
+    "dt": {
+      "payer": "누가 내나",
+      "operator_revenue": "우리 수입",
+      "formula": "산식",
+      "hard_gate": "필수 조건",
+      "risk": "위험"
     }
   },
   "metrics": {
@@ -1444,7 +1584,7 @@
       "status": "available",
       "code_state": "not_applicable",
       "url": "https://giwa.io",
-      "note": "GIWA 공식 사이트"
+      "note": "GIWA 공식 홈페이지"
     },
     {
       "id": "giwa-docs-connect",
@@ -1453,7 +1593,7 @@
       "status": "available",
       "code_state": "documentation",
       "url": "https://docs.giwa.io/giwa-chain/en/get-started/connect-to-giwa",
-      "note": "GIWA Sepolia chain ID, RPC와 explorer 기준 문서"
+      "note": "GIWA Sepolia 접속 정보 · 체인 ID·RPC·탐색기 기준 문서"
     },
     {
       "id": "giwa-github-org",
@@ -1462,7 +1602,7 @@
       "status": "available",
       "code_state": "source_available",
       "url": "https://github.com/giwa-io",
-      "note": "공개 공식 저장소의 시작점"
+      "note": "GIWA 공식 코드 저장소 모음 · 여기서 시작"
     },
     {
       "id": "giwa-node",
@@ -1471,7 +1611,7 @@
       "status": "sepolia_only",
       "code_state": "source_available",
       "url": "https://github.com/giwa-io/node",
-      "note": "현재 공개 구성은 GIWA Sepolia 범위"
+      "note": "노드 실행 코드 · 현재는 Sepolia 테스트넷용만 공개"
     },
     {
       "id": "giwa-chain-operations",
@@ -1480,7 +1620,7 @@
       "status": "sepolia_artifacts",
       "code_state": "source_available",
       "url": "https://github.com/giwa-io/chain-operations",
-      "note": "Sepolia 배포·업그레이드 운영 아티팩트"
+      "note": "Sepolia 배포·업그레이드 운영 기록 · 메인넷 기록 없음"
     },
     {
       "id": "giwa-dojang",
@@ -1489,7 +1629,7 @@
       "status": "available",
       "code_state": "source_available",
       "url": "https://github.com/giwa-io/dojang",
-      "note": "EAS 기반 attestations 구현"
+      "note": "EAS 기반 온체인 증명서(attestation) 구현 코드"
     },
     {
       "id": "giwa-token-guide",
@@ -1498,7 +1638,7 @@
       "status": "testnet_guide",
       "code_state": "example_available",
       "url": "https://docs.giwa.io/giwa-chain/en/get-started/smart-contract/issue-a-token",
-      "note": "EVM 토큰 발행 예제이며 경제적 가치·상장과 무관"
+      "note": "토큰 발행 예제 · 테스트넷용 · 가치·상장과 무관"
     },
     {
       "id": "giwa-contracts",
@@ -1507,7 +1647,7 @@
       "status": "available",
       "code_state": "addresses_and_docs",
       "url": "https://docs.giwa.io/giwa-chain/en/network-information/contracts",
-      "note": "공식 네트워크 컨트랙트 주소 문서"
+      "note": "공식 네트워크 컨트랙트 주소 목록"
     },
     {
       "id": "giwa-explorer",
@@ -1516,7 +1656,7 @@
       "status": "live",
       "code_state": "not_applicable",
       "url": "https://sepolia-explorer.giwa.io",
-      "note": "공개 테스트넷 관찰용 Blockscout"
+      "note": "Sepolia 테스트넷 블록 탐색기(Blockscout) · 관찰용"
     },
     {
       "id": "gasok",
@@ -1525,7 +1665,7 @@
       "status": "roadmap_only",
       "code_state": "not_applicable",
       "url": "https://giwa.io/gasok",
-      "note": "선정 팀 일정은 public mainnet 출시 약속이 아님"
+      "note": "빌더 지원 프로그램 · 선정 일정 ≠ 공개 메인넷 출시 약속"
     },
     {
       "id": "giwa-faq",
@@ -1534,7 +1674,7 @@
       "status": "available",
       "code_state": "documentation",
       "url": "https://docs.giwa.io/giwa-chain/en/introduction/faq",
-      "note": "native GIWA token 계획 없음 등 공식 FAQ"
+      "note": "공식 FAQ · GIWA 자체 토큰 발행 계획 없음"
     }
   ],
   "ecosystem": [
@@ -1545,10 +1685,10 @@
       "officiality": "official",
       "status": "public_testnet_live",
       "network": "GIWA Sepolia",
-      "summary": "OP Stack EVM-equivalent public testnet using ETH gas and chain ID 91342.",
+      "summary": "GIWA 공개 테스트넷 · 체인 ID 91342 · 가스는 ETH · OP Stack(이더리움 롤업 표준 스택)",
       "limitations": [
-        "Public RPC is rate-limited and not for production.",
-        "Public mainnet is not confirmed available."
+        "공개 RPC는 속도 제한 · 운영용 아님",
+        "공개 메인넷은 확인되지 않음"
       ],
       "source_ids": [
         "src_001",
@@ -1581,11 +1721,11 @@
       "officiality": "official",
       "status": "testnet_preconfirmation",
       "network": "GIWA Sepolia",
-      "summary": "Development preconfirmation endpoint targeting updates up to every 200 ms.",
+      "summary": "최대 200 ms마다 갱신되는 개발용 사전 확인 엔드포인트",
       "limitations": [
-        "Not finality.",
-        "Rate-limited development endpoint.",
-        "Mainnet support is not confirmed."
+        "최종 확정 아님",
+        "속도 제한 개발용 엔드포인트",
+        "메인넷 지원 미확인"
       ],
       "source_ids": [
         "src_001",
@@ -1612,10 +1752,10 @@
       "officiality": "official",
       "status": "deployed_testnet",
       "network": "GIWA Sepolia",
-      "summary": "EAS-based attestations for verified address, balance roots, verified balances, and code.",
+      "summary": "EAS 기반 온체인 증명서(attestation) · 검증 주소·잔고·코드 증명",
       "limitations": [
-        "Attestation semantics must be checked per schema.",
-        "Identity evidence is not trading authority."
+        "증명 의미는 스키마별로 확인 필요",
+        "신원 증거 ≠ 거래 권한"
       ],
       "source_ids": [
         "src_012",
@@ -1651,10 +1791,10 @@
       "officiality": "official",
       "status": "documented_testnet",
       "network": "GIWA Sepolia",
-      "summary": "ENS-based username.up.id identity for eligible verified addresses.",
+      "summary": "ENS 기반 username.up.id 이름 · 검증된 주소만 사용 가능",
       "limitations": [
-        "Eligibility depends on Verified Address.",
-        "Names are non-transferable and revocable."
+        "검증 주소(Verified Address) 필요",
+        "이름은 양도 불가 · 회수 가능"
       ],
       "source_ids": [
         "src_016"
@@ -1680,10 +1820,10 @@
       "officiality": "official",
       "status": "testnet_available",
       "network": "Ethereum Sepolia to GIWA Sepolia",
-      "summary": "Officially documented native testnet bridge path.",
+      "summary": "공식 문서화된 테스트넷 브리지 · 이더리움 Sepolia ↔ GIWA Sepolia",
       "limitations": [
-        "Test assets only.",
-        "L2-to-L1 withdrawal is documented as taking about seven days."
+        "테스트 자산 전용",
+        "L2 → L1 출금 약 7일"
       ],
       "source_ids": [
         "src_009",
@@ -1710,10 +1850,10 @@
       "officiality": "provider_reported",
       "status": "documented_testnet",
       "network": "GIWA Sepolia",
-      "summary": "Pull-oracle integration documented by GIWA and Pyth.",
+      "summary": "풀 방식 오라클(외부 가격 공급 장치) · GIWA·Pyth 양쪽 문서화",
       "limitations": [
-        "Price freshness and feed availability require runtime validation.",
-        "Oracle data is not enabled as strategy input here."
+        "가격 신선도·피드 가용성은 실행 검증 필요",
+        "오라클 데이터는 전략 입력으로 안 씀"
       ],
       "source_ids": [
         "src_017",
@@ -1747,10 +1887,10 @@
       "officiality": "provider_reported",
       "status": "documented_testnet",
       "network": "GIWA Sepolia",
-      "summary": "Push and pull oracle options described for GIWA testnet.",
+      "summary": "푸시·풀 방식 오라클 옵션 · GIWA 테스트넷 문서 기준",
       "limitations": [
-        "Third-party support can change.",
-        "No production use is authorized."
+        "제3자 지원은 바뀔 수 있음",
+        "운영 사용 승인 없음"
       ],
       "source_ids": [
         "src_017",
@@ -1777,10 +1917,10 @@
       "officiality": "provider_reported",
       "status": "sepolia_supported",
       "network": "GIWA Sepolia",
-      "summary": "Managed node and faucet support documented for GIWA Sepolia.",
+      "summary": "관리형 노드·파우셋 서비스 · GIWA Sepolia 지원 문서화",
       "limitations": [
-        "Provider access and terms apply.",
-        "No mainnet support is established here."
+        "제공사 접근 권한·약관 적용",
+        "메인넷 지원 확인 안 됨"
       ],
       "source_ids": [
         "src_021",
@@ -1807,12 +1947,12 @@
       "officiality": "third_party",
       "status": "experimental_testnet_deployed",
       "network": "GIWA Sepolia",
-      "summary": "Third-party token launcher and AMM stack with verified testnet contracts.",
+      "summary": "제3자 토큰 런처 + AMM · 검증된 테스트넷 컨트랙트 7개",
       "limitations": [
-        "Not an official GIWA product.",
-        "No external audit reported.",
-        "Admin uses a single wallet.",
-        "Use test ETH only."
+        "GIWA 공식 제품 아님",
+        "외부 감사 보고 없음",
+        "관리자는 지갑 1개",
+        "테스트 ETH만 사용"
       ],
       "source_ids": [
         "src_004",
@@ -1850,11 +1990,11 @@
       "officiality": "third_party",
       "status": "experimental_testnet_deployed",
       "network": "GIWA Sepolia",
-      "summary": "Third-party pump-style bonding-curve launchpad prototype.",
+      "summary": "제3자 pump형 본딩커브(자동 가격 상승 곡선) 런치패드 시제품",
       "limitations": [
-        "No repository license.",
-        "DEX migration and real-wallet E2E remain incomplete.",
-        "No mainnet policy or legal review."
+        "저장소 라이선스 없음",
+        "DEX 이전·실지갑 E2E 미완",
+        "메인넷 정책·법률 검토 없음"
       ],
       "source_ids": [
         "src_004",
@@ -1884,9 +2024,9 @@
       "officiality": "third_party",
       "status": "experimental_testnet_deployed",
       "network": "GIWA Sepolia",
-      "summary": "Third-party request-to-pay prototype using Dojang and up.id concepts.",
+      "summary": "제3자 결제 요청(request-to-pay) 시제품 · Dojang·up.id 개념 사용",
       "limitations": [
-        "Audit, license, durable hosting, and real-wallet KPI evidence are incomplete."
+        "감사·라이선스·호스팅·실지갑 KPI 미완"
       ],
       "source_ids": [
         "src_004",
@@ -1913,12 +2053,12 @@
       "officiality": "third_party",
       "status": "prototype_not_reusable",
       "network": "GIWA Sepolia",
-      "summary": "A small fixed ETH/token pair experiment discovered on testnet.",
+      "summary": "테스트넷에서 발견된 소규모 고정 ETH/토큰 페어 실험",
       "limitations": [
-        "Contracts are not source-verified.",
-        "Repository has no license or substantive documentation.",
-        "Configuration contains a stale chain-ID typo.",
-        "Rejected as a reuse base."
+        "컨트랙트 소스 미검증",
+        "라이선스·문서 없음",
+        "설정에 오래된 체인 ID 오타",
+        "재사용 기반으로 기각"
       ],
       "source_ids": [
         "src_004",
@@ -1950,12 +2090,12 @@
       "officiality": "third_party",
       "status": "experimental_testnet_deployed",
       "network": "GIWA Sepolia",
-      "summary": "Third-party Infinity-style concentrated-liquidity DEX (universalRouter/clPoolManager) with pool tiers 0.01/0.05/0.3 % and an on-chain protocol fee share of about 33 %; the most active swap router observed on 2026-09-04.",
+      "summary": "제3자 집중 유동성 DEX · 풀 0.01/0.05/0.3 % · 프로토콜 몫 약 33 % · 09-04 최다 활동",
       "limitations": [
-        "Not an official GIWA product.",
-        "Contract source unverified; audit pending; contracts \"TBA at TGE\".",
-        "Fee split observed from the app bundle and on-chain config, not from a published schedule.",
-        "Testnet volume on mock assets is not adoption or liquidity."
+        "GIWA 공식 제품 아님",
+        "소스 미검증 · 감사 대기 · 주소 TGE 때 공개",
+        "수수료 배분은 앱·온체인 설정에서 관측",
+        "모의 자산 거래량 ≠ 채택·유동성"
       ],
       "source_ids": [
         "src_585",
@@ -1977,12 +2117,12 @@
       "officiality": "third_party",
       "status": "experimental_testnet_deployed",
       "network": "GIWA Sepolia",
-      "summary": "Third-party concentrated-liquidity DEX with hooks (up.id fee discount), copy-an-LP-range feature and an on-chain protocolFeeSplitRatio of 330000 (33 % of the LP fee).",
+      "summary": "제3자 집중 유동성 DEX · 훅(up.id 할인)·LP 구간 복사 · 프로토콜 몫 33 %",
       "limitations": [
-        "Not an official GIWA product.",
-        "Recent router transactions came from a single EOA; the public API indexer stopped on 2026-08-26.",
-        "Copy trading copies an LP range and does not execute on the user’s behalf.",
-        "No mainnet claim; no audit reported."
+        "GIWA 공식 제품 아님",
+        "최근 거래는 지갑 1개 · 공개 API 08-26 중단",
+        "카피 트레이딩 = LP 구간 복사 · 대리 실행 아님",
+        "메인넷 주장 없음 · 감사 보고 없음"
       ],
       "source_ids": [
         "src_586",
@@ -2004,12 +2144,12 @@
       "officiality": "third_party",
       "status": "experimental_testnet_deployed",
       "network": "GIWA Sepolia",
-      "summary": "Third-party modular stack (launch curve, liquidity modules, fee sharing) with a verified v4 manifest and an on-chain protocol fee policy of 20 % of trading fees, 10 % of pool-creation fees and 0.2 % on migration, plus a 20 % referrer share paid to an EOA treasury.",
+      "summary": "제3자 모듈형 런치+AMM · 프로토콜 몫 거래 20 %·생성 10 %·이전 0.2 % · 추천인 20 %",
       "limitations": [
-        "Not an official GIWA product.",
-        "Usage negligible (13 launches, 12 aggregated swaps as of 2026-09-04).",
-        "Contract repository private; addresses come from the npm SDK.",
-        "No audit or mainnet plan published."
+        "GIWA 공식 제품 아님",
+        "사용 미미(09-04 런칭 13 · 스왑 12)",
+        "컨트랙트 저장소 비공개 · 주소는 npm SDK",
+        "감사·메인넷 계획 미공개"
       ],
       "source_ids": [
         "src_587",
@@ -2031,12 +2171,12 @@
       "officiality": "third_party",
       "status": "experimental_testnet_deployed",
       "network": "GIWA Sepolia",
-      "summary": "Third-party KRW-quoted trading terminal for Upbit users with a Dojang-attestation-gated launchpad and a V2-style AMM fork whose feeTo was removed (0.3 % entirely to LPs).",
+      "summary": "제3자 KRW 표시 거래 터미널 · Dojang 게이트 런치패드 · V2형 AMM 0.3 % 전액 LP",
       "limitations": [
-        "Not an official GIWA product and not affiliated with Upbit.",
-        "Runs its own seed bot on testnet; mock trades are not demand.",
-        "Protocol fee policy for mainnet undecided.",
-        "Entity not stated."
+        "GIWA 공식 아님 · 업비트와 무관",
+        "테스트넷 자체 시드 봇 · 모의 거래 ≠ 수요",
+        "메인넷 프로토콜 수수료 미정",
+        "운영 주체 미공개"
       ],
       "source_ids": [
         "src_588",
@@ -2053,90 +2193,90 @@
     }
   ],
   "infrastructure": {
-    "headline": "공식 GIWA Sepolia 노드는 있다. 빠른 제품 조회에는 별도 인덱서가 더 필요하다.",
+    "headline": "공식 GIWA Sepolia 노드는 있다 · 빠른 제품 조회용 인덱서는 아직 없다",
     "status": "official_sepolia_node_available",
     "profile": [
       {
-        "label": "Network",
+        "label": "네트워크",
         "value": "GIWA Sepolia · chain 91342",
         "state": "confirmed"
       },
       {
-        "label": "Stack",
+        "label": "스택",
         "value": "v0.6.0 · op-reth 2.3.3 · op-node 1.19.1",
         "state": "confirmed"
       },
       {
-        "label": "Minimum",
-        "value": "4 cores · 8 GB RAM · 500 GB NVMe",
+        "label": "최소 사양",
+        "value": "4코어 · 8 GB RAM · 500 GB NVMe",
         "state": "official_minimum"
       },
       {
-        "label": "Recommended",
-        "value": "8+ cores · 16+ GB RAM · 1+ TB NVMe",
+        "label": "권장 사양",
+        "value": "8+코어 · 16+ GB RAM · 1+ TB NVMe",
         "state": "official_recommended"
       },
       {
-        "label": "L1 dependency",
-        "value": "Ethereum Sepolia execution + beacon RPC",
+        "label": "L1 의존",
+        "value": "이더리움 Sepolia 실행 + 비콘 RPC",
         "state": "required"
       },
       {
-        "label": "Self-host RPC",
-        "value": "HTTP 8545 · WS 8546 · broad default namespaces",
+        "label": "자체 RPC",
+        "value": "HTTP 8545 · WS 8546 · 기본 권한 범위 넓음",
         "state": "hardening_required"
       },
       {
-        "label": "Public RPC",
-        "value": "개발용 rate-limited · production SLA 없음",
+        "label": "공개 RPC",
+        "value": "개발용 · 속도 제한 · 운영 SLA 없음",
         "state": "limited"
       },
       {
         "label": "Flashblocks",
-        "value": "약 200ms preview · finality 아님",
+        "value": "약 200ms 미리보기 · 최종 확정 아님",
         "state": "tentative"
       },
       {
-        "label": "Unknown",
-        "value": "archive/pruning · disk growth · HA · backup · load benchmark",
+        "label": "미확인",
+        "value": "아카이브·디스크 증가·이중화·백업·부하 시험",
         "state": "unverified"
       }
     ],
     "topology": [
       {
         "id": "l1",
-        "label": "Ethereum Sepolia",
-        "detail": "execution + beacon RPC",
+        "label": "이더리움 Sepolia",
+        "detail": "실행 + 비콘 RPC",
         "state": "external_dependency"
       },
       {
         "id": "rollup",
-        "label": "GIWA rollup node",
-        "detail": "L1 derivation · unsafe/safe/finalized",
+        "label": "GIWA 롤업 노드",
+        "detail": "L1에서 블록 도출 · 확정 3단계",
         "state": "official_code"
       },
       {
         "id": "execution",
-        "label": "op-reth",
-        "detail": "local HTTP JSON-RPC",
+        "label": "op-reth 실행 노드",
+        "detail": "로컬 HTTP JSON-RPC",
         "state": "official_code"
       },
       {
         "id": "indexer",
-        "label": "reorg-aware indexer",
-        "detail": "backfill + realtime tail + raw evidence",
+        "label": "리오그 인식 인덱서",
+        "detail": "과거 채우기 + 실시간 + 원본 증거",
         "state": "not_implemented"
       },
       {
         "id": "api",
-        "label": "read API / cache",
-        "detail": "as_of · finality · stale flags",
+        "label": "읽기 API / 캐시",
+        "detail": "기준 시각 · 확정도 · 오래됨 표시",
         "state": "not_implemented"
       },
       {
         "id": "dashboard",
-        "label": "dashboard",
-        "detail": "브라우저는 public RPC를 직접 호출하지 않음",
+        "label": "대시보드",
+        "detail": "브라우저는 공개 RPC를 직접 호출 안 함",
         "state": "static_ui_only"
       }
     ],
@@ -2160,113 +2300,113 @@
     ]
   },
   "pool_blueprint": {
-    "headline": "Pool은 Factory 하나가 아니라 core·periphery·data·operations 네 층이다.",
-    "observed_notice": "2026-09-03 제3자 V3형 Factory·Router·Position Manager와 테스트 거래 1건은 관찰됐지만, 공식성·운영자·감사·실유동성은 확인되지 않았다.",
+    "headline": "풀 = 핵심(core)·주변(periphery)·데이터·운영 4개 층 · Factory 1개가 아니다",
+    "observed_notice": "2026-09-03 제3자 V3형 Factory·Router·Position Manager와 테스트 거래 1건 관찰 · 공식성·운영자·감사·실유동성 미확인",
     "components": [
       {
         "name": "Factory + V3 Pool",
         "layer": "core",
-        "role": "pair/fee pool 생성, ticks·liquidity·swap state",
+        "role": "페어·수수료 풀 생성 · 가격 구간·유동성·스왑 상태",
         "external_evidence": "partial_observation",
         "local_state": "not_implemented",
-        "gate": "exact upstream + license + audit"
+        "gate": "정확한 원본 코드 + 라이선스 + 감사"
       },
       {
         "name": "Router + Quoter",
         "layer": "periphery",
-        "role": "route·quote·slippage·exact in/out",
+        "role": "경로·견적·슬리피지(체결 오차)·정확 입출력",
         "external_evidence": "router_only_mock_assets",
         "local_state": "not_implemented",
-        "gate": "Quoter missing · canonical assets missing"
+        "gate": "Quoter 없음 · 기준 자산 없음"
       },
       {
         "name": "Position Manager",
         "layer": "periphery",
-        "role": "LP NFT mint·increase·decrease·collect",
+        "role": "LP NFT 발행·증액·감액·수취",
         "external_evidence": "partial_observation",
         "local_state": "not_implemented",
-        "gate": "custody and position authority model"
+        "gate": "보관과 포지션 권한 모델"
       },
       {
         "name": "WETH + stable quote + Permit2",
         "layer": "asset",
-        "role": "asset wrapping·quote unit·allowances",
+        "role": "ETH 포장 · 견적 단위 · 사용 승인(allowance)",
         "external_evidence": "testnet_conflict",
         "local_state": "not_implemented",
-        "gate": "canonical mainnet asset registry"
+        "gate": "메인넷 기준 자산 목록"
       },
       {
         "name": "Pool Passport + token list",
         "layer": "trust",
-        "role": "code·admin·tax·mint·freeze·LP provenance",
+        "role": "코드·관리자·세금·발행·동결·LP 출처",
         "external_evidence": "requirements_only",
         "local_state": "spec_only",
-        "gate": "schema + address conflict quarantine"
+        "gate": "스키마 + 주소 충돌 격리"
       },
       {
         "name": "Event indexer + read API",
         "layer": "data",
-        "role": "PoolCreated/Swap/Mint/Burn/Collect replay",
+        "role": "PoolCreated/Swap/Mint/Burn/Collect 재생",
         "external_evidence": "Blockscout only",
         "local_state": "not_implemented",
-        "gate": "finality + reorg + idempotency"
+        "gate": "확정도 + 리오그 + 중복 방지"
       },
       {
         "name": "Governance + monitoring",
         "layer": "operations",
-        "role": "roles·timelock·alerts·incident response",
+        "role": "역할·타임락·경보·사고 대응",
         "external_evidence": "unverified_candidates",
         "local_state": "not_implemented",
-        "gate": "Safe/timelock versions and runbook"
+        "gate": "Safe/타임락 버전과 운영 절차서"
       },
       {
         "name": "Tests + audit + deployment",
         "layer": "assurance",
-        "role": "unit·invariant·fuzz·reproducible build",
+        "role": "단위·불변식·퍼즈 · 재현 가능한 빌드",
         "external_evidence": "none",
         "local_state": "blocked",
-        "gate": "separate human deployment authority"
+        "gate": "별도 사람 배포 승인 권한"
       }
     ],
     "flows": [
       {
-        "name": "Discovery",
+        "name": "발견",
         "steps": [
-          "Factory registry",
-          "PoolCreated logs",
-          "bytecode/source",
-          "admin & fee facts",
+          "Factory 목록",
+          "PoolCreated 로그",
+          "바이트코드/소스",
+          "관리자·수수료 사실",
           "Pool Passport"
         ]
       },
       {
-        "name": "Quote",
+        "name": "견적",
         "steps": [
-          "Dashboard",
-          "read API",
-          "finalized + tentative state",
+          "대시보드",
+          "읽기 API",
+          "확정 + 잠정 상태",
           "Quoter / eth_call",
-          "price impact + finality"
+          "가격 영향 + 확정도"
         ]
       },
       {
-        "name": "Future swap · disabled",
+        "name": "미래 스왑 · 비활성",
         "steps": [
-          "token selection",
-          "Permit2/allowance",
-          "Router calldata",
-          "wallet signature",
-          "unsafe → safe → finalized"
+          "토큰 선택",
+          "Permit2/사용 승인",
+          "Router 호출 데이터",
+          "지갑 서명",
+          "미확정 → 안전 → 최종"
         ]
       },
       {
-        "name": "LP position · disabled",
+        "name": "LP 포지션 · 비활성",
         "steps": [
-          "pair + range",
-          "Position Manager mint",
+          "페어 + 가격 구간",
+          "Position Manager 발행",
           "LP NFT",
-          "collect/decrease events",
-          "indexed position"
+          "수취/감액 이벤트",
+          "인덱스된 포지션"
         ]
       }
     ]
@@ -2284,26 +2424,26 @@
     "recommendation": {
       "confidence": "MODERATE",
       "headline": "첫 수익원은 코인 발행보다 Pool Passport와 인덱스 데이터 구독이 맞다.",
-      "summary": "GIWA Sepolia에서 지금 검증 가능한 것은 근거·코드·풀 위험 데이터다. public mainnet, canonical assets, 유동성, 법률 분류가 열리기 전에는 DEX·NFT·밈코인 거래 수익을 매출 계획에 넣지 않고, 이후에도 interface fee → protocol fee 순으로 단계화한다.",
+      "summary": "GIWA Sepolia에서 지금 검증 가능한 것은 근거·코드·풀 위험 데이터다. 공개 메인넷·기준 자산·유동성·법률 분류가 열리기 전에는 DEX·NFT·밈코인 거래 수익을 매출 계획에 넣지 않는다. 열린 뒤에도 인터페이스 수수료 → 프로토콜 수수료 순서로 간다.",
       "tags": [
-        "P0 DATA MRR",
-        "P1 VETTED LAUNCH",
-        "P2 INTERFACE FEE",
-        "MEMECOIN LAST"
+        "P0 데이터 구독",
+        "P1 검증된 론칭 서비스",
+        "P2 인터페이스 수수료",
+        "밈코인은 맨 마지막"
       ]
     },
     "models": [
       {
         "id": "indexed-data",
-        "name": "Indexed data & alerting",
-        "category": "NODE / DATA",
+        "name": "인덱스 데이터 · 알림 구독",
+        "category": "노드 · 데이터",
         "priority": "BUILD_NOW",
-        "verdict": "노드 자체가 돈을 버는 것이 아니라, finality가 붙은 API·주소 위험 변화·증거 보존이 반복 과금 가능한 제품이 된다.",
-        "payer": "프로젝트 팀 · 리서치/운영 조직",
-        "operator_revenue": "구독 MRR + 사용량 + setup",
+        "verdict": "노드 자체는 돈이 안 된다 · 확정도 붙은 API·주소 위험 알림·증거 보존이 월 구독 상품이 된다",
+        "payer": "프로젝트 팀 · 리서치·운영 조직",
+        "operator_revenue": "월 구독(MRR) + 사용량 + 초기 설정비",
         "formula": "MRR + API usage + setup − RPC/index/storage/on-call",
-        "hard_gate": "reorg-safe indexer · SLA · 3개 design partner · 별도 상업 승인",
-        "primary_risk": "public RPC 복제만으로는 지불의사가 없고, archive·저장·온콜 비용이 마진을 잠식한다.",
+        "hard_gate": "리오그 안전 인덱서 · SLA · 설계 파트너 3곳 · 별도 상업 승인",
+        "primary_risk": "공개 RPC 복제만으로는 아무도 안 낸다 · 아카이브·저장·온콜 비용이 마진을 먹는다",
         "source_ids": [
           "src_301",
           "src_305",
@@ -2323,15 +2463,15 @@
       },
       {
         "id": "pool-passport",
-        "name": "Pool Passport / monitoring",
-        "category": "TRUST DATA",
+        "name": "Pool Passport · 풀 감시",
+        "category": "신뢰 데이터",
         "priority": "BUILD_NOW",
-        "verdict": "code hash·proxy·admin·mint/freeze/tax·fee recipient·LP 권한을 증거와 함께 제공하는 GIWA 첫 read-only 제품 후보다.",
-        "payer": "토큰/풀 팀 · 투자/상장·운영 조직",
-        "operator_revenue": "검증 setup + 모니터링 구독",
+        "verdict": "코드 해시·프록시·관리자·발행/동결/세금·수수료 수취인·LP 권한을 증거와 함께 주는 GIWA 첫 읽기 전용 상품",
+        "payer": "토큰·풀 팀 · 투자·상장·운영 조직",
+        "operator_revenue": "검증 설정비 + 감시 구독",
         "formula": "projects × setup fee + monitored addresses × MRR − verification cost",
-        "hard_gate": "주소 충돌 격리 · source/full verification 분리 · pay-to-play 공시",
-        "primary_risk": "고객이 비용을 냈다는 사실이 안전 인증처럼 보이면 이해상충이 생긴다.",
+        "hard_gate": "주소 충돌 격리 · 소스 검증과 전체 검증 분리 · 유료 고객 공시",
+        "primary_risk": "돈 낸 사실이 안전 인증처럼 보이면 이해상충",
         "source_ids": [
           "src_301",
           "src_303",
@@ -2351,15 +2491,15 @@
       },
       {
         "id": "interface-fee",
-        "name": "Swap interface / routing fee",
+        "name": "스왑 UI · 라우팅 수수료",
         "category": "DEX",
         "priority": "GATED",
-        "verdict": "풀 소유와 별개로 UI·API가 실제로 라우팅한 거래에만 과금해 운영사 귀속을 가장 명확히 만들 수 있다.",
-        "payer": "해당 인터페이스를 선택한 swapper",
-        "operator_revenue": "interface fee 전액 또는 partner split",
+        "verdict": "풀 소유와 별개로 우리 UI·API가 실제 라우팅한 거래에만 과금 → 귀속이 가장 분명",
+        "payer": "우리 인터페이스를 고른 스왑 사용자",
+        "operator_revenue": "인터페이스 수수료 전액 또는 파트너 분배",
         "formula": "routed organic volume × interface bps − rebates − infra/support",
-        "hard_gate": "public mainnet · canonical assets · wallet execution · fee disclosure · 법률검토",
-        "primary_risk": "무료 대체 UI로 거래가 빠지고, protocol fee와 중복 과금될 수 있다.",
+        "hard_gate": "공개 메인넷 · 기준 자산 · 지갑 실행 · 수수료 공시 · 법률 검토",
+        "primary_risk": "무료 UI로 거래가 빠짐 · 프로토콜 수수료와 이중 과금",
         "source_ids": [
           "src_310",
           "src_311",
@@ -2379,15 +2519,15 @@
       },
       {
         "id": "protocol-fee",
-        "name": "DEX protocol fee",
+        "name": "DEX 프로토콜 수수료",
         "category": "DEX",
         "priority": "GATED",
-        "verdict": "LP fee 일부를 treasury·holder로 전환하는 구조다. 초기 유동성보다 먼저 켜면 venue 경쟁력을 약화시킬 수 있다.",
-        "payer": "trader가 내는 pool fee 안에서 LP와 분할",
-        "operator_revenue": "treasury 귀속분만; LP/holder 몫 제외",
+        "verdict": "LP 수수료 일부를 금고·홀더로 돌리는 구조 · 유동성보다 먼저 켜면 거래처 경쟁력이 떨어진다",
+        "payer": "트레이더가 내는 풀 수수료를 LP와 나눔",
+        "operator_revenue": "금고 귀속분만 · LP·홀더 몫 제외",
         "formula": "organic pool volume × fee tier × protocol share",
-        "hard_gate": "90일 유기 거래·깊이·retention · governance/timelock · fee recipient 공개",
-        "primary_risk": "LP 이탈·가격 영향·수익 이중계상; holder revenue는 운영사 순매출이 아니다.",
+        "hard_gate": "90일 유기 거래·깊이·재방문 · 거버넌스·타임락 · 수취인 공개",
+        "primary_risk": "LP 이탈 · 가격 영향 · 수익 이중 계산 · 홀더 수익은 우리 매출 아님",
         "source_ids": [
           "src_311",
           "src_313",
@@ -2407,15 +2547,15 @@
       },
       {
         "id": "treasury-lp",
-        "name": "Treasury LP returns",
-        "category": "LIQUIDITY",
+        "name": "자기자본 LP 수익",
+        "category": "유동성",
         "priority": "GATED",
-        "verdict": "운영사가 자기 자본으로 LP가 될 때만 LP fee가 운영사 수익이다. 일반 LP의 수수료를 launchpad 매출로 잡으면 안 된다.",
-        "payer": "trader; 수익 수취자는 active LP",
-        "operator_revenue": "자기 LP 포지션의 실현 fee만",
+        "verdict": "우리 돈으로 LP를 설 때만 LP 수수료가 우리 수익 · 남의 LP 수수료를 매출로 잡으면 안 됨",
+        "payer": "트레이더 · 수취자는 활성 LP",
+        "operator_revenue": "우리 LP 포지션에서 실현된 수수료만",
         "formula": "pool fees × active-liquidity share − IL/LVR − hedge/gas/ops",
-        "hard_gate": "분리된 risk budget · custody/mandate · 가격·oracle·exit policy",
-        "primary_risk": "impermanent loss·LVR·집중 범위 이탈이 fee보다 클 수 있다.",
+        "hard_gate": "분리된 위험 예산 · 보관·운용 권한 · 가격·오라클·청산 정책",
+        "primary_risk": "비영구 손실·LVR·구간 이탈이 수수료보다 클 수 있음",
         "source_ids": [
           "src_311",
           "src_312",
@@ -2435,15 +2575,15 @@
       },
       {
         "id": "nft-drop",
-        "name": "NFT primary drop & marketplace",
+        "name": "NFT 1차 발행 · 마켓",
         "category": "NFT",
         "priority": "GATED",
-        "verdict": "1차 민팅은 목적·IP·커뮤니티가 분명할 때 일회성 launch revenue가 되고, 2차 수수료는 선택적 creator earnings 때문에 보장되지 않는다.",
-        "payer": "민터 또는 판매자; 계약·UI에 명시",
-        "operator_revenue": "drop/platform fee + optional service fee",
+        "verdict": "목적·IP·커뮤니티가 분명할 때만 일회성 론칭 수익 · 2차 로열티는 선택제라 보장 없음",
+        "payer": "민팅 참여자 또는 판매자 · 계약·UI에 명시",
+        "operator_revenue": "발행·플랫폼 수수료 + 선택 서비스비",
         "formula": "primary mint GMV × platform rate + setup − creator payout/refunds/ops",
-        "hard_gate": "IP·환불·소비자 고지 · mint utility · organic audience · royalty 정책",
-        "primary_risk": "일회성 spike, 재고 미판매, optional royalty, 저작권·광고 책임.",
+        "hard_gate": "IP·환불·소비자 고지 · 실제 쓸모 · 진짜 관객 · 로열티 정책",
+        "primary_risk": "일회성 급등 · 재고 미판매 · 선택 로열티 · 저작권·광고 책임",
         "source_ids": [
           "src_320",
           "src_321",
@@ -2463,15 +2603,15 @@
       },
       {
         "id": "creator-coins",
-        "name": "Creator / social coin fee split",
-        "category": "CREATOR COINS",
+        "name": "크리에이터 코인 수수료 분배",
+        "category": "크리에이터 코인",
         "priority": "LAST",
-        "verdict": "creator·referrer·liquidity·protocol을 한 거래수수료에서 나누지만, NFT보다 금융·시장행위 노출이 크다.",
-        "payer": "coin trader",
-        "operator_revenue": "protocol share; creator/referral 몫 제외",
+        "verdict": "한 거래 수수료를 창작자·추천인·유동성·프로토콜이 나눔 · NFT보다 금융·시장행위 노출이 큼",
+        "payer": "코인 트레이더",
+        "operator_revenue": "프로토콜 몫만 · 창작자·추천 몫 제외",
         "formula": "coin volume × total fee × protocol share − sponsorship/moderation",
-        "hard_gate": "token legal classification · creator identity · abuse/moderation · surveillance",
-        "primary_risk": "투기 유인, 이해상충, referral abuse, fee 변경과 creator expectation mismatch.",
+        "hard_gate": "토큰 법적 분류 · 창작자 신원 · 악용 대응 · 시장 감시",
+        "primary_risk": "투기 유인 · 이해상충 · 추천 악용 · 수수료 변경 시 창작자 반발",
         "source_ids": [
           "src_342",
           "src_343",
@@ -2491,15 +2631,15 @@
       },
       {
         "id": "memecoin-launchpad",
-        "name": "Memecoin curve + graduation",
-        "category": "MEMECOIN",
+        "name": "밈코인 커브 + 졸업",
+        "category": "밈코인",
         "priority": "LAST",
-        "verdict": "무상 생성·즉시 가격발견·자동 AMM 이관으로 cold start를 줄이지만, 운영사 gross fee와 토큰 성공률은 반대로 움직일 수 있다.",
-        "payer": "bonding-curve / AMM trader + graduation event",
-        "operator_revenue": "curve protocol fee + graduation fee + post-pool share",
+        "verdict": "무료 생성·즉시 가격 발견·자동 AMM 이관으로 초기 진입은 쉽다 · 우리 총수수료와 토큰 성공률은 반대로 움직일 수 있다",
+        "payer": "본딩커브·AMM 트레이더 + 졸업 이벤트",
+        "operator_revenue": "커브 수수료 + 졸업 수수료 + 졸업 후 풀 몫",
         "formula": "curve volume × protocol rate + graduates × fee + AMM volume × share",
-        "hard_gate": "시장감시·bot/sybil·issuer/creator 책임·content moderation·mainnet liquidity",
-        "primary_risk": "대다수 launch의 미졸업, sniper coordination, 조작·사용자 손실·규제 리스크.",
+        "hard_gate": "시장 감시 · 봇·다계정 대응 · 발행자·창작자 책임 · 메인넷 유동성",
+        "primary_risk": "대부분 미졸업 · 스나이퍼 담합 · 조작·사용자 손실·규제 리스크",
         "source_ids": [
           "src_350",
           "src_351",
@@ -2578,45 +2718,45 @@
     "sequence": [
       {
         "phase": "P0",
-        "name": "Evidence OS",
+        "name": "근거 운영체계",
         "status": "build_now",
-        "action": "provider RPC + raw evidence + finality/reorg index + Pool Passport",
-        "gate": "read-only tests and provenance conflicts resolved"
+        "action": "노드 RPC + 원본 증거 + 확정도·리오그 인덱스 + Pool Passport",
+        "gate": "읽기 전용 테스트 통과 · 출처 충돌 해소"
       },
       {
         "phase": "P1",
-        "name": "Data pilot",
+        "name": "데이터 파일럿",
         "status": "gated",
-        "action": "3 design partners와 off-chain 구독·monitoring willingness-to-pay 검증",
+        "action": "설계 파트너 3곳과 구독·감시 지불 의사 검증",
         "gate": "별도 상업·계약·개인정보 승인"
       },
       {
         "phase": "P2",
-        "name": "Vetted launch services",
+        "name": "검증된 론칭 서비스",
         "status": "gated",
-        "action": "목적 있는 NFT/프로젝트 launch의 fixed setup fee부터 검토",
-        "gate": "public mainnet, IP/consumer review, canonical assets"
+        "action": "목적 있는 NFT·프로젝트 론칭의 고정 설정비부터",
+        "gate": "공개 메인넷 · IP·소비자 검토 · 기준 자산"
       },
       {
         "phase": "P3",
-        "name": "Interface fee",
+        "name": "인터페이스 수수료",
         "status": "gated",
-        "action": "실제 라우팅한 유기 거래에 투명한 별도 fee",
-        "gate": "30/90-day depth, repeat users, disclosure and legal review"
+        "action": "실제 라우팅한 유기 거래에만 투명한 별도 수수료",
+        "gate": "30·90일 깊이 · 재방문 사용자 · 공시·법률 검토"
       },
       {
         "phase": "P4",
-        "name": "Protocol fee / treasury LP",
+        "name": "프로토콜 수수료 · 자기자본 LP",
         "status": "blocked",
-        "action": "fee switch와 자기자본 LP를 각각 별도 원장·권한으로 심사",
-        "gate": "audit, governance, risk budget, incident plan"
+        "action": "수수료 스위치와 자기자본 LP를 각각 별도 장부·권한으로 심사",
+        "gate": "감사 · 거버넌스 · 위험 예산 · 사고 대응 계획"
       },
       {
         "phase": "LAST",
-        "name": "Memecoin launchpad",
+        "name": "밈코인 런치패드",
         "status": "blocked",
-        "action": "시장감시·creator accountability 없이는 열지 않음",
-        "gate": "regulatory classification, abuse controls, organic retention"
+        "action": "시장 감시·창작자 책임 없이는 열지 않음",
+        "gate": "규제 분류 · 악용 통제 · 유기적 재방문"
       }
     ],
     "case_studies": [
@@ -2816,8 +2956,8 @@
   "research": [
     {
       "id": "GIWA_fee_capture_product_decision_2026_20260904_143036",
-      "title": "Fee-capture product decision (2026-09-04)",
-      "description": "스왑·텔레그램 봇·런치패드 fee 사업을 리서치 13편·설계 4안·심사 3편·반증 검증으로 판정",
+      "title": "수수료 제품 결정 (2026-09-04)",
+      "description": "어떤 수수료가 합법적으로 우리 것인가 · 리서치 13편·설계 4안·심사 3편",
       "topic": "GIWA에서 합법적으로 거래 수수료를 포획하는 제품(단순 스왑·텔레그램 봇·런치패드·B2B 엔진)의 판정과 단계별 계획",
       "status": "COMPLETED",
       "updated_at": "2026-09-04T23:00:00+09:00",
@@ -2857,8 +2997,8 @@
     },
     {
       "id": "GIWA_revenue_models_chain_launch_benchmarks_2026_20260903_175751",
-      "title": "Revenue models & launch benchmarks",
-      "description": "DEX·NFT·밈코인·데이터 수익을 Ethereum·Base·Solana·Robinhood 사례와 비교",
+      "title": "수익모델·체인 론칭 벤치마크",
+      "description": "DEX·NFT·밈코인·데이터 수익이 이더리움·Base·솔라나·로빈후드에서 어땠는가",
       "topic": "GIWA revenue models and chain-launch benchmarks across Ethereum, Base, Solana and Robinhood Chain",
       "status": "COMPLETE",
       "updated_at": "2026-09-03T19:08:51+09:00",
@@ -2898,8 +3038,8 @@
     },
     {
       "id": "GIWA_dex_fee_jurisdictions_2026_20260903_144748",
-      "title": "DEX fee jurisdiction matrix",
-      "description": "호주·오스트리아·독일·미국에서 동일 기능과 fee 흐름을 비교",
+      "title": "DEX 수수료 국가별 비교",
+      "description": "호주·오스트리아·독일·미국에서 같은 기능·수수료 흐름이 어떻게 다른가",
       "topic": "Australia, Austria, Germany, and United States regulatory and tax comparison for a simple open-source GIWA DEX fee model",
       "status": "COMPLETED",
       "updated_at": "2026-09-03T15:07:29+09:00",
@@ -2939,8 +3079,8 @@
     },
     {
       "id": "GIWA_simple_open_dex_volume_2026_20260903_132946",
-      "title": "Simple DEX volume strategy",
-      "description": "v3-compatible venue, anchor pair, organic volume와 90일 go/no-go 전략",
+      "title": "단순 DEX 거래량 전략",
+      "description": "v3 호환 거래처·기준 페어로 유기 거래량을 90일 안에 만들 수 있는가",
       "topic": "Research-only design for a simple open-source GIWA DEX that can earn transparent fees and attract organic volume",
       "status": "COMPLETED",
       "updated_at": "2026-09-03T13:46:30+09:00",
@@ -2980,8 +3120,8 @@
     },
     {
       "id": "GIWA_ecosystem_fee_projects_2026_20260903_124749",
-      "title": "GIWA ecosystem & fee projects",
-      "description": "GASOK 공개 프로젝트, DEX 신호와 현실적인 fee 제품 후보를 비교",
+      "title": "GIWA 생태계·수수료 프로젝트",
+      "description": "GASOK 공개 프로젝트와 DEX 신호 중 현실적인 수수료 제품 후보는 무엇인가",
       "topic": "GIWA ecosystem, GASOK Phase 3 announcements, Uniswap and Bithumb chain signals, liquidity bootstrapping, fee models, and lawful project options",
       "status": "COMPLETE",
       "updated_at": "2026-09-03T13:19:16+09:00",
@@ -3021,8 +3161,8 @@
     },
     {
       "id": "GIWA_ecosystem_readiness_2026_20260825_050301",
-      "title": "GIWA ecosystem readiness",
-      "description": "네트워크·생태계·지역 반응과 public mainnet 준비도를 함께 검증",
+      "title": "GIWA 생태계 준비도",
+      "description": "네트워크·생태계·지역 반응으로 볼 때 공개 메인넷은 얼마나 가까운가",
       "topic": "GIWA ecosystem readiness 2026",
       "status": "COMPLETE",
       "updated_at": "2026-08-25T06:37:00+09:00",
@@ -3064,11 +3204,11 @@
   "build_tracks": [
     {
       "id": "robinhood-launch-prep",
-      "name": "Robinhood · GIWA launch prep (2026-09-06)",
+      "name": "로빈후드·GIWA 론칭 준비 (2026-09-06)",
       "status": "implemented",
       "progress": 100,
-      "summary": "로빈후드 체인(TVL $905M, DEX $1.89B/일, Pons V2 수수료 $8.75M/일) 즉시 론칭 + GIWA 리허설: 런치패드 15개 비교, 공급 배분·초기 LP·졸업 규범 13개 플랫폼, D-3→D+7 플레이북, 비용표, LP 상태 체크",
-      "next": "오너가 Pons V2 파라미터(dev-buy 0.05–0.08 ETH, 세금 0–2 %, 바이백 OFF, 콜드 수취인) 확정 → 로빈후드 첫 론칭; GIWA는 Joseon Sepolia 리허설",
+      "summary": "완료: 로빈후드(TVL $905M · DEX $1.89B/일 · Pons V2 수수료 $8.75M/일) 런치패드 15개 비교·규범 13개·플레이북·비용표",
+      "next": "오너가 Pons V2 값 확정(dev-buy 0.05–0.08 ETH · 세금 0–2 % · 바이백 OFF) → 첫 론칭",
       "files": [
         {
           "path": "docs/LAUNCH_PREP_2026-09-06.md",
@@ -3092,11 +3232,11 @@
     },
     {
       "id": "locker-launcher",
-      "name": "Flat-fee locker launcher (fee = 0 on Sepolia)",
+      "name": "정액 수수료 락커 런처 (Sepolia fee 0)",
       "status": "spec_only",
       "progress": 5,
-      "summary": "Clanker v3.1형 LpLocker(withdraw 경로 부재 negative test)·단일 bytecode 토큰·end-of-tx creator 잔고 0; 휴면 protocol-share 스위치와 LaunchGate 제외",
-      "next": "P0: Sepolia creationFee=0 배포 후보; 메인넷 수수료 파라미터는 배포 전 오너 확정 후 불변",
+      "summary": "설계만 있음: Clanker v3.1형 락커(LP 인출 함수 없음) · 토큰 코드 1종 · 창작자 잔고 0 · 구현 코드 없음",
+      "next": "P0: Sepolia에 생성 수수료 0으로 배포 후보 · 메인넷 값은 배포 전 오너 확정 후 불변",
       "files": [
         {
           "path": "docs/FEE_CAPTURE_DECISION_2026-09-04.md",
@@ -3120,11 +3260,11 @@
     },
     {
       "id": "shared-engine",
-      "name": "Shared execution engine (read layer first)",
+      "name": "공유 실행 엔진 (읽기 계층 먼저)",
       "status": "spec_only",
       "progress": 5,
-      "summary": "자체 op-reth·two-lane 인덱서·venue registry·Pool Passport·quote/pre-sim/validator·signer-as-code — 네 제품이 60–70 % 공유",
-      "next": "P0 읽기 계층(노드·인덱서·registry·Passport ≥6)을 공개 데이터로; 실행 계층은 별도 승인",
+      "summary": "설계만 있음: 자체 노드 · 인덱서(체인 기록 정리 DB) · 거래처 목록 · Pool Passport — 4개 제품이 60–70 % 공유",
+      "next": "P0: 읽기 계층(노드·인덱서·거래처 목록·Passport 6개 이상) 공개 데이터로 · 실행 계층은 별도 승인",
       "files": [
         {
           "path": "docs/FEE_CAPTURE_DECISION_2026-09-04.md",
@@ -3142,11 +3282,11 @@
     },
     {
       "id": "fee-capture-decision",
-      "name": "Fee-capture decision (2026-09-04)",
+      "name": "수수료 사업 결정 (2026-09-04)",
       "status": "implemented",
       "progress": 100,
-      "summary": "오너 방향(수수료 사업)을 리서치 13편·설계 4안·심사 3편·반증 검증 12건으로 판정. 후속 결정(같은 날): 법인·FIU·법령해석 경로 없이 주체 없는 탈중앙 배포",
-      "next": "G1: Sepolia reference build(불변 v3 풀 계층 + 락커 런처 fee=0) 승인",
+      "summary": "완료: 리서치 13편·설계 4안·심사 3편·반증 12건으로 판정 · 같은 날 추가 결정: 법인·FIU 없이 주체 없는 배포",
+      "next": "G1: Sepolia 기준 빌드(불변 v3 풀 + 락커 런처 fee 0) 승인",
       "files": [
         {
           "path": "docs/FEE_CAPTURE_DECISION_2026-09-04.md",
@@ -3170,11 +3310,11 @@
     },
     {
       "id": "evidence-inventory",
-      "name": "Evidence inventory",
+      "name": "근거 목록",
       "status": "implemented",
       "progress": 100,
-      "summary": "12개 생태계 항목과 세 가지 안전 플래그를 기계 판독형으로 검증",
-      "next": "새 항목은 source ID와 observed date를 함께 등록",
+      "summary": "완료: 생태계 항목 16개 + 안전 플래그 3개를 기계가 읽는 형식으로 검증",
+      "next": "새 항목은 출처 ID와 관측 날짜를 함께 등록",
       "files": [
         {
           "path": "data/ecosystem.json",
@@ -3204,11 +3344,11 @@
     },
     {
       "id": "read-only-probe",
-      "name": "Read-only chain probe",
+      "name": "읽기 전용 체인 프로브",
       "status": "implemented",
       "progress": 100,
-      "summary": "chain ID 91342 fail-close와 읽기 전용 RPC allowlist 구현",
-      "next": "관찰 스냅샷 갱신은 수동·읽기 전용으로 유지",
+      "summary": "완료: 체인 ID 91342가 아니면 즉시 중단 · 읽기 전용 RPC 허용 목록만 호출",
+      "next": "관측 스냅샷 갱신은 수동·읽기 전용으로 유지",
       "files": [
         {
           "path": "src/giwa_lab/constants.py",
@@ -3238,11 +3378,11 @@
     },
     {
       "id": "node-runtime",
-      "name": "GIWA node runtime",
+      "name": "GIWA 노드 실행 환경",
       "status": "spec_only",
       "progress": 15,
-      "summary": "공식 op-reth 기반 Sepolia 노드 코드와 사양은 있으나 이 저장소에는 실행 구성·HA·백업이 없음",
-      "next": "별도 인프라 저장소에서 least-privilege namespace와 L1 RPC를 포함한 read-only POC",
+      "summary": "있음: 공식 op-reth 기반 Sepolia 노드 코드·사양 · 없음: 이 저장소의 실행 구성·이중화·백업",
+      "next": "별도 인프라 저장소에서 최소 권한 RPC + L1 RPC 포함 읽기 전용 시험 구축",
       "files": [
         {
           "path": "docs/MAINNET_GATES.md",
@@ -3254,11 +3394,11 @@
     },
     {
       "id": "event-indexer",
-      "name": "Finality-aware event indexer",
+      "name": "확정도 인식 이벤트 인덱서",
       "status": "spec_only",
       "progress": 10,
-      "summary": "빠른 조회에 필요한 로그 backfill·reorg·unsafe/safe/finalized 투영은 아직 구현되지 않음",
-      "next": "eth_getLogs·eth_call·receipt 읽기 전용 확장과 idempotent raw evidence store",
+      "summary": "없음: 과거 로그 채우기 · 리오그(블록 되돌림) 처리 · 미확정/안전/최종 3단계 반영 — 미구현",
+      "next": "eth_getLogs·eth_call·영수증 읽기 전용 확장 + 중복 없는 원본 증거 저장소",
       "files": [
         {
           "path": "src/giwa_lab/rpc.py",
@@ -3276,11 +3416,11 @@
     },
     {
       "id": "pool-passport",
-      "name": "Pool Passport data layer",
+      "name": "Pool Passport 데이터 계층",
       "status": "spec_only",
       "progress": 20,
-      "summary": "bytecode·source·proxy·admin·fee recipient·token authority·LP 권한을 한 레코드로 묶는 요구사항 단계",
-      "next": "주소 충돌을 격리한 schema와 네 개 read-only demo passport 구현",
+      "summary": "요구사항만: 코드·소스·프록시·관리자·수수료 수취인·토큰 권한·LP 권한을 레코드 1건으로 묶음",
+      "next": "주소 충돌 격리 스키마 + 읽기 전용 데모 Passport 4개 구현",
       "files": [
         {
           "path": "contracts/specs/DEX.md",
@@ -3298,11 +3438,11 @@
     },
     {
       "id": "research-dashboard",
-      "name": "Research dashboard",
+      "name": "리서치 대시보드",
       "status": "implemented",
       "progress": 100,
-      "summary": "리서치, 생태계, 코드 상태와 mainnet gate를 단일 정적 UI로 연결",
-      "next": "리서치 변경 시 catalog 생성 검사를 통과",
+      "summary": "완료: 리서치·생태계·코드 상태·메인넷 게이트를 정적 페이지 1개로 연결",
+      "next": "리서치 변경 시 카탈로그 생성 검사 통과",
       "files": [
         {
           "path": "dashboard/index.html",
@@ -3332,11 +3472,11 @@
     },
     {
       "id": "token-contract",
-      "name": "Token contract",
+      "name": "토큰 컨트랙트",
       "status": "spec_only",
       "progress": 25,
-      "summary": "투명한 fixed-supply ERC-20 요구사항만 정의, Solidity 구현은 없음",
-      "next": "Phase 1 승인 후 로컬 Anvil용 구현·invariant/fuzz tests",
+      "summary": "요구사항만: 총량 고정 ERC-20(표준 토큰 규격) · Solidity 구현 없음",
+      "next": "Phase 1 승인 후 로컬 Anvil 구현 + 불변식·퍼즈 테스트",
       "files": [
         {
           "path": "contracts/specs/TOKEN.md",
@@ -3348,11 +3488,11 @@
     },
     {
       "id": "dex-contract",
-      "name": "DEX / AMM contract",
+      "name": "DEX / AMM 컨트랙트",
       "status": "spec_only",
       "progress": 20,
-      "summary": "v3-compatible 후보와 위협모델 질문만 존재, 재사용 base 미선정",
-      "next": "라이선스·감사 이력이 있는 base를 선택한 뒤 local-only prototype",
+      "summary": "있음: v3 호환 후보 + 위협 모델 질문 · 없음: 재사용할 기반 코드 선정",
+      "next": "라이선스·감사 이력 있는 기반 선택 → 로컬 전용 프로토타입",
       "files": [
         {
           "path": "contracts/specs/DEX.md",
@@ -3370,11 +3510,11 @@
     },
     {
       "id": "testnet-deployment",
-      "name": "GIWA Sepolia deployment",
+      "name": "GIWA Sepolia 배포",
       "status": "blocked",
       "progress": 0,
-      "summary": "signer, broadcast, faucet, deployment 코드는 의도적으로 없음",
-      "next": "정확한 revision·contract·deployer를 지정한 별도 승인 필요",
+      "summary": "의도적으로 없음: 서명자 · 브로드캐스트 · 파우셋 · 배포 코드",
+      "next": "정확한 리비전·컨트랙트·배포자를 지정한 별도 승인 필요",
       "files": [
         {
           "path": "docs/BOUNDARIES.md",
@@ -3392,11 +3532,11 @@
     },
     {
       "id": "public-mainnet",
-      "name": "Public mainnet launch",
+      "name": "공개 메인넷 출시",
       "status": "blocked",
       "progress": 0,
-      "summary": "공식 public mainnet endpoint·canonical assets·운영 권한이 미확인",
-      "next": "모든 mainnet evidence gate를 새 근거로 재검증",
+      "summary": "미확인: 공식 메인넷 엔드포인트 · 기준 자산(canonical assets) · 운영 권한",
+      "next": "모든 메인넷 근거 게이트를 새 근거로 재검증",
       "files": [
         {
           "path": "docs/MAINNET_GATES.md",
@@ -3410,7 +3550,7 @@
   "document_groups": [
     {
       "name": "론칭 준비",
-      "description": "로빈후드 즉시 론칭과 GIWA 리허설 — 런치패드 비교, 공급 배분·초기 LP 규범, 플레이북, 비용, LP 체크",
+      "description": "로빈후드 즉시 론칭 + GIWA 리허설 · 비교표·규범·플레이북·비용",
       "files": [
         {
           "path": "docs/LAUNCH_PREP_2026-09-06.md",
@@ -3458,7 +3598,7 @@
     },
     {
       "name": "결정 메모",
-      "description": "무엇을 만들지와 언제 멈출지를 빠르게 판단 — 2026-09-04 fee-capture 결정이 상위",
+      "description": "무엇을 만들고 언제 멈출지 · 2026-09-04 수수료 결정이 상위",
       "files": [
         {
           "path": "docs/FEE_CAPTURE_DECISION_2026-09-04.md",
@@ -3488,7 +3628,7 @@
     },
     {
       "name": "안전·출시 게이트",
-      "description": "research-only 경계와 public mainnet 차단 조건",
+      "description": "리서치 전용 경계와 공개 메인넷 차단 조건",
       "files": [
         {
           "path": "CONSTITUTION.md",
@@ -3518,7 +3658,7 @@
     },
     {
       "name": "제품·컨트랙트 사양",
-      "description": "구현 전 해결할 설계 질문과 테스트 요건",
+      "description": "구현 전 풀어야 할 설계 질문과 테스트 요건",
       "files": [
         {
           "path": "docs/PUMP_PLATFORM.md",
@@ -3545,52 +3685,52 @@
     {
       "id": "gate-1",
       "state": "blocked",
-      "text": "Official public mainnet chain ID, genesis/config, RPC, explorer, bridge, finality, upgrade and incident documentation are published and independently reproducible."
+      "text": "공식 메인넷 chain ID·설정·RPC·탐색기·브리지·확정·업그레이드·incident documentation 공개 · 재현 가능"
     },
     {
       "id": "gate-2",
       "state": "blocked",
-      "text": "Current node release and supported client path are pinned; archival/snapshot guidance is not contradictory; required RPC namespaces are least-privilege."
+      "text": "노드 릴리스·클라이언트 경로 고정 · 아카이브/스냅샷 안내 모순 없음 · RPC 권한은 최소"
     },
     {
       "id": "gate-3",
       "state": "blocked",
-      "text": "Sequencer, backup operation, fault-proof permission model, Security Council, upgrade keys, pauses, withdrawals, and emergency procedures are disclosed enough for a threat model."
+      "text": "시퀀서·백업 운영·결함 증명 권한·보안 위원회·업그레이드 키·정지·출금·비상 절차 공개"
     },
     {
       "id": "gate-4",
       "state": "blocked",
-      "text": "Canonical ETH/stablecoin paths, bridge trust, oracle support, failure/staleness behavior, and usable liquidity are evidenced—not inferred from testnet."
+      "text": "기준 ETH·스테이블코인 경로·브리지 신뢰·오라클·장애 동작·실사용 유동성 근거 확인 · 테스트넷 추정 아님"
     },
     {
       "id": "gate-5",
       "state": "blocked",
-      "text": "Token and DEX contracts pass reproducible builds, unit/invariant/fuzz tests, static analysis, independent audit, deployment rehearsal, source verification, and admin-role review."
+      "text": "토큰·DEX 컨트랙트: 재현 빌드·단위/불변식/퍼즈·정적 분석·외부 감사·배포 리허설·소스 검증·관리자 검토"
     },
     {
       "id": "gate-6",
       "state": "blocked",
-      "text": "Multisig, timelock, monitoring, on-call ownership, incident response, upgrade/rollback policy, disclosures, and legal review are complete."
+      "text": "멀티시그·타임락·모니터링·온콜 담당·사고 대응·업그레이드/롤백 정책·공시·법률 검토 완료"
     },
     {
       "id": "gate-7",
       "state": "blocked",
-      "text": "Market design avoids deceptive supply, fake volume, wash trading, hidden allocations, listing implications, and unsafe public solicitation."
+      "text": "시장 설계: 기만적 공급·가짜 거래량·워시트레이딩·숨은 배분·상장 암시·위험한 공개 권유 없음"
     },
     {
       "id": "gate-8",
       "state": "blocked",
-      "text": "Legal gates (2026-09-04): Filing A (금융위 법령해석 on the fixed-fee engine / user-signed tool) read with counsel before any paid consumer tier; Filing B (flat creation fee + creator LP-fee stream) non-adverse plus a paid written opinion plus closed research on 법인 ETH→KRW conversion and VAT before the creation fee is switched on (Gate L1); Filing C (immutable zero-fee AMM + own-capital LP) only after a canonical stablecoin exists; no per-trade fee of any kind before a 특금법 §7 VASP 신고 수리."
+      "text": "법률 게이트(2026-09-04 §0.1 갱신): 법인 설립·FIU 신고·법령해석 경로는 추진하지 않음 · 대신 운영자 없는 불변 배포 · 한국 거주자 대상 호스팅 UI·커스터디·거래당 수수료 사업 없음 · 관련 리서치는 기록으로 유지"
     },
     {
       "id": "gate-9",
       "state": "blocked",
-      "text": "No dormant fee switch: the v3 factory owner is renounced in the deployment ceremony; the launcher carries no protocol-share activation path; any future per-trade economics require a new deployment under a registered entity."
+      "text": "휴면 수수료 스위치 없음: v3 팩토리 소유권 포기 · 런처에 프로토콜 몫 활성 경로 없음 · 거래당 수수료는 새 배포"
     },
     {
       "id": "gate-10",
       "state": "blocked",
-      "text": "A named human explicitly approves the exact revision, chain, addresses, parameters, roles, funding, liquidity limits, and launch window."
+      "text": "지정된 사람이 정확한 리비전·체인·주소·파라미터·역할·자금·유동성 한도·launch window까지 승인"
     }
   ]
 }
