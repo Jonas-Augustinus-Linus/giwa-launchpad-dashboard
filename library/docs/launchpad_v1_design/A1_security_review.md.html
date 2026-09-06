@@ -1,0 +1,471 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex,nofollow,noarchive" />
+    <meta name="theme-color" content="#090c0e" />
+    <title>A1 — Security review of launchpad v1 design (D1 curve/factory/graduation · D2 v4 hook · D3 locker/escrow/GIWA adapter) · GIWA · Robinhood Launchpad</title>
+    <link rel="stylesheet" href="../../../assets/document.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#document">본문으로 바로가기</a>
+    <header class="document-header">
+      <a class="brand" href="../../../development.html" aria-label="GIWA 대시보드로 돌아가기">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span><strong>GIWA · RH</strong><small>LAUNCHPAD ROOM</small></span>
+      </a>
+      <nav aria-label="문서 동작">
+        <a href="../../../development.html">← 대시보드</a>
+      </nav>
+    </header>
+    <main id="document" class="document-shell">
+      <div class="document-meta">
+        <span>REPORT</span>
+        <span>SHA256 c6578bfea360</span>
+      </div>
+      <h1>A1 — Security review of launchpad v1 design (D1 curve/factory/graduation · D2 v4 hook · D3 locker/escrow/GIWA adapter)</h1>
+      <p class="source-path">docs/launchpad_v1_design/A1_security_review.md</p>
+      <article class="markdown-body"><h1 id="a1-security-review-of-launchpad-v1-design-d1-curvefactorygraduation-d2-v4-hook-d3-lockerescrowgiwa-adapter">A1 — Security review of launchpad v1 design (D1 curve/factory/graduation · D2 v4 hook · D3 locker/escrow/GIWA adapter)</h1>
+<p>Lens: pre-contest auditor (Code4rena / Cantina warden). Date 2026-09-06 KST. Scope = the three design documents in <code>docs/launchpad_v1_design/</code>, read in full, plus the reference material they cite (<code>launch_research_2026-09-06/01</code>, <code>launch_research_2026-09-06/02</code>, <code>launch_research_2026-09-06/05</code>, verified Pons V2 sources under <code>Pons V2 검증 소스(robinhoodchain.blockscout.com, 저장소 미포함)/</code>). Nothing here is deployed; every finding is against the <em>design as written</em>, so "fix" means "change the spec before implementation".</p>
+<p>Primary sources checked this session (not just the design docs' summaries of them):
+- CreateX <code>CreateX.sol</code> — <code>_guard</code>, <code>_parseSalt</code>, <code>deployCreate2</code>, <code>deployCreate3</code>, <code>computeCreate3Address</code>, <code>_efficientHash</code>: https://raw.githubusercontent.com/pcaversaccio/createx/main/src/CreateX.sol
+- Uniswap v4 <code>Hooks.sol</code> <code>beforeSwap</code> / <code>afterSwap</code> / <code>isValidHookAddress</code> (local verified copy <code>_ref_ponsv2/_pons_contracts_lib_v4-core_src_libraries_Hooks.sol</code>, identical to <code>Uniswap/v4-core@main</code>)
+- Uniswap v4-periphery <code>PositionManager.sol</code> (<code>nextTokenId</code>, <code>_mint</code>, <code>onlyIfApproved</code>, <code>salt = bytes32(tokenId)</code> on decrease/burn): https://raw.githubusercontent.com/Uniswap/v4-periphery/main/src/PositionManager.sol
+- Arbitrum block numbers and time: https://docs.arbitrum.io/build-decentralized-apps/arbitrum-vs-ethereum/block-numbers-and-time ("block production only occurs when there are transactions to sequence"; <code>block.timestamp</code> from the sequencer clock, bounded −24 h/+1 h)
+- OP Stack predeploys: https://docs.optimism.io/stack/smart-contracts ("Most [predeploys] … sit behind proxies owned by the L2 <code>ProxyAdmin</code>"; network-upgrade transactions can replace every predeploy implementation atomically)
+- Pons V2 verified sources: <code>PonsV2BondingCurve.sol</code> (<code>graduate()</code> is "deliberately not nonReentrant" because it is called from inside <code>buy()</code>'s guarded frame; <code>_tryAutoGraduate</code> try/catch), <code>PonsV2GraduationExecutor.sol</code> (<code>receive()</code>, Permit2 expiry <code>block.timestamp + MINT_DEADLINE_WINDOW</code>), <code>PonsV2MemeHook.sol</code>, <code>PonsV2LaunchLocker.sol</code></p>
+<p>Severity scale: <strong>Critical</strong> = funds at risk or the core product promise is falsified with no remediation path once deployed (immutable system) · <strong>High</strong> = a state-changing path behaves against the spec in a way an attacker or an unlucky user can trigger, or an integration mismatch that would ship a non-working system · <strong>Medium</strong> = exploitable griefing / correctness defect with bounded impact · <strong>Low</strong> = hardening · <strong>Info</strong> = disclosure / documentation.</p>
+<hr>
+<h2 id="0-summary-table">0. Summary table</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Sev</th>
+<th>Component</th>
+<th>Title</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A1-01</td>
+<td>Critical</td>
+<td>D1 curve</td>
+<td><code>try this.graduate(token)</code> runs <em>inside</em> the shared transient reentrancy guard → the atomic graduation reverts on every crossing buy (and <code>windDown</code>'s inner retry always "fails")</td>
+</tr>
+<tr>
+<td>A1-02</td>
+<td>High</td>
+<td>D1 curve</td>
+<td><code>windDown</code> is reachable for any Closed token by gas-starving the inner <code>graduate</code> attempt (EIP-150 63/64); converts a graduating token into a never-graduated curve → "liquidity permanently locked" is falsifiable per token</td>
+</tr>
+<tr>
+<td>A1-03</td>
+<td>High</td>
+<td>D1 curve / D2 hook</td>
+<td>"No bundles by construction" is overstated: a launcher-timed second-wallet buy 0.1–1.0 s after launch pays ≈4–6 % (curve) / 25 % (pool); the exemption is not needed to bundle</td>
+</tr>
+<tr>
+<td>A1-04</td>
+<td>High</td>
+<td>D2 hook / D3 escrow</td>
+<td>Any revert in <code>FeeEscrow.credit/accrue</code> bricks every hooked pool forever; three reachable triggers exist in the current spec (unregistered token, <code>WrongQuote</code> on GIWA — D3 §2.3 contradicts §3.6 —, <code>creator == 0</code> registration)</td>
+</tr>
+<tr>
+<td>A1-05</td>
+<td>High</td>
+<td>D1/D2/D3</td>
+<td>Eleven cross-document contradictions on load-bearing interfaces (who calls <code>initialize</code>, where curve fees live, overhang burn vs lock, hook flags 0x2044 vs 0x22CC, accrue API, token deploy path, locker API, two competing timelocks, hook deploy path, dust rounding, creation-fee destination) — as written the three components do not compose</td>
+</tr>
+<tr>
+<td>A1-06</td>
+<td>Medium</td>
+<td>D3 GIWA pair</td>
+<td><code>LaunchPair</code> CREATE2 address depends on <code>openedAt = block.timestamp</code> in the initcode → <code>router.pairFor(token)</code> is not computable; sketch double-pays the fee (push + <code>creditToken</code> pull) → reserves &gt; balance → pair bricked until <code>sync</code>, which then lowers <code>k</code></td>
+</tr>
+<tr>
+<td>A1-07</td>
+<td>Medium</td>
+<td>D3 GIWA pair</td>
+<td><code>mint()</code> prices the pool from <em>balances</em>; the pair address is predictable pre-graduation, so a pre-deploy donation skews the opening price (Pons explicitly designs against this on the v4 path)</td>
+</tr>
+<tr>
+<td>A1-08</td>
+<td>Medium</td>
+<td>D1 curve</td>
+<td>Sub-second snipe-tax interpolation via <code>ArbSys.arbBlockNumber()</code> runs on a <em>transaction-load</em> clock, not wall-clock (Arbitrum: blocks only when there are txs; 0.07 s/block measured under load); D1's own schedule table is numerically wrong (29 % at 0.4 s, ≈4 % at 1.0 s — not 49.5 % / 6.2 %)</td>
+</tr>
+<tr>
+<td>A1-09</td>
+<td>Medium</td>
+<td>D1 executor ↔ curve</td>
+<td>Executor forwards SWEEP dust with <code>CURVE.creditProtocolFees{value}()</code> while the curve's reentrancy lock is held; if that function is guarded (D1 §3.7 guards "claim*"), every graduation reverts → WindDown; the v4 target sketch in D3 also has no <code>receive()</code> for the SWEEP</td>
+</tr>
+<tr>
+<td>A1-10</td>
+<td>Medium</td>
+<td>D3 escrow</td>
+<td>Creator-recipient stalemate and dead-key outcomes: compromised key can drain accrued fees immediately; lost key = 80 % stream stuck forever; <code>claim()</code> when <code>creator == PROTOCOL</code> can never pay the protocol share (only <code>claimFor</code>)</td>
+</tr>
+<tr>
+<td>A1-11</td>
+<td>Low</td>
+<td>D2 hook</td>
+<td><code>take</code> in <code>beforeSwap</code> is paid from PoolManager's pooled ETH before the swapper settles; a t=0 snipe whose 99 % fee exceeds PoolManager's total ETH reverts (benign, but document); unchecked <code>int128(int256(fee))</code> casts on a fee that can be 99× the amount</td>
+</tr>
+<tr>
+<td>A1-12</td>
+<td>Low</td>
+<td>D3 locker</td>
+<td>Negative test list N1 misses <code>isValidSignature</code> (ERC-1271) and <code>permitForAll</code>; <code>onERC721Received</code> still lets <em>any</em> PositionManager NFT be pushed into the locker (harmless sink, but N9's wording overclaims)</td>
+</tr>
+<tr>
+<td>A1-13</td>
+<td>Low</td>
+<td>D3 escrow</td>
+<td>Permissionless <code>credit</code> lets anyone inflate <code>FeesAccrued</code> for any token (fee-dashboard spoofing); 2 % creator tax + 80 % fee rebate makes wash volume cost ≈0.2 %/trade</td>
+</tr>
+<tr>
+<td>A1-14</td>
+<td>Low</td>
+<td>D3 GIWA pair / router</td>
+<td>Missing <code>to != pair/token0/token1</code> check, <code>uint112</code> overflow checks in <code>_update</code>, <code>sync</code> semantics ("donations become LP" only if <code>sync</code> is atomic with the donation — otherwise the next swapper captures it), two-step transfer+swap must be router-only</td>
+</tr>
+<tr>
+<td>A1-15</td>
+<td>Low</td>
+<td>D3 deploy</td>
+<td>Permit2 allowance expiry <code>uint48(block.timestamp)</code> (D3 sketch) is valid for exactly the current second; Pons uses <code>+ MINT_DEADLINE_WINDOW</code>; a deployment window where the factory is live before hook/target exist would strand launches</td>
+</tr>
+<tr>
+<td>A1-16</td>
+<td>Low</td>
+<td>D1/D2/D3 CreateX</td>
+<td>Same-address story has a trust caveat: CREATE3 addresses are bytecode-independent, so on a <em>future</em> chain (GIWA 9134) the owner EOA can place different code at the "same" escrow/locker/factory address; verifiers must compare <code>extcodehash</code> per chain; the owner EOA is a live privilege for as long as unclaimed chains exist</td>
+</tr>
+<tr>
+<td>A1-17</td>
+<td>Info</td>
+<td>all</td>
+<td>Residual external powers: Uniswap governance protocol fee (≤ 0.1 %/direction), Robinhood/GIWA sequencers (timestamps, ordering; can shorten the 3-day timelock by ≤ 1 h, lengthen snipe windows), ArbOS/OP Stack network upgrades (ArbSys precompile, WETH9 predeploy replaceable in a hard fork — proxied status of <code>0x4200…0006</code> not confirmed by docs), PositionManager/Permit2 immutability assumed</td>
+</tr>
+<tr>
+<td>A1-18</td>
+<td>Info</td>
+<td>D1</td>
+<td>Dev buy goes to <code>msg.sender</code>; a contract launcher can split the ≤5 % across wallets in the same tx (cap holds, but the "one wallet" narrative does not); overhang position (D1) is a permanent 40 %-depth ask wall starting ≤ 2 % above graduation and will be labelled as a locker-held 8.16 % bag by scanners</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="1-findings-in-detail">1. Findings in detail</h2>
+<h3 id="a1-01-critical-atomic-graduation-is-dead-on-arrival-guarded-self-call">A1-01 · Critical · Atomic graduation is dead on arrival: guarded self-call</h3>
+<p><strong>Where.</strong> D1 §3.7: "Reentrancy guard: OZ <code>ReentrancyGuardTransient</code> … on <code>buy</code>, <code>sell</code>, <code>claim*</code>, <code>graduate</code>, <code>windDown</code>." D1 §5.1 step 3: inside <code>buy()</code> → <code>try this.graduate(token) {} catch …</code> ("an <em>external self-call</em> so the try/catch boundary is a real call frame"). D1 §5.4: <code>windDown</code> "first re-tries <code>graduate</code> in a try/catch and only proceeds if that reverts".</p>
+<p><strong>Defect.</strong> <code>buy()</code> holds the transient lock; <code>this.graduate()</code> is a new call frame into the same contract; <code>graduate()</code> is <code>nonReentrant</code> → it reverts with <code>Reentrancy()</code> <strong>every time</strong>. Consequences:
+1. Every crossing buy emits <code>GraduationDeferred</code> and leaves the token <code>Closed</code>. The atomic path never works; every launch depends on a keeper/UI calling <code>graduate()</code> afterwards (a fresh frame, so that call succeeds). Trading is frozen between the crossing block and the keeper's block on every launch.
+2. <code>windDown()</code> holds the lock too, so its inner <code>graduate</code> retry also reverts with <code>Reentrancy()</code> — the "only if graduate() is genuinely impossible" precondition is <em>always</em> satisfied. Any token that nobody graduates within 7 days can be wound down (see A1-02 for why that is bad).</p>
+<p>Pons hit exactly this and documented the escape: <code>PonsV2BondingCurve.graduate()</code> is "deliberately not nonReentrant … so it stays callable from within buy()'s own guarded frame" and is <code>onlyFactory</code>, with the factory as the trampoline. D1 copied the try/catch shape but not that exception.</p>
+<p><strong>Fix (spec).</strong></p>
+<pre><code class="language-solidity">// buy(): guarded. The graduation attempt goes through an INTERNAL function that
+// does not touch the guard; the try/catch boundary is the call into the executor.
+function _tryGraduate(address token) private {
+    CurveState storage c = _curves[token];
+    uint256 r = c.realQuote;
+    c.status = Status.Graduated; c.realQuote = 0;              // effects
+    TOKEN(token).safeTransfer(EXECUTOR, X_RES);
+    try EXECUTOR.graduate{value: r, gas: GRADUATE_GAS}(token, X_RES, r) returns (...) { emit Graduated(...); }
+    catch (bytes memory reason) {
+        // roll back our own effects; the executor's frame already reverted
+        c.status = Status.Closed; c.realQuote = uint128(r);
+        // token transfer must also be reverted -&gt; do the transfer INSIDE a self-call
+        // frame instead, or have the executor pull via transferFrom inside its own frame.
+        emit GraduationDeferred(token, reason, gasleft());
+    }
+}
+</code></pre>
+<p>Simplest robust shape: keep an <strong>external, permissionless, <code>nonReentrant</code> <code>graduate(token)</code></strong> for the retry path, and make the atomic attempt an <code>internal</code> <code>_graduateUnguarded</code> that is <em>also</em> what <code>graduate()</code> calls after taking the lock. The executor must <strong>pull</strong> the tokens (<code>transferFrom(curve, executor, X_RES)</code> with a pre-set allowance) inside its own frame so that a revert in the executor leaves the curve's token balance intact without manual rollback. Add a Foundry test that a crossing buy from an EOA with <code>gasLimit = estimateGas</code> ends in <code>Graduated</code>, not <code>Closed</code>.</p>
+<h3 id="a1-02-high-winddown-valve-is-attacker-reachable-eip-150-gas-starvation">A1-02 · High · WindDown valve is attacker-reachable (EIP-150 gas starvation)</h3>
+<p><strong>Where.</strong> D1 §5.4 / D13: <code>windDown(token)</code> re-opens sells against <code>R ≈ Q</code> if <code>now ≥ closedAt + 7 days</code> <strong>and</strong> an inner <code>try graduate()</code> reverts.</p>
+<p><strong>Attack.</strong> The caller controls the gas of the inner attempt (63/64 rule). Call <code>windDown</code> with a gas limit such that the inner <code>graduate</code> runs out of gas (≈ 1 M needed; give it 200 k). The catch fires, the "graduation is impossible" predicate is satisfied, status → <code>WindDown</code>. From then on <code>graduate()</code> reverts (<code>NotClosed</code>), sells drain <code>R</code> along the curve, the pool is never created, the locker never receives a position. Pre-condition: the token sat <code>Closed</code> for 7 days — trivially true for any token whose crossing buyer set a low gas limit (or, with A1-01 unfixed, for <strong>every</strong> token) and that nobody bothered to graduate. Expected victims: long-tail tokens; but the effect is that the system's central promise ("liquidity permanently locked") is per-token falsifiable by a single unprivileged call, and the resulting state is indistinguishable on-chain from a "bricked v4" case.</p>
+<p>Even with correct gas handling, the valve makes "no admin" weaker, not stronger: it is an <em>unprivileged</em> state transition that contradicts the graduation promise, gated only by 7 days of inattention.</p>
+<p><strong>Fix.</strong> Preferred: <strong>drop WindDown</strong> (owner OQ 6) — the only realistic trigger is a bug in immutable code, and "holders can always sell along the curve" is a worse story than "deploy v2". If kept:</p>
+<pre><code class="language-solidity">uint256 constant GRADUATE_GAS = 3_000_000;     // ≥ 2× measured graduation gas
+function windDown(address token) external nonReentrant {
+    ...
+    if (gasleft() &amp;lt; GRADUATE_GAS * 64 / 63 + 100_000) revert InsufficientGas();
+    try this.graduateUnguarded{gas: GRADUATE_GAS}(token) { return; }   // succeeded → done
+    catch (bytes memory reason) {
+        if (reason.length == 0) revert NotProvenBroken();   // OOG / empty revert never counts
+        ...
+    }
+}
+</code></pre>
+<p>and lengthen the grace to ≥ 30 days, require ≥ 3 failed attempts in distinct days recorded on-chain, and allow <code>graduate()</code> from <code>WindDown</code> (re-closing sells) so that a transiently broken executor does not permanently strand the pool.</p>
+<h3 id="a1-03-high-no-bundles-by-construction-is-not-true-at-1-second-timestamp-granularity">A1-03 · High · "No bundles by construction" is not true at 1-second timestamp granularity</h3>
+<p><strong>Where.</strong> D1 §3.4 "no exempt list ⇒ no bundles by construction"; D1 D7; D2 §4 "No exemptions".</p>
+<p><strong>Analysis.</strong> Snipe tax is a function of <code>block.timestamp − launchedAt</code> (whole seconds). The launcher controls <em>when</em> the launch tx is submitted and can observe the sequencer's timestamp flips (10 blocks per second on Robinhood). Launch at wall-clock <code>.8</code> of second <code>S</code>; send the second-wallet buy immediately; it lands in second <code>S+1</code>, 0.1–0.3 s after launch, before any human can react:
+- Curve, coarse schedule <code>T=3</code>: <code>9900 &gt;&gt; floor(1·14/3) = 9900 &gt;&gt; 4 = 618 bps</code> → <strong>6.2 %</strong>.
+- Curve with D1's <code>arbBlockNumber</code> interpolation: elapsed clamps to <code>tsMs + 999</code> once ≥ 10 blocks have passed → n = 37 eighth-halvings → ≈ <strong>4 %</strong>; and this is reachable <em>inside</em> the launch second if 10 blocks are produced (the interpolation can only lower the tax).
+- Pool (D2 staircase): t=1 → <strong>25 %</strong>.
+Compare: Pons's exempt list lets a creator pre-clear 32 wallets at 0 %; ours costs 4–6 % on the curve — a price every real bundler pays gladly (Bags/Pons bundles routinely pay 10 %+ in slippage). The dev-buy exemption is irrelevant to this; the schedule's <code>t=1</code> level is the whole story. The claim should not be made in that form to Korean retail.</p>
+<p><strong>Fix.</strong> (a) Rephrase the guarantee as "every non-disclosed buy in the first N seconds pays ≥ X %" and pick X deliberately: with the coarse schedule, <code>T=5</code> gives 24.75 % at t=1, 3.1 % at t=2 (Pons's <em>documented</em> schedule); or add a floor shelf: <code>taxBps(t) = max(schedule(t), 5000)</code> for <code>t ≤ 1</code>. (b) Anchor the clock to <code>launchedAt + 1</code> so second 0 <em>and</em> second 1 are the same 99 % tier (D3 §5.2 already suggests it), which makes the launcher's timing trick useless and costs humans nothing (nobody reacts in &lt; 1 s). (c) Same for the post-graduation staircase: <code>[9800, 9800, 2400, 200]</code> anchored to <code>initTimestamp</code>. (d) Keep the schedule identical across curve, hook and pair (see A1-05).</p>
+<h3 id="a1-04-high-escrow-revert-every-hooked-pool-bricked-forever">A1-04 · High · Escrow revert = every hooked pool bricked forever</h3>
+<p><strong>Where.</strong> D2 §3.3 <code>_collect</code> → <code>ESCROW.accrue{value}</code> inside the swap; D2 §11 risk 7 acknowledges "any bug in accrue bricks swaps on every pool of this hook forever". D3 §2.3 <code>credit</code>: <code>if (l.creator == address(0)) revert NotRegistered(); if (l.quote != address(0)) revert WrongQuote();</code>. D3 §3.6: "the escrow's <code>credit</code> wraps to WETH9 when <code>ledger.quote == WETH9</code>" — contradicts §2.3, which reverts in that case.</p>
+<p><strong>Reachable triggers as specified.</strong>
+1. <code>register(token, quote, creator)</code> with <code>creator == 0</code> (D1 §4: "0 ⇒ launcher" is the <em>factory's</em> rule; the escrow itself accepts 0) → <code>l.creator == 0</code> → <code>NotRegistered</code> on every credit → the curve's first trade reverts (or, if the curve keeps its own ledger per D1, the first pool swap reverts). Immutable, per token, forever.
+2. Quote mismatch: hook passes native (<code>credit{value}</code>), GIWA ledger says WETH9 → <code>WrongQuote</code> (D3 §2.3) → every pair swap on GIWA reverts. D3 §3.6's "wrap inside credit" is the intended behaviour but is not what the sketch does.
+3. Registration ordering: if <code>escrow.register</code> is not in the same tx as <code>createToken</code> (D3 says "in the launch tx" — D1's <code>createToken</code> sequence never calls it), a token can exist on the curve with no ledger.</p>
+<p><strong>Fix.</strong> Make <code>credit</code> <em>total</em> for registered tokens and make registration impossible to get wrong:
+- <code>register</code>: <code>require(creator != 0 &amp;&amp; (quote == address(0) || quote == WETH9))</code>; called from <code>createToken</code> in the same tx; <code>hook.register(key, …)</code> and <code>LaunchPairTarget.graduate</code> must <code>require(escrow.quoteOf(token) == &amp;lt;this venue's quote&gt;)</code> before <code>initialize</code>/<code>new LaunchPair</code>.
+- <code>credit{value}</code>: if <code>l.quote == WETH9</code> → <code>WETH9.deposit{value}()</code> then accrue; never revert on <code>msg.value == 0</code> (return) — consistent with §3.6.
+- Invariant test: for every registered token and every venue, <code>credit</code>/<code>creditToken</code> never reverts except on <code>NotRegistered</code>; fuzz the hook against a mock escrow that reverts to prove the failure mode is understood, then prove the real escrow has no revert path other than solvency.
+- Consider the ERC-6909 fallback D2 mentions: if <code>accrue</code> reverts, <code>mint</code> claims to the hook instead of reverting the swap (a permissionless <code>flush</code> later). That removes the single-point-of-failure at ≈ +20 k gas. I recommend it for v1 given "no rescue path".</p>
+<h3 id="a1-05-high-the-three-documents-specify-different-systems">A1-05 · High · The three documents specify different systems</h3>
+<p>Each item below is a place where an implementer following one document will build something the other component cannot call. None is subtle; all must be settled before a line of Solidity.</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Topic</th>
+<th>D1</th>
+<th>D2</th>
+<th>D3</th>
+<th>Recommendation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Who calls <code>PoolManager.initialize</code>, whom does <code>beforeInitialize</code> accept</td>
+<td><code>GraduationExecutor</code> (<code>sender == EXECUTOR</code>)</td>
+<td><code>FACTORY</code></td>
+<td><code>UniswapV4Target</code> (<code>onlyFactory</code> on <code>graduate</code>, but the curve calls it)</td>
+<td>One contract: the graduation target/executor; <code>beforeInitialize</code> accepts only it; the curve (not the factory) calls <code>target.graduate</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td>Where curve-phase fees live</td>
+<td>curve singleton ledger (<code>creatorFees[token]</code>, <code>protocolFees</code>), claim from curve</td>
+<td>escrow, <code>accrue</code> restricted to hook + registered curve</td>
+<td>escrow, <code>credit</code> permissionless</td>
+<td>Escrow only, one ledger, one claim surface (D3), curve calls <code>credit{value}</code> per trade</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Creator-recipient timelock</td>
+<td>factory: propose → 3 d → <code>execute</code> by anyone</td>
+<td>escrow: queue/execute/cancel</td>
+<td>escrow: propose → 3 d → <code>accept</code> by new wallet within 3 d</td>
+<td>D3's two-step in the escrow; delete the factory's copy; hook/curve read nothing about recipients</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Overhang 8.16 %</td>
+<td>second locked single-sided position</td>
+<td>—</td>
+<td>burn to <code>0xdEaD</code> (D3-8)</td>
+<td>Owner decision; security-neutral; if the position is kept, D3's locker needs <code>lockV4Position</code> ×2 and the N-tests cover both ids</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Hook flags</td>
+<td><code>BEFORE_INITIALIZE \| AFTER_SWAP \| AFTER_SWAP_RETURNS_DELTA</code> (0x2044 — afterSwap-only, i.e. Pons's design that lands fees in the memecoin and needs a sweep operator)</td>
+<td>0x22CC (before+after, quote-only)</td>
+<td>"before/after return-deltas + token-side burn fallback"</td>
+<td>D2's 0x22CC/0x20CC; delete D1 §5.5 and D3 §1.4's burn fallback (with D2's selection there is no token-side path)</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Escrow accrue API</td>
+<td><code>creditProtocolFees{value}()</code> on the curve</td>
+<td><code>accrue(token, sharedFee, creatorOnlyFee)</code></td>
+<td><code>credit(token)</code>, <code>creditToken(token, amt)</code></td>
+<td><code>credit(token)</code> + <code>creditToken</code>; creator tax is curve-only (D1/D3) so no <code>creatorOnly</code> leg is needed — the curve credits the tax with a separate <code>creditCreatorOnly(token)</code> or accrues it 100 % via a flag</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Token deploy path</td>
+<td>CreateX <code>deployCreate3</code>, salt <code>[factory][00][entropy(launcher,userSalt,name,symbol)]</code></td>
+<td>—</td>
+<td><code>new LaunchToken{salt: keccak(creator, nonce, name, symbol)}</code> (plain CREATE2 from the factory)</td>
+<td>D1's CREATE3 (address independent of the curve address in the initcode); D3 §4.2 must be rewritten</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Hook deploy path</td>
+<td>mined CREATE2 "per chain"</td>
+<td>CreateX <code>deployCreate2</code> with permissioned salt</td>
+<td>Arachnid proxy <code>0x4e59…956C</code></td>
+<td>CreateX <code>deployCreate2</code> (already a dependency; permissioned salt blocks a stranger burning the address with different constructor args); miner must use <code>deployer = CreateX</code>, <code>salt = guardedSalt</code></td>
+</tr>
+<tr>
+<td>9</td>
+<td>Locker API</td>
+<td><code>register(token, idFull, idOverhang)</code></td>
+<td><code>setLockedPosition(poolId, tokenId)</code> on the hook</td>
+<td><code>lockV4Position(token, tokenId, poolId)</code></td>
+<td>D3's, extended to two ids if #4 keeps the overhang; hook reads the locked id from the locker (view) instead of a second write path</td>
+</tr>
+<tr>
+<td>10</td>
+<td>Creation fee destination</td>
+<td>accrued to curve <code>protocolFees</code></td>
+<td>—</td>
+<td>escrow, protocol ledger</td>
+<td>Escrow (<code>credit</code> under a reserved "protocol-only" token key, or a <code>creditProtocol{value}()</code>), so one claim surface</td>
+</tr>
+<tr>
+<td>11</td>
+<td>Split rounding</td>
+<td>remainder → protocol</td>
+<td>rounding → protocol</td>
+<td>remainder → creator</td>
+<td>Pick one; immaterial, but the 80/20-within-1-wei invariant test needs a direction</td>
+</tr>
+</tbody>
+</table>
+<p>Also: D1's <code>IGraduationExecutor.graduate(token, tokensTotal, ethAmount)</code> vs D3's <code>IGraduationTarget.graduate(token, tokenAmount, quoteAmount, sqrtPriceX96)</code>; D1 computes <code>sqrtPriceX96</code> in the executor from <code>(R, X_res)</code>, D3 expects the curve to pass it. Recommendation: executor computes it (the curve stays venue-agnostic and never needs <code>TickMath</code>).</p>
+<h3 id="a1-06-medium-giwa-pair-non-computable-address-and-a-fee-double-pay-in-the-sketch">A1-06 · Medium · GIWA pair: non-computable address and a fee double-pay in the sketch</h3>
+<p><strong>Where.</strong> D3 §3.5 <code>new LaunchPair{salt: token}(token, WETH9, LOCKER, ESCROW, uint64(block.timestamp))</code>; D3 §3.4 <code>pairFor</code> "pure CREATE2 computation"; D3 §3.3 <code>swap</code> sketch does <code>token1.safeTransfer(escrow, f); escrow.creditToken(token0Addr, f)</code> while <code>creditToken</code> <em>pulls</em> <code>f</code> via <code>safeTransferFrom(msg.sender)</code>.</p>
+<p><strong>Defects.</strong> (1) Constructor args are part of the CREATE2 initcode hash; <code>openedAt</code> is the graduation timestamp, so the address is unknown until graduation and <code>pairFor(token)</code> cannot be a pure function. (2) Push + pull sends <code>2f</code> out of the pair but <code>_update(…, b1 − f)</code> records <code>f</code> — reserve exceeds balance; the next buy computes <code>q = b1 − r1</code> → underflow revert; the pair is bricked until someone calls <code>sync()</code>, which <em>lowers</em> <code>r1</code> (so the "sync can never lower reserves" statement is false in this state) and reduces <code>k</code> by exactly the leaked amount each swap. The escrow gets paid twice from LP funds until then.</p>
+<p><strong>Fix.</strong> Constructor takes only <code>(token)</code>; <code>WETH9</code>, <code>LOCKER</code>, <code>ESCROW</code> come from the deployer via an immutable read of <code>msg.sender</code> (<code>ILaunchPairTarget(msg.sender).weth9()</code> …) or from a <code>bytes32</code>-free <code>initialize</code> callable once by the deployer; <code>openedAt</code> is set in <code>mint()</code>. Pick <strong>one</strong> crediting mode (pull with a one-time max approval is cleanest: <code>escrow.creditToken(token, f)</code> only). Invariant: <code>balanceOf(pair) ≥ reserve</code> for both tokens after every function.</p>
+<h3 id="a1-07-medium-giwa-pair-opening-price-manipulable-by-pre-graduation-donation">A1-07 · Medium · GIWA pair opening price manipulable by pre-graduation donation</h3>
+<p><strong>Where.</strong> D3 §3.3 "Shares minted = <code>sqrt(r0 · r1)</code>" from balances; D3 §3.5 pair address is <code>CREATE2(target, token)</code> — predictable before it exists.</p>
+<p><strong>Attack.</strong> Anyone can send tokens (bought on the curve) to the future pair address. At graduation <code>mint</code> reads balances → reserves <code>(T + D, E)</code> → opening price lower than the curve's end price by <code>T/(T+D)</code>. The donor loses <code>D</code>, but on a fee-ordered sequencer the donor can bid to be the first pool buyer and recover most of it at the discounted price; every other holder is marked down. Pons's v4 executor comment ("a donation cannot move the price the pool opens at") exists because they use explicit amounts; the v4 path here is fine (explicit <code>MINT_POSITION</code> amounts and explicit <code>sqrtPriceX96</code>), the GIWA path is not.</p>
+<p><strong>Fix.</strong> <code>mint(uint256 amount0, uint256 amount1)</code> sets reserves to exactly the amounts the target transferred; any excess balance is <em>not</em> captured as reserve at mint (it will be captured by the first swap as input — equivalent to <code>skim</code> to the first swapper, which is acceptable and matches v2 semantics for stray balances). Test: donate before graduation → opening price equals curve end price to 1 wei.</p>
+<h3 id="a1-08-medium-arbblocknumber-interpolation-measures-load-not-time-the-table-is-wrong">A1-08 · Medium · <code>arbBlockNumber</code> interpolation measures load, not time; the table is wrong</h3>
+<p><strong>Where.</strong> D1 §3.4 (Robinhood clock): <code>blkMs = (arbBlockNumber − launchBlock)·100</code>, <code>elapsedMs = max(tsMs, min(blkMs, tsMs + 999))</code>.</p>
+<p><strong>Analysis.</strong> Arbitrum docs: "block production only occurs when there are transactions to sequence"; D1's own probe measured 0.07 s/block under load and 10 blocks/s at rest. The block clock therefore runs ≈ 1.4× wall-clock precisely during a launch (when bots spam), i.e. the tax decays faster exactly when it should not; the clamp only prevents crossing into the next second. A launcher can also <em>spam its own cheap txs</em> to advance the block clock inside the launch second (each sequenced tx can close a block on Orbit chains). The design's numbers are also mis-stated: with 14 halvings over 3 s, 0.4 s = 1.87 halvings → <strong>≈ 29 %</strong> (not 49.5 %), 0.6 s → ≈ 14 % (not 24.7 %), 1.0 s → ≈ 4 % (not 6.2 %). Finally the precompile is a chain-specific dependency in an otherwise chain-agnostic curve and is inconsistent with D2's integer staircase on the same chain.</p>
+<p><strong>Fix.</strong> Drop the interpolation. Use one integer-second staircase for curve, hook and pair (<code>[9900, 9900, 2400, 200]</code> anchored at <code>launchedAt</code>, per A1-03), documented as "whole seconds since launch, ≈ 10 Robinhood blocks / 1 GIWA block per step". If sub-second resolution is wanted, nominal 100 ms is the wrong constant — but the honest statement is that no on-chain clock on Nitro resolves below the sequencer second.</p>
+<h3 id="a1-09-medium-graduation-reverts-on-its-own-dust-forwarding-missing-receive">A1-09 · Medium · Graduation reverts on its own dust forwarding / missing <code>receive()</code></h3>
+<p><strong>Where.</strong> D1 §5.2 step 6: <code>SWEEP(ETH, EXECUTOR)</code> then <code>CURVE.creditProtocolFees{value}()</code> — "never revert on dust". D1 §3.7 guards <code>claim*</code>; D3's <code>UniswapV4Target</code> sketch has no <code>receive()</code>.</p>
+<p><strong>Defects.</strong> (1) <code>SWEEP</code> sends native ETH to the executor via <code>call</code>; without <code>receive()</code> the PositionManager call reverts → graduation reverts (Pons's executor has <code>receive() external payable {}</code> for this exact reason). (2) The executor is inside the curve's guarded <code>buy → graduate</code> frame; if <code>creditProtocolFees</code> is <code>nonReentrant</code> (it is a <code>claim*</code>-family function per D1) the dust forward reverts → graduation reverts → <code>Closed</code> → A1-02 territory. (3) D3 forwards the dust to <code>escrow.credit(token)</code> instead — fine, but must be the same choice everywhere.</p>
+<p><strong>Fix.</strong> Executor has <code>receive()</code> restricted to <code>POSITION_MANAGER</code>/<code>POOL_MANAGER</code>; dust goes to the escrow (<code>credit{value}(token)</code>), never back into the curve; the curve exposes no payable function except <code>buy</code>/<code>open</code>. Pons's low-level-call-and-report pattern for the residual sweep is the right shape.</p>
+<h3 id="a1-10-medium-creator-recipient-lifecycle-edge-cases">A1-10 · Medium · Creator-recipient lifecycle edge cases</h3>
+<p><strong>Where.</strong> D3 §2.4–2.5.</p>
+<ol>
+<li>Compromised creator key: attacker <code>claim</code>s accrued fees instantly and proposes a new recipient; the creator can only <code>cancel</code> — a permanent stalemate where neither side can rotate the key and the attacker keeps claiming every new accrual. D3 acknowledges the stalemate but not that the <em>stream</em> is lost, not just the balance. Mitigation lives outside the contracts (recipient = Safe from day one); state it in the launch UI as a required step, not a recommendation.</li>
+<li>Lost creator key: 80 % of every future fee for that token is unclaimable forever; there is no protocol-side CTO path by design. Disclose.</li>
+<li><code>claim(token)</code> when <code>l.creator == PROTOCOL</code>: the <code>if (msg.sender == l.creator)</code> branch always wins; the protocol share can only be moved by <code>claimFor</code>. Fix: <code>claim(token, role)</code> with an explicit role argument.</li>
+<li><code>proposeCreator</code> while a proposal is pending silently replaces it and resets <code>pendingEta</code> — fine, but emit <code>CreatorProposalCancelled</code> first so indexers see the old one die.</li>
+</ol>
+<h3 id="a1-11-low-hook-fee-take-timing-and-casts">A1-11 · Low · Hook fee <code>take</code> timing and casts</h3>
+<p><code>take</code> in <code>beforeSwap</code>/<code>afterSwap</code> is paid out of the PoolManager's pooled ETH before the swapper settles (Universal Router settles after the swap). A t=0 exact-in buy of <code>X</code> with fee <code>0.99 X</code> larger than the PoolManager's total ETH balance reverts with an opaque <code>CurrencyNotSettled</code>/transfer failure — benign (the sniper loses gas), but the UI/Quoter should not show it as a hook bug. Unchecked <code>int128(int256(fee))</code> and <code>uint128</code> casts: fee can be 99× the pool delta in case B/D; use <code>SafeCast.toInt128</code>. Also the hook needs <code>receive()</code> accepting only <code>POOL_MANAGER</code> (stray ETH is otherwise stuck, harmless).</p>
+<h3 id="a1-12-low-locker-negative-test-list-gaps">A1-12 · Low · Locker negative-test list gaps</h3>
+<p>Add to N1: <code>isValidSignature</code> (ERC-1271 — <code>IERC721Permit_v4.permit</code>/<code>permitForAll</code> verify contract owners through it; absence is the property), <code>permitForAll</code>, <code>subscribe</code>, <code>unsubscribe</code>. Reword N9: <code>onERC721Received</code> gated to <code>positionManager</code> stops <em>foreign collections</em>, not foreign <em>positions</em>; any PositionManager NFT can still be <code>safeTransferFrom</code>'d into the locker and is then stuck — harmless, but <code>lockInfo</code>-driven verifiers are unaffected only because <code>lockV4Position</code> is target-only and checks <code>ownerOf</code>. Keep D1's "no ERC-1271" explicitly in the spec.</p>
+<h3 id="a1-13-low-permissionless-credit-and-cheap-wash-volume">A1-13 · Low · Permissionless <code>credit</code> and cheap wash volume</h3>
+<p>Anyone can <code>credit{value}(token)</code> and mint a <code>FeesAccrued</code> event for any token — the DefiLlama adapter in D3 §2.6 sums all of them, so "protocol revenue" and per-token creator revenue are spoofable at the cost of the spoofed amount (which still goes to the recipients — cheap if the spoofer <em>is</em> the creator). With a 2 % creator tax and 80 % fee rebate, a creator wash-trading their own curve pays ≈ 0.2 % per trade net. Fix: keep <code>credit</code> permissionless (no privilege to gate) but index <code>source</code> and filter dashboards to <code>{curve, hook, pair}</code>; consider restricting <code>credit</code> to registered sources anyway (D2's choice) — there is no legitimate third-party crediting use case in v1.</p>
+<h3 id="a1-14-low-pair-hygiene">A1-14 · Low · Pair hygiene</h3>
+<p><code>swap</code>: <code>require(to != address(this) &amp;&amp; to != token0 &amp;&amp; to != token1)</code>; <code>_update</code>: <code>require(b0 &amp;lt;= type(uint112).max &amp;&amp; b1 &amp;lt;= …)</code>; document that "donate to LP" requires <code>transfer</code> + <code>sync</code> in one tx (otherwise the next swapper receives the donation as free input — same as v2 without <code>skim</code>); document that the two-step <code>transfer</code> then <code>swap</code> must never be done by EOAs (router only), since a fee-ordered sequencer lets anyone bid to <code>swap</code> first with the victim's deposit.</p>
+<h3 id="a1-15-low-deployment-order-and-permit2-expiry">A1-15 · Low · Deployment-order and Permit2 expiry</h3>
+<p>Use <code>uint48(block.timestamp + 300)</code> for the Permit2 allowance (Permit2 reverts <code>AllowanceExpired</code> when <code>block.timestamp &gt; expiration</code>, so <code>== now</code> works only by the strict inequality — fragile across compiler/library changes). Deploy the factory <strong>last</strong>, run a full smoke graduation on each chain before publishing addresses, and have <code>createToken</code> <code>require(EXECUTOR.code.length != 0 &amp;&amp; HOOK.code.length != 0)</code> — cheap insurance against the window where a launch could never graduate.</p>
+<h3 id="a1-16-low-same-address-story-what-create3-does-and-does-not-guarantee">A1-16 · Low · Same-address story: what CREATE3 does and does not guarantee</h3>
+<p>Confirmed against CreateX source: permissioned salt with flag byte <code>0x00</code> → <code>guardedSalt = keccak256(bytes32(uint160(msg.sender)) ‖ salt)</code> (D1's formula is exact; D2/D3's <code>abi.encode(msg.sender, salt)</code> produces the same bytes). CREATE3 address = <code>f(CreateX, guardedSalt)</code> and is bytecode-independent. Consequences to state in docs: (1) on any chain where the owner EOA has not yet deployed, the owner (and only the owner) can place <em>any</em> code at the escrow/locker/factory/curve addresses — "same address" ≠ "same code"; verifiers must compare <code>extcodehash</code> per chain; (2) the owner EOA therefore remains a privileged key for as long as unclaimed chains exist (GIWA mainnet 9134); a leak lets an attacker squat the canonical addresses on new chains — keep it in a hardware wallet and consider burning the remaining salts by deploying the real contracts on 9134 at genesis+1; (3) tokens: the factory's permissioned salt binds <code>msg.sender == factory</code>, so a stranger cannot pre-claim a token address on chain B; but the launcher's <em>chain-B</em> token is only issued if the <em>same</em> factory code is there — again an owner-honesty point; (4) <code>deployCreate2</code> for the hook: CreateX is the CREATE2 deployer and applies <code>_guard</code> to the salt, so HookMiner must iterate the 11 entropy bytes and hash with <code>deployer = CreateX, salt = guardedSalt</code> — D2 §5.2 has this right; D3 §4.2's Arachnid path does not apply the guard (pick one — A1-05 #8).</p>
+<h3 id="a1-17-info-residual-external-powers-disclose">A1-17 · Info · Residual external powers (disclose)</h3>
+<table>
+<thead>
+<tr>
+<th>Party</th>
+<th>Power over this system</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Uniswap governance (<code>PoolManager</code> owner)</td>
+<td>Enable a protocol fee ≤ 0.1 % per direction on any pool (on top of our 1 %); cannot touch positions or hooks</td>
+</tr>
+<tr>
+<td>Robinhood sequencer / chain owner</td>
+<td>Ordering (FCFS; Timeboost status unverified), <code>block.timestamp</code> within [−24 h, +1 h] → can shorten the 3-day timelock by ≤ 1 h and lengthen/shorten snipe windows; ArbOS upgrades can change precompile semantics (only matters if <code>ArbSys</code> is used — see A1-08)</td>
+</tr>
+<tr>
+<td>GIWA sequencer / OP Stack governance</td>
+<td>Priority-fee ordering; network-upgrade transactions can replace predeploy implementations — the docs say most predeploys are proxied and that a hard fork updates every predeploy atomically; whether <code>WETH9</code> at <code>0x4200…0006</code> is proxied was not confirmed (2,846 B code size suggests a direct WETH9, but a hard fork can still replace non-proxied code). The escrow, pair and router hold WETH9 — a residual trust on GIWA that native ETH would avoid</td>
+</tr>
+<tr>
+<td>Uniswap <code>PositionManager</code>, <code>Permit2</code>, <code>CreateX</code></td>
+<td>Assumed immutable and canonical (they are); a bug in them is a bug in ours</td>
+</tr>
+<tr>
+<td>Owner EOA</td>
+<td>CREATE3 salts on unclaimed chains (A1-16); nothing on deployed chains</td>
+</tr>
+<tr>
+<td>Protocol recipient</td>
+<td>Claim its 20 %; if it is an EOA and the key is lost, 20 % of all fees are stuck forever — make it a Safe</td>
+</tr>
+<tr>
+<td>Creator recipient / pending creator</td>
+<td>Claim, propose, cancel, accept (A1-10)</td>
+</tr>
+<tr>
+<td>Anyone</td>
+<td><code>createToken</code>, <code>buy</code>, <code>sell</code>, <code>graduate</code> (retry), <code>windDown</code> (A1-02 — should not exist), <code>claimFor</code>, <code>credit</code> (A1-13), <code>sync</code>, router calls, <code>donate</code> on the v4 pool (value stuck in the uncollectable locked position — harmless), add/remove <em>their own</em> liquidity in the hooked pool</td>
+</tr>
+</tbody>
+</table>
+<h3 id="a1-18-info-narrative-risks-worth-deciding-consciously">A1-18 · Info · Narrative risks worth deciding consciously</h3>
+<ul>
+<li>Dev buy is sent to <code>msg.sender</code>; a contract launcher receives it and may split it in the same tx (still ≤ 5 %; the <code>DevBuy</code> event names the contract). Either accept and document, or require <code>msg.sender == tx.origin</code>-free alternative: none exists that is not itself a footgun — accept.</li>
+<li>Overhang as a locked single-sided position (D1 D11) is a permanent ask wall of ≈ 40 % extra depth starting ≤ 2 % above the graduation price; GMGN-style tools will show the locker as an 8.16 % holder. Burn (D3-8) avoids both at the cost of the "exactly 1e9" story. Security-neutral; decide before audit (A1-05 #4).</li>
+<li>The crossing buyer (≈ 33 % of supply in D1's worked example, bought at ≈ 46 % of the pool's opening price) can dump into the fresh pool at t=0 paying only 1 % (sells are never snipe-taxed). Inherent to the Pons shape; document that "post-graduation snipe tax" protects against <em>buyers</em> only.</li>
+</ul>
+<hr>
+<h2 id="2-things-i-checked-that-hold-up-so-the-auditor-after-me-does-not-re-derive-them">2. Things I checked that hold up (so the auditor after me does not re-derive them)</h2>
+<ul>
+<li><strong>Hook delta accounting (D2 §3):</strong> verified against <code>Hooks.beforeSwap</code>/<code>afterSwap</code> source: <code>amountToSwap += hookDeltaSpecified</code> with the sign-flip guard; <code>hookDelta</code> orientation <code>(amountSpecified &amp;lt; 0 == zeroForOne) ? (specified, unspecified) : (unspecified, specified)</code>; <code>swapDelta -= hookDelta</code>; the hook's transient <code>−fee</code> from <code>take</code> nets against <code>+fee</code> credited via <code>_accountPoolBalanceDelta</code>. All four cases in D2 §3.1 are correct, including the <code>p/(1−p)</code> exact-out normalisation, and <code>HookDeltaExceedsSwapAmount</code> is unreachable with <code>bps ≤ 9900</code>.</li>
+<li><strong><code>beforeInitialize</code> gate:</strong> <code>initialize</code> passes <code>msg.sender</code> to the hook; <code>PositionManager.initializePool</code> would present the PositionManager as sender and is therefore rejected; <code>PoolAlreadyInitialized</code> for our key is unreachable. Flags: <code>isValidHookAddress</code> requires return-delta bits to accompany action bits and ≥ 1 bit for a static-fee pool — 0x22CC and 0x20CC both pass.</li>
+<li><strong><code>beforeRemoveLiquidity</code> guard:</strong> PositionManager's <code>_decrease</code>/<code>_burn</code> use <code>salt = bytes32(tokenId)</code> and <code>sender == PositionManager</code> — the guard matches. It is defence-in-depth only; the real lock is <code>onlyIfApproved</code> + a locker that never approves and has no ERC-1271.</li>
+<li><strong>Locker custody:</strong> <code>PositionManager</code> mints with <code>_mint</code> (no receiver callback), <code>nextTokenId</code> is public and pre-incremented, so <code>tokenId = nextTokenId()</code> read before <code>modifyLiquidities</code> is right; <code>ownerOf</code> check after is the proof. No <code>CALL</code> in the locker's runtime code is achievable and provable (N4).</li>
+<li><strong>Curve rounding:</strong> every outbound amount floors, the crossing buy ceils <code>netNeed</code> and grosses up with ceil, fees floor on the gross leg → <code>k' ≥ k</code>, <code>R_final ≥ Q</code> (minus the <code>min(spent, g)</code> wei edge, which only leaves <code>R</code> a wei short — harmless), buy-then-sell never returns more than spent. Dust sells with <code>gross &amp;lt; 100 wei</code> pay zero fee — not extractable.</li>
+<li><strong>Curve reentrancy surface:</strong> <code>LaunchToken</code> is plain OZ (no hooks), ETH out only via <code>call</code> after effects, refund to <code>msg.sender</code> not <code>recipient</code>; a reverting receiver only hurts itself. <code>Refund</code> after the graduation attempt is the right order.</li>
+<li><strong>Sniper multi-wallet / contract callers:</strong> time-based, so splitting does not help; the cap <code>≤ 10000 − f − c − 100</code> keeps exact-out finite.</li>
+<li><strong>CreateX same-chain front-run:</strong> entropy is <code>msg.sender</code>-namespaced and CreateX's guard binds the factory; a copied calldata lands elsewhere. Cross-chain squat impossible for third parties (A1-16 caveats are about the owner, not attackers).</li>
+<li><strong>Native ETH as v4 currency0:</strong> <code>address(0)</code> always sorts first; avoids the upgradeable aeWETH proxy on Robinhood — correct call.</li>
+<li><strong>Gas:</strong> 32 M per-tx cap on Nitro vs ≈ 1.1 M graduation; not a DoS vector. Griefing the atomic path only self-defers (once A1-01 is fixed).</li>
+<li><strong>Escrow CEI:</strong> balances zeroed before <code>call</code>; <code>nonReentrant</code>; <code>claimFor</code> reads recipients from storage; <code>receive</code> only from WETH9. Solvency invariant is well-formed.</li>
+</ul>
+<hr>
+<h2 id="3-must-change-before-implementation">3. MUST change before implementation</h2>
+<ol>
+<li><strong>A1-01</strong> — make the atomic graduation attempt unguarded (internal path) and have the executor <em>pull</em> tokens inside its own frame; keep the external <code>graduate()</code> retry guarded; add the EOA-gas-limit test.</li>
+<li><strong>A1-02</strong> — remove <code>windDown</code>, or gate it with <code>gasleft() ≥ 64/63·GRADUATE_GAS</code>, an explicit gas stipend, <code>reason.length != 0</code>, ≥ 30-day grace, multi-attempt evidence, and a way back to <code>Graduated</code>.</li>
+<li><strong>A1-04</strong> — <code>escrow.register</code> rejects <code>creator == 0</code> and non-whitelisted quotes; <code>credit</code> wraps to WETH9 on GIWA instead of reverting; hook/target verify the escrow quote before creating a pool; adopt ERC-6909 claim fallback (or prove <code>credit</code> total) so an escrow revert can never revert a swap.</li>
+<li><strong>A1-05</strong> — resolve all eleven contradictions in one canonical interface document (<code>I*.sol</code> files) before coding; in particular: executor is the sole <code>initialize</code> caller; escrow is the only fee ledger and the only timelock; hook flags 0x22CC/0x20CC with no token-side burn path; token via CreateX CREATE3; one snipe schedule for curve/hook/pair.</li>
+<li><strong>A1-03 + A1-08</strong> — replace the schedule with an integer-second staircase anchored at <code>launchedAt + 1</code> (99 % for seconds 0–1), same table on both venues and both chains; drop <code>ArbSys</code>; restate the anti-bundle guarantee quantitatively in the UI copy.</li>
+<li><strong>A1-06 / A1-07</strong> — <code>LaunchPair</code> constructor without <code>openedAt</code>; one fee-crediting mode; <code>mint(amount0, amount1)</code> with explicit amounts; <code>balance ≥ reserve</code> invariant.</li>
+<li><strong>A1-09</strong> — executor/target <code>receive()</code> restricted to PositionManager/PoolManager; dust → escrow; no payable curve function reachable from the executor.</li>
+<li><strong>A1-15</strong> — Permit2 expiry <code>now + 300</code>; deploy factory last; <code>createToken</code> checks executor/hook code presence; smoke graduation before publishing.</li>
+</ol>
+<h2 id="4-accepted-risks-document-do-not-fix">4. Accepted risks (document, do not fix)</h2>
+<ul>
+<li>Parallel hookless pools for the same token (D2 §6) — unpreventable without transfer restrictions.</li>
+<li>Uniswap governance protocol fee ≤ 0.1 %/direction on the hooked pool.</li>
+<li>Sequencer timestamp latitude (≤ 1 h shorter timelock; snipe windows measured on the sequencer clock); Timeboost express lane if enabled (unverified).</li>
+<li>OP Stack hard-fork replacement of predeploys (WETH9) and ArbOS upgrades — chain-level trust shared with every contract on those chains.</li>
+<li>Owner EOA's CREATE3 power on not-yet-deployed chains; protocol/creator recipient key loss = stuck share (mitigated by using Safes).</li>
+<li>Crossing buyer's untaxed t=0 dump into the fresh pool; the launcher's contract-splitting of the ≤ 5 % dev buy.</li>
+<li>Fee-metric spoofing through permissionless <code>credit</code> (if kept) and cheap wash volume with the 2 % creator tax.</li>
+<li><code>take</code> in <code>beforeSwap</code> reverting for a t=0 snipe larger than the PoolManager's pooled ETH.</li>
+<li>v4-core BUSL: hook compiles against core libraries as documented/intended use; GIWA avoids core entirely.</li>
+</ul>
+<h2 id="5-tests-to-add-to-d3-52-beyond-the-14-listed">5. Tests to add to D3 §5.2 (beyond the 14 listed)</h2>
+<ol start="15">
+<li>Crossing buy from an EOA with <code>gasLimit = eth_estimateGas</code> ends <code>Graduated</code> in the same tx (regression for A1-01).</li>
+<li><code>windDown</code> with any gas limit while <code>graduate()</code> is viable → reverts (A1-02); with a mock executor that reverts with empty data → reverts (<code>NotProvenBroken</code>).</li>
+<li>Launcher timing: launch at <code>T</code>, buy from a second wallet at <code>T+1</code> (and at <code>T</code> + 10 blocks) → tax ≥ 99 % under the anchored schedule (A1-03).</li>
+<li>Escrow: for every registered <code>(token, quote)</code> and every venue, <code>credit</code>/<code>creditToken</code> never revert; <code>register(creator = 0)</code> reverts (A1-04).</li>
+<li>Pair: pre-deploy donation of tokens/WETH to <code>pairFor(token)</code> → opening price equals the curve's final price; <code>balance ≥ reserve</code> after every op; one crediting mode (A1-06/07).</li>
+<li>Executor: SWEEP dust &gt; 0 → graduation still succeeds and dust lands in the escrow (A1-09).</li>
+<li>Locker: <code>permit</code>/<code>permitForAll</code> with a forged signature for <code>owner = locker</code> reverts in <code>PositionManager</code>; ABI has no <code>isValidSignature</code> (A1-12).</li>
+<li>Cross-chain: same <code>(launcher, userSalt, name, symbol)</code> on 46630 and 91342 → identical token address; different <code>extcodehash</code> for factory/escrow between chains is <em>detected</em> by <code>Wiring.check()</code> (A1-16).</li>
+</ol></article>
+    </main>
+    <footer>
+      <span>research_only=true</span>
+      <span>strategy_consumption_allowed=false</span>
+      <span>order_input=false</span>
+    </footer>
+  </body>
+</html>

@@ -157,6 +157,16 @@
       "sha256": "e99a2ecc2f6646329a24a2344ea3a9f8e48635ad5a5e1e19c8a9b1db4540efa7"
     },
     {
+      "path": "contracts/v1/interfaces/IBondingCurve.sol",
+      "url": "./library/contracts/v1/interfaces/IBondingCurve.sol.html",
+      "sha256": "67ac5bd59046652572ebb97e004afd47411e5852c307c8eafafed08509d814c9"
+    },
+    {
+      "path": "contracts/v1/interfaces/IMemeHook.sol",
+      "url": "./library/contracts/v1/interfaces/IMemeHook.sol.html",
+      "sha256": "ec24eacf921d17d5d8b1e18297ac62ea9c9270e5a5580f23bfd44e02718574b6"
+    },
+    {
       "path": "dashboard/assets/app.css",
       "url": "./library/dashboard/assets/app.css.html",
       "sha256": "927eac94244f7b56cbcf436c9f131152e4c14631f7ce5dda9c30331448d9fe6c"
@@ -205,6 +215,11 @@
       "path": "docs/FEE_PROJECT_PROPOSAL_2026-09-03.md",
       "url": "./library/docs/FEE_PROJECT_PROPOSAL_2026-09-03.md.html",
       "sha256": "e22fb26436d13cbe84cc8e60a4836c15a6b66e9ea84efd1583a72000379e5f65"
+    },
+    {
+      "path": "docs/LAUNCHPAD_V1_CONTRACT_DESIGN.md",
+      "url": "./library/docs/LAUNCHPAD_V1_CONTRACT_DESIGN.md.html",
+      "sha256": "9f5e2062a304edb541fed2831d2ab94e703aac6c211c4a8f1bb77cd2ff2c7a01"
     },
     {
       "path": "docs/LAUNCH_PREP_2026-09-06.md",
@@ -260,6 +275,36 @@
       "path": "docs/launch_research_2026-09-06/README.md",
       "url": "./library/docs/launch_research_2026-09-06/README.md.html",
       "sha256": "c7dd42df6b27a2bd4d9b1d4afb56a33a8348aef25738aa87eb1ddbc00c5a9647"
+    },
+    {
+      "path": "docs/launchpad_v1_design/A1_security_review.md",
+      "url": "./library/docs/launchpad_v1_design/A1_security_review.md.html",
+      "sha256": "c6578bfea36002d5635a4b64c855c9125d679dd8a104b44b5712c8cfe38fc6c7"
+    },
+    {
+      "path": "docs/launchpad_v1_design/A2_economics_review.md",
+      "url": "./library/docs/launchpad_v1_design/A2_economics_review.md.html",
+      "sha256": "65556927381ec4a152ddfb52c98378e6d86f6329efb7ae76a6161cd666c34a0b"
+    },
+    {
+      "path": "docs/launchpad_v1_design/D1_curve_factory_graduation.md",
+      "url": "./library/docs/launchpad_v1_design/D1_curve_factory_graduation.md.html",
+      "sha256": "2fd530e9fc67494a134d1ddc360c4a1e88ded2eb0af5d30f72650d93c66ecd4e"
+    },
+    {
+      "path": "docs/launchpad_v1_design/D2_v4_hook_fees_sniper.md",
+      "url": "./library/docs/launchpad_v1_design/D2_v4_hook_fees_sniper.md.html",
+      "sha256": "6841dd753c43f34ada474b0ee67df53b13d6a3a9f39b71055f1bf508971b490a"
+    },
+    {
+      "path": "docs/launchpad_v1_design/D3_locker_escrow_giwa_adapter.md",
+      "url": "./library/docs/launchpad_v1_design/D3_locker_escrow_giwa_adapter.md.html",
+      "sha256": "2e67adb2a62dbef72c8a322b09572f8787509a7b3540468e9a70d7032b40de8a"
+    },
+    {
+      "path": "docs/launchpad_v1_design/README.md",
+      "url": "./library/docs/launchpad_v1_design/README.md.html",
+      "sha256": "068da3c0990d21ce8fb27573b88fc9b24ac164ac778b26a1deee68b83e807eaf"
     },
     {
       "path": "schemas/ecosystem.schema.json",

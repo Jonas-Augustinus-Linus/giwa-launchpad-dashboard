@@ -1,0 +1,968 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex,nofollow,noarchive" />
+    <meta name="theme-color" content="#090c0e" />
+    <title>A2 — Economics / game-theory review of launchpad v1 (D1 + D2 + D3) · GIWA · Robinhood Launchpad</title>
+    <link rel="stylesheet" href="../../../assets/document.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#document">본문으로 바로가기</a>
+    <header class="document-header">
+      <a class="brand" href="../../../development.html" aria-label="GIWA 대시보드로 돌아가기">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span><strong>GIWA · RH</strong><small>LAUNCHPAD ROOM</small></span>
+      </a>
+      <nav aria-label="문서 동작">
+        <a href="../../../development.html">← 대시보드</a>
+      </nav>
+    </header>
+    <main id="document" class="document-shell">
+      <div class="document-meta">
+        <span>REPORT</span>
+        <span>SHA256 65556927381e</span>
+      </div>
+      <h1>A2 — Economics / game-theory review of launchpad v1 (D1 + D2 + D3)</h1>
+      <p class="source-path">docs/launchpad_v1_design/A2_economics_review.md</p>
+      <article class="markdown-body"><h1 id="a2-economics-game-theory-review-of-launchpad-v1-d1-d2-d3">A2 — Economics / game-theory review of launchpad v1 (D1 + D2 + D3)</h1>
+<p>Reviewer lens: economics and incentives only. Status: review of the 2026-09-06 design drafts; nothing here deploys anything. All numbers are recomputed from the three design files and the research snapshots in <code>scratchpad/launch/</code> (observed 2026-09-05/06, ETH = $2,476). The reproduction script is <code>docs/launchpad_v1_design/a2_econ.py</code> (plain Python, exact <code>Decimal</code> arithmetic; run <code>python3 _a2_econ.py</code>).</p>
+<p>Inputs read in full: <code>D1_curve_factory_graduation.md</code>, <code>D2_v4_hook_fees_sniper.md</code>, <code>D3_locker_escrow_giwa_adapter.md</code>, <code>docs/launch_research_2026-09-06/01_robinhood_launchpads.md</code>, <code>docs/launch_research_2026-09-06/02_launch_structure_norms.md</code>, <code>docs/launch_research_2026-09-06/05_lp_burn_signal.md</code>, the verified Pons V2 sources under <code>Pons V2 검증 소스(robinhoodchain.blockscout.com, 저장소 미포함)/</code> (<code>PonsV2GraduationMath.sol</code>, <code>PonsV2BondingCurve.sol</code> <code>currentSnipeTaxBps</code>, factory <code>_ponsv2_main.sol</code>), <code>launch/ponsv2_firstbuys.json</code> (40 launches), <code>launch/raw/grad3.log</code> (22 graduations with launch→graduation delay), <code>launch/sum_pons-v2.json</code> (DefiLlama daily fee series), <code>launch/gt_dex_pons-v2-dex.json</code> (GeckoTerminal top-20 graduated pools by 24 h volume).</p>
+<hr>
+<h2 id="0-verdict-in-one-screen">0. Verdict in one screen</h2>
+<table>
+<thead>
+<tr>
+<th>Question asked</th>
+<th>Short answer</th>
+<th>Where</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Does <code>V = 1.68, Q = 4.2</code> reproduce start ≈ $4k / graduation ≈ $51k with 71.43 % sold?</td>
+<td><strong>Yes, exactly.</strong> Start FDV 1.68 ETH = $4,160; graduation FDV <code>(V+Q)²/V</code> = 20.58 ETH = $50,956; sold <code>Q/(V+Q)</code> = 71.43 %; 20.41 % + 4.2 ETH to the pool; 8.16 % overhang. Matches the NEST on-chain graduation to 8 digits.</td>
+<td>§1</td>
+</tr>
+<tr>
+<td>Price continuity at graduation — any free arbitrage?</td>
+<td><strong>None.</strong> Pool opening price <code>Q / tokensFull</code> equals the curve's final marginal price <code>(V+Q)/(X0−X_sell)</code> identically (ratio = 1, not just to rounding), because <code>tokensFull = X_res·Q/(V+Q)</code> is derived from the same identity. What <em>does</em> change is <strong>depth</strong>: the full-range position carries <code>L_pool = 0.714 · L_curve</code>, so a sell that would have returned 0.855 ETH on the curve returns 0.808 ETH one block later (−5.5 % for 1 ETH-at-spot, −20 % for 10 ETH). With D1's overhang position, upside depth is restored to <code>1.003 · L_curve</code> beyond a 1.96 % gap; downside depth stays at 0.714×. Pons has the same asymmetry (its overhang sits idle).</td>
+<td>§2</td>
+</tr>
+<tr>
+<td>1 % × 80/20 vs Pons 70/30 + tax vs Bags 2 %/1 %</td>
+<td>Ours = <strong>$8,000 per $1M volume</strong> (Pons $7,000, Bags $10,000, Bankr $6,650, o1 $5,000). Second-best flat rate with the lowest total friction among the creator-favourable pads; the owner's own launches earn <strong>$10,000 per $1M</strong> (creator + protocol). Competitive.</td>
+<td>§3</td>
+</tr>
+<tr>
+<td>Sniper tax vs 0.1 s blocks</td>
+<td>3 s ≈ <strong>30 blocks</strong> (measured 9.87 blocks/s). The exponential with 14 halvings has a half-life of <code>T/14</code> = 0.21 s (T=3) — 2 blocks. Without sub-second interpolation the schedule is a cliff (99 % for ~10 blocks, then 6.18 %); with D1's <code>arbBlockNumber</code> interpolation it is a real exponential. <strong>The tax does not protect humans</strong>: a 1 ETH bot buy at t = 1.0 s (T=3) pays 4 % and takes 33 % of supply; humans arrive at 2–5 s. It removes the pure latency race in the first ~0.5 s and skims bots. <strong>The creator-as-bot problem is real</strong>: with snipe proceeds in the 80/20 bucket, a creator's own bot pays 7.8 % effective where a stranger pays 38 % (t = 0.3 s).</td>
+<td>§4</td>
+</tr>
+<tr>
+<td>Dev-buy cap ≤ 5 %</td>
+<td>Right number. 5 % costs 0.0893 ETH ($221) at V = 1.68 and moves the start price +10.8 %; it covers ~85 % of observed Pons dev buys (median 1.16 %, p75 2.9 %, p90 6.9 %) and sits inside every scanner heuristic (GMGN top-10 &lt; 30 %, Pons V1's 5 %/5.5 % hard rule). It is an <em>optics</em> cap, not an accumulation cap — the creator can buy more from other wallets at t ≥ 1 s like anyone else.</td>
+<td>§5</td>
+</tr>
+<tr>
+<td>Fee-0 pool, no third-party LPs</td>
+<td>Correct given the locker has no collect path (any LP fee credited to the locked position would be stranded forever). Depth = graduation liquidity + overhang, growing as <code>√(price multiple)</code>. Cost: fee-earning <strong>parallel pools</strong> appear on big tokens (NEST 30 pairs, VIBES 4) and leak volume/fees; unpreventable on v4, bounded by routing share.</td>
+<td>§6</td>
+</tr>
+<tr>
+<td>Creator tax ≤ 2 % — keep or drop?</td>
+<td><strong>Drop for v1.</strong> Its revenue is only material on tokens that never graduate (the 97 %); on a graduating token it adds ~$200–600 lifetime; it fragments the "one curve, one fee" story, adds an immutable + code path in curve <em>and</em> hook, and 41 % of sampled Pons graduates use tax 0 anyway. If kept: curve-only, ≤ 200 bps, default 0, shown in the launch card.</td>
+<td>§7</td>
+</tr>
+<tr>
+<td>Protocol revenue at 1/3/10 % of Robinhood launch flow</td>
+<td>Using Pons's 7-day average ($5.33M/day) as the flow proxy: 1 % → <strong>$10.7k/day</strong> protocol, 3 % → $32k, 10 % → $107k; on the 30-day average ($1.58M/day) a third of that. But fees are a lottery: the top pool alone is 34 % of the top-20 graduated-pool volume, top-5 = 63 %, top-10 = 82 %; the top-20 pools are 0.08 % of launches. A pad with 1 % of launches has an expected ~0.2 "top-20-class" tokens per day <em>only if its launch quality equals Pons's</em> — realistic early revenue is the owner's own launches plus launch fees.</td>
+<td>§8</td>
+</tr>
+<tr>
+<td>GIWA day-1 (V = 0.6, Q = 1.5)</td>
+<td>Ratio is right (same 12.25×), absolute level is a guess that becomes permanent. <strong>Replace the single immutable (V, Q) with an immutable tier table selectable per launch</strong> so GIWA can start at (0.6, 1.5) and move to (1.68, 4.2) without a new factory (a new factory changes every future token address). ETH-only quote is fine; if a canonical stablecoin never arrives nothing breaks (KRW is a display problem).</td>
+<td>§9</td>
+</tr>
+<tr>
+<td>Immutable vs per-launch</td>
+<td>Table in §10. Everything with a trust meaning is immutable; the creator chooses only name/symbol/salt/metadata, dev-buy size (≤ cap), fee recipient (timelocked), and the curve tier.</td>
+<td>§10</td>
+</tr>
+</tbody>
+</table>
+<p>Must-change items are in §12; accepted risks in §13.</p>
+<hr>
+<h2 id="1-curve-parameterisation-recomputed">1. Curve parameterisation — recomputed</h2>
+<p>Curve: <code>(V + R)(X0 − S) = V·X0</code>, virtual quote only. With sold fraction <code>s = Q/(V+Q)</code>:</p>
+<table>
+<thead>
+<tr>
+<th>Identity</th>
+<th>Formula</th>
+<th>Robinhood (V 1.68, Q 4.2)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>sold on curve</td>
+<td><code>s = Q/(V+Q)</code></td>
+<td>71.4286 % (714,285,714.29 tokens)</td>
+</tr>
+<tr>
+<td>start FDV</td>
+<td><code>V</code> (= <code>Q(1−s)/s</code>)</td>
+<td>1.68 ETH = <strong>$4,160</strong></td>
+</tr>
+<tr>
+<td>graduation FDV</td>
+<td><code>(V+Q)²/V</code> (= <code>Q/(s(1−s))</code>)</td>
+<td>20.58 ETH = <strong>$50,956</strong></td>
+</tr>
+<tr>
+<td>price multiple</td>
+<td><code>(1+Q/V)²</code> (= <code>1/(1−s)²</code>)</td>
+<td>12.25×</td>
+</tr>
+<tr>
+<td>pool tokens</td>
+<td><code>X0·V·Q/(V+Q)²</code></td>
+<td>204,081,632.65 (20.41 %)</td>
+</tr>
+<tr>
+<td>overhang</td>
+<td><code>X0·V²/(V+Q)²</code></td>
+<td>81,632,653.06 (8.16 %)</td>
+</tr>
+<tr>
+<td>final price</td>
+<td><code>(V+Q)²/(V·X0)</code></td>
+<td>2.058e-8 ETH</td>
+</tr>
+</tbody>
+</table>
+<p>All match D1 and the on-chain Pons medians (<code>PoolGraduated.tokenAmount</code> median 204,081,632.65 over 1,351 graduations; <code>liquidityDelta</code> of the NEST graduation reproduced to 8 significant digits). The <code>$4k → $51k</code> claim is correct at $2,476/ETH and scales linearly with ETH.</p>
+<p>What the ratio alone determines (useful for the tier decision in §9 — every row keeps <code>Q = 4.2</code>):</p>
+<table>
+<thead>
+<tr>
+<th>sold <code>s</code></th>
+<th><code>V</code></th>
+<th>start FDV</th>
+<th>graduation FDV</th>
+<th>multiple</th>
+<th>pool / overhang</th>
+<th>precedent</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>71.43 %</td>
+<td>1.68</td>
+<td>$4,160</td>
+<td>$50,956</td>
+<td>12.25×</td>
+<td>20.41 % / 8.16 %</td>
+<td>Pons V2 (chosen)</td>
+</tr>
+<tr>
+<td>75 %</td>
+<td>1.40</td>
+<td>$3,466</td>
+<td>$55,462</td>
+<td>16×</td>
+<td>18.75 % / 6.25 %</td>
+<td>—</td>
+</tr>
+<tr>
+<td>80 %</td>
+<td>1.05</td>
+<td>$2,600</td>
+<td>$65,000</td>
+<td>25×</td>
+<td>16 % / 4 %</td>
+<td>pump.fun-like (79.3 %)</td>
+</tr>
+<tr>
+<td>83 %</td>
+<td>0.86</td>
+<td>$2,130</td>
+<td>$73,700</td>
+<td>34.6×</td>
+<td>14.1 % / 2.9 %</td>
+<td>Bags-RH (83/17, $73k)</td>
+</tr>
+</tbody>
+</table>
+<p>Observation: a higher sold fraction raises the graduation FDV and lowers the start FDV, and shrinks the overhang. Pons's 71.4 % is the most conservative of the live pads (lowest multiple, deepest pool relative to FDV: 4.2 ETH is 20.4 % of graduation mcap; pump.fun is 21 %, Bags-RH 17 %). Keeping the Pons shape is the right call for Robinhood — bots and traders already price it, and it graduates at the lowest bar.</p>
+<p>Rounding: D1's integer arithmetic gives <code>R_final − Q = 2 wei</code>, fees floored on the gross leg. No economic issue.</p>
+<hr>
+<h2 id="2-graduation-price-continuity-depth-cliff-overhang">2. Graduation: price continuity, depth cliff, overhang</h2>
+<h3 id="21-continuity-checked">2.1 Continuity (checked)</h3>
+<p><code>sqrtPriceX96 = sqrt(tokensFull / R)</code> (same as Pons's <code>PonsV2GraduationMath.sqrtPriceX96FromAmounts</code>) with <code>tokensFull = X_res·R/(V+R)</code> gives <code>tokensFull/R = X_res/(V+R) = 1/p*</code>. So the pool opens at exactly the curve's last marginal price — the ratio is 1 by algebra, the only residual is wei-level dust (2 wei of <code>R</code> move the 21st digit). Fees are symmetric across the boundary (1 % on the ETH leg in both venues), sells carry no surcharge in either venue, and the crossing buyer's refund cannot be recycled cheaply (the pool's t = 0 fee is 99 %). <strong>There is no arbitrage window at graduation.</strong> The last curve buyer's <em>average</em> fill is far below <code>p*</code> (the worked example's 3.19 ETH crossing buy averages 9.5e-9 vs <code>p*</code> 2.06e-8) but that is the curve, not a gap; dumping that bag into the fresh pool returns 2.60 ETH for a 3.19 ETH cost.</p>
+<h3 id="22-depth-discontinuity-real-quantified">2.2 Depth discontinuity (real, quantified)</h3>
+<p>Effective liquidity: curve <code>L_curve = √((V+Q)·X_res) = 4.10e22</code>; full-range pool <code>L_pool = √(Q·tokensFull) = 2.93e22 = 0.714·L_curve</code> (both reserves scale by <code>Q/(V+Q)</code>). Consequences for holders, sell side:</p>
+<table>
+<thead>
+<tr>
+<th>sell size (tokens worth … at spot)</th>
+<th>on the curve, last block</th>
+<th>in the pool, next block</th>
+<th>change</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1 ETH</td>
+<td>0.855 ETH</td>
+<td>0.808 ETH</td>
+<td>−5.5 %</td>
+</tr>
+<tr>
+<td>5 ETH</td>
+<td>2.702 ETH</td>
+<td>2.283 ETH</td>
+<td>−15.5 %</td>
+</tr>
+<tr>
+<td>10 ETH</td>
+<td>3.703 ETH</td>
+<td>2.958 ETH</td>
+<td>−20.1 %</td>
+</tr>
+</tbody>
+</table>
+<p>Pons has exactly this cliff; nobody advertises it. Not fixable without changing the seed ratio (a virtual-quote curve always hands over <code>s</code> of its virtual depth). Disclose it in the UI ("graduated pools are thinner than the curve; expect ~1.4× the price impact").</p>
+<h3 id="23-the-overhang-d1-d11-numbers">2.3 The overhang (D1 D11) — numbers</h3>
+<p>D1 puts the 8.16 % into a token-only position <code>[MIN_TICK, floor(tick/200)·200]</code>, i.e. an ask wall starting 1.96 % above the opening price and extending to infinity. Liquidity <code>L_over = tokensOver/√P_u = 1.18e22 = 0.289·L_curve</code>; <code>L_pool + L_over = 1.003·L_curve</code>. So <strong>D1's overhang exactly restores curve-equivalent depth on the upside</strong> (a nice, non-obvious property: <code>√(V·(V+Q)) + √(Q·…)</code> sums back to the curve's virtual <code>L</code>), while the downside keeps 0.714×.</p>
+<table>
+<thead>
+<tr>
+<th>price multiple</th>
+<th>overhang sold</th>
+<th>ETH captured by overhang</th>
+<th>ETH in full-range</th>
+<th>overhang adds</th>
+<th>mcap</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2×</td>
+<td>23.9M</td>
+<td>0.71 ETH</td>
+<td>5.9 ETH</td>
+<td>+12 %</td>
+<td>$102k</td>
+</tr>
+<tr>
+<td>4×</td>
+<td>40.8M</td>
+<td>1.71 ETH</td>
+<td>8.4 ETH</td>
+<td>+20 %</td>
+<td>$204k</td>
+</tr>
+<tr>
+<td>10×</td>
+<td>55.8M</td>
+<td>3.71 ETH</td>
+<td>13.3 ETH</td>
+<td>+28 %</td>
+<td>$510k</td>
+</tr>
+<tr>
+<td>100×</td>
+<td>73.5M</td>
+<td>15.4 ETH</td>
+<td>42.0 ETH</td>
+<td>+37 %</td>
+<td>$5.1M</td>
+</tr>
+</tbody>
+</table>
+<p>Price impact of buys right after graduation: 1 ETH → ×1.53 with the full-range position only, ×1.37 with the overhang (beyond the 2 % gap); 5 ETH → ×4.75 vs ×3.39. So the overhang <strong>dampens early pumps by ~30 % in price terms</strong> and converts into permanently locked ETH as the token rises. Three ways to read it:</p>
+<ul>
+<li>Holder economics: strictly better (more ETH depth forever, less reflexive blow-off).</li>
+<li>Promoter economics: worse (first-wave pump velocity is the marketing; the "8 % sell wall" will be pointed at in Telegram).</li>
+<li>Scanner optics: pool holds 28.57 % — no different from Pons's locker holding 28.57 %; GMGN attributes both to a contract.</li>
+</ul>
+<p>Versus burn (D3-8): supply 918.4M, every holder's share +8.9 %, no ask wall, simplest to explain, breaks the "exactly 1e9" line. Versus Pons's idle lock: the worst of both (dead supply that neither adds depth nor is burned).</p>
+<p><strong>Recommendation: keep D1's position (economically strongest) but decide now — D1 and D3 currently contradict each other</strong> (D1 locks the overhang in the pool; D3-8 burns by default and its <code>IGraduationTarget.graduate</code> signature assumes the leftover is already burned). This is a must-change (§12-1). If the owner prefers the pump-friendly optics, burn; do not park.</p>
+<p>Minor: with <code>tickSpacing = 200</code> the ask wall starts up to 2 % above spot; <code>tickSpacing = 10</code> would close the gap to 0.1 % but breaks the "same shape as Pons" indexer story. Cosmetic; keep 200.</p>
+<hr>
+<h2 id="3-fee-level-and-split-competitiveness">3. Fee level and split — competitiveness</h2>
+<h3 id="31-creator-income-per-1m-of-volume-flat-all-phases">3.1 Creator income per $1M of volume (flat, all phases)</h3>
+<table>
+<thead>
+<tr>
+<th>Venue</th>
+<th>Total fee</th>
+<th>Creator share</th>
+<th>Creator $/1M</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>ours</strong></td>
+<td>1 %</td>
+<td>80 %</td>
+<td><strong>$8,000</strong></td>
+<td>+ nothing else; no buyback toggle; +snipe proceeds (if kept in the bucket)</td>
+</tr>
+<tr>
+<td>Pons V2</td>
+<td>1 %</td>
+<td>70 % (35 % with buyback)</td>
+<td>$7,000 / $3,500</td>
+<td>+ creator tax ≤ 10 % on curve volume only</td>
+</tr>
+<tr>
+<td>Bags-RH</td>
+<td>2 %</td>
+<td>50 %</td>
+<td>$10,000</td>
+<td>2 % trader friction; ~no flow ($9k fees/day)</td>
+</tr>
+<tr>
+<td>Bankr</td>
+<td>1.75 %</td>
+<td>38 %</td>
+<td>$6,650</td>
+<td>partly paid in the memecoin; +15 % vest</td>
+</tr>
+<tr>
+<td>PAIR</td>
+<td>1 %</td>
+<td>70 %</td>
+<td>$7,000</td>
+<td></td>
+</tr>
+<tr>
+<td>o1</td>
+<td>1 %</td>
+<td>50 %</td>
+<td>$5,000</td>
+<td>referrer 20 % can be self-captured</td>
+</tr>
+<tr>
+<td>pools.trade</td>
+<td>0.25 %</td>
+<td>40 % of ETH side</td>
+<td>≈ $500</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Ours is the best rate among 1 %-fee venues and second only to Bags, whose 2 % total fee is a volume tax (every bot/aggregator route prefers the 1 % pool). The 1 % total is the Robinhood Schelling point (Pons, o1, PAIR, Sentry, LetsCash base); GMGN/Maestro add their own 1 % on top, so the trader's all-in is already 2 %. Do not raise it; do not lower it either (0.5 % would halve creator income without visibly increasing volume — meme volume is narrative-driven, not fee-elastic at this level).</p>
+<p>For the owner's own launches, creator + protocol = <strong>$10,000 per $1M</strong> vs $7,000 on Pons. That +$3k/$1M is the whole financial case for building the pad; break-even on a $25–60k audit is $8–20M of the owner's own-token lifetime volume (ZZZ did $27M in its first day on Pons).</p>
+<h3 id="32-8020">3.2 80/20</h3>
+<p>Pons takes 30 %, o1 50 %, Bags 50 %, Bankr 62 %. 20 % is the most creator-favourable protocol cut on the chain; combined with 0 % team allocation it is the cleanest "creator pad" pitch available. Since the owner is both protocol and (initially) the dominant creator, the split only matters for third-party launchers; 20 % is enough to fund the only real ongoing cost (a UI). Keep.</p>
+<h3 id="33-creation-fee">3.3 Creation fee</h3>
+<p>0.0005 ETH ($1.24) accrued to the protocol. Note the scale effect at Pons: 26.7k launches/day × 0.0005 ETH ≈ 13.4 ETH ≈ <strong>$33k/day from launch fees alone</strong> — more than the swap-fee protocol revenue at a 1 % flow share (§8). Bot spam is revenue-positive but a feed-quality problem; the UI must rank by dev-buy size and activity, not recency. Our launch gas is ~3.5× cheaper than Pons's (≈1.1M vs 3.7M gas), which makes spam cheaper — expected, acceptable.</p>
+<hr>
+<h2 id="4-sniper-tax-shape-blocks-bots-and-the-creator-bot-problem">4. Sniper tax — shape, blocks, bots, and the creator-bot problem</h2>
+<h3 id="41-block-arithmetic">4.1 Block arithmetic</h3>
+<p>Measured: 9.87 blocks/s, 10 consecutive blocks per timestamp second (<code>launch/raw/sample_hours.log</code>, D1 §chain facts). 3 s ≈ 30 blocks, 5 s ≈ 50. <code>taxBps(t) = 9900 &gt;&gt; floor(t·14/T)</code> has half-life <code>T/14</code>: 0.21 s (2 blocks) at T = 3, 0.36 s (3.5 blocks) at T = 5.</p>
+<p>Schedules at block resolution (D1's eighth-halving interpolation, cap 98 % so the buyer keeps ≥ 1 %):</p>
+<table>
+<thead>
+<tr>
+<th>block (time)</th>
+<th>T = 3</th>
+<th>T = 4</th>
+<th>T = 5</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>b0 (0.0 s)</td>
+<td>98.0 %</td>
+<td>98.0 %</td>
+<td>98.0 %</td>
+</tr>
+<tr>
+<td>b3 (0.3 s)</td>
+<td>38.2 %</td>
+<td>49.5 %</td>
+<td>58.9 %</td>
+</tr>
+<tr>
+<td>b5 (0.5 s)</td>
+<td>20.8 %</td>
+<td>29.4 %</td>
+<td>38.2 %</td>
+</tr>
+<tr>
+<td>b10 (1.0 s)</td>
+<td>4.0 %</td>
+<td>8.8 %</td>
+<td>14.7 %</td>
+</tr>
+<tr>
+<td>b15 (1.5 s)</td>
+<td>0.8 %</td>
+<td>2.6 %</td>
+<td>5.7 %</td>
+</tr>
+<tr>
+<td>b20 (2.0 s)</td>
+<td>0.2 %</td>
+<td>0.8 %</td>
+<td>2.2 %</td>
+</tr>
+<tr>
+<td>b30 (3.0 s)</td>
+<td>0</td>
+<td>0.1 %</td>
+<td>0.3 %</td>
+</tr>
+<tr>
+<td>coarse 1-s (GIWA)</td>
+<td>99 / 6.2 / 0.2 / 0</td>
+<td>99 / 12.4 / 0.8 / 0.1 / 0</td>
+<td>99 / 24.8 / 3.1 / 0.4 / 0.04 / 0</td>
+</tr>
+</tbody>
+</table>
+<p>Without interpolation the Robinhood schedule is a <strong>cliff at the second boundary</strong>: ~10 blocks at 99 %, then the first block of second 1 at 6.18 % (T = 3). Bots watch <code>block.timestamp</code> and land exactly there. D1's <code>arbBlockNumber</code> interpolation is therefore not a refinement but the thing that makes the schedule exponential at all — keep it. (Its clamp <code>min(blkMs, tsMs + 999)</code> means the tax can only be <em>lower</em> than the timestamp schedule, never higher; the only failure mode — no blocks produced — errs toward higher tax.)</p>
+<h3 id="42-what-bots-do-ev-table">4.2 What bots do (EV table)</h3>
+<p>Fresh curve after a 5 % dev buy (<code>R = 0.0884</code>, <code>S = 50M</code>); a 1 ETH bot buy:</p>
+<table>
+<thead>
+<tr>
+<th>t</th>
+<th>T = 3 tax → supply → value at graduation</th>
+<th>T = 5 tax → supply → value at graduation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0.1 s</td>
+<td>76 % → 10.8 % → 2.2 ETH (2.2×)</td>
+<td>83 % → 7.8 % → 1.6 ETH (1.6×)</td>
+</tr>
+<tr>
+<td>0.3 s</td>
+<td>38 % → 24.3 % → 5.0 ETH (5.0×)</td>
+<td>59 % → 17.6 % → 3.6 ETH (3.6×)</td>
+</tr>
+<tr>
+<td>0.6 s</td>
+<td>15 % → 30.7 % → 6.3 ETH (6.3×)</td>
+<td>32 % → 26.1 % → 5.4 ETH (5.4×)</td>
+</tr>
+<tr>
+<td>1.0 s</td>
+<td>4 % → 33.2 % → 6.8 ETH (6.8×)</td>
+<td>15 % → 30.7 % → 6.3 ETH (6.3×)</td>
+</tr>
+<tr>
+<td>2.0 s</td>
+<td>0.2 % → 34.1 % → 7.0 ETH (7.0×)</td>
+<td>2.2 % → 33.6 % → 6.9 ETH (6.9×)</td>
+</tr>
+</tbody>
+</table>
+<p>Reading: the curve is so cheap at the start (1 ETH = a third of supply) that <strong>any launch a bot believes will graduate is +EV even at 60–75 % tax</strong>. Bots therefore do not wait for 0 %; they wait until the tax is below their personal edge estimate and then race. The tax's real functions are (a) killing the <em>pure</em> latency race in the first ~0.3–0.5 s (where the prize would otherwise go to whoever is co-located with the sequencer), (b) skimming 5–40 % of bot entries into the fee bucket, (c) giving the disclosed dev buy a guaranteed cheapest fill. It does <strong>not</strong> give human buyers a chance: humans react at 2–5 s, by which point the tax is &lt; 1 % on every schedule and the bots hold 30–35 % of supply. Pons's data agrees: 50 % of graduations happen within 2.2 min of launch (p10 0.8 min, p25 1.3, p75 18.6, p90 40.8; <code>raw/grad3.log</code>, n = 22) — the winners are decided by bots in the first minutes.</p>
+<p>Longer windows only tax humans: o1's 20 s linear ramp charges 50 % at 10 s. Within the owner's fixed rule ("99 % → ~0 over a few seconds") the tunable is <code>T</code>. <strong>Recommend T = 5 s on both chains</strong> (Pons's documented value; Pons's source default is 15 s and they operate at 3 s — a choice that maximises bot volume, which is what an incumbent wants). Rationale: with interpolation, T = 5 gives 15 % at 1 s and 2 % at 2 s — bots still come, but their entry is skimmed 2–4× harder than at T = 3, and the human at 3 s still pays 0.3 %. On GIWA (1-s blocks, no interpolation) T = 5 is the only schedule whose second-1 step (24.75 %) is a meaningful skim; T = 3's 6.18 % is not. One <code>T</code> on both chains also keeps the Korean UI's story to one sentence.</p>
+<p>Sub-second caveat on Robinhood: if Timeboost is enabled (D2 OQ-1, unverified), an express-lane holder gets a 200 ms head start = 2 blocks — the tax at those blocks is 76–83 %, so the express lane buys nothing profitable at launch. Fine either way.</p>
+<h3 id="43-does-the-exponential-give-the-launcher-an-unfair-edge">4.3 Does the exponential give the launcher an unfair edge?</h3>
+<p>Two different edges:</p>
+<ol>
+<li><strong>The disclosed dev buy</strong> (0 % tax, ≤ 5 %, same tx). Intended, visible in <code>DevBuy</code>, capped. Not a fairness problem — it is the market norm (Pons, o1, Bags, pump.fun all exempt the atomic first buy) and Raydium's docs call <em>not</em> doing it a mistake.</li>
+<li><strong>The creator running a bot</strong> with snipe proceeds flowing 80 % back to the creator. At t = 0.3 s (T = 3) a stranger's bot pays 38.2 %; the creator's bot pays 38.2 % and gets 30.6 % back → <strong>7.8 % effective</strong>. At t = 0.1 s: 15.5 % vs 76 %. This is undetectable (it looks like ordinary sniping), and it means the "≤ 5 % dev buy" is a floor on creator inventory, not a ceiling — the creator is structurally the best-placed sniper of their own launch. Pons has the same flaw (70 % rebate). o1 routes the surcharge to the platform, Virtuals to a vested team buyback, Clanker's sniper auction 80/20 to reward recipients.</li>
+</ol>
+<p>For the owner's own launches this is moot (creator + protocol = the owner). For third-party launchers on the pad it is the single largest integrity gap in the design. Options, one escrow constant each (D2 OQ-2):</p>
+<table>
+<thead>
+<tr>
+<th>Snipe proceeds →</th>
+<th>creator-bot effective cost at t = 0.3 s (T=3)</th>
+<th>marketing</th>
+<th>verdict</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>80/20 bucket (draft)</td>
+<td>7.8 %</td>
+<td>"anti-snipe tax is paid into your fee pool" (Pons parity)</td>
+<td>keeps the exploit</td>
+</tr>
+<tr>
+<td>100 % protocol (o1)</td>
+<td>38.2 %</td>
+<td>"the creator cannot profit from sniping their own launch"</td>
+<td><strong>recommended</strong></td>
+</tr>
+<tr>
+<td>50/50</td>
+<td>19.1 %</td>
+<td>middle</td>
+<td>acceptable</td>
+</tr>
+<tr>
+<td>burn / bid-side ETH position at graduation</td>
+<td>38.2 %</td>
+<td>"sniper money becomes permanent liquidity"</td>
+<td>best optics, more code (third position); v1.1</td>
+</tr>
+</tbody>
+</table>
+<p>Recommendation: <strong>100 % protocol in v1</strong> (one constant), and say why on the launch page. Cost to a third-party creator: on a bot-heavy launch the snipe skim is a few % of the first ~2 ETH of buys — tens of dollars — vs a trust feature the pad can advertise that Pons cannot.</p>
+<h3 id="44-post-graduation-snipe-d2-4">4.4 Post-graduation snipe (D2 §4)</h3>
+<p>Graduation is not a price discontinuity (§2.1), so the "prize" is only the marketing surge after the ipop/DexScreener alert. Pons's hook has no post-graduation tax (verified: no <code>snipe</code> symbol in <code>PonsV2MemeHook.sol</code>); D2 adds a 3 s staircase [98, 24, 2] %. Keep it — it costs nothing when nobody snipes and it protects the graduation second (which is inside <em>someone else's</em> buy tx, so a human cannot be in it by accident unless their router falls back from curve to pool inside the same second — the UI must not do that). But <strong>use the same schedule function as the curve</strong> (one library, one <code>T</code>) instead of a second table; today D1 (exponential, 14 halvings, T = 3) and D2 ([9800, 2400, 200], integer seconds) disagree, and D3 describes a third ("98 % → 0 over <code>SNIPE_SECONDS</code>"). Must-change §12-4.</p>
+<h3 id="45-optional-inside-the-rules-per-tx-size-cap-during-the-window">4.5 Optional, inside the rules: per-tx size cap during the window</h3>
+<p>Not a tax, not an exempt list: "while <code>t &amp;lt; T</code>, one buy may take at most 10 % of the <em>remaining</em> sellable supply". Multi-wallet bots defeat it, but on an FCFS chain that means 3–4 competing bots each get a slice instead of one bot taking 34 % — better holder distribution for the same bot volume. Pons V1 hard-coded 5 % per wallet in blocks 1–2. Worth a v1.1 look; not required.</p>
+<hr>
+<h2 id="5-dev-buy-cap-5">5. Dev-buy cap ≤ 5 %</h2>
+<table>
+<thead>
+<tr>
+<th>cap</th>
+<th>gross cost at V = 1.68</th>
+<th>start-price move</th>
+<th>worth at graduation</th>
+<th>at 10× graduation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1 %</td>
+<td>0.017 ETH ($42)</td>
+<td>+2.0 %</td>
+<td>$510</td>
+<td>$5.1k</td>
+</tr>
+<tr>
+<td>2 %</td>
+<td>0.035 ETH ($86)</td>
+<td>+4.1 %</td>
+<td>$1.0k</td>
+<td>$10.2k</td>
+</tr>
+<tr>
+<td>3 %</td>
+<td>0.052 ETH ($130)</td>
+<td>+6.3 %</td>
+<td>$1.5k</td>
+<td>$15.3k</td>
+</tr>
+<tr>
+<td><strong>5 %</strong></td>
+<td><strong>0.089 ETH ($221)</strong></td>
+<td><strong>+10.8 %</strong></td>
+<td><strong>$2.5k</strong></td>
+<td><strong>$25.5k</strong></td>
+</tr>
+<tr>
+<td>7 %</td>
+<td>0.128 ETH ($316)</td>
+<td>+15.6 %</td>
+<td>$3.6k</td>
+<td>$35.7k</td>
+</tr>
+<tr>
+<td>10 %</td>
+<td>0.189 ETH ($467)</td>
+<td>+23.5 %</td>
+<td>$5.1k</td>
+<td>$51k</td>
+</tr>
+</tbody>
+</table>
+<p>Observed Pons first buys (34/40 same-block): median 1.16 %, p75 2.86 %, p90 6.86 %, max 20.96 %. A 5 % cap admits ~85 % of observed launcher behaviour and refuses the p90+ tail that scanners flag. Is 5 % enough for the launcher "to matter"? For an experienced launcher the dev buy is a signal ("skin in the game, not a bot"), not the inventory — inventory comes from the fee stream ($8k–10k per $1M) and, honestly, from buying at t ≥ 1 s like everyone else (§4.3). Too much for optics? No: 5 % in one disclosed wallet is inside GMGN's top-10 &lt; 30 % and Pons V1's 5 %/5.5 % rule; 5–10 % is "tolerated if disclosed", &gt; 10 % reads as a pre-mine. Keep 5 %, cap in tokens (deterministic in ETH per tier), revert-not-clamp (D1), recipient = launching wallet (so the bag and the fee recipient cluster in the same address, which is what the insider detectors expect). One additional rule worth stating in the UI: the dev buy is the <em>only</em> untaxed buy and the <em>only</em> exemption in the whole system — that sentence is the anti-bundle guarantee.</p>
+<hr>
+<h2 id="6-fee-0-pool-third-party-liquidity-depth">6. Fee-0 pool, third-party liquidity, depth</h2>
+<ul>
+<li><strong>Why nobody LPs</strong>: with LP fee 0 and the hook taking 1 % in quote outside the position, a third-party LP earns 0 and carries impermanent loss. They will not come; JIT is pointless. Depth is exactly the graduation liquidity: <code>4.2 ETH + 204.08M</code> (+ overhang), growing as <code>Q·√m</code> in ETH terms (5.9 ETH at 2×, 13.3 at 10×, 42 at 100×). Ratio of ETH depth to mcap: 20 % at graduation, 6.5 % at 10×, 2 % at 100× — same as pump.fun/Pons. Fine for a memecoin; the alternative (deeper pools) only exists if someone donates capital.</li>
+<li><strong>Why not a small LP tier</strong> (e.g. 0.3 % LP + 1 % hook): the locked position would earn 20–28 % of that LP fee (its share of in-range liquidity) with no collect path → permanently stranded in the PoolManager, i.e. burned value; third-party LPs would earn the rest and compete with the creator for the same trade. Only sensible if the locker had a collect-and-forward path — which D3 rightly refuses (it is the attack surface). Keep fee 0.</li>
+<li><strong>The real cost of fee 0 — parallel pools</strong>: for big tokens, LPs create <em>their own</em> pool (hookless v4 1 %, v3 1 %, USDG pairs) to earn fees; routers split by depth; the creator loses that share. Observed on Robinhood: NEST 30 v4 pairs, VIBES 1 v3 + 4 v4, FATCOIN's largest volume in an EOA-made USDG pool (01 §3). Unpreventable on v4 (any key can be initialised) and not gated by the token (no transfer hooks). Mitigations already in the design (100 % of graduation liquidity in the hooked pool, canonical <code>PoolRegistered</code> id, UI routing) are the only ones available. Expected leakage: 0 for the 97 % of tokens that never matter; meaningful (tens of %) only on the handful that reach $10M+ mcap — i.e. exactly where the creator income is. Accept and disclose.</li>
+<li><strong>Uniswap protocol fee</strong> (≤ 0.1 % per direction, governance-controlled) can appear on top; traders pay it, creators unaffected. Disclose.</li>
+</ul>
+<hr>
+<h2 id="7-creator-tax-2-drop">7. Creator tax ≤ 2 % — drop</h2>
+<p>Curve volume for a graduating token is a few × the raise (4.2 ETH + churn; call it 10–20 ETH ≈ $25–50k); a 2 % tax on that is <strong>$500–1,000 once</strong>, versus $8,000 per $1M of post-graduation volume. The tax is only material on tokens that <em>never</em> graduate — 97.4 % of launches — where it extracts more from the buyers of a failed launch. That is the reputational shape of the feature ("read the tax before trading" is boilerplate on Pons's docs; GMGN/GoPlus label tax tokens). Pons's sample of 22 graduates: 13 used tax 0, 3 used 1 %, 2 used 1.5 %, 2 used 2 %, one each 8 % and 10 % — creators who graduate mostly do not use it.</p>
+<p>Costs of keeping it: one immutable per launch, a code path in the curve <em>and</em> (per D2 OQ-3) possibly the hook and pair, a <code>register()</code> argument, an extra fee bucket in the escrow, a Korean-UI explainer, and a scanner label. Benefit: parity with a Pons feature the good launches do not use.</p>
+<p><strong>Recommendation: drop in v1</strong> (owner's rule says "optional", so optional-off is inside the rule). If kept: curve-only (never in the hook/pair), ≤ 200 bps, default 0, immutable, shown on the token card as "creator tax 2 % on the curve" in red. Either way, resolve D2 OQ-3 as curve-only.</p>
+<hr>
+<h2 id="8-protocol-revenue-scenarios-and-the-shape-of-the-distribution">8. Protocol revenue scenarios and the shape of the distribution</h2>
+<p>Flow proxies (DefiLlama <code>pons-v2</code>, <code>launch/sum_pons-v2.json</code>): 24 h $8.75M (09-04 peak), 7 d avg $5.33M/day, 30 d avg $1.58M/day; the series went $139k (08-16) → $1.2M (08-26) → $4.7M (08-30) → $8.75M (09-04). DefiLlama's Pons figure includes launch fees, curve fees, creator taxes, and swept hook fees; a bottom-up cross-check (1 % of curve volume $161M + top-20 graduated pools $198M) gives ≈ $3.6M/day, so the $8.75M contains a large creator-tax and/or long-tail-pool component. Treat $3.6–5.3M/day as "current Robinhood launch-flow fees".</p>
+<table>
+<thead>
+<tr>
+<th>flow share</th>
+<th>fees/day (7 d avg base)</th>
+<th>protocol 20 %/day</th>
+<th>protocol/yr</th>
+<th>creators 80 %/day</th>
+<th>(30 d avg base: protocol/day)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1 %</td>
+<td>$53k</td>
+<td><strong>$10.7k</strong></td>
+<td>$3.9M</td>
+<td>$43k</td>
+<td>$3.2k</td>
+</tr>
+<tr>
+<td>3 %</td>
+<td>$160k</td>
+<td><strong>$32k</strong></td>
+<td>$11.7M</td>
+<td>$128k</td>
+<td>$9.5k</td>
+</tr>
+<tr>
+<td>10 %</td>
+<td>$533k</td>
+<td><strong>$107k</strong></td>
+<td>$38.9M</td>
+<td>$426k</td>
+<td>$32k</td>
+</tr>
+</tbody>
+</table>
+<p>Plus launch fees: at 1 % of Pons's launch count (267/day) ≈ 0.13 ETH ≈ $330/day.</p>
+<p><strong>Distribution.</strong> GeckoTerminal's top-20 Pons graduated pools by 24 h volume: #1 (SLINK/USDG) $66M = 34 % of the top-20's $198M; top-3 53 %; top-5 63 %; top-10 82 %. The top-20 are ~3 % of the 2-day graduation cohort and <strong>0.08 % of launches</strong>. Fee income is therefore a power law with α ≈ 1.1: the median launch earns ~$0, the median <em>graduate</em> earns a few hundred dollars over its life, and a single ZZZ-class token ($27M/day) yields $270k/day in fees ($54k/day protocol) — more than the entire "1 % share" scenario. Two consequences:</p>
+<ol>
+<li>"1 % of launch flow" is not a revenue plan; expected revenue at 1 % of <em>launches</em> is well below 1 % of <em>fees</em>, because winners follow the audience (GMGN feeds, DexScreener boosts, the Pons Explore tab), not the contracts. A new pad with 267 launches/day and Pons-quality flow would see a top-20-class token every ~5 days in expectation; with realistic early flow, every few weeks. Variance dominates: plan on months of $0–2k/day punctuated by five-figure days.</li>
+<li>The bankable revenue is the owner's own launches (100 % of a 1 % fee → $10k per $1M) and, on GIWA, being the only pad with a creator share at all (GIWA MARKETS pays creators 0 %, Joseon-style pads 0.3 % swap). The 20 % protocol cut on third-party launches is upside, not the base.</li>
+</ol>
+<hr>
+<h2 id="9-giwa-day-1-variant">9. GIWA day-1 variant</h2>
+<p>D1 proposes <code>V = 0.6, Q = 1.5</code> (start $1.5k, graduation $18k, same 12.25×) as a permanent immutable because ETH is scarce on day 1. Issues:</p>
+<ul>
+<li><strong>Permanence</strong>: within weeks GIWA will have bridged ETH and CEX rails (KR funding via CEX → Arbitrum → Relay is already the owner's plan), and a 1.5 ETH bar ($3.7k) then means pools that are rug-thin (a 0.5 ETH buy moves price +71 %). Changing <code>Q</code> requires a new curve <em>and</em> a new factory (the factory is an immutable of the curve and vice-versa), and a new factory changes the CREATE3 namespace of every future token — the same-address-on-both-chains property is lost for all launches after the switch unless Robinhood also redeploys. That is an expensive way to turn one number.</li>
+<li><strong>Self-graduation</strong> at Q = 1.5 costs the creator only fees (≈ 1 % × 2 + snipe): they end up holding 71.4 % of supply plus a "graduated" badge with $3.7k of locked ETH. Cheap badge; Pons's "graduation is not a quality signal" boilerplate becomes more true the lower Q is.</li>
+<li><strong>ETH-only quote</strong>: correct on GIWA (nothing else exists day 1) and correct for v1 on Robinhood for the reasons D1 gives, but note the cost: on Robinhood, USDG pairs were 24 % of Pons launches and 3 of this week's 5 largest Pons tokens were non-ETH pairs (SLINK/USDG, Ponsan/USDG, OZZY/USDG, SPY/NOTHING). v1.1 should add USDG. If a canonical stablecoin never comes to GIWA, ETH remains the quote and nothing in the economics breaks — KRW is a display-layer conversion; the only casualty is the "stable-denominated graduation bar" story, which Robinhood pads have but do not need.</li>
+</ul>
+<p><strong>Recommendation — an immutable tier table, selectable per launch</strong> (no admin, no setter; the table is a constructor constant; the launcher picks <code>tier ∈ {0, 1, 2}</code> at <code>createToken</code>; the curve stores 1 byte in the spare bytes of its per-token slot):</p>
+<table>
+<thead>
+<tr>
+<th>tier</th>
+<th>V</th>
+<th>Q</th>
+<th>start FDV</th>
+<th>graduation FDV</th>
+<th>intended use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0 "seed"</td>
+<td>0.6</td>
+<td>1.5</td>
+<td>$1.5k</td>
+<td>$18k</td>
+<td>GIWA day-1; small-community tests</td>
+</tr>
+<tr>
+<td>1 "standard"</td>
+<td>1.68</td>
+<td>4.2</td>
+<td>$4.2k</td>
+<td>$51k</td>
+<td>Robinhood default; GIWA once ETH is available</td>
+</tr>
+<tr>
+<td>2 "deep"</td>
+<td>2.8</td>
+<td>7.0</td>
+<td>$6.9k</td>
+<td>$85k</td>
+<td>serious launches wanting Bags-class depth</td>
+</tr>
+</tbody>
+</table>
+<p>All tiers keep <code>Q = 2.5·V</code> so the percentages (71.43 / 20.41 / 8.16), the 12.25× multiple, the dev-buy cap in tokens and the seed-liquidity formula are identical — only the ETH scale changes. The UI defaults to tier 1 on Robinhood and tier 0 on GIWA and can move the GIWA default with a UI change, not a redeploy. Token address parity across chains is unaffected (the tier is not in the salt). Cost: one immutable array, one byte of state, a <code>tier</code> argument, one more fuzz dimension.</p>
+<p>If a single immutable per chain is kept anyway: GIWA <code>Q = 1.5</code> is defensible for a Sepolia rehearsal, but for the 9134 mainnet deployment wait for observed bridge liquidity (D1 §9 already says this) — do not ship a permanent <code>Q = 1.5</code>.</p>
+<hr>
+<h2 id="10-what-must-be-immutable-vs-per-launch-selectable">10. What must be immutable vs per-launch selectable</h2>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Immutable (protocol)</th>
+<th>Per-launch (creator)</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Supply 1e9, 18 dec, no mint/pause/blacklist</td>
+<td>✔</td>
+<td></td>
+<td>trust</td>
+</tr>
+<tr>
+<td>Trading fee 100 bps, both directions, both phases</td>
+<td>✔</td>
+<td></td>
+<td>Schelling point; "one fee" story</td>
+</tr>
+<tr>
+<td>Split 8000/2000, protocol recipient</td>
+<td>✔</td>
+<td></td>
+<td>trust; no fee switch</td>
+</tr>
+<tr>
+<td>Creation fee 0.0005 ETH</td>
+<td>✔</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Curve tier table {V, Q}</td>
+<td>✔ (table)</td>
+<td>✔ (choice of tier)</td>
+<td>§9</td>
+</tr>
+<tr>
+<td>Dev-buy cap 50M tokens (5 %)</td>
+<td>✔</td>
+<td>✔ (amount ≤ cap)</td>
+<td>§5</td>
+</tr>
+<tr>
+<td>Snipe schedule (<code>START</code>, <code>T</code>, halvings, interpolation), post-graduation window</td>
+<td>✔</td>
+<td></td>
+<td>any per-launch knob = a way to switch it off for one's own launch</td>
+</tr>
+<tr>
+<td>Snipe-proceeds routing</td>
+<td>✔</td>
+<td></td>
+<td>§4.3</td>
+</tr>
+<tr>
+<td>Creator tax</td>
+<td>(drop) — if kept: cap 200 bps immutable</td>
+<td>✔ (0–200, immutable per token)</td>
+<td>§7</td>
+</tr>
+<tr>
+<td>Quote asset</td>
+<td>✔ (v1: native ETH)</td>
+<td>(v1.1: whitelist choice)</td>
+<td>§9</td>
+</tr>
+<tr>
+<td>Overhang disposition</td>
+<td>✔ (compile-time)</td>
+<td></td>
+<td>one story for all tokens</td>
+</tr>
+<tr>
+<td>Tick spacing 200, pool key shape</td>
+<td>✔</td>
+<td></td>
+<td>indexer parity</td>
+</tr>
+<tr>
+<td>Timelock 3 d + accept window 3 d</td>
+<td>✔</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Creator recipient</td>
+<td></td>
+<td>✔ (timelocked)</td>
+<td></td>
+</tr>
+<tr>
+<td>Name, symbol, userSalt, metadata URI</td>
+<td></td>
+<td>✔</td>
+<td>address = commitment to name/symbol</td>
+</tr>
+<tr>
+<td>WindDown grace 7 d</td>
+<td>✔</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Nothing else is selectable. In particular do not make the post-graduation snipe or the schedule per-launch: a creator who can turn it off for their own token has an exempt list by another name.</p>
+<hr>
+<h2 id="11-recommended-parameter-table">11. Recommended parameter table</h2>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Draft</th>
+<th>Recommended</th>
+<th>Rationale</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Curve shape</td>
+<td>virtual-quote CP, <code>Q = 2.5V</code></td>
+<td>keep</td>
+<td>Pons parity; deepest pool per FDV among live pads</td>
+</tr>
+<tr>
+<td>Robinhood tier</td>
+<td>V 1.68 / Q 4.2 (immutable)</td>
+<td>same numbers as <strong>tier 1 of an immutable tier table</strong></td>
+<td>§9</td>
+</tr>
+<tr>
+<td>GIWA tier</td>
+<td>V 0.6 / Q 1.5 (immutable)</td>
+<td>tier 0 as UI default on GIWA; tier 1 available from day 1</td>
+<td>§9</td>
+</tr>
+<tr>
+<td>Sold / pool / overhang</td>
+<td>71.43 / 20.41 / 8.16 %</td>
+<td>keep</td>
+<td>§1</td>
+</tr>
+<tr>
+<td>Overhang</td>
+<td>D1: locked ask position; D3: burn</td>
+<td><strong>pick one now; recommend D1's position</strong></td>
+<td>§2.3</td>
+</tr>
+<tr>
+<td>Trading fee</td>
+<td>1 % both ways</td>
+<td>keep</td>
+<td>§3</td>
+</tr>
+<tr>
+<td>Split</td>
+<td>80 / 20</td>
+<td>keep</td>
+<td>§3.2</td>
+</tr>
+<tr>
+<td>Creation fee</td>
+<td>0.0005 ETH → protocol</td>
+<td>keep</td>
+<td>§3.3</td>
+</tr>
+<tr>
+<td>Dev buy</td>
+<td>≤ 50M tokens, exempt, launcher wallet, revert on excess</td>
+<td>keep</td>
+<td>§5</td>
+</tr>
+<tr>
+<td>Snipe start / cap</td>
+<td>9900 / buyer keeps ≥ 1 %</td>
+<td>keep</td>
+<td></td>
+</tr>
+<tr>
+<td>Snipe window <code>T</code></td>
+<td>RH 3 s (interpolated), GIWA 4 s</td>
+<td><strong>5 s on both</strong>, interpolated on RH</td>
+<td>§4.2</td>
+</tr>
+<tr>
+<td>Snipe proceeds</td>
+<td>80/20 bucket</td>
+<td><strong>100 % protocol</strong> (owner decision; 50/50 acceptable)</td>
+<td>§4.3</td>
+</tr>
+<tr>
+<td>Post-graduation snipe</td>
+<td>3 s staircase [98, 24, 2] (hook) / "same curve" (pair)</td>
+<td>keep, but <strong>same schedule function as the curve</strong>, buys only</td>
+<td>§4.4</td>
+</tr>
+<tr>
+<td>Creator tax</td>
+<td>≤ 200 bps, curve-only</td>
+<td><strong>drop</strong>; if kept, curve-only, default 0</td>
+<td>§7</td>
+</tr>
+<tr>
+<td>LP fee</td>
+<td>0</td>
+<td>keep</td>
+<td>§6</td>
+</tr>
+<tr>
+<td>Tick spacing</td>
+<td>200</td>
+<td>keep</td>
+<td>§2.3</td>
+</tr>
+<tr>
+<td>Quote</td>
+<td>native ETH (RH), WETH9 (GIWA pair)</td>
+<td>keep; USDG in v1.1</td>
+<td>§9</td>
+</tr>
+<tr>
+<td>Timelock</td>
+<td>3 d + 3 d accept</td>
+<td>keep</td>
+<td></td>
+</tr>
+<tr>
+<td>WindDown</td>
+<td>7 d</td>
+<td>keep</td>
+<td>holder exit if graduation is bricked; no admin needed</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="12-must-change-before-audit-freeze">12. Must-change (before audit freeze)</h2>
+<ol>
+<li><strong>Overhang disposition is contradictory across D1 and D3.</strong> D1 D11 locks the 8.16 % as a second position; D3-8 burns it by default and <code>IGraduationTarget.graduate</code> assumes the leftover is already burned. Pick one (recommendation: D1's position, §2.3), and make D3's target mint both positions (or burn) accordingly. A compile-time constant is fine, but the two documents must agree before the executor/target interface is frozen.</li>
+<li><strong>Curve-phase fees and the creator recipient live in two places.</strong> D1 accrues curve fees in the <code>BondingCurve</code> singleton with its own <code>claimCreatorFees</code> and keeps the recipient + 3-day timelock in the factory; D2/D3 keep the ledger, recipient and timelock in <code>FeeEscrow</code>. Two recipients and two timelocks for one token is an economic bug (a creator could point curve fees and pool fees at different wallets; the DefiLlama adapter over <code>FeesAccrued</code> would miss all curve-phase fees; the escrow's <code>FACTORY.register</code> and the curve's <code>factory.creatorRecipient</code> can diverge). Unify: the curve credits <code>FeeEscrow.credit{value}(token, …)</code> per trade (or, to save the external call, accrues and lets anyone <code>flush(token)</code> into the escrow), the escrow is the only ledger and the only recipient registry, the factory holds no recipient state.</li>
+<li><strong>D1 §5.5 lists the hook flags of an afterSwap-only hook</strong> (<code>BEFORE_INITIALIZE | AFTER_SWAP | AFTER_SWAP_RETURNS_DELTA</code>), which is Pons's design that D2 rejects because the fee would land in the memecoin on exact-in buys and need an operator to convert. D1 must reference D2's <code>0x22CC</code> (or <code>0x20CC</code>) and its <code>register()</code>-before-<code>initialize</code> ordering; otherwise component 1's executor and component 2's hook cannot be wired.</li>
+<li><strong>One snipe schedule.</strong> Three different functions today (D1 exponential with 14 halvings and sub-second interpolation; D2 table <code>[9800, 2400, 200]</code> by integer second; D3 "98 % → 0 over <code>SNIPE_SECONDS</code>"). Ship one pure library <code>snipeBps(elapsedMs, T)</code> used by curve, hook and pair, with <code>T</code> a single constant (recommend 5 s), interpolation on Robinhood only. Divergent schedules are auditable surprises and a UI that cannot state one rule.</li>
+<li><strong>Curve tier table instead of a single immutable (V, Q) per chain</strong> (§9). An immutable <code>Q = 1.5</code> on GIWA will be wrong within weeks of mainnet, and fixing it costs the cross-chain address namespace.</li>
+<li><strong>Decide snipe-proceeds routing explicitly</strong> (§4.3) and document it. The draft's silence (D2 OQ-2 open, D1 "joins the 80/20 bucket") leaves the largest third-party-creator integrity gap undecided. Recommendation: 100 % protocol.</li>
+<li><strong>Creator tax: decide drop/keep, and if kept, curve-only</strong> (§7; resolves D2 OQ-3 and D1 §8 Q3). The hook and pair should not carry a tax path in v1.</li>
+</ol>
+<p>Not economics, but noticed while reading and worth a line to the other reviewers: D1 has the curve credit ETH dust to <code>CURVE.creditProtocolFees</code>, D3 to <code>escrow.credit(token)</code> — same unification as item 2; D3's <code>IGraduationTarget</code> is <code>onlyFactory</code> while D1's executor is <code>onlyCurve</code> — pick one caller.</p>
+<hr>
+<h2 id="13-accepted-risks-economic">13. Accepted risks (economic)</h2>
+<ul>
+<li><strong>Depth cliff at graduation</strong> (−5 % to −20 % realised proceeds on large sells vs the last curve block). Structural to any virtual-quote curve; same on Pons; disclose.</li>
+<li><strong>Sniper tax does not protect humans</strong>; it prices the latency race and skims bots. Bots take ~30 % of supply of any launch they believe in, within 1–2 s, on every schedule inside the owner's "few seconds" rule.</li>
+<li><strong>Parallel fee-earning pools</strong> on big tokens leak volume and fees from the creator's hooked pool; unpreventable on v4; bounded by routing share.</li>
+<li><strong>Revenue is a power law</strong>: third-party protocol revenue is a lottery on 0.1 % of launches; base revenue is the owner's own launches and launch fees.</li>
+<li><strong>Bot-spam launches</strong> are cheaper here (≈ 1.1M gas) than on Pons; revenue-positive, feed-noise-negative.</li>
+<li><strong>Overhang ask wall</strong> (if D1's position is kept) dampens early pumps by ~30 % in price terms; a marketing negative traded for permanent ETH depth.</li>
+<li><strong>ETH-only quote in v1</strong> forgoes the USDG/stock-pair segment that produced 3 of Pons's top-5 tokens this week; v1.1 item.</li>
+<li><strong>Uniswap governance protocol fee</strong> (≤ 0.1 %/direction) may be switched on; traders pay, creators unaffected.</li>
+<li><strong>Timestamp granularity on GIWA</strong> (1 s, fee-ordered): the second-1 block is a priority-fee auction whose proceeds go to the sequencer; the tax skim is the only part the pad captures.</li>
+</ul>
+<hr>
+<h3 id="sources">Sources</h3>
+<ul>
+<li>Verified Pons V2 sources (Robinhood Blockscout, local copies): <code>Pons V2 검증 소스(robinhoodchain.blockscout.com, 저장소 미포함)/_pons_contracts_src_v2_libraries_PonsV2GraduationMath.sol</code> (<code>sqrtPriceX96 = sqrt(amount1/amount0)·2^96</code>), <code>_pons_contracts_src_v2_PonsV2BondingCurve.sol</code> (<code>currentSnipeTaxBps</code>: <code>startBps &gt;&gt; (elapsed·14/window)</code>, exempt list), <code>_ponsv2_main.sol</code> (<code>snipeTaxStartBps = 9_900</code>, source default <code>snipeTaxSeconds = 15</code>, <code>MAX_SNIPE_TAX_SECONDS = 60</code>, <code>MAX_SNIPE_TAX_EXEMPTIONS = 32</code>; on-chain value 3 s per <code>docs/launch_research_2026-09-06/01_robinhood_launchpads.md</code> RH-03).</li>
+<li>Pons V2 docs: https://docs.ponsfamily.com/docs/v2 (snipe tax "joins the launch's trading fee", leftover locked, 3-day CTO timelock).</li>
+<li>o1 fees/anti-snipe (surcharge to platform, 20 s linear): https://docs.o1.exchange/launchpad/trading/fees-referrals.md ; Virtuals anti-sniper (proceeds to vested team buyback): https://whitepaper.virtuals.io/about-virtuals/capital-formation-layer/anti-sniper-protection-for-token-launches.md ; Clanker sniper auction 80/20: https://raw.githubusercontent.com/clanker-devco/v4-contracts/main/specs/SniperAuctionV0Explainer.md ; Raydium "not making an initial buy is a mistake": https://docs.raydium.io/user-flows/creating-a-launchlab-token.md ; GMGN heuristics: https://docs.gmgn.ai/index/ca-security-checks.md.</li>
+<li>Arbitrum block time/number semantics (sequencer clock, 1 s granularity, <code>block.number</code> = L1 estimate): https://docs.arbitrum.io/build-decentralized-apps/arbitrum-vs-ethereum/block-numbers-and-time ; FCFS / Timeboost: https://docs.arbitrum.io/how-arbitrum-works/sequencer ; GIWA fee ordering and 1 s blocks: https://docs.giwa.io/network-information/diffs-ethereum-giwa.md.</li>
+<li>Market data snapshots (2026-09-05/06): DefiLlama <code>https://api.llama.fi/summary/fees/pons-v2</code> (<code>launch/sum_pons-v2.json</code>), <code>https://api.llama.fi/overview/fees/robinhood-chain</code> (<code>launch/fees_rh.json</code>); GeckoTerminal <code>https://api.geckoterminal.com/api/v2/networks/robinhood/dexes/pons-v2-dex/pools</code> (<code>launch/gt_dex_pons-v2-dex.json</code>); on-chain samples <code>launch/ponsv2_firstbuys.json</code>, <code>launch/raw/grad3.log</code>, <code>launch/raw/sample_hours.log</code>.</li>
+<li>Recomputation: <code>docs/launchpad_v1_design/a2_econ.py</code> (this review) and <code>docs/launchpad_v1_design/curve_numbers.py</code> (D1's).</li>
+</ul></article>
+    </main>
+    <footer>
+      <span>research_only=true</span>
+      <span>strategy_consumption_allowed=false</span>
+      <span>order_input=false</span>
+    </footer>
+  </body>
+</html>

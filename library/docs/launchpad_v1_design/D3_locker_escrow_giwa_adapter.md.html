@@ -1,0 +1,1082 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex,nofollow,noarchive" />
+    <meta name="theme-color" content="#090c0e" />
+    <title>D3 — PermanentLocker, FeeEscrow, GIWA pool adapter, deployment &amp; security plan (launchpad v1) · GIWA · Robinhood Launchpad</title>
+    <link rel="stylesheet" href="../../../assets/document.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#document">본문으로 바로가기</a>
+    <header class="document-header">
+      <a class="brand" href="../../../development.html" aria-label="GIWA 대시보드로 돌아가기">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span><strong>GIWA · RH</strong><small>LAUNCHPAD ROOM</small></span>
+      </a>
+      <nav aria-label="문서 동작">
+        <a href="../../../development.html">← 대시보드</a>
+      </nav>
+    </header>
+    <main id="document" class="document-shell">
+      <div class="document-meta">
+        <span>REPORT</span>
+        <span>SHA256 2e67adb2a62d</span>
+      </div>
+      <h1>D3 — PermanentLocker, FeeEscrow, GIWA pool adapter, deployment &amp; security plan (launchpad v1)</h1>
+      <p class="source-path">docs/launchpad_v1_design/D3_locker_escrow_giwa_adapter.md</p>
+      <article class="markdown-body"><h1 id="d3-permanentlocker-feeescrow-giwa-pool-adapter-deployment-security-plan-launchpad-v1">D3 — PermanentLocker, FeeEscrow, GIWA pool adapter, deployment &amp; security plan (launchpad v1)</h1>
+<p>Status: design, 2026-09-06 (KST). Nothing here deploys anything. Solidity is illustrative (≥0.8.26, <code>evm_version = cancun</code>), not a full implementation.</p>
+<p>Inputs read: <code>docs/launch_research_2026-09-06/01_robinhood_launchpads.md</code> (Pons V2 mechanics, addresses), <code>docs/launch_research_2026-09-06/02_launch_structure_norms.md</code> (dev-buy / sniper norms, licences), <code>docs/launch_research_2026-09-06/05_lp_burn_signal.md</code> §2.c–§3 (what third-party tools can and cannot read on v4), verified sources of <code>PonsV2LaunchLocker</code> (<code>launch/owner_src.json</code>), <code>PonsV2FeeEscrow</code> (<code>launch/sc_0xd3AF…Ac9e.json</code>), <code>ClankerLpLockerFeeConversion.sol</code>, plus the primary docs cited inline.</p>
+<p>Fixed product rules this component must honour (from the brief): 1e9 fixed supply, 0% team, 100% to curve/pool; one disclosed atomic dev-buy; 1% trading fee split creator 80 / protocol 20; protocol recipient immutable; creator recipient changeable only through a 3-day timelock; no buyback; <strong>no admin key, no pause, no upgrade, no fee switch, no blacklist/mint</strong>; liquidity permanently locked; token-side fees retained or burned; 0.0005 ETH creation fee to the protocol recipient; same token address on both chains via CreateX.</p>
+<hr>
+<h2 id="0-decisions-in-one-screen">0. Decisions in one screen</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Decision</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>D3-1</td>
+<td><strong>The locker only custodies.</strong> It holds the v4 position NFT (Robinhood) or the pair's non-transferable LP shares (GIWA). It has no <code>claim</code>, no fee logic, no owner, no <code>setFactory</code>. Fees never touch the locker.</td>
+<td>On v4 fees are taken by the hook at swap time (Pons/Clanker pattern), so a locker <code>collect</code> path is pure attack surface: a <code>DECREASE_LIQUIDITY(0)</code> call is the same ABI as a real decrease. If the locker never calls <code>modifyLiquidities</code> at all, the negative test "locker never calls PositionManager with a write selector" is trivially provable.</td>
+</tr>
+<tr>
+<td>D3-2</td>
+<td><strong>Position-side fees on v4 are zero by construction</strong>: pool <code>fee = 0</code>, hook takes 1% in quote via return-delta; token-side residue (exact-in ETH buys, see §1.4) is burned to <code>0x…dEaD</code>.</td>
+<td>Owner rule "token-side fees retained or burned"; removes any need for internal swap-backs (<code>maxInternalPriceImpactBps</code>-style knobs in Pons).</td>
+</tr>
+<tr>
+<td>D3-3</td>
+<td><strong>FeeEscrow is keyed by token, not by recipient</strong>; balances are <code>ledger[token] = {creatorAccrued, protocolAccrued}</code> in that token's quote asset; the creator recipient is per token; the protocol recipient is one immutable address.</td>
+<td>Per-token accounting is what a 20-line DefiLlama/Dune adapter needs (§2.6). The timelock is naturally per token.</td>
+</tr>
+<tr>
+<td>D3-4</td>
+<td><strong>Native ETH is the quote on Robinhood (v4 <code>currency0 = address(0)</code>), WETH9 predeploy is the quote on GIWA.</strong> The escrow supports both: <code>credit{value}</code> and <code>creditToken</code>. Claims can unwrap WETH9.</td>
+<td>Avoids the upgradeable <code>aeWETH</code> proxy (<code>0x0Bd7…AD73</code>, TransparentUpgradeableProxy per 04 §1) entirely on Robinhood; GIWA's <code>0x4200…0006</code> is an immutable predeploy.</td>
+</tr>
+<tr>
+<td>D3-5</td>
+<td><strong>GIWA pool = from-scratch <code>LaunchPair</code> (x·y=k, MIT, ~250 lines) with 1% quote-side fee streamed to the escrow, non-transferable LP shares minted once to the locker, <code>sync</code> kept, <code>skim</code>/flash-swap/<code>feeTo</code>/<code>_mintFee</code> removed.</strong></td>
+<td>v2-core is GPL-3.0 (<code>Uniswap/v2-core/LICENSE</code>); a fork drags 0.3%-on-input semantics, <code>feeTo</code>, <code>skim</code> and flash callbacks we do not want. Third-party v2 routers would mis-quote a 1%-quote-side pair anyway, so a tiny router of our own is required regardless (§3.5).</td>
+</tr>
+<tr>
+<td>D3-6</td>
+<td><strong><code>IGraduationTarget</code> makes the curve chain-agnostic</strong>: <code>UniswapV4Target</code> (Robinhood) and <code>LaunchPairTarget</code> (GIWA) are the only chain-specific contracts besides the hook.</td>
+<td>Component 1's curve calls one interface; the address of the target is an immutable in the factory.</td>
+</tr>
+<tr>
+<td>D3-7</td>
+<td><strong>Same addresses on both chains via CreateX <code>deployCreate3</code> with sender-guarded, non-cross-chain-protected salts</strong> (salt byte 21 = <code>0x00</code>), so even contracts with chain-specific constructor args (target, locker) land at identical addresses. Hook uses CREATE2 with a mined salt (flag bits) via the Arachnid proxy.</td>
+<td>CREATE3 addresses depend only on (deployer, salt), not init code — the property we need because <code>PoolManager</code> vs <code>WETH9</code> arguments differ per chain.</td>
+</tr>
+<tr>
+<td>D3-8</td>
+<td><strong>Leftover supply at graduation is burned (transferred to <code>0x…dEaD</code>), not locked.</strong></td>
+<td>"100% to curve/pool" reads cleanest when no contract holds a bag that GMGN/Bubblemaps could label "insider". Component 1 may override with <code>locker.lockTokenSupply</code> semantics if it needs a reserve; the locker exposes the view either way.</td>
+</tr>
+<tr>
+<td>D3-9</td>
+<td><strong>After deployment, the only addresses that can do anything are the per-token creator recipient (claim / propose / cancel / accept) and the protocol recipient (claim). Everything else is permissionless or absent.</strong></td>
+<td>§4.6 lists every callable state-changing function and who can call it.</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="1-permanentlocker">1. PermanentLocker</h2>
+<h3 id="11-what-the-locker-must-and-must-not-be">1.1 What the locker must and must not be</h3>
+<p>Reference behaviours observed on-chain (05 §2.c): <code>PonsV2LaunchLocker</code> (<code>0x267444D0…4952</code>, verified) has ABI <code>setFactory</code> (once), <code>lockPosition</code>, <code>lockTokenSupply</code>, <code>isLocked</code>, <code>onERC721Received</code> — no withdraw path, but it still carries <code>Ownable2Step</code> for the one-time <code>setFactory</code> wiring and a <code>renounceOwnership</code> override that reverts. <code>ClankerLpLockerFeeConversion</code> (<code>ClankerLpLockerFeeConversion.sol</code> l.30, 718–740) is <code>Ownable</code>, calls <code>positionManager.modifyLiquidities</code> to collect (<code>DECREASE_LIQUIDITY</code> with liquidity 0), and has <code>withdrawETH</code>/<code>withdrawERC20</code> <code>onlyOwner</code> sweeps of stray balances. Both are "permanent by reading the source", which is exactly what 05 §3 step 3 says a verifier must do.</p>
+<p>Our locker is stricter than both: <strong>no owner at all, no factory setter (factory address is an immutable computed before deploy, §4.2), no call into PositionManager, no ERC-20/ETH movement of any kind.</strong> The only state transitions are "register custody of position X for token T" (once per token) and the event log.</p>
+<h3 id="12-interface">1.2 Interface</h3>
+<pre><code class="language-solidity">// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.26;
+
+/// @notice Custody-only locker. Holds a Uniswap v4 position NFT (Robinhood) or
+///         LaunchPair LP shares (GIWA) forever. No owner. No outbound path.
+interface IPermanentLocker {
+    enum Venue { NONE, UNISWAP_V4, LAUNCH_PAIR }
+
+    struct LockInfo {
+        Venue   venue;          // which implementation graduated this token
+        address venueContract;  // PositionManager (v4) or the LaunchPair (GIWA)
+        uint256 positionId;     // v4 tokenId, or 0 for LaunchPair
+        bytes32 poolId;         // v4 PoolId, or keccak256(pair) for LaunchPair
+        uint64  lockedAt;       // block.timestamp of graduation
+        uint256 burnedSupply;   // tokens sent to 0xdEaD at graduation (D3-8)
+    }
+
+    event PositionLocked(address indexed token, Venue indexed venue, address venueContract, uint256 positionId, bytes32 poolId);
+    event SupplyBurned(address indexed token, uint256 amount);
+
+    // --- the ONLY state-changing entry points (onlyGraduationTarget, once per token) ---
+    function lockV4Position(address token, uint256 tokenId, bytes32 poolId) external;
+    function lockPairShares(address token, address pair) external;
+
+    // --- views for third-party verifiers (05 §3 checklist) ---
+    function lockInfo(address token) external view returns (LockInfo memory);
+    function positionOwner(address token) external view returns (address);   // always address(this) once locked
+    function lockedForever(address token) external view returns (bool);      // true once locked; there is no unlock
+    function feeRecipients(address token) external view returns (address creator, address protocol, uint16 creatorBps, uint16 protocolBps);
+    function feeEscrow() external view returns (address);
+    function graduationTarget() external view returns (address);
+    function hasWithdrawPath() external pure returns (bool);                 // constant false — documented, greppable
+    function supportsInterface(bytes4) external view returns (bool);        // ERC-165: IPermanentLocker + IERC721Receiver
+}
+</code></pre>
+<p><code>feeRecipients</code> is a pass-through read of the escrow (<code>IFeeEscrow.ledger(token)</code>), so a tool that only knows the position owner can walk owner → locker → escrow → recipients without an ABI for the escrow.</p>
+<h3 id="13-sketch">1.3 Sketch</h3>
+<pre><code class="language-solidity">contract PermanentLocker is IPermanentLocker, IERC721Receiver {
+    address public immutable graduationTarget;   // UniswapV4Target or LaunchPairTarget (CREATE3-precomputed)
+    address public immutable positionManager;    // 0x58da…4fA7 on Robinhood; address(0) on GIWA
+    IFeeEscrow public immutable feeEscrow;
+
+    mapping(address token =&gt; LockInfo) private _info;
+
+    error OnlyGraduationTarget();
+    error AlreadyLocked();
+    error NotHeld();
+    error OnlyPositionManager();
+
+    constructor(address target_, address positionManager_, address escrow_) {
+        graduationTarget = target_; positionManager = positionManager_; feeEscrow = IFeeEscrow(escrow_);
+    }
+
+    modifier onlyTarget() { if (msg.sender != graduationTarget) revert OnlyGraduationTarget(); _; }
+
+    function lockV4Position(address token, uint256 tokenId, bytes32 poolId) external onlyTarget {
+        if (_info[token].venue != Venue.NONE) revert AlreadyLocked();
+        if (IERC721(positionManager).ownerOf(tokenId) != address(this)) revert NotHeld();
+        _info[token] = LockInfo(Venue.UNISWAP_V4, positionManager, tokenId, poolId, uint64(block.timestamp), 0);
+        emit PositionLocked(token, Venue.UNISWAP_V4, positionManager, tokenId, poolId);
+    }
+
+    function lockPairShares(address token, address pair) external onlyTarget {
+        if (_info[token].venue != Venue.NONE) revert AlreadyLocked();
+        if (ILaunchPair(pair).balanceOf(address(this)) == 0 || ILaunchPair(pair).balanceOf(address(this)) != ILaunchPair(pair).totalSupply()) revert NotHeld();
+        _info[token] = LockInfo(Venue.LAUNCH_PAIR, pair, 0, keccak256(abi.encodePacked(pair)), uint64(block.timestamp), 0);
+        emit PositionLocked(token, Venue.LAUNCH_PAIR, pair, 0, keccak256(abi.encodePacked(pair)));
+    }
+
+    /// PositionManager mints with plain `_mint` (no receiver callback) — v4-periphery
+    /// PositionManager.sol; this exists only so an explicit safeTransferFrom from the
+    /// canonical PositionManager cannot revert. Anything else is refused.
+    function onERC721Received(address, address, uint256, bytes calldata) external view returns (bytes4) {
+        if (msg.sender != positionManager) revert OnlyPositionManager();
+        return IERC721Receiver.onERC721Received.selector;
+    }
+
+    function hasWithdrawPath() external pure returns (bool) { return false; }
+    // no receive(), no fallback(), no payable functions → ETH cannot even be sent here
+}
+</code></pre>
+<p>Notes:
+- Position <strong>mint goes straight to the locker</strong> as <code>recipient</code> in <code>MINT_POSITION</code> (v4 docs: "recipient, // Who receives the NFT", https://developers.uniswap.org/docs/protocols/v4/guides/position-manager). <code>PositionManager</code> uses <code>_mint</code>, not <code>_safeMint</code> (v4-periphery <code>PositionManager.sol</code>), so the callback is never part of the graduation path — custody is proven by the <code>ownerOf</code> check, same as Pons.
+- The locker is <strong>deployed with no <code>receive</code>/<code>fallback</code></strong> so accidental ETH cannot accumulate; ERC-20s sent by mistake are simply stuck (intentionally — a <code>rescue</code> is a withdraw path).
+- <code>positionOwner(token)</code> returns <code>address(this)</code> after lock; a verifier that wants an independent check does <code>PositionManager.ownerOf(lockInfo(token).positionId) == locker</code> (05 §3 step 2) and then greps the verified ABI for the selectors in §1.5 (05 §3 step 3).
+- On v4 the position's accrued LP fees are always zero because the pool fee is 0 and the hook does not <code>donate</code>. So there is nothing for the locker to collect — that is the answer to "what does the locker even need": <strong>custody + a verifiable read surface</strong>, nothing else.</p>
+<h3 id="14-contract-with-the-hook-component-2-that-makes-d3-1-possible">1.4 Contract with the hook (component 2) that makes D3-1 possible</h3>
+<p>The escrow only accepts the <strong>quote</strong> asset. The hook must therefore take its 1% in quote for every swap direction:</p>
+<table>
+<thead>
+<tr>
+<th>Swap</th>
+<th>Specified currency</th>
+<th>Where the hook can take a quote-side fee</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Buy, exact-in ETH</td>
+<td>ETH (specified)</td>
+<td><code>beforeSwapReturnDelta</code> on the specified currency (reduce ETH going into the pool) — flag <code>1 &amp;lt;&amp;lt; 3</code></td>
+</tr>
+<tr>
+<td>Buy, exact-out token</td>
+<td>token specified, ETH unspecified</td>
+<td><code>afterSwapReturnDelta</code> on unspecified (ETH) — flag <code>1 &amp;lt;&amp;lt; 2</code></td>
+</tr>
+<tr>
+<td>Sell, exact-in token</td>
+<td>token specified, ETH unspecified</td>
+<td><code>afterSwapReturnDelta</code> on ETH output</td>
+</tr>
+<tr>
+<td>Sell, exact-out ETH</td>
+<td>ETH specified</td>
+<td><code>beforeSwapReturnDelta</code> on ETH… (exact-out on the specified side raises the user's ETH out; simplest is to disallow exact-out sells in our router and accept that other routers doing it pay fee via the fallback below)</td>
+</tr>
+</tbody>
+</table>
+<p>Flag values from <code>Uniswap/v4-core/src/libraries/Hooks.sol</code> (<code>BEFORE_SWAP_FLAG = 1&amp;lt;&amp;lt;7</code>, <code>AFTER_SWAP_FLAG = 1&amp;lt;&amp;lt;6</code>, <code>BEFORE_SWAP_RETURNS_DELTA_FLAG = 1&amp;lt;&amp;lt;3</code>, <code>AFTER_SWAP_RETURNS_DELTA_FLAG = 1&amp;lt;&amp;lt;2</code>; the after-swap hook delta is applied as <code>swapDelta = swapDelta - hookDelta</code> on the unspecified currency). Fallback for any path where the only takeable side is the token: take it and <strong>burn</strong> (<code>poolManager.take(token, 0xdEaD, amt)</code> — <code>take</code> to an arbitrary recipient is allowed inside the unlock), emitting <code>TokenFeeBurned(token, amount)</code>. Pons V2's hook instead runs an internal swap-back bounded by <code>maxInternalPriceImpactBps = 300</code> (01 §RH-04); we deliberately do not.</p>
+<p>The hook credits the escrow inside the same unlock: <code>poolManager.take(CurrencyLibrary.ADDRESS_ZERO, address(this), fee); feeEscrow.credit{value: fee}(token);</code>. The escrow's <code>credit</code> does no external calls, so re-entering the PoolManager is impossible from there.</p>
+<h3 id="15-negative-test-list-must-all-pass-each-is-a-foundry-test-that-greps-the-compiled-abi-and-where-applicable-tries-the-call">1.5 Negative-test list (must all pass; each is a Foundry test that greps the compiled ABI and, where applicable, tries the call)</h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Assertion</th>
+<th>How tested</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>N1</td>
+<td>ABI contains none of the selectors: <code>decreaseLiquidity</code>, <code>burn</code>, <code>burnPosition</code>, <code>withdraw*</code>, <code>unlock*</code>, <code>collect*</code>, <code>rescue*</code>, <code>sweep*</code>, <code>transfer*</code>, <code>safeTransferFrom</code>, <code>approve</code>, <code>setApprovalForAll</code>, <code>modifyLiquidities</code>, <code>execute</code>, <code>call</code>, <code>multicall</code>, <code>upgradeTo*</code>, <code>setFactory</code>, <code>setTarget</code>, <code>transferOwnership</code>, <code>renounceOwnership</code>, <code>owner</code>, <code>pause</code>, <code>unpause</code>, <code>initialize</code></td>
+<td><code>forge inspect PermanentLocker abi</code> → JSON → assert set intersection empty (a CI script, plus a test that reads the artifact)</td>
+</tr>
+<tr>
+<td>N2</td>
+<td>No <code>receive</code>, no <code>fallback</code>, no <code>payable</code> function</td>
+<td>ABI scan; <code>vm.expectRevert(); payable(locker).call{value:1}("")</code></td>
+</tr>
+<tr>
+<td>N3</td>
+<td>No <code>DELEGATECALL</code>, <code>SELFDESTRUCT</code>, <code>CALLCODE</code> opcodes in runtime bytecode</td>
+<td>bytecode disassembly scan in CI (<code>evm-dasm</code>/<code>cast disassemble</code>)</td>
+</tr>
+<tr>
+<td>N4</td>
+<td>No <code>CALL</code> opcode whose target could be <code>positionManager</code> with a non-view selector: the only external calls are <code>ownerOf</code>, <code>balanceOf</code>, <code>totalSupply</code>, <code>ledger</code> (all <code>STATICCALL</code>)</td>
+<td>assert the runtime bytecode contains no <code>CALL</code> (0xF1) at all — only <code>STATICCALL</code> (0xFA). The sketch above satisfies this.</td>
+</tr>
+<tr>
+<td>N5</td>
+<td>Not a proxy: <code>EXTCODESIZE</code> stable, no EIP-1967 slots, no <code>implementation()</code></td>
+<td>test reads slots <code>0x3608…bbc</code> / admin slot → zero; bytecode has no <code>DELEGATECALL</code> (N3)</td>
+</tr>
+<tr>
+<td>N6</td>
+<td><code>lockV4Position</code> reverts unless caller is <code>graduationTarget</code> (fuzz 10k callers), reverts on second call for same token, reverts if <code>ownerOf(tokenId) != locker</code></td>
+<td>unit + fuzz</td>
+</tr>
+<tr>
+<td>N7</td>
+<td>After lock, <code>PositionManager.modifyLiquidities</code> with <code>DECREASE_LIQUIDITY</code>/<code>BURN_POSITION</code> on that tokenId from <strong>any</strong> address (including the target, the factory, the hook, the escrow, protocol recipient) reverts (<code>onlyIfApproved</code> fails because owner is the locker and the locker never approves)</td>
+<td>fork test against Robinhood testnet 46630 v4 (§4.4)</td>
+</tr>
+<tr>
+<td>N8</td>
+<td><code>PositionManager.transferFrom(locker, x, tokenId)</code> and <code>safeTransferFrom</code> revert for every caller</td>
+<td>fork test</td>
+</tr>
+<tr>
+<td>N9</td>
+<td><code>onERC721Received</code> reverts when <code>msg.sender != positionManager</code> (so no random NFT can be pushed in with a callback that might be abused)</td>
+<td>unit</td>
+</tr>
+<tr>
+<td>N10</td>
+<td>No storage variable other than <code>_info</code> mapping (immutables are not storage) → <code>forge inspect storage-layout</code> has exactly one slot family</td>
+<td>CI check</td>
+</tr>
+<tr>
+<td>N11</td>
+<td><code>hasWithdrawPath()</code> is <code>pure</code> and returns <code>false</code>; <code>lockedForever(token)</code> is <code>true</code> iff <code>lockInfo(token).venue != NONE</code> and can never return to false (invariant test)</td>
+<td>invariant</td>
+</tr>
+<tr>
+<td>N12</td>
+<td>GIWA: <code>LaunchPair</code> has no <code>transfer</code>/<code>transferFrom</code>/<code>approve</code>/<code>permit</code> for LP shares and <code>burn</code> is absent from its ABI; locker holds <code>totalSupply()</code> of shares forever</td>
+<td>ABI scan + invariant <code>pair.balanceOf(locker) == pair.totalSupply()</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="16-mapping-to-the-05-3-verifier-checklist">1.6 Mapping to the 05 §3 verifier checklist</h3>
+<table>
+<thead>
+<tr>
+<th>05 §3 step</th>
+<th>What our contracts expose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1 Pool version + hook</td>
+<td><code>lockInfo(token).venue</code>, <code>.poolId</code>; the hook address is in the v4 <code>Initialize</code> event and is immutable per pool ("The hook is part of the PoolKey and is set once… cannot be added, removed, or swapped afterward", https://developers.uniswap.org/docs/protocols/v4/concepts/hooks). Hook has no owner and no <code>set*</code> (component 2).</td>
+</tr>
+<tr>
+<td>2 Position owner</td>
+<td><code>positionOwner(token)</code> and independently <code>PositionManager.ownerOf(positionId)</code> = locker; GIWA: <code>pair.balanceOf(locker) == pair.totalSupply()</code></td>
+</tr>
+<tr>
+<td>3 Withdraw path in owner contract</td>
+<td><code>hasWithdrawPath() == false</code>, verified source on Blockscout, ABI negative list N1, no owner</td>
+</tr>
+<tr>
+<td>4 Fee recipient / who earns</td>
+<td><code>feeRecipients(token)</code> → (creator, protocol, 8000, 2000); escrow events (§2.6)</td>
+</tr>
+<tr>
+<td>5 Token contract</td>
+<td>component 1 (plain OZ ERC-20, no owner)</td>
+</tr>
+<tr>
+<td>8 Copycat pools</td>
+<td><code>lockInfo(token).poolId</code> is <em>the</em> locked pool; UI/tools should route only there</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="2-feeescrow">2. FeeEscrow</h2>
+<h3 id="21-requirements-design">2.1 Requirements → design</h3>
+<ul>
+<li>Per-token accrued creator/protocol balances in that token's quote asset (native ETH on Robinhood, WETH9 on GIWA; a future USDG/stock pairing is just another ERC-20 quote — the design allows it, v1 config does not enable it).</li>
+<li>Pull claim by the recipient; permissionless <code>claimFor(token)</code> push to the <em>current</em> recipient (never to a caller-chosen address).</li>
+<li>Creator recipient change: propose → 3-day delay → accept by the new recipient (two-step so a typo cannot strand fees) → expires 3 days later if not accepted; current recipient may cancel during the wait. Protocol recipient: <code>immutable</code>.</li>
+<li>No owner, no pause, no sweep, no arbitrary token rescue. Nothing can move value except to the two recipients.</li>
+<li>Reentrancy: CEI, <code>nonReentrant</code>, <code>call</code> with all gas (smart-wallet recipients), no <code>transfer()</code>.</li>
+<li>Events designed for a 20-line fees adapter (§2.6).</li>
+</ul>
+<h3 id="22-storage-and-interface">2.2 Storage and interface</h3>
+<pre><code class="language-solidity">interface IFeeEscrow {
+    struct Ledger {
+        address quote;            // address(0) = native ETH; else ERC-20 (WETH9 on GIWA)
+        address creator;          // current creator recipient
+        address pendingCreator;   // proposed new recipient (0 if none)
+        uint64  pendingEta;       // earliest accept time
+        uint128 creatorAccrued;   // claimable by `creator`
+        uint128 protocolAccrued;  // claimable by PROTOCOL
+        uint128 creatorLifetime;  // monotonic, for dashboards
+        uint128 protocolLifetime;
+    }
+
+    // constants
+    function PROTOCOL() external view returns (address);         // immutable
+    function CREATOR_BPS() external view returns (uint16);       // 8000
+    function PROTOCOL_BPS() external view returns (uint16);      // 2000
+    function TIMELOCK() external view returns (uint64);          // 3 days
+    function ACCEPT_WINDOW() external view returns (uint64);     // 3 days
+    function FACTORY() external view returns (address);          // immutable; the only registrar
+
+    // registration (factory, once per token, at launch)
+    function register(address token, address quote, address creator) external;
+
+    // crediting (permissionless: caller can only give away value it attaches)
+    function credit(address token) external payable;                             // native quote
+    function creditToken(address token, uint256 amount) external;                // pulls `ledger.quote` from msg.sender
+
+    // claiming
+    function claim(address token, bool unwrap) external returns (uint256);       // msg.sender must be creator or PROTOCOL
+    function claimFor(address token, bool unwrap) external returns (uint256 creatorPaid, uint256 protocolPaid); // anyone; pays both recipients
+    function claimMany(address[] calldata tokens, bool unwrap) external;         // gas saver for creators with many launches
+
+    // creator recipient timelock
+    function proposeCreator(address token, address newCreator) external;         // current creator
+    function cancelProposal(address token) external;                             // current creator
+    function acceptCreator(address token) external;                              // pendingCreator, after eta, before eta + ACCEPT_WINDOW
+
+    // views
+    function ledger(address token) external view returns (Ledger memory);
+    function claimable(address token, address who) external view returns (uint256);
+}
+</code></pre>
+<p>Why <code>register</code> is factory-only: <code>credit</code> is permissionless (like Pons: "the caller can only ever add value they already attached to the call, so there is no privilege to gate"), but the <em>recipient</em> for a token must be bound exactly once by the launch transaction, otherwise a griefer could register a token address first with themselves as creator. <code>FACTORY</code> is an immutable set at deploy to the CREATE3-precomputed factory address (§4.2); there is no setter.</p>
+<h3 id="23-credit-and-split">2.3 Credit and split</h3>
+<pre><code class="language-solidity">uint16 public constant CREATOR_BPS = 8000;
+uint16 public constant PROTOCOL_BPS = 2000;
+
+function credit(address token) external payable {
+    Ledger storage l = _ledger[token];
+    if (l.creator == address(0)) revert NotRegistered();
+    if (l.quote != address(0)) revert WrongQuote();
+    if (msg.value == 0) return;
+    _accrue(token, l, msg.value);
+}
+
+function creditToken(address token, uint256 amount) external nonReentrant {
+    Ledger storage l = _ledger[token];
+    if (l.creator == address(0)) revert NotRegistered();
+    if (l.quote == address(0)) revert WrongQuote();
+    uint256 before = IERC20(l.quote).balanceOf(address(this));
+    IERC20(l.quote).safeTransferFrom(msg.sender, address(this), amount);
+    uint256 got = IERC20(l.quote).balanceOf(address(this)) - before;   // fee-on-transfer safe (Pons does the same)
+    if (got == 0) return;
+    _accrue(token, l, got);
+}
+
+function _accrue(address token, Ledger storage l, uint256 amount) private {
+    uint256 protocolPart = amount * PROTOCOL_BPS / 10_000;   // rounds down → dust favours the creator
+    uint256 creatorPart  = amount - protocolPart;
+    l.creatorAccrued  += uint128(creatorPart);
+    l.protocolAccrued += uint128(protocolPart);
+    l.creatorLifetime += uint128(creatorPart);
+    l.protocolLifetime += uint128(protocolPart);
+    emit FeesAccrued(token, l.quote, msg.sender, creatorPart, protocolPart);
+}
+</code></pre>
+<p>Overflow: <code>uint128</code> holds 3.4e38 wei; total ETH supply is ~1.2e26 wei — safe, and the packing keeps the ledger to 3 slots.</p>
+<h3 id="24-claims-pull-and-permissionless-push">2.4 Claims (pull and permissionless push)</h3>
+<pre><code class="language-solidity">function claim(address token, bool unwrap) external nonReentrant returns (uint256 amt) {
+    Ledger storage l = _ledger[token];
+    if (msg.sender == l.creator)       { amt = l.creatorAccrued;  l.creatorAccrued = 0; }
+    else if (msg.sender == PROTOCOL)   { amt = l.protocolAccrued; l.protocolAccrued = 0; }
+    else revert NotRecipient();
+    if (amt == 0) revert NoBalance();
+    _pay(l.quote, msg.sender, amt, unwrap);
+    emit Claimed(token, msg.sender, msg.sender == l.creator ? Role.CREATOR : Role.PROTOCOL, l.quote, amt);
+}
+
+function claimFor(address token, bool unwrap) external nonReentrant returns (uint256 c, uint256 p) {
+    Ledger storage l = _ledger[token];
+    c = l.creatorAccrued;  p = l.protocolAccrued;
+    l.creatorAccrued = 0;  l.protocolAccrued = 0;                      // effects before interactions
+    if (c &gt; 0) { _pay(l.quote, l.creator, c, unwrap); emit Claimed(token, l.creator, Role.CREATOR, l.quote, c); }
+    if (p &gt; 0) { _pay(l.quote, PROTOCOL, p, unwrap);  emit Claimed(token, PROTOCOL,  Role.PROTOCOL, l.quote, p); }
+}
+
+function _pay(address quote, address to, uint256 amt, bool unwrap) private {
+    if (quote == address(0)) {
+        (bool ok,) = to.call{value: amt}(&quot;&quot;);                          // full gas: smart wallets / Safes
+        if (!ok) revert TransferFailed();
+    } else if (unwrap &amp;&amp; quote == WETH9) {                             // WETH9 immutable on GIWA (0x4200…0006)
+        IWETH9(quote).withdraw(amt);                                   // ETH lands here via receive()
+        (bool ok,) = to.call{value: amt}(&quot;&quot;);
+        if (!ok) revert TransferFailed();
+    } else {
+        IERC20(quote).safeTransfer(to, amt);
+    }
+}
+
+receive() external payable { if (msg.sender != WETH9) revert DirectEthNotAccepted(); }
+</code></pre>
+<ul>
+<li><code>claimFor</code> <strong>cannot redirect</strong>: the recipient is read from storage, the caller only pays gas. If a recipient is a contract that reverts, <code>claimFor</code> reverts and nothing is lost — the recipient can still <code>claim</code> themselves after fixing their contract, or move via the timelock.</li>
+<li>A revert-on-receive creator cannot brick the protocol's share: <code>claimFor</code> pays both, but <code>claim</code> by <code>PROTOCOL</code> pays only its own part and never touches the creator's transfer.</li>
+<li><code>receive</code> accepts only WETH9 unwraps, so stray ETH cannot inflate <code>address(this).balance</code> above liabilities in a way anyone could attribute (there is no attribution function anyway).</li>
+<li>On Robinhood <code>WETH9</code> immutable is set to <code>address(0)</code> (no unwrap path; native quote) — one bytecode, per-chain constructor arg (fine under CREATE3, §4.2).</li>
+</ul>
+<h3 id="25-creator-recipient-timelock">2.5 Creator-recipient timelock</h3>
+<pre><code class="language-solidity">uint64 public constant TIMELOCK = 3 days;
+uint64 public constant ACCEPT_WINDOW = 3 days;
+
+function proposeCreator(address token, address newCreator) external {
+    Ledger storage l = _ledger[token];
+    if (msg.sender != l.creator) revert NotRecipient();
+    if (newCreator == address(0) || newCreator == l.creator) revert BadRecipient();
+    l.pendingCreator = newCreator;
+    l.pendingEta = uint64(block.timestamp) + TIMELOCK;
+    emit CreatorProposed(token, l.creator, newCreator, l.pendingEta, l.pendingEta + ACCEPT_WINDOW);
+}
+function cancelProposal(address token) external {
+    Ledger storage l = _ledger[token];
+    if (msg.sender != l.creator) revert NotRecipient();
+    emit CreatorProposalCancelled(token, l.pendingCreator);
+    l.pendingCreator = address(0); l.pendingEta = 0;
+}
+function acceptCreator(address token) external {
+    Ledger storage l = _ledger[token];
+    if (msg.sender != l.pendingCreator) revert NotPending();
+    if (block.timestamp &amp;lt; l.pendingEta) revert TooEarly();
+    if (block.timestamp &gt; l.pendingEta + ACCEPT_WINDOW) revert Expired();
+    emit CreatorChanged(token, l.creator, msg.sender);
+    l.creator = msg.sender; l.pendingCreator = address(0); l.pendingEta = 0;
+}
+</code></pre>
+<p>Semantics chosen vs Pons: Pons's docs say "Nothing happens for three days. After that anyone can carry it out, and if no one does within a further three days it expires" and "a creator moving their fees elsewhere during the wait does not call off the proposal" — that clause exists because Pons's proposal is a <em>protocol-side</em> CTO takeover (https://docs.ponsfamily.com/docs/v2). We have no protocol admin, so the only proposer is the creator; the two-step <strong>accept by the new wallet</strong> replaces "anyone can carry it out" and protects against fat-fingered addresses. Accrued fees during the wait remain claimable by the current recipient — a stolen key can drain accrued fees immediately but must sit on the proposal for 3 days in public; holders and the creator see <code>CreatorProposed</code> and can react (the creator can <code>cancelProposal</code> with the same key, so a theft of the key is a stalemate rather than a silent takeover — this is the honest limit of any single-key design; creators who care should make the recipient a Safe from day one).</p>
+<p>Timestamp semantics: on Robinhood (Arbitrum Nitro) <code>block.timestamp</code> is set by the sequencer's clock, may be up to "24 hours earlier than the current time, or one hour in the future", and is monotonic (https://docs.arbitrum.io/build-decentralized-apps/arbitrum-vs-ethereum/block-numbers-and-time). A 3-day lock could therefore be shortened by at most ~1 h by a misbehaving sequencer — acceptable; never use <code>block.number</code> for this on Robinhood because it is the <em>L1</em> block estimate ("unreliable in the shorter term (minutes)", same page). On GIWA (OP Stack) <code>block.number</code> is the L2 block and blocks are 1 s (docs.giwa.io <code>diffs-ethereum-giwa.md</code>), but we use timestamps on both for one code path.</p>
+<h3 id="26-event-schema-and-the-20-line-adapter">2.6 Event schema and the 20-line adapter</h3>
+<pre><code class="language-solidity">event Registered(address indexed token, address indexed quote, address indexed creator);
+event FeesAccrued(address indexed token, address indexed quote, address indexed source, uint256 creatorAmount, uint256 protocolAmount);
+event Claimed(address indexed token, address indexed recipient, Role role, address quote, uint256 amount);
+event CreatorProposed(address indexed token, address indexed from, address indexed to, uint64 eta, uint64 expiry);
+event CreatorProposalCancelled(address indexed token, address pending);
+event CreatorChanged(address indexed token, address indexed from, address indexed to);
+</code></pre>
+<p><code>source</code> = the curve, the hook, or the LaunchPair — that is how an adapter splits "curve fees" from "pool fees" without another event. Every amount is already split, so the adapter is one <code>getLogs</code> + two sums (DefiLlama's Pons V2 adapter in <code>launch/adapter_ponsdotfamily-v2.ts</code> needs four event types and a per-pool sweep to do the same):</p>
+<pre><code class="language-ts">// DefiLlama fees adapter (dimension-adapters style), ~20 lines
+import { FetchOptions, SimpleAdapter } from &quot;../../adapters/types&quot;;
+const ESCROW = &quot;0x…&quot;; // same address on both chains (CREATE3)
+const EV = &quot;event FeesAccrued(address indexed token, address indexed quote, address indexed source, uint256 creatorAmount, uint256 protocolAmount)&quot;;
+const fetch = async (o: FetchOptions) =&gt; {
+  const logs = await o.getLogs({ target: ESCROW, eventAbi: EV });
+  const dailyFees = o.createBalances(), dailyRevenue = o.createBalances(), creators = o.createBalances();
+  for (const l of logs) {
+    const q = l.quote === &quot;0x0000000000000000000000000000000000000000&quot; ? &quot;0x0000000000000000000000000000000000000000&quot; : l.quote; // ETH or WETH9
+    dailyFees.add(q, l.creatorAmount + l.protocolAmount);
+    dailyRevenue.add(q, l.protocolAmount);           // protocol revenue = 20%
+    creators.add(q, l.creatorAmount);                // creator revenue = 80%
+  }
+  return { dailyFees, dailyRevenue, dailyProtocolRevenue: dailyRevenue, dailyUserFees: dailyFees, dailySupplySideRevenue: creators };
+};
+const adapter: SimpleAdapter = { version: 2, adapter: { robinhood: { fetch, start: &quot;&amp;lt;launch date&gt;&quot; }, giwa: { fetch, start: &quot;&amp;lt;launch date&gt;&quot; } },
+  methodology: { Fees: &quot;1% of every trade in the quote asset&quot;, Revenue: &quot;20% of fees to the protocol recipient&quot;, SupplySideRevenue: &quot;80% of fees to token creators&quot; } };
+export default adapter;
+</code></pre>
+<p>Dune: one <code>decoded</code> table on <code>FeesAccrued</code> gives per-token, per-source, per-day fees; <code>Claimed</code> gives payout lag.</p>
+<h3 id="27-feeescrow-negative-tests">2.7 FeeEscrow negative tests</h3>
+<ul>
+<li>ABI has no <code>owner</code>, <code>set*</code> (other than the three timelock functions), <code>sweep*</code>, <code>rescue*</code>, <code>withdraw*</code> (other than <code>claim*</code>), <code>upgradeTo*</code>, <code>pause</code>; no <code>DELEGATECALL</code>/<code>SELFDESTRUCT</code> in bytecode.</li>
+<li><code>register</code> reverts for any <code>msg.sender != FACTORY</code> (fuzz) and on re-registration.</li>
+<li>Invariant: <code>address(this).balance &gt;= Σ_tokens(creatorAccrued + protocolAccrued)</code> for native ledgers and the same per ERC-20 quote (solvency); equality modulo WETH-unwrap transit within a tx.</li>
+<li>Invariant: <code>creatorLifetime : protocolLifetime</code> per token equals 8000:2000 within 1 wei per credit.</li>
+<li>No path moves value to an address that is not <code>ledger.creator</code> or <code>PROTOCOL</code> (property test over all external functions with random callers).</li>
+</ul>
+<hr>
+<h2 id="3-giwa-adapter-launchpair-launchrouter">3. GIWA adapter: <code>LaunchPair</code> + <code>LaunchRouter</code></h2>
+<h3 id="31-why-we-cannot-reuse-uniswap-on-giwa-and-what-we-reuse-instead">3.1 Why we cannot reuse Uniswap on GIWA, and what we reuse instead</h3>
+<ul>
+<li>v4-core is Business Source License 1.1 with "Change Date: The earlier of 2027-06-15 or a date specified at…", "Change License: MIT License" (<code>Uniswap/v4-core/licenses/BUSL_LICENSE</code>; <code>src/PoolManager.sol</code> header <code>SPDX-License-Identifier: BUSL-1.1</code>). Deploying our own PoolManager on GIWA is production use → not allowed before 2027-06-15. Nothing Uniswap is deployed on GIWA Sepolia (<code>eth_getCode</code> of the Robinhood PoolManager address on 91342 = <code>0x</code>, re-checked 2026-09-06).</li>
+<li>v2-core is GPL-3.0 (<code>Uniswap/v2-core/LICENSE</code>: "GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007"). A fork is legal; our whole repo would then be GPL-3 (fine for an open, immutable launchpad) — but see the feature argument below.</li>
+<li>v4-periphery is MIT (<code>Uniswap/v4-periphery/LICENSE</code>); we use its <code>Actions</code>/<code>PositionManager</code> interfaces on Robinhood only.</li>
+</ul>
+<h3 id="32-2-hour-build-vs-reusable-v2-fork-and-the-pick">3.2 "2-hour build" vs "reusable v2 fork" — and the pick</h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>2-hour build (from scratch)</th>
+<th>Reusable v2 fork</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Code</td>
+<td><code>LaunchPair</code> (~250 lines: reserves, <code>mint</code> once, <code>swap</code>, <code>sync</code>, view-only LP shares, 1% quote fee → escrow), <code>LaunchRouter</code> (~150 lines: exact-in/out both directions, ETH wrap/unwrap, deadline/slippage), no factory (the graduation target deploys the pair with CREATE2, salt = token)</td>
+<td><code>UniswapV2Factory</code>/<code>Pair</code>/<code>ERC20</code> + <code>Router02</code> + <code>Library</code> (~1,100 lines), <code>feeTo</code>/<code>_mintFee</code>, <code>skim</code>, flash swaps via <code>uniswapV2Call</code>, transferable LP tokens, 0.3% fee on <strong>input</strong> of either side</td>
+</tr>
+<tr>
+<td>Fee model</td>
+<td>1% on the <strong>quote</strong> side only, streamed to the escrow with the 80/20 split, every swap</td>
+<td>0.3% stays in reserves for LPs; to get "1% quote-side to escrow" you must rewrite <code>swap</code> anyway</td>
+</tr>
+<tr>
+<td>Third-party routers (GIWATER/Joseon v2-style)</td>
+<td>Will mis-quote us regardless (they assume 0.3% on input) → we must ship our own router and publish <code>getAmountOut</code></td>
+<td>Same problem once the fee is changed</td>
+</tr>
+<tr>
+<td>Attack surface</td>
+<td>No flash callback, no <code>skim</code>, no LP transfers, no <code>feeTo</code> switch, <code>mint</code> once</td>
+<td>Must audit/patch <code>skim</code>, <code>_mintFee</code>, LP inflation, flash-swap re-entrancy interplay with our escrow</td>
+</tr>
+<tr>
+<td>Licence</td>
+<td>MIT (ours)</td>
+<td>GPL-3.0</td>
+</tr>
+<tr>
+<td>Audit cost</td>
+<td>Small, self-contained, x·y=k invariant is textbook</td>
+<td>Larger diff to explain to an auditor</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Pick: from-scratch <code>LaunchPair</code> + <code>LaunchRouter</code>, MIT.</strong> The "2 hours" is honest for the pair (the math is v2's), the router is another 2–3 hours, the tests are the real work (§5).</p>
+<h3 id="33-launchpair-semantics">3.3 <code>LaunchPair</code> semantics</h3>
+<ul>
+<li><code>token0 = launch token</code>, <code>token1 = quote (WETH9 0x4200…0006)</code>; fixed at construction (immutables), so no sorting ambiguity and a fixed ABI for tools.</li>
+<li>Reserves <code>r0, r1</code> (<code>uint112</code> each + <code>uint32</code> timestamp in one slot, v2 layout so v2-aware indexers can read <code>getReserves()</code>).</li>
+<li><strong>Fee: 1% of the quote leg, always in quote, always to the escrow</strong>:</li>
+<li>Buy (quote in <code>q</code>, token out <code>t</code>): <code>f = ceil(q / 100)</code>; invariant <code>(r1 + q − f) · (r0 − t) ≥ r1 · r0</code>; after the swap <code>r1 += q − f</code>, <code>r0 −= t</code>; <code>f</code> → <code>escrow.creditToken(token, f)</code>.</li>
+<li>Sell (token in <code>x</code>, quote out <code>y</code> to user): <code>y_gross = ceil(y · 100 / 99)</code>, <code>f = y_gross − y</code>; invariant <code>(r1 − y_gross) · (r0 + x) ≥ r1 · r0</code>; <code>r1 −= y_gross</code>; <code>y</code> → user, <code>f</code> → escrow.</li>
+<li>Exactly one of <code>amount0Out</code>/<code>amount1Out</code> may be non-zero (no two-sided swaps, no flash swaps: outputs are transferred <strong>after</strong> the invariant check on <em>pre-transfer</em> balances, i.e. the caller must have pre-paid input — v2's "optimistic transfer" ordering is dropped, so there is no callback and no re-entrant window).</li>
+<li><strong>Post-graduation sniper fee (optional, component 1/2 own the curve-side one)</strong>: <code>openedAt</code> immutable; for <code>block.timestamp − openedAt &amp;lt; SNIPE_SECONDS</code> the quote-side fee on <strong>buys</strong> is <code>1% + extra(t)</code> where <code>extra</code> decays 98%→0 over <code>SNIPE_SECONDS</code> (same curve as the hook on Robinhood, §5 lists the timestamp-granularity caveat); the extra goes to the same escrow split. Sells are never surcharged (a 99% sell tax reads as a honeypot to GMGN: 02 §LS-25).</li>
+<li><strong>LP shares: view-only.</strong> <code>name/symbol/decimals/totalSupply/balanceOf</code> exist so Blockscout's token tab and GoPlus-style <code>lp_holders</code> (05 §2.a) show "locker holds 100%"; there is <strong>no <code>transfer</code>, <code>transferFrom</code>, <code>approve</code>, <code>permit</code>, <code>burn</code></strong>. <code>mint(to)</code> is callable <strong>once</strong>, only by the graduation target, only with <code>to == locker</code> (checked against the immutable). Shares minted = <code>sqrt(r0 · r1)</code> (no <code>MINIMUM_LIQUIDITY</code> burn — with a single, permanent, non-transferable depositor the first-depositor inflation attack does not exist; 05 §2.a's "LP burned" semantics are replaced by "LP shares cannot move" which is strictly stronger).</li>
+<li><strong><code>sync()</code> kept, <code>skim()</code> removed.</strong> <code>sync</code> only raises reserves to balances (donated tokens become permanent liquidity — a feature: "donate to LP"); <code>skim</code> would let anyone extract donations (MEV race, no benefit to us). Note: <code>sync</code> can never <em>lower</em> reserves because tokens only leave via <code>swap</code>, which updates reserves in the same call.</li>
+<li>Reentrancy: <code>nonReentrant</code> on <code>swap</code>/<code>mint</code>/<code>sync</code>; the only external calls are <code>safeTransfer</code> of a plain ERC-20 and WETH9 (both non-callback), plus <code>escrow.creditToken</code> (no callbacks). Pair holds WETH9, never native ETH → no <code>receive</code>.</li>
+<li>Views for integrators: <code>getReserves()</code>, <code>getAmountOut(uint256 amountIn, bool quoteIn) → (amountOut, fee)</code>, <code>getAmountIn(uint256 amountOut, bool quoteOut) → (amountIn, fee)</code>, <code>feeBps() = 100</code>, <code>snipeFeeBps(uint256 ts)</code>, <code>escrow()</code>, <code>locker()</code>.</li>
+</ul>
+<pre><code class="language-solidity">function swap(uint256 amount0Out, uint256 amount1Out, address to) external nonReentrant {
+    if ((amount0Out == 0) == (amount1Out == 0)) revert OneSideOnly();
+    (uint112 r0, uint112 r1,) = getReserves();
+    uint256 b0 = token0.balanceOf(address(this));
+    uint256 b1 = token1.balanceOf(address(this));
+    if (amount0Out &gt; 0) {                                   // BUY: quote already paid in
+        uint256 q = b1 - r1;  if (q == 0) revert NoInput();
+        uint256 f = _buyFee(q);                             // 1% (+ snipe extra), ceil
+        if ((b1 - f) * (b0 - amount0Out) &amp;lt; uint256(r1) * r0) revert K();
+        token1.safeTransfer(address(escrow), f);  escrow.creditToken(token0Addr, f);   // escrow pulls via allowance set in constructor; or push+notify variant
+        token0.safeTransfer(to, amount0Out);
+        _update(b0 - amount0Out, b1 - f);
+        emit Swap(msg.sender, 0, q, amount0Out, 0, f, to);
+    } else {                                                // SELL: token already paid in
+        uint256 x = b0 - r0;  if (x == 0) revert NoInput();
+        uint256 yGross = Math.mulDivUp(amount1Out, 100, 99);
+        uint256 f = yGross - amount1Out;
+        if ((b1 - yGross) * b0 &amp;lt; uint256(r1) * r0) revert K();
+        token1.safeTransfer(to, amount1Out);
+        token1.safeTransfer(address(escrow), f);  escrow.creditToken(token0Addr, f);
+        _update(b0, b1 - yGross);
+        emit Swap(msg.sender, x, 0, 0, amount1Out, f, to);
+    }
+}
+</code></pre>
+<p>(Escrow crediting detail: <code>creditToken</code> pulls from <code>msg.sender</code>; the pair approves the escrow for <code>type(uint256).max</code> of WETH9 in its constructor and calls <code>creditToken(token0Addr, f)</code> without a prior transfer. Either variant is fine; the pull variant keeps the escrow's balance-delta accounting identical for curve, hook and pair.)</p>
+<h3 id="34-launchrouter-stateless-immutable-150-lines">3.4 <code>LaunchRouter</code> (stateless, immutable, ~150 lines)</h3>
+<pre><code class="language-solidity">interface ILaunchRouter {
+    function buyExactIn(address token, uint256 minOut, address to, uint256 deadline) external payable returns (uint256 out);   // ETH → WETH9 → pair
+    function buyExactOut(address token, uint256 amountOut, address to, uint256 deadline) external payable returns (uint256 spent); // refunds excess ETH
+    function sellExactIn(address token, uint256 amountIn, uint256 minOut, address to, uint256 deadline, bool unwrap) external returns (uint256 out);
+    function sellExactOut(address token, uint256 amountOut, uint256 maxIn, address to, uint256 deadline, bool unwrap) external returns (uint256 spent);
+    function quoteBuy(address token, uint256 ethIn) external view returns (uint256 out, uint256 fee);
+    function quoteSell(address token, uint256 tokenIn) external view returns (uint256 out, uint256 fee);
+    function pairFor(address token) external view returns (address);   // CREATE2 address, no storage
+}
+</code></pre>
+<ul>
+<li><code>deadline</code> checked first; slippage via <code>minOut</code>/<code>maxIn</code>; Permit2 (<code>0x0000…8BA3</code>, present on GIWA Sepolia) optional for sells so wallets can do one-signature sells; <code>unwrap</code> returns ETH via WETH9 <code>withdraw</code> (immutable predeploy) then <code>call</code> to <code>to</code>.</li>
+<li><code>pairFor</code> is a pure CREATE2 computation over <code>(LaunchPairTarget, salt = bytes32(uint256(uint160(token))), keccak(initcode))</code>, so wallets and GIWATER/Joseon can find the pool without an event index.</li>
+<li>Router holds nothing between calls; <code>receive</code> accepts ETH only from WETH9. Any ETH left after <code>buyExactOut</code> is refunded in the same call.</li>
+<li>Because the fee is 1% quote-side, <strong>third-party v2 routers will compute wrong <code>amountOut</code> and revert on our <code>K()</code> check</strong> (they assume 0.3% on input). That is a known, acceptable limitation for v1: GIWATER is a CL DEX (04 §2.1), Joseon has its own router — neither routes foreign pairs today. If an aggregator appears, it needs a 30-line adapter that calls <code>getAmountOut</code>.</li>
+</ul>
+<h3 id="35-igraduationtarget-chain-agnostic-graduation">3.5 <code>IGraduationTarget</code> — chain-agnostic graduation</h3>
+<pre><code class="language-solidity">interface IGraduationTarget {
+    /// @dev Called once per token by the curve (component 1) in the graduation tx.
+    ///      The curve has already: transferred `tokenAmount` of `token` to this contract,
+    ///      burned the leftover to 0xdEaD (D3-8), and attached `quoteAmount` as msg.value.
+    /// @return poolId   venue-specific id (v4 PoolId, or keccak(pair))
+    /// @return venue    address to show users (PoolManager on v4; the pair on GIWA)
+    function graduate(address token, uint256 tokenAmount, uint256 quoteAmount, uint160 sqrtPriceX96OrZero)
+        external payable returns (bytes32 poolId, address venue);
+
+    function locker() external view returns (address);
+    function feeEscrow() external view returns (address);
+    function quote() external view returns (address);       // address(0) native (Robinhood) or WETH9 (GIWA)
+    function venueKind() external pure returns (bytes32);   // keccak(&quot;UNISWAP_V4&quot;) | keccak(&quot;LAUNCH_PAIR&quot;)
+}
+</code></pre>
+<p>The curve computes the opening price from its own final state (Pons: pool seeded at the curve's final price, 01 §Pons V2) and passes it; the curve must not need to know ticks or pairs.</p>
+<p><strong><code>UniswapV4Target</code> (Robinhood)</strong></p>
+<pre><code class="language-solidity">function graduate(address token, uint256 tokenAmount, uint256 quoteAmount, uint160 sqrtPriceX96)
+    external payable onlyFactory returns (bytes32 poolId, address venue)
+{
+    if (msg.value != quoteAmount) revert BadValue();
+    PoolKey memory key = PoolKey({
+        currency0: CurrencyLibrary.ADDRESS_ZERO,          // native ETH (&amp;lt; any token address, so always currency0)
+        currency1: Currency.wrap(token),
+        fee: 0,                                            // hook charges instead (Pons/o1 pattern)
+        tickSpacing: TICK_SPACING,                         // 200, matches Pons; full range = [-887200, 887200]
+        hooks: IHooks(HOOK)
+    });
+    poolManager.initialize(key, sqrtPriceX96);             // hook.beforeInitialize checks sender == this target (component 2)
+    poolId = PoolId.unwrap(key.toId());
+
+    // Permit2-free path: PositionManager pulls ERC-20s from msg.sender via Permit2 by default,
+    // so approve Permit2 for exactly tokenAmount, then execute MINT_POSITION with recipient = locker
+    IERC20(token).forceApprove(PERMIT2, tokenAmount);
+    IPermit2(PERMIT2).approve(token, address(posm), uint160(tokenAmount), uint48(block.timestamp));
+    uint128 liquidity = LiquidityAmounts.getLiquidityForAmounts(sqrtPriceX96, MIN_SQRT, MAX_SQRT, quoteAmount, tokenAmount);
+    bytes memory actions = abi.encodePacked(uint8(Actions.MINT_POSITION), uint8(Actions.SETTLE_PAIR), uint8(Actions.SWEEP));
+    bytes[] memory params = new bytes[](3);
+    params[0] = abi.encode(key, MIN_TICK, MAX_TICK, liquidity, quoteAmount, tokenAmount, address(LOCKER), &quot;&quot;);
+    params[1] = abi.encode(key.currency0, key.currency1);
+    params[2] = abi.encode(key.currency0, address(this));          // sweep unspent ETH back here (rounding dust)
+    uint256 tokenId = posm.nextTokenId();
+    posm.modifyLiquidities{value: quoteAmount}(abi.encode(actions, params), block.timestamp);
+
+    LOCKER.lockV4Position(token, tokenId, poolId);                 // verifies ownerOf == locker
+    _forwardDust(token);                                            // ETH dust → escrow.credit(token); token dust → 0xdEaD
+    return (poolId, address(poolManager));
+}
+</code></pre>
+<p>Action byte values and the "fees are collected by using DECREASE_LIQUIDITY with zero liquidity / SWEEP for native ETH" guidance are from https://developers.uniswap.org/docs/protocols/v4/guides/position-manager. The one-sided rounding leaves wei-level ETH/token dust in the target; it is forwarded (ETH → escrow as fees for the token, tokens → burn), so the target holds nothing after the call and no <code>rescue</code> is ever needed.</p>
+<p>Two-position variant (Clanker-style, 02 §(a) "100% into one locked concentrated position") is <strong>not</strong> used: the curve already discovered a price, and a full-range position at that price is what buyers expect from a Pons-class graduation. A full-range position also means the hook fee is the <em>only</em> fee forever (no LP fee to argue about).</p>
+<p><strong><code>LaunchPairTarget</code> (GIWA)</strong></p>
+<pre><code class="language-solidity">function graduate(address token, uint256 tokenAmount, uint256 quoteAmount, uint160)
+    external payable onlyFactory returns (bytes32 poolId, address venue)
+{
+    if (msg.value != quoteAmount) revert BadValue();
+    bytes32 salt = bytes32(uint256(uint160(token)));
+    LaunchPair pair = new LaunchPair{salt: salt}(token, WETH9, address(LOCKER), address(ESCROW), uint64(block.timestamp));
+    IWETH9(WETH9).deposit{value: quoteAmount}();
+    IERC20(WETH9).safeTransfer(address(pair), quoteAmount);
+    IERC20(token).safeTransfer(address(pair), tokenAmount);
+    pair.mint(address(LOCKER));                                   // once; shares = sqrt(k); to must equal LOCKER
+    LOCKER.lockPairShares(token, address(pair));                  // verifies balanceOf(locker) == totalSupply
+    return (keccak256(abi.encodePacked(address(pair))), address(pair));
+}
+</code></pre>
+<p>The pair's address is <code>CREATE2(LaunchPairTarget, token-as-salt, initcode)</code> → deterministic, computable off-chain, no registry, no factory contract to own.</p>
+<h3 id="36-escrow-registration-and-quote-per-chain">3.6 Escrow registration and quote per chain</h3>
+<p><code>Factory.launch()</code> calls <code>escrow.register(token, target.quote(), creatorRecipient)</code> in the launch tx — on Robinhood <code>quote = address(0)</code> (native), on GIWA <code>quote = WETH9</code>. The curve (component 1) credits with <code>credit{value}</code> on Robinhood and with <code>creditToken</code> (after wrapping) on GIWA — or, simpler, the curve always holds native ETH and the <em>escrow</em> wraps on GIWA inside <code>credit</code>: v1 picks <strong>curve credits native on both chains; the escrow's <code>credit</code> wraps to WETH9 when <code>ledger.quote == WETH9</code></strong> so the curve is chain-agnostic and the pair credits <code>creditToken</code>. (Cost: one <code>deposit</code> per curve trade on GIWA, ~25k gas at 0.001 gwei — negligible.)</p>
+<hr>
+<h2 id="4-deployment-plan">4. Deployment plan</h2>
+<h3 id="41-chain-facts-used-all-re-probed-2026-09-06-unless-noted">4.1 Chain facts used (all re-probed 2026-09-06 unless noted)</h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Robinhood mainnet 4663</th>
+<th>Robinhood testnet 46630</th>
+<th>GIWA Sepolia 91342</th>
+<th>GIWA mainnet 9134</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RPC</td>
+<td><code>https://rpc.mainnet.chain.robinhood.com</code> (public, rate-limited) / Alchemy</td>
+<td><code>https://rpc.testnet.chain.robinhood.com/rpc</code> (docs.robinhood.com/chain/connecting; chainlist also lists publicnode)</td>
+<td><code>https://sepolia-rpc.giwa.io</code> (+ <code>sepolia-rpc-flashblocks.giwa.io</code>, <code>pending</code> tag, ≤200 ms preconfirmation, docs.giwa.io <code>flashblocks.md</code>)</td>
+<td>none (<code>chainid.network</code> entry <code>rpc: []</code>, <code>status: incubating</code>)</td>
+</tr>
+<tr>
+<td>Explorer (Blockscout)</td>
+<td><code>robinhoodchain.blockscout.com</code> (Cloudflare-challenged for bare curl; rust verifier, solc ≤0.8.36 per <code>/api/v2/smart-contracts/verification/config</code> read via file 04)</td>
+<td><code>explorer.testnet.chain.robinhood.com</code> (rust verifier enabled; solc list starts at 0.8.36)</td>
+<td><code>sepolia-explorer.giwa.io</code> (rust verifier enabled; solc ≤0.8.36)</td>
+<td>none</td>
+</tr>
+<tr>
+<td>Uniswap v4</td>
+<td>PoolManager <code>0x8366…0951</code> (24,009 B), PosM <code>0x58da…4fA7</code>, StateView <code>0xf333…673b</code>, Quoter <code>0x8dc1…8f94</code>, UR <code>0x8876…0904</code></td>
+<td><strong>same addresses, same bytecode sizes present</strong> (PoolManager 24,009 B, PosM 23,877 B, StateView 3,531 B) even though developers.uniswap.org lists no Robinhood testnet</td>
+<td>none (<code>0x</code> at the PoolManager address)</td>
+<td>—</td>
+</tr>
+<tr>
+<td>CreateX <code>0xba5E…a5Ed</code></td>
+<td>11,838 B</td>
+<td>11,838 B</td>
+<td>11,838 B</td>
+<td>expected at genesis (OP Stack preinstall set, docs.giwa.io contracts.md per file 04)</td>
+</tr>
+<tr>
+<td>Arachnid CREATE2 proxy <code>0x4e59…956C</code></td>
+<td>69 B</td>
+<td>69 B</td>
+<td>69 B</td>
+<td>expected</td>
+</tr>
+<tr>
+<td>Permit2 / Multicall3</td>
+<td>present</td>
+<td>present (9,152 B / 3,808 B)</td>
+<td>present</td>
+<td>expected</td>
+</tr>
+<tr>
+<td>WETH</td>
+<td><code>0x0Bd7…AD73</code> aeWETH <strong>proxy</strong> (not used by us)</td>
+<td><code>0x</code> at that address (testnet WETH differs; irrelevant: native quote)</td>
+<td>WETH9 predeploy <code>0x4200…0006</code> (2,846 B)</td>
+<td>predeploy</td>
+</tr>
+<tr>
+<td>Gas price now</td>
+<td>0.411 gwei</td>
+<td>0.01 gwei</td>
+<td>0.001 gwei</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Ordering</td>
+<td>FCFS, no public mempool (docs.robinhood.com/chain)</td>
+<td>same</td>
+<td>"sequencer executes transactions in order of highest fee", no public mempool, 1 s blocks (docs.giwa.io <code>diffs-ethereum-giwa.md</code>)</td>
+<td>same as Sepolia presumably</td>
+</tr>
+</tbody>
+</table>
+<h3 id="42-addressing-createx-salts">4.2 Addressing: CreateX salts</h3>
+<p>CreateX (README, https://github.com/pcaversaccio/createx): salt = 20 bytes <code>msg.sender</code> (permissioned deploy protection) ‖ 1 byte cross-chain flag (<code>0x01</code> on / <code>0x00</code> off, <code>&gt;0x01</code> reverts) ‖ 11 bytes entropy; with sender protection and the flag <strong>off</strong>, <code>guardedSalt = keccak256(abi.encode(msg.sender, salt))</code> — chain-independent. With the flag on, <code>keccak256(abi.encode(msg.sender, block.chainid, salt))</code> — which would give <em>different</em> addresses per chain, so we keep it <strong>off</strong>.</p>
+<p>Two deployment primitives:
+- <code>deployCreate3(salt, initCode)</code> — address depends on <code>(CreateX, guardedSalt)</code> only. Used for <strong>FeeEscrow, PermanentLocker, GraduationTarget, LaunchRouter, Factory/Curve</strong> so the addresses match on 4663 and 9134 even though constructor args differ (PoolManager vs WETH9, hook vs none).
+- The <strong>hook</strong> needs address flag bits (<code>Hooks.sol</code>: permissions live in the low 14 bits; HookMiner mines a salt against the CREATE2 deployer <code>0x4e59b44847b379578588920cA78FbF26c0B4956C</code>, https://developers.uniswap.org/docs/protocols/v4/guides/hooks/hook-deployment). Robinhood only; deploy through the Arachnid proxy with the mined salt. Front-run risk: anyone who sees our initcode + salt (e.g. from the testnet deploy) can deploy the <em>identical</em> bytecode at that address on mainnet first — harmless, because constructor args are baked into the initcode and the contract has no owner; the deployer script must simply tolerate "already deployed" and verify <code>extcodehash</code> matches.
+- <strong>Per-launch token</strong>: created by the Factory (<code>new LaunchToken{salt: keccak256(abi.encode(creator, creatorNonce, name, symbol))}(name, symbol, curve)</code>) — the factory address and the curve address are identical on both chains, so a creator who launches with the same <code>(name, symbol, nonce)</code> on GIWA gets the <strong>same token address</strong> as on Robinhood. The factory is the CREATE2 deployer, so no outsider can claim that address.</p>
+<p>Circular immutables (locker ↔ target ↔ factory ↔ escrow) are resolved by <strong>precomputing</strong> every CREATE3 address off-chain (<code>computeCreate3Address(guardedSalt)</code>), passing them as constructor args, and asserting after deployment with a <code>Wiring.check()</code> script that every immutable equals the deployed address — there are no setters to fix a mistake, so a wrong wiring means redeploy under fresh salts (cost: minutes, §4.5).</p>
+<h3 id="43-deploy-order-and-constructor-args-identical-script-on-all-chains-chain-specific-args-from-a-per-chain-config">4.3 Deploy order and constructor args (identical script on all chains, chain-specific args from a per-chain config)</h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Contract</th>
+<th>Method / salt</th>
+<th>Constructor args</th>
+<th>Chain-specific?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>FeeEscrow</code></td>
+<td>CREATE3 <code>salt("escrow-v1")</code></td>
+<td><code>PROTOCOL</code> (immutable EOA/Safe), <code>FACTORY</code> (precomputed #6), <code>WETH9</code> (0x4200…0006 on GIWA, <code>address(0)</code> on Robinhood)</td>
+<td>arg only</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>PermanentLocker</code></td>
+<td>CREATE3 <code>salt("locker-v1")</code></td>
+<td><code>graduationTarget</code> (precomputed #4), <code>positionManager</code> (<code>0x58da…4fA7</code> / <code>address(0)</code>), <code>escrow</code> (#1)</td>
+<td>arg only</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>LaunchHook</code> (Robinhood only)</td>
+<td>CREATE2 via <code>0x4e59…956C</code>, mined salt for flags <code>BEFORE_INITIALIZE | BEFORE_SWAP | AFTER_SWAP | BEFORE_SWAP_RETURNS_DELTA | AFTER_SWAP_RETURNS_DELTA</code> (+ <code>BEFORE_ADD_LIQUIDITY</code> if component 2 restricts LPs)</td>
+<td><code>poolManager</code>, <code>escrow</code> (#1), <code>target</code> (precomputed #4), snipe params</td>
+<td>Robinhood only</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>UniswapV4Target</code> / <code>LaunchPairTarget</code></td>
+<td>CREATE3 <code>salt("target-v1")</code></td>
+<td>v4: <code>poolManager, posm, permit2, hook(#3), locker(#2), escrow(#1), factory(precomputed #6)</code>; pair: <code>weth9, locker, escrow, factory</code></td>
+<td>different bytecode, same address</td>
+</tr>
+<tr>
+<td>5</td>
+<td><code>LaunchRouter</code> (GIWA) / none on Robinhood (Universal Router <code>0x8876…0904</code> + Quoter serve v4)</td>
+<td>CREATE3 <code>salt("router-v1")</code></td>
+<td><code>weth9, target(#4)</code></td>
+<td>GIWA only</td>
+</tr>
+<tr>
+<td>6</td>
+<td><code>LaunchFactory</code> (+ curve logic, component 1)</td>
+<td>CREATE3 <code>salt("factory-v1")</code></td>
+<td><code>escrow(#1), locker(#2), target(#4), PROTOCOL, CREATION_FEE = 0.0005 ether, curve params (phantom quote, threshold), devBuyCapBps ≤ 500, creatorTaxCapBps ≤ 200, snipe params</code></td>
+<td>args only</td>
+</tr>
+<tr>
+<td>7</td>
+<td><code>Wiring.check()</code></td>
+<td>script</td>
+<td>asserts every immutable on 1–6 equals the deployed address; asserts hook <code>getHookPermissions()</code> == address bits; asserts <code>escrow.PROTOCOL()</code>, <code>factory.CREATION_FEE()</code>, split constants</td>
+<td>—</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Verify all on Blockscout</td>
+<td><code>forge verify-contract --verifier blockscout --verifier-url &amp;lt;explorer&gt;/api</code> per contract, standard-json, exact solc + <code>evm_version = cancun</code> + fixed optimizer runs; the GIWA docs example uses exactly this flag set (https://docs.giwa.io/get-started/smart-contract/develop/foundry.md)</td>
+<td>—</td>
+<td></td>
+</tr>
+<tr>
+<td>9</td>
+<td>Smoke launch on each chain (testnet first, then mainnet with a throw-away token)</td>
+<td>create → dev-buy → buys to graduation → <code>claimFor</code> both recipients → all 05 §3 reads</td>
+<td>—</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Compiler pin: <code>solc 0.8.30</code>, <code>evm_version = cancun</code> (both chains support Cancun; GIWA Sepolia verified <code>prague</code> in its docs example, Robinhood ArbOS level not verified for Prague per file 04 §1 — Cancun is the safe common denominator), <code>via_ir = false</code> unless needed, <code>optimizer_runs = 1_000_000</code> for the pair/hook (hot paths), <code>bytecode_hash = none</code> so the metadata does not change addresses between machines.</p>
+<h3 id="44-testnets">4.4 Testnets</h3>
+<ul>
+<li><strong>Robinhood testnet 46630 has Uniswap v4 at the mainnet addresses</strong> (probed). So the entire Robinhood path — hook, target, locker <code>ownerOf</code> checks, N7/N8 fork tests — rehearses 1:1 on 46630 with <code>explorer.testnet.chain.robinhood.com</code> verification. Test ETH: no faucet listed in chainlist or docs; bridge from Sepolia via the Robinhood testnet bridge (not verified here — <strong>UNVERIFIED</strong>, resolve before rehearsal).</li>
+<li><strong>GIWA Sepolia 91342</strong>: CreateX/Permit2/Multicall3/WETH9 present; faucets 0.005–0.01 ETH/day (<code>faucet.giwa.io</code>, <code>faucet.lambda256.io/giwa-sepolia</code>), bulk via <code>sepolia-bridge.giwa.io</code> (Superbridge) or gas.zip outbound (file 04 §2.2). A full graduation rehearsal needs ≥ threshold ETH (4.2–5 ETH) plus dust.</li>
+<li><strong>GIWA mainnet 9134</strong>: nothing exists yet (file 04 §1 point 8). The day-1 kit is: same script, same salts, config file with <code>chainId 9134</code>, RPC/explorer filled in when published. Because CreateX is an OP Stack preinstall at genesis, addresses are known <strong>today</strong> and can be printed in the docs before mainnet exists.</li>
+</ul>
+<h3 id="45-gas-budget-estimates-measured-numbers-must-replace-these-in-the-test-report">4.5 Gas budget (estimates; measured numbers must replace these in the test report)</h3>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Gas (est.)</th>
+<th>Robinhood @0.41 gwei</th>
+<th>GIWA @0.001 gwei</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Escrow + Locker + Target + Router + Factory (+ hook on RH) deploy</td>
+<td>~9–13 M</td>
+<td>~0.004–0.006 ETH</td>
+<td>~0.00001 ETH</td>
+</tr>
+<tr>
+<td>Per launch: token deploy + register + curve init + creation fee</td>
+<td>~1.3–1.8 M</td>
+<td>~0.0006 ETH (+0.0005 ETH fee)</td>
+<td>negligible (+0.0005 ETH fee)</td>
+</tr>
+<tr>
+<td>Graduation, Robinhood: <code>initialize</code> + <code>MINT_POSITION</code> full-range + hook init + lock</td>
+<td>~0.9–1.4 M</td>
+<td>~0.0005 ETH</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Graduation, GIWA: pair <code>new</code> (~1.2 M) + wrap + transfers + <code>mint</code> + lock</td>
+<td>~1.6–2.0 M</td>
+<td>—</td>
+<td>negligible</td>
+</tr>
+<tr>
+<td>Swap via hook (v4) / via pair</td>
+<td>~180–260 k / ~110–140 k</td>
+<td>~0.0001 ETH</td>
+<td>negligible</td>
+</tr>
+<tr>
+<td><code>claimFor</code></td>
+<td>~60–90 k</td>
+<td>—</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<p>Robinhood's 0.41 gwei is the observed public-RPC <code>eth_gasPrice</code> at 2026-09-06 ~09:40 KST; it moved between 0.1–0.5 gwei during the 09-05 session per file 01. Budget the mainnet deployment + two smoke launches at <strong>≤ 0.05 ETH per chain</strong> including retries.</p>
+<h3 id="46-who-can-do-what-after-deploy-the-complete-list">4.6 Who can do what after deploy (the complete list)</h3>
+<table>
+<thead>
+<tr>
+<th>Address</th>
+<th>Can call</th>
+<th>Effect</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Per-token <strong>creator recipient</strong></td>
+<td><code>FeeEscrow.claim(token)</code>, <code>claimMany</code>, <code>proposeCreator</code>, <code>cancelProposal</code></td>
+<td>move its own 80% share; start/cancel a 3-day recipient change</td>
+</tr>
+<tr>
+<td>Per-token <strong>pending creator</strong></td>
+<td><code>FeeEscrow.acceptCreator(token)</code> within the window</td>
+<td>become the recipient</td>
+</tr>
+<tr>
+<td><strong>Protocol recipient</strong> (immutable)</td>
+<td><code>FeeEscrow.claim(token)</code>, <code>claimMany</code></td>
+<td>move its own 20% share — nothing else; it cannot change fees, pause, register, or touch liquidity</td>
+</tr>
+<tr>
+<td><strong>Anyone</strong></td>
+<td><code>FeeEscrow.claimFor</code>, <code>credit</code>/<code>creditToken</code> (give value away), <code>Factory.launch</code> (pay 0.0005 ETH), curve buy/sell, <code>Factory.graduate(token)</code> if an auto-graduation ran out of gas (Pons has the same "anyone can call <code>createGraduatedPool</code>" fallback, 01 §Pons V2), <code>LaunchPair.sync</code>, <code>LaunchRouter.*</code>, v4 swaps through any router</td>
+<td>ordinary use</td>
+</tr>
+<tr>
+<td><strong>Nobody</strong></td>
+<td>change fee bps, recipients' split, protocol recipient, snipe params, creation fee, hook, target, locker; pause; upgrade; blacklist; mint; withdraw liquidity</td>
+<td>these functions do not exist</td>
+</tr>
+<tr>
+<td><strong>Outside our control (disclose in docs)</strong></td>
+<td>Uniswap governance = <code>PoolManager</code> owner can set a v4 <em>protocol</em> fee (capped at 0.1% of swap input per pool in v4-core <code>ProtocolFeeLibrary</code>) on any pool — would be on top of our hook fee; Robinhood/GIWA sequencers (ordering, timestamps within Arbitrum's ±bounds); the Robinhood <code>aeWETH</code> proxy admin (we never hold that WETH); Blockscout/Alchemy availability</td>
+<td>residual, external</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="5-security-review-checklist-and-test-plan">5. Security review checklist and test plan</h2>
+<h3 id="51-test-matrix-foundry">5.1 Test matrix (Foundry)</h3>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Unit</th>
+<th>Fuzz</th>
+<th>Invariant (handler-based)</th>
+<th>Fork</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PermanentLocker</td>
+<td>N1–N12 (§1.5)</td>
+<td>callers × tokens × tokenIds</td>
+<td><code>lockedForever</code> never flips back; <code>PositionManager.ownerOf(id) == locker</code> for every locked id; <code>pair.balanceOf(locker) == pair.totalSupply()</code></td>
+<td>46630 v4: attempt <code>DECREASE_LIQUIDITY</code>, <code>BURN_POSITION</code>, <code>transferFrom</code> from every known actor → revert</td>
+</tr>
+<tr>
+<td>FeeEscrow</td>
+<td>register/credit/claim/claimFor/timelock happy + revert paths; WETH unwrap; revert-on-receive recipient</td>
+<td>amounts up to 1e26 wei, fee-on-transfer mock quote, random callers</td>
+<td>solvency (§2.7); 80/20 within 1 wei; no value leaves except to <code>creator</code>/<code>PROTOCOL</code>; <code>pendingEta</code> monotone; accept only in <code>[eta, eta+3d]</code></td>
+<td>GIWA Sepolia: WETH9 <code>deposit</code>/<code>withdraw</code> path</td>
+</tr>
+<tr>
+<td>LaunchPair</td>
+<td>k-check both directions, one-side-only, fee rounding (1-wei trades), <code>mint</code> once &amp; only to locker, <code>sync</code></td>
+<td>random trade sequences; adversarial <code>to</code>; direct donations then <code>sync</code></td>
+<td><code>r0*r1</code> non-decreasing across swaps; <code>balance ≥ reserve</code> for both tokens; escrow credited == Σ fees emitted; no path reduces <code>totalSupply</code>; <code>getAmountOut</code> never over-quotes (a swap with the quoted amount never reverts on <code>K()</code>)</td>
+<td>GIWA Sepolia end-to-end via router</td>
+</tr>
+<tr>
+<td>LaunchRouter</td>
+<td>exact-in/out × buy/sell × unwrap; deadline; refund of excess ETH</td>
+<td>slippage bounds, dust</td>
+<td>router balance == 0 after every call</td>
+<td>—</td>
+</tr>
+<tr>
+<td>UniswapV4Target</td>
+<td>graduate with the curve's final price; dust forwarding; <code>initialize</code> only once per token</td>
+<td><code>sqrtPriceX96</code> across the allowed band; <code>tokenAmount</code>/<code>quoteAmount</code> extremes</td>
+<td>target holds nothing after <code>graduate</code></td>
+<td>46630 v4 full flow</td>
+</tr>
+<tr>
+<td>LaunchPairTarget</td>
+<td>CREATE2 address == <code>router.pairFor(token)</code>; wrap; mint; lock</td>
+<td>—</td>
+<td>—</td>
+<td>91342</td>
+</tr>
+<tr>
+<td>Hook (component 2, but we test its escrow contract)</td>
+<td>fee in quote for all four swap shapes (§1.4); token-side burn path</td>
+<td>swap sizes, directions, exact-in/out</td>
+<td><code>escrow.ledger(token)</code> growth == 1% of quote volume ± rounding; pool <code>fee == 0</code>; hook never holds balance after swap</td>
+<td>46630</td>
+</tr>
+</tbody>
+</table>
+<h3 id="52-specific-attacks-to-test-each-becomes-a-named-test">5.2 Specific attacks to test (each becomes a named test)</h3>
+<ol>
+<li><strong>Graduation front-run</strong> — Robinhood FCFS/no-mempool: the graduating buy and the pool creation are the <em>same</em> tx (component 1), so nobody can <code>initialize</code> the pool key first with a different price… unless they use the same <code>(currency0, currency1, fee 0, tickSpacing, hook)</code> key earlier. Test: an attacker calls <code>poolManager.initialize(key, badPrice)</code> before graduation → must revert in <code>hook.beforeInitialize</code> (sender must be the target, and the token must be a factory token in <code>PRE_GRADUATION</code> state). Also test that a <em>different</em> key (other tickSpacing/fee/hook) for the same token can be created by anyone — it can (v4 is permissionless), and that our <code>lockInfo(token).poolId</code> is what UIs must route to (05 §4 point 6, copycat pools).</li>
+<li><strong>Sniper via multiple wallets</strong> — the curve-side decay is per-block timestamp, not per wallet, so splitting across wallets does not help; test that N wallets buying in the first second pay the same effective rate, and that the <em>disclosed dev-buy exemption</em> applies to exactly one call from the launch tx (hard cap <code>devBuyCapBps ≤ 500</code> of supply-equivalent enforced on-chain; a second exempt buy in the same tx reverts). Timestamp granularity: Arbitrum timestamps are whole seconds and 0.1 s blocks share them → a "99% → 0 over 3 s" schedule is a 3–4-step staircase, and everything in second 0 pays the same. Test the staircase explicitly and document it; consider anchoring decay to <code>launchTimestamp + 1</code> so second 0 is uniformly 99%.</li>
+<li><strong>Sell-side griefing</strong> — post-graduation sells never carry a surcharge (only buys, §3.3), so a 99%-sell honeypot pattern is impossible; test <code>snipeFeeBps</code> for sells == 0 at all <code>t</code>. On the curve (component 1) the same rule.</li>
+<li><strong>Rounding to steal dust</strong> — pair: 1-wei buys (<code>f = ceil(1/100) = 1</code> → the whole wei is fee, output 0 → must not reduce <code>k</code>); sells with <code>amount1Out = 1</code> (<code>yGross = ceil(100/99) = 2</code>); escrow: <code>protocolPart</code> rounds down so the creator gets the wei; v4 target: <code>SWEEP</code> dust forwarded, never left claimable by a third party. Fuzz 1e6 random micro-trades and assert <code>k</code> never decreases.</li>
+<li><strong>Reentrancy via native ETH</strong> — escrow <code>claim</code>/<code>claimFor</code> to a malicious recipient that re-enters <code>claim</code>, <code>claimFor</code>, <code>proposeCreator</code>, <code>acceptCreator</code> (all must revert on <code>nonReentrant</code> or see zeroed balances); router <code>unwrap</code> path re-entering <code>sellExactIn</code>; hook crediting escrow inside the PoolManager unlock while an attacker's router re-enters <code>swap</code> (the escrow does no external calls in <code>credit</code>, assert with a call-tracing test).</li>
+<li><strong>Hook delta accounting</strong> — for each of the four swap shapes assert <code>poolManager</code> currency deltas net to zero after <code>take</code> + <code>credit</code>; assert no hook delta when <code>amountSpecified == 0</code>; assert the hook cannot be tricked into taking a fee on a pool it did not initialize (<code>poolId</code> allowlist populated only by <code>beforeInitialize</code> from the target).</li>
+<li><strong>Pair k-invariant</strong> — handler with buy/sell/sync/donate/direct-transfer-then-swap; assert <code>r0*r1</code> monotone non-decreasing and <code>escrow</code> credits == emitted fees; assert a swap whose input was "paid" by a <em>previous</em> donation (balance &gt; reserve) pays the fee on the whole delta (no free trades from stale reserves).</li>
+<li><strong>CreateX salt front-running</strong> — (a) our sender-guarded CREATE3 salts cannot be used by anyone else (<code>guardedSalt</code> includes <code>msg.sender</code>); test by attempting the deploy from another EOA → different address. (b) Hook via the unguarded Arachnid proxy: an attacker deploys the same initcode first → same address, same bytecode; the deploy script must detect <code>extcodehash</code> and proceed. (c) A <em>different</em> initcode at our precomputed address is impossible (CREATE2 is content-addressed). (d) Per-launch token: the factory is the deployer, so a griefer cannot pre-occupy <code>(name, symbol, nonce)</code> addresses; but a griefer <em>can</em> launch first with the same <code>(name, symbol)</code> under <strong>their</strong> creator address → different salt, different address; document that "same address on both chains" holds per <code>(creator, nonce, name, symbol)</code>, i.e., the owner's own launches.</li>
+<li><strong>Escrow registration squatting</strong> — only the factory can <code>register</code>; fuzz-callers test; second <code>register</code> for the same token reverts.</li>
+<li><strong>Recipient bricking</strong> — creator recipient is a contract that reverts on receive: <code>claimFor</code> reverts but <code>PROTOCOL.claim</code> still works; creator can <code>proposeCreator</code> to a working wallet.</li>
+<li><strong>Locker as ERC-721 sink</strong> — random NFTs <code>safeTransferFrom</code>'d to the locker revert (N9); an attacker cannot make the locker "own" a foreign position to confuse verifiers (<code>lockV4Position</code> is target-only and checks <code>ownerOf</code>).</li>
+<li><strong>Gas-limit / DoS on graduation</strong> — graduation tx gas on Robinhood v4 measured under <code>--gas-report</code>; the factory's auto-graduate falls back to a permissionless <code>graduate(token)</code> so a gas-limited router cannot strand a completed curve (Pons precedent).</li>
+<li><strong>Timestamp drift</strong> — fork tests with <code>vm.warp</code> ±1 h around <code>pendingEta</code> to model the Arbitrum sequencer bound; assert the lock can be shortened by at most that bound.</li>
+<li><strong>Fee-on-transfer / weird quote</strong> — v1 quotes are native ETH and WETH9 only; test that <code>register</code> with any other quote reverts in v1 (allowlist of two), so the escrow's fee-on-transfer defence is belt-and-braces, not load-bearing.</li>
+</ol>
+<h3 id="53-static-and-ci-gates">5.3 Static and CI gates</h3>
+<ul>
+<li><code>forge build --sizes</code> (pair/hook under 24,576 B), <code>forge test -vvv</code>, <code>forge test --match-contract Invariant --fuzz-runs 10000</code> nightly, <code>forge coverage</code> ≥ 95 % lines on escrow/pair/locker, <code>slither</code> (reentrancy-eth, arbitrary-send, unprotected-upgrade, suicidal), ABI-negative-list script (N1), opcode scan (N3/N4), storage-layout diff (N10), <code>forge verify-check</code> after each testnet deploy.</li>
+</ul>
+<h3 id="54-audit-plan">5.4 Audit plan</h3>
+<p>Precedent (Clanker docs, https://clanker.gitbook.io/documentation/references/audits.md): v2.0.0 Quantstamp (Jan 2025), <strong>v3.1.0 Macro (Mar 2025)</strong>, v4 Cantina + Macro (Jun–Jul 2025), v4.1 Macro (Aug 2025).</p>
+<p>Recommendation for v1 (≈1,200–1,600 lines of non-library Solidity across escrow, locker, pair, router, target, hook, curve):
+1. <strong>Freeze</strong> before the review: fee constants (100 bps, 8000/2000), creation fee, dev-buy cap, creator-tax cap, snipe schedule, tick spacing, <code>TIMELOCK</code>/<code>ACCEPT_WINDOW</code>, quote allowlist, compiler pin, CreateX salts and precomputed addresses, the ABI-negative list, and the testnet deployments (auditors review the exact commit + the verified 46630/91342 deployments).
+2. <strong>Option A — 1-week private review</strong> by a boutique with v4-hook experience (Macro, Cantina "solo/spearbit-lite", Pashov-class independent): typically <strong>$25–40k</strong> for this size; deliverable = report + fix review. Best fit for an operator-less system where the main risk is "a function exists that should not".
+3. <strong>Option B — public contest</strong> (Cantina/Sherlock/Code4rena) at <strong>$25–60k</strong> pot: more eyes on the pair math and hook deltas, slower (2–3 weeks incl. judging), public disclosure of the design before launch (fine — it is immutable and there is nothing to front-run except the brand).
+4. Either way: publish the report, the ABI-negative-list CI output and the Blockscout verification links next to the addresses; that is what 05 §3 step 3 verifiers will read.
+5. Post-audit: <strong>no fixes on mainnet are possible</strong> — a finding after mainnet means a <strong>v2 deployment under new salts</strong>; the v1 contracts keep working forever (fees still flow to the recipients). State this in the docs so users understand "immutable" cuts both ways.</p>
+<hr>
+<h2 id="6-open-questions-for-the-other-components-the-owner">6. Open questions for the other components / the owner</h2>
+<ol>
+<li>Component 1 must confirm the graduation entry: <code>IGraduationTarget.graduate(token, tokenAmount, quoteAmount, sqrtPriceX96)</code> with leftover already burned (D3-8), or ask for <code>lockTokenSupply</code> instead.</li>
+<li>Component 2 must confirm the hook takes <strong>all</strong> fee in quote via before/after return-deltas and burns token-side residue (§1.4); if it prefers a Pons-style internal swap-back, the escrow design does not change but the burn event does.</li>
+<li>Owner: is a post-graduation buy-side sniper fee wanted at all (§3.3)? It is optional in the brief; default proposed = 3 s decaying, buys only, on both venues, proceeds to the normal 80/20 split.</li>
+<li>Owner: creator recipient = the fee wallet also used for the dev-buy? 02 §4 point 2 recommends "the same wallet that receives fees" for clustering heuristics; the escrow does not care.</li>
+<li>Robinhood testnet 46630 ETH source (bridge URL) — UNVERIFIED this session.</li>
+<li>GIWA mainnet explorer/RPC/verifier URLs — absent until Upbit publishes; everything else in §4 is ready.</li>
+</ol>
+<h2 id="7-sources">7. Sources</h2>
+<ul>
+<li>Pons V2 docs: https://docs.ponsfamily.com/docs/v2 (escrow claim, 3-day CTO timelock wording, "the function does not exist", sniper tax, leftover supply). Verified sources: <code>PonsV2LaunchLocker</code> <code>0x267444D099b10fB5Ed7c3Cc7B7c767AdcA574952</code>, <code>PonsV2FeeEscrow</code> <code>0xd3AFEB2a57f70eF218Aa82451c51B2fb0416Ac9e</code>, <code>PonsV2MemeHook</code> <code>0xE5e702641Ea86F4ae6cC3cDaeD2B886f976Be044</code> (robinhoodchain.blockscout.com; local copies in <code>launch/</code>).</li>
+<li>Clanker: <code>ClankerLpLockerFeeConversion.sol</code> (https://github.com/clanker-devco/v4-contracts), audits page https://clanker.gitbook.io/documentation/references/audits.md.</li>
+<li>Uniswap v4: hooks concept https://developers.uniswap.org/docs/protocols/v4/concepts/hooks ; hook deployment / HookMiner https://developers.uniswap.org/docs/protocols/v4/guides/hooks/hook-deployment ; PositionManager guide https://developers.uniswap.org/docs/protocols/v4/guides/position-manager ; <code>Hooks.sol</code> flag constants https://raw.githubusercontent.com/Uniswap/v4-core/main/src/libraries/Hooks.sol ; <code>PositionManager.sol</code> (<code>_mint</code>, <code>onlyIfApproved</code>, <code>modifyLiquidities(bytes,uint256)</code>) https://raw.githubusercontent.com/Uniswap/v4-periphery/main/src/PositionManager.sol ; deployments https://developers.uniswap.org/docs/protocols/v4/deployments ; licences <code>Uniswap/v4-core/licenses/BUSL_LICENSE</code> (Change Date 2027-06-15, Change License MIT), <code>Uniswap/v4-periphery/LICENSE</code> (MIT), <code>Uniswap/v2-core/LICENSE</code> (GPL-3.0), <code>UniswapV2Pair.sol</code> https://raw.githubusercontent.com/Uniswap/v2-core/master/contracts/UniswapV2Pair.sol.</li>
+<li>CreateX: https://github.com/pcaversaccio/createx (salt layout, guarded salt, <code>deployCreate3</code>, canonical address).</li>
+<li>Arbitrum block number/time: https://docs.arbitrum.io/build-decentralized-apps/arbitrum-vs-ethereum/block-numbers-and-time.</li>
+<li>Robinhood Chain: https://docs.robinhood.com/chain/ (FCFS), https://docs.robinhood.com/chain/connecting (chain ids 4663/46630, RPCs, explorers); <code>chainid.network/chains.json</code> entries for 4663/46630/91342/9134.</li>
+<li>GIWA: https://docs.giwa.io/network-information/diffs-ethereum-giwa.md (fee ordering, 1 s blocks), https://docs.giwa.io/network-information/flashblocks.md (≤200 ms preconfirmation, <code>pending</code>), https://docs.giwa.io/get-started/smart-contract/develop/foundry.md (Blockscout verification flags).</li>
+<li>Live probes 2026-09-06: <code>eth_getCode</code> on 4663 / 46630 / 91342 for PoolManager, PositionManager, StateView, CreateX, Permit2, Multicall3, WETH, Arachnid proxy; <code>eth_gasPrice</code> on all three; Blockscout <code>verification/config</code> on 46630 and 91342.</li>
+</ul></article>
+    </main>
+    <footer>
+      <span>research_only=true</span>
+      <span>strategy_consumption_allowed=false</span>
+      <span>order_input=false</span>
+    </footer>
+  </body>
+</html>

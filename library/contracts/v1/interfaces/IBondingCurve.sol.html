@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex,nofollow,noarchive" />
+    <meta name="theme-color" content="#090c0e" />
+    <title>IBondingCurve.sol · GIWA · Robinhood Launchpad</title>
+    <link rel="stylesheet" href="../../../../assets/document.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#document">본문으로 바로가기</a>
+    <header class="document-header">
+      <a class="brand" href="../../../../development.html" aria-label="GIWA 대시보드로 돌아가기">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span><strong>GIWA · RH</strong><small>LAUNCHPAD ROOM</small></span>
+      </a>
+      <nav aria-label="문서 동작">
+        <a href="../../../../development.html">← 대시보드</a>
+      </nav>
+    </header>
+    <main id="document" class="document-shell">
+      <div class="document-meta">
+        <span>PROJECT FILE</span>
+        <span>SHA256 67ac5bd59046</span>
+      </div>
+      <h1>IBondingCurve.sol</h1>
+      <p class="source-path">contracts/v1/interfaces/IBondingCurve.sol</p>
+      <article class="code-body"><pre class="source-code"><span class="code-line"><i>1</i><code>// SPDX-License-Identifier: MIT</code></span>
+<span class="code-line"><i>2</i><code>pragma solidity ^0.8.26;</code></span>
+<span class="code-line"><i>3</i><code></code></span>
+<span class="code-line"><i>4</i><code>/// @title IBondingCurve — the per-chain singleton curve (launchpad v1)</code></span>
+<span class="code-line"><i>5</i><code>/// @notice ONE contract per chain holds the curve state of every token in a mapping (no clones, no per-launch</code></span>
+<span class="code-line"><i>6</i><code>///         contracts). Quote asset = native ETH on both chains. Fees are NOT held here: every trade credits</code></span>
+<span class="code-line"><i>7</i><code>///         FeeEscrow in the same call (`credit{value}`), so the escrow is the only ledger.</code></span>
+<span class="code-line"><i>8</i><code>/// @dev    Curve: (V + R) * (X0 - S) = V * X0   (virtual quote only; V and Q per immutable tier)</code></span>
+<span class="code-line"><i>9</i><code>///           R = real quote held for the token, S = tokens sold, X0 = 1e27.</code></span>
+<span class="code-line"><i>10</i><code>///           Graduation trigger: S == X_SELL where X_SELL = X0 * Q / (V + Q) (identical for all tiers because</code></span>
+<span class="code-line"><i>11</i><code>///           Q = 2.5 V in every tier) -&gt; 714,285,714.285714 tokens (71.4286 %). X_RES = X0 - X_SELL.</code></span>
+<span class="code-line"><i>12</i><code>///         Rounding: every amount paid OUT by the curve is floored; the crossing buy&#x27;s required input is</code></span>
+<span class="code-line"><i>13</i><code>///           ceiled (+1 wei) and grossed up with ceil; fees floor on the gross leg. Hence k&#x27; &gt;= k always.</code></span>
+<span class="code-line"><i>14</i><code>///         Snipe tax (buys only): SnipeSchedule.snipeBps(block.timestamp - launchedAt), whole seconds,</code></span>
+<span class="code-line"><i>15</i><code>///           table [9900, 9900, 2475, 309, 38] then 0 (t &gt;= 5). Capped so total bps &lt;= MAX_TOTAL_BPS (9900).</code></span>
+<span class="code-line"><i>16</i><code>///           100 % of snipe proceeds go to the protocol (escrow `protocolOnly` leg). No exempt addresses;</code></span>
+<span class="code-line"><i>17</i><code>///           the only exempt buy is the dev buy executed inside `open()` (call-path exemption).</code></span>
+<span class="code-line"><i>18</i><code>///         Reentrancy: OZ ReentrancyGuardTransient on buy/sell/graduate. The atomic graduation attempt inside</code></span>
+<span class="code-line"><i>19</i><code>///           the crossing buy uses the INTERNAL unguarded path (`_graduate`) so it does not re-enter the guard;</code></span>
+<span class="code-line"><i>20</i><code>///           the permissionless `graduate()` retry takes the guard then calls the same internal path.</code></span>
+<span class="code-line"><i>21</i><code>///         Status machine per token: None -&gt; Trading -&gt; Closed -&gt; Graduated. There is NO wind-down / rescue state.</code></span>
+<span class="code-line"><i>22</i><code>interface IBondingCurve {</code></span>
+<span class="code-line"><i>23</i><code>    // ------------------------------------------------------------------ types</code></span>
+<span class="code-line"><i>24</i><code>    enum Status { None, Trading, Closed, Graduated }</code></span>
+<span class="code-line"><i>25</i><code></code></span>
+<span class="code-line"><i>26</i><code>    /// @notice Immutable tier table entry (all tiers keep graduationQuote == 2.5 * virtualQuote).</code></span>
+<span class="code-line"><i>27</i><code>    struct Tier {</code></span>
+<span class="code-line"><i>28</i><code>        uint128 virtualQuote;     // V, wei  (tier0 0.6e18, tier1 1.68e18, tier2 2.8e18)</code></span>
+<span class="code-line"><i>29</i><code>        uint128 graduationQuote;  // Q, wei  (tier0 1.5e18, tier1 4.2e18, tier2 7.0e18)</code></span>
+<span class="code-line"><i>30</i><code>    }</code></span>
+<span class="code-line"><i>31</i><code></code></span>
+<span class="code-line"><i>32</i><code>    /// @notice Per-token state (2 storage slots).</code></span>
+<span class="code-line"><i>33</i><code>    struct CurveState {</code></span>
+<span class="code-line"><i>34</i><code>        uint128 realQuote;        // R, wei; 0 once Graduated (moved to the pool)</code></span>
+<span class="code-line"><i>35</i><code>        uint128 tokensSold;       // S, &lt;= X_SELL</code></span>
+<span class="code-line"><i>36</i><code>        uint64  launchedAt;       // block.timestamp at open(); snipe-tax anchor</code></span>
+<span class="code-line"><i>37</i><code>        uint64  closedAt;         // block.timestamp of the crossing buy (0 before)</code></span>
+<span class="code-line"><i>38</i><code>        uint8   tier;</code></span>
+<span class="code-line"><i>39</i><code>        uint16  creatorTaxBps;    // 0..200, curve-only</code></span>
+<span class="code-line"><i>40</i><code>        Status  status;</code></span>
+<span class="code-line"><i>41</i><code>    }</code></span>
+<span class="code-line"><i>42</i><code></code></span>
+<span class="code-line"><i>43</i><code>    struct BuyQuote {</code></span>
+<span class="code-line"><i>44</i><code>        uint256 tokensOut;</code></span>
+<span class="code-line"><i>45</i><code>        uint256 quoteSpent;       // gross quote actually consumed (== quoteIn unless the buy crosses)</code></span>
+<span class="code-line"><i>46</i><code>        uint256 quoteRefund;      // quoteIn - quoteSpent (crossing buy only)</code></span>
+<span class="code-line"><i>47</i><code>        uint256 fee;              // 1 % of quoteSpent -&gt; escrow shared (80/20)</code></span>
+<span class="code-line"><i>48</i><code>        uint256 creatorTax;       // creatorTaxBps of quoteSpent -&gt; escrow creatorOnly</code></span>
+<span class="code-line"><i>49</i><code>        uint256 snipeTax;         // snipeBps of quoteSpent -&gt; escrow protocolOnly</code></span>
+<span class="code-line"><i>50</i><code>        bool    crosses;          // true if this buy exhausts X_SELL (graduation)</code></span>
+<span class="code-line"><i>51</i><code>    }</code></span>
+<span class="code-line"><i>52</i><code></code></span>
+<span class="code-line"><i>53</i><code>    struct SellQuote {</code></span>
+<span class="code-line"><i>54</i><code>        uint256 quoteOut;         // net to the seller</code></span>
+<span class="code-line"><i>55</i><code>        uint256 fee;              // 1 % of gross quote -&gt; escrow shared</code></span>
+<span class="code-line"><i>56</i><code>        uint256 creatorTax;       // creatorTaxBps of gross -&gt; escrow creatorOnly</code></span>
+<span class="code-line"><i>57</i><code>    }</code></span>
+<span class="code-line"><i>58</i><code></code></span>
+<span class="code-line"><i>59</i><code>    // ------------------------------------------------------------------ events</code></span>
+<span class="code-line"><i>60</i><code>    event CurveOpened(address indexed token, uint8 tier, uint16 creatorTaxBps, uint64 launchedAt);</code></span>
+<span class="code-line"><i>61</i><code>    /// @notice The single disclosed, snipe-exempt dev buy (executed inside open()).</code></span>
+<span class="code-line"><i>62</i><code>    event DevBuy(address indexed token, address indexed launcher, uint256 quoteIn, uint256 tokensOut);</code></span>
+<span class="code-line"><i>63</i><code>    event Buy(</code></span>
+<span class="code-line"><i>64</i><code>        address indexed token, address indexed sender, address indexed recipient,</code></span>
+<span class="code-line"><i>65</i><code>        uint256 quoteIn, uint256 quoteSpent, uint256 tokensOut, uint256 fee, uint256 creatorTax, uint256 snipeTax</code></span>
+<span class="code-line"><i>66</i><code>    );</code></span>
+<span class="code-line"><i>67</i><code>    event Sell(</code></span>
+<span class="code-line"><i>68</i><code>        address indexed token, address indexed sender, address indexed recipient,</code></span>
+<span class="code-line"><i>69</i><code>        uint256 tokensIn, uint256 quoteOut, uint256 fee, uint256 creatorTax</code></span>
+<span class="code-line"><i>70</i><code>    );</code></span>
+<span class="code-line"><i>71</i><code>    event Refund(address indexed token, address indexed to, uint256 amount);</code></span>
+<span class="code-line"><i>72</i><code>    /// @notice The crossing buy landed: S == X_SELL, buys and sells are closed, graduation follows.</code></span>
+<span class="code-line"><i>73</i><code>    event CurveClosed(address indexed token, uint256 realQuote, uint256 tokensSold);</code></span>
+<span class="code-line"><i>74</i><code>    /// @notice The atomic graduation attempt reverted; anyone may call graduate(token).</code></span>
+<span class="code-line"><i>75</i><code>    event GraduationDeferred(address indexed token, bytes reason, uint256 gasLeft);</code></span>
+<span class="code-line"><i>76</i><code>    event Graduated(</code></span>
+<span class="code-line"><i>77</i><code>        address indexed token, bytes32 indexed poolId, address venue,</code></span>
+<span class="code-line"><i>78</i><code>        uint256 positionIdFull, uint256 positionIdOverhang,</code></span>
+<span class="code-line"><i>79</i><code>        uint256 quoteSeeded, uint256 tokensSeeded, uint256 tokensOverhang, uint160 sqrtPriceX96</code></span>
+<span class="code-line"><i>80</i><code>    );</code></span>
+<span class="code-line"><i>81</i><code></code></span>
+<span class="code-line"><i>82</i><code>    // ------------------------------------------------------------------ errors</code></span>
+<span class="code-line"><i>83</i><code>    error NotFactory();</code></span>
+<span class="code-line"><i>84</i><code>    error UnknownToken(address token);</code></span>
+<span class="code-line"><i>85</i><code>    error NotTrading(Status current);</code></span>
+<span class="code-line"><i>86</i><code>    error NotClosed(Status current);</code></span>
+<span class="code-line"><i>87</i><code>    error ZeroAmount();</code></span>
+<span class="code-line"><i>88</i><code>    error ZeroAddress();</code></span>
+<span class="code-line"><i>89</i><code>    error Expired(uint256 deadline);</code></span>
+<span class="code-line"><i>90</i><code>    error SlippageExceeded(uint256 got, uint256 min);</code></span>
+<span class="code-line"><i>91</i><code>    error DevBuyExceedsCap(uint256 tokensOut, uint256 cap);</code></span>
+<span class="code-line"><i>92</i><code>    error CreatorTaxTooHigh(uint16 bps, uint16 max);</code></span>
+<span class="code-line"><i>93</i><code>    error InvalidTier(uint8 tier);</code></span>
+<span class="code-line"><i>94</i><code>    error AlreadyOpen(address token);</code></span>
+<span class="code-line"><i>95</i><code>    error QuoteTransferFailed();</code></span>
+<span class="code-line"><i>96</i><code>    error Reentrancy();</code></span>
+<span class="code-line"><i>97</i><code></code></span>
+<span class="code-line"><i>98</i><code>    // ------------------------------------------------------------------ factory-only</code></span>
+<span class="code-line"><i>99</i><code>    /// @notice Opens the curve for `token` (whose whole supply must already sit in this contract), records</code></span>
+<span class="code-line"><i>100</i><code>    ///         `launchedAt`, approves TARGET for X_RES (pulled at graduation), and runs the dev buy with</code></span>
+<span class="code-line"><i>101</i><code>    ///         `msg.value` (may be 0) as a snipe-exempt buy to `launcher`. Reverts if tokensOut &gt; MAX_DEV_BUY_TOKENS.</code></span>
+<span class="code-line"><i>102</i><code>    function open(address token, uint8 tier, uint16 creatorTaxBps, address launcher, uint256 minDevTokensOut)</code></span>
+<span class="code-line"><i>103</i><code>        external payable returns (uint256 devTokensOut);</code></span>
+<span class="code-line"><i>104</i><code></code></span>
+<span class="code-line"><i>105</i><code>    // ------------------------------------------------------------------ trading (permissionless)</code></span>
+<span class="code-line"><i>106</i><code>    /// @notice Exact-input buy with a price-bound slippage check: spent * minTokensOut &lt;= quoteIn * tokensOut,</code></span>
+<span class="code-line"><i>107</i><code>    ///         so a partial (crossing) fill honours the caller&#x27;s price instead of reverting. Refund -&gt; msg.sender.</code></span>
+<span class="code-line"><i>108</i><code>    function buy(address token, uint256 minTokensOut, address recipient, uint256 deadline)</code></span>
+<span class="code-line"><i>109</i><code>        external payable returns (uint256 tokensOut, uint256 quoteSpent, uint256 quoteRefunded);</code></span>
+<span class="code-line"><i>110</i><code></code></span>
+<span class="code-line"><i>111</i><code>    /// @notice Exact-input sell (Trading only). Never snipe-taxed. 1 % fee + creator tax on the gross quote.</code></span>
+<span class="code-line"><i>112</i><code>    function sell(address token, uint256 tokensIn, uint256 minQuoteOut, address recipient, uint256 deadline)</code></span>
+<span class="code-line"><i>113</i><code>        external returns (uint256 quoteOut);</code></span>
+<span class="code-line"><i>114</i><code></code></span>
+<span class="code-line"><i>115</i><code>    /// @notice Permissionless retry of a deferred graduation (status Closed). Effects: status = Graduated,</code></span>
+<span class="code-line"><i>116</i><code>    ///         realQuote = 0, then TARGET.graduate{value: R, gas: GRADUATE_GAS}(token, X_RES, R, V);</code></span>
+<span class="code-line"><i>117</i><code>    ///         the target PULLS X_RES via transferFrom inside its own frame. A revert leaves the token Closed.</code></span>
+<span class="code-line"><i>118</i><code>    function graduate(address token) external;</code></span>
+<span class="code-line"><i>119</i><code></code></span>
+<span class="code-line"><i>120</i><code>    // ------------------------------------------------------------------ views</code></span>
+<span class="code-line"><i>121</i><code>    function getState(address token) external view returns (CurveState memory);</code></span>
+<span class="code-line"><i>122</i><code>    function tierParams(uint8 tier) external view returns (Tier memory);</code></span>
+<span class="code-line"><i>123</i><code>    function tierCount() external view returns (uint8);</code></span>
+<span class="code-line"><i>124</i><code>    function quoteBuy(address token, uint256 quoteIn) external view returns (BuyQuote memory);</code></span>
+<span class="code-line"><i>125</i><code>    function quoteSell(address token, uint256 tokensIn) external view returns (SellQuote memory);</code></span>
+<span class="code-line"><i>126</i><code>    /// @notice Snipe bps that a buy sent NOW would pay (already capped against fee + tax).</code></span>
+<span class="code-line"><i>127</i><code>    function currentSnipeBps(address token) external view returns (uint256);</code></span>
+<span class="code-line"><i>128</i><code>    /// @notice Marginal price (V + R) / (X0 - S) as quote-per-token, 1e18-scaled.</code></span>
+<span class="code-line"><i>129</i><code>    function price(address token) external view returns (uint256 quotePerTokenWad);</code></span>
+<span class="code-line"><i>130</i><code>    function sellableTokens(address token) external view returns (uint256);</code></span>
+<span class="code-line"><i>131</i><code>    /// @notice S * 10_000 / X_SELL.</code></span>
+<span class="code-line"><i>132</i><code>    function graduationProgressBps(address token) external view returns (uint256);</code></span>
+<span class="code-line"><i>133</i><code></code></span>
+<span class="code-line"><i>134</i><code>    // immutables / constants</code></span>
+<span class="code-line"><i>135</i><code>    function X0() external view returns (uint256);                 // 1e27</code></span>
+<span class="code-line"><i>136</i><code>    function X_SELL() external view returns (uint256);             // 714_285_714_285714285714285714 (= X0*5/7)</code></span>
+<span class="code-line"><i>137</i><code>    function X_RES() external view returns (uint256);              // X0 - X_SELL</code></span>
+<span class="code-line"><i>138</i><code>    function FEE_BPS() external view returns (uint16);             // 100</code></span>
+<span class="code-line"><i>139</i><code>    function MAX_CREATOR_TAX_BPS() external view returns (uint16); // 200</code></span>
+<span class="code-line"><i>140</i><code>    function MAX_TOTAL_BPS() external view returns (uint16);       // 9_900 (buyer always keeps &gt;= 1 %)</code></span>
+<span class="code-line"><i>141</i><code>    function MAX_DEV_BUY_TOKENS() external view returns (uint256); // 50_000_000e18 (5 % of supply)</code></span>
+<span class="code-line"><i>142</i><code>    function SNIPE_WINDOW_SECONDS() external view returns (uint8); // 5</code></span>
+<span class="code-line"><i>143</i><code>    function GRADUATE_GAS() external view returns (uint256);       // explicit stipend for the atomic attempt (&gt;= 2x measured)</code></span>
+<span class="code-line"><i>144</i><code>    function FACTORY() external view returns (address);</code></span>
+<span class="code-line"><i>145</i><code>    function TARGET() external view returns (address);</code></span>
+<span class="code-line"><i>146</i><code>    function ESCROW() external view returns (address);</code></span>
+<span class="code-line"><i>147</i><code>}</code></span></pre></article>
+    </main>
+    <footer>
+      <span>research_only=true</span>
+      <span>strategy_consumption_allowed=false</span>
+      <span>order_input=false</span>
+    </footer>
+  </body>
+</html>

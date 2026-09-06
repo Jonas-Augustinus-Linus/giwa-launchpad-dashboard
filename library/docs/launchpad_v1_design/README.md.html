@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex,nofollow,noarchive" />
+    <meta name="theme-color" content="#090c0e" />
+    <title>런치패드 v1 설계 부록 · GIWA · Robinhood Launchpad</title>
+    <link rel="stylesheet" href="../../../assets/document.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#document">본문으로 바로가기</a>
+    <header class="document-header">
+      <a class="brand" href="../../../development.html" aria-label="GIWA 대시보드로 돌아가기">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span><strong>GIWA · RH</strong><small>LAUNCHPAD ROOM</small></span>
+      </a>
+      <nav aria-label="문서 동작">
+        <a href="../../../development.html">← 대시보드</a>
+      </nav>
+    </header>
+    <main id="document" class="document-shell">
+      <div class="document-meta">
+        <span>REPORT</span>
+        <span>SHA256 068da3c0990d</span>
+      </div>
+      <h1>런치패드 v1 설계 부록</h1>
+      <p class="source-path">docs/launchpad_v1_design/README.md</p>
+      <article class="markdown-body"><h1 id="v1">런치패드 v1 설계 부록</h1>
+<p>정본은 <a href="../LAUNCHPAD_V1_CONTRACT_DESIGN.md.html"><code>docs/LAUNCHPAD_V1_CONTRACT_DESIGN.md</code></a>와 <a href="#" class="unavailable-link" title="게시되지 않은 내부 경로"><code>contracts/v1/interfaces/</code></a>다. 이 폴더는 정본을 만들 때 쓴 초안·리뷰·계산 스크립트다. 초안끼리 충돌하는 내용은 정본이 이긴다.</p>
+<table>
+<thead>
+<tr>
+<th>파일</th>
+<th>내용</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>D1_curve_factory_graduation.md</code></td>
+<td>토큰·팩토리·본딩커브 싱글턴·졸업 설계 초안</td>
+</tr>
+<tr>
+<td><code>D2_v4_hook_fees_sniper.md</code></td>
+<td>Robinhood Uniswap v4 훅(1 % quote 수수료·스나이퍼세·initialize 게이트) 초안</td>
+</tr>
+<tr>
+<td><code>D3_locker_escrow_giwa_adapter.md</code></td>
+<td>영구 락커·수수료 에스크로·GIWA LaunchPair 어댑터 초안</td>
+</tr>
+<tr>
+<td><code>A1_security_review.md</code></td>
+<td>보안 적대 리뷰(16건) — must-change는 정본 §0에 반영</td>
+</tr>
+<tr>
+<td><code>A2_economics_review.md</code></td>
+<td>경제 리뷰 — 오버행·티어·스나이퍼세 라우팅 결정 근거</td>
+</tr>
+<tr>
+<td><code>curve_numbers.py</code></td>
+<td>커브 정수 산식 재현(정본 §4.7)</td>
+</tr>
+<tr>
+<td><code>a2_econ.py</code></td>
+<td>경제 리뷰 계산</td>
+</tr>
+<tr>
+<td><code>rh_gas_probe.json</code></td>
+<td>Robinhood 체인 Pons V2 가스 실측(읽기 전용 RPC)</td>
+</tr>
+</tbody>
+</table>
+<p>아무것도 배포되지 않았다. 서명·브로드캐스트·배포 코드는 이 저장소에 없다.</p></article>
+    </main>
+    <footer>
+      <span>research_only=true</span>
+      <span>strategy_consumption_allowed=false</span>
+      <span>order_input=false</span>
+    </footer>
+  </body>
+</html>

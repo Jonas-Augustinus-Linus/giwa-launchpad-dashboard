@@ -1,0 +1,839 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex,nofollow,noarchive" />
+    <meta name="theme-color" content="#090c0e" />
+    <title>D1 — LaunchToken + LaunchFactory + BondingCurve + Graduation (launchpad v1 design) · GIWA · Robinhood Launchpad</title>
+    <link rel="stylesheet" href="../../../assets/document.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#document">본문으로 바로가기</a>
+    <header class="document-header">
+      <a class="brand" href="../../../development.html" aria-label="GIWA 대시보드로 돌아가기">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span><strong>GIWA · RH</strong><small>LAUNCHPAD ROOM</small></span>
+      </a>
+      <nav aria-label="문서 동작">
+        <a href="../../../development.html">← 대시보드</a>
+      </nav>
+    </header>
+    <main id="document" class="document-shell">
+      <div class="document-meta">
+        <span>REPORT</span>
+        <span>SHA256 2fd530e9fc67</span>
+      </div>
+      <h1>D1 — LaunchToken + LaunchFactory + BondingCurve + Graduation (launchpad v1 design)</h1>
+      <p class="source-path">docs/launchpad_v1_design/D1_curve_factory_graduation.md</p>
+      <article class="markdown-body"><h1 id="d1-launchtoken-launchfactory-bondingcurve-graduation-launchpad-v1-design">D1 — LaunchToken + LaunchFactory + BondingCurve + Graduation (launchpad v1 design)</h1>
+<p>Status: design, 2026-09-06 (KST). Nothing here is deployed. Solidity ≥ 0.8.26, EVM <code>cancun</code> (both chains run PUSH0/TSTORE; Robinhood Nitro and GIWA Karst/Osaka both accept it — Pons V2 is verified as <code>v0.8.35</code>, <code>evm_version: cancun</code>, 200 runs on Robinhood Blockscout).</p>
+<p>Scope: component 1 only — token, factory, curve, graduation into the permanent pool. The post-graduation hook (fee split in the v4 pool, optional post-graduation snipe window), the fee escrow UI, the GIWA-native pool internals, and the Korean UI are other components; where this component touches them I define the interface it needs and nothing more.</p>
+<p>Reference material read for this component: <code>docs/launch_research_2026-09-06/01_robinhood_launchpads.md</code> (§2.1 Pons V2, §2.6 Bags-RH, §2.4 o1), <code>docs/launch_research_2026-09-06/02_launch_structure_norms.md</code> (§1 curve arithmetic, §3(c)/(d) norms, §4), <code>docs/launch_research_2026-09-06/05_lp_burn_signal.md</code> (§2.c v4 custody, §3 checklist), the full verified Pons V2 source pulled from Blockscout (<code>sc_ponsv2.json</code> → extracted under <code>Pons V2 검증 소스(robinhoodchain.blockscout.com, 저장소 미포함)/</code>: <code>PonsV2BondingCurve.sol</code>, <code>PonsV2BondingCurveMath.sol</code>, <code>PonsV2GraduationMath.sol</code>, <code>PonsV2GraduationExecutor.sol</code>, <code>PonsV2GraduationGuard.sol</code>, <code>PonsV2LaunchLocker.sol</code>, <code>PonsV2LaunchDeployer.sol</code>, <code>PonsV2LauncherToken.sol</code>, factory <code>_ponsv2_main.sol</code>), and fresh RPC reads on 2026-09-06 (<code>docs/launchpad_v1_design/rh_gas_probe.json</code>).</p>
+<p>Primary sources cited inline:
+- CreateX README (salt guard rules, CREATE3 without init-code factor): https://github.com/pcaversaccio/createx (raw README fetched 2026-09-06)
+- Uniswap v4 core <code>PoolManager.initialize</code> (no unlock needed; tickSpacing/currency/hook checks; <code>beforeInitialize(msg.sender, key, sqrtPriceX96)</code>): https://github.com/Uniswap/v4-core/blob/main/src/PoolManager.sol , https://github.com/Uniswap/v4-core/blob/main/src/libraries/Hooks.sol
+- Uniswap v4 PositionManager guide (MINT_POSITION / SETTLE_PAIR / SWEEP encoding): https://developers.uniswap.org/docs/protocols/v4/guides/position-manager
+- Uniswap v4 deployments on Robinhood 4663: https://developers.uniswap.org/docs/protocols/v4/deployments (PoolManager <code>0x8366a39CC670B4001A1121B8F6A443A643e40951</code>, PositionManager <code>0x58daec3116aae6D93017bAAea7749052E8a04fA7</code>, Permit2 <code>0x000000000022D473030F116dDEE9F6B43aC78BA3</code>)
+- Arbitrum block number / timestamp semantics: https://docs.arbitrum.io/build-decentralized-apps/arbitrum-vs-ethereum/block-numbers-and-time
+- OpenZeppelin <code>EIP712.sol</code> (immutable <code>_hashedName</code> — relevant to the "identical runtime bytecode" requirement): https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/cryptography/EIP712.sol</p>
+<p>Chain facts re-measured 2026-09-06 (RPC <code>https://rpc.mainnet.chain.robinhood.com</code>, needs a non-Python UA):
+- gas price 0.425 gwei; block <code>gasLimit</code> 2^50 (Nitro "unlimited"; per-tx cap applies); receipts show <code>gasUsedForL1: 0x0</code>.
+- 10 consecutive blocks share one <code>block.timestamp</code> (blocks 55,557,998–55,558,007 all at 1788655394) — i.e. ~0.1 s blocks, 1 s timestamp granularity.
+- <code>block.number</code> opcode (via Multicall3 <code>getBlockNumber</code>) = <strong>25,914,786</strong> (Ethereum L1 height) while <code>ArbSys(0x64).arbBlockNumber()</code> = <strong>55,558,061</strong> (own chain height). Never use <code>block.number</code> as a local clock on Robinhood.
+- Code sizes: CreateX 11,838 B, PositionManager 23,877 B, PoolManager 24,009 B, Permit2 9,152 B, WETH proxy 2,202 B (aeWETH upgradeable proxy).
+- Measured Pons V2 gas: <code>launchAndBuy</code> <strong>3,714,307</strong> and <strong>3,759,543</strong> gas (deploys curve + token contracts); router curve buy <strong>213,420</strong>; crossing buy + atomic graduation (NEST, tx <code>0x8951e5…d1fe</code>) <strong>952,468</strong> gas, another graduation <strong>985,786</strong>. At 0.425 gwei, 1M gas = 0.000425 ETH ≈ $1.05.</p>
+<hr>
+<h2 id="0-decisions-in-one-screen">0. Decisions in one screen</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Decision</th>
+<th>Choice</th>
+<th>Why (short)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>D1</td>
+<td>Token</td>
+<td>OZ <code>ERC20</code> + <code>ERC20Burnable</code>, <strong>no</strong> <code>ERC20Permit</code>; name/symbol in storage (OZ default); constructor only mints 1e9·1e18 to the curve singleton; zero owner, zero hooks</td>
+<td>Identical runtime bytecode across launches and chains → Blockscout "verified twin" auto-verification; OZ <code>EIP712</code> bakes <code>_hashedName</code> into an immutable, which would break bytecode identity; Permit2 (canonical on both chains) already covers gasless approvals</td>
+</tr>
+<tr>
+<td>D2</td>
+<td>Address parity</td>
+<td>Token deployed through <strong>CreateX <code>deployCreate3</code></strong> from the factory, salt = <code>[factory:20][0x00][entropy:11]</code>, entropy = <code>keccak(launcher, userSalt, keccak(name), keccak(symbol))[:11]</code>; <strong>factory itself deployed via CreateX CREATE3 with the owner-EOA-guarded salt</strong> so the factory address is identical on 4663 / 9134 / 91342</td>
+<td>CREATE3 removes the init-code factor, so chain-specific constructor args (curve address) don't change the address; sender-guarded salts make cross-chain squatting impossible; launcher-namespaced entropy makes same-chain salt front-running impossible</td>
+</tr>
+<tr>
+<td>D3</td>
+<td>Curve topology</td>
+<td><strong>One singleton <code>BondingCurve</code> contract per chain</strong> holding per-token state in a mapping; no clones, no per-launch contracts</td>
+<td>Launch gas ≈ 1.0–1.1M vs Pons's 3.7M; no delegatecall tax on every trade; one address to index; same audit surface (per-launch contracts share bytecode anyway)</td>
+</tr>
+<tr>
+<td>D4</td>
+<td>Curve math</td>
+<td>Constant product with a <strong>virtual quote reserve only</strong> (<code>(V+R)(X0−S) = V·X0</code>), no virtual token reserve; graduation trigger = <strong>sellable supply exhausted</strong> (<code>S == X_sell</code>), final buy clamped with exact-out math and ETH refund</td>
+<td>Exactly Pons's shape (verified in source), so Robinhood traders/bots already price it; token-exhaustion trigger makes the seed amounts identical for every launch</td>
+</tr>
+<tr>
+<td>D5</td>
+<td>Parameters</td>
+<td>Robinhood: <code>V = 1.68 ETH</code>, <code>Q = 4.2 ETH</code> (→ 71.43 % sold, 20.41 % + 4.2 ETH to pool, 8.16 % overhang). GIWA mainnet-day: <code>V = 0.6</code>, <code>Q = 1.5</code> (same ratio <code>Q = 2.5 V</code>, graduation FDV 7.35 ETH). Both are <strong>immutables</strong>; a new config is a new deployment</td>
+<td>No admin, so no <code>addLaunchConfig</code>; keeping <code>Q/V = 2.5</code> keeps every percentage identical across chains</td>
+</tr>
+<tr>
+<td>D6</td>
+<td>Fees on curve</td>
+<td>1 % of the ETH leg on buys (input) and sells (output), split <strong>80 creator / 20 protocol</strong>, accrued in the singleton and pull-claimed; optional creator tax <strong>≤ 200 bps</strong>, immutable per token, curve phase only; 0.0005 ETH creation fee accrued to protocol</td>
+<td>Owner's rules; accrual (not push) avoids a revert-prone external call per trade</td>
+</tr>
+<tr>
+<td>D7</td>
+<td>Snipe tax</td>
+<td><code>taxBps(t) = 9900 &gt;&gt; floor(t·14 / T)</code> (exponential, 14 halvings over <code>T</code>), capped so the buyer always nets ≥ 1 % of spend; joins the 80/20 fee bucket; <strong>only exemption = the single dev-buy executed inside <code>createToken</code></strong>; Robinhood clock = <code>block.timestamp</code> with sub-second interpolation from <code>ArbSys.arbBlockNumber()</code>, GIWA clock = <code>block.timestamp</code></td>
+<td>Same schedule the market already accepts on Pons (docs "≈25 % at 1 s, ≈3 % at 2 s" is exactly <code>9900&gt;&gt;2</code>, <code>9900&gt;&gt;5</code> for <code>T=5</code>); no exempt list ⇒ no bundles by construction</td>
+</tr>
+<tr>
+<td>D8</td>
+<td>Dev buy</td>
+<td><code>createToken(..., devBuyEth)</code>; internal buy with <code>snipeBps = 0</code>; <strong>revert if <code>tokensOut &gt; 50,000,000e18</code> (5 % of supply)</strong>; at <code>V=1.68</code> that is ≈ 0.0893 ETH gross</td>
+<td>Hard on-chain cap; deterministic because the curve is fresh</td>
+</tr>
+<tr>
+<td>D9</td>
+<td>Quote asset</td>
+<td><strong>Native ETH (<code>Currency address(0)</code>) on the curve and in the v4 pool</strong>, never WETH</td>
+<td>Robinhood WETH is an admin-upgradeable aeWETH proxy — a trust dependency the owner forbids; v4 natively settles ETH; Pons V2 pools are <code>(ETH, token)</code> already; no wrap gas, no Permit2 on the ETH leg; ETH always sorts as <code>currency0</code> so the PoolKey is fixed</td>
+</tr>
+<tr>
+<td>D10</td>
+<td>Graduation</td>
+<td>Attempted <strong>atomically inside the crossing buy</strong> via <code>try/catch</code>; on failure the curve is <code>Closed</code> and <strong>anyone can call <code>graduate(token)</code></strong>; the executor does <code>PoolManager.initialize</code> → <code>PositionManager.modifyLiquidities</code> (MINT full-range to the locker, MINT single-sided overhang to the locker, SETTLE_PAIR, SWEEP) → <code>locker.register</code></td>
+<td>Pons's proven pattern (their <code>_tryAutoGraduate</code> + permissionless <code>createGraduatedPool</code>); hook <code>beforeInitialize</code> gate makes the initialize race impossible</td>
+</tr>
+<tr>
+<td>D11</td>
+<td>Leftover 8.16 %</td>
+<td><strong>Second single-sided token-only position <code>[MIN_TICK, floor(tick/200)·200]</code> in the same locker</strong> (not burned, not parked)</td>
+<td>Honours "curve/pool gets 100 %": at graduation 71.43 % is with buyers and 28.57 % + all raised ETH is permanently in the pool; overhang converts into locked ETH depth as price rises; supply stays exactly 1e9. Burn is the documented alternative (<code>LEFTOVER_MODE</code> compile-time constant)</td>
+</tr>
+<tr>
+<td>D12</td>
+<td>Pool key</td>
+<td><code>{currency0: ETH, currency1: token, fee: 0, tickSpacing: 200, hooks: LaunchHook}</code>; LP position accrues <strong>no</strong> pool fee; the hook charges 1 % of the quote leg (component 2)</td>
+<td>Same shape as Pons (<code>fee 0 / ts 200 / hook</code>), which every Robinhood indexer already decodes</td>
+</tr>
+<tr>
+<td>D13</td>
+<td>No admin</td>
+<td>No owner anywhere in this component; the only mutable per-token state is <code>creatorRecipient</code> behind a 3-day timelock proposed by the current recipient; a no-trust <code>windDown</code> valve re-opens sells if graduation is impossible for 7 days</td>
+<td>Owner's rules + a way for holders to exit if the executor is ever bricked, without giving anyone a key</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="1-contracts-and-how-they-relate">1. Contracts and how they relate</h2>
+<pre><code>                 CreateX 0xba5Ed099…a5Ed (same on 4663 / 9134 / 91342)
+                        │ deployCreate3(ownerGuardedSalt_i, initCode_i)   (once per chain, by the owner EOA)
+                        ▼
+   ┌───────────────── LaunchFactory (same address on every chain) ─────────────────┐
+   │ createToken()  registry  creatorRecipient timelock  predictTokenAddress()      │
+   │            │ deployCreate3(factoryGuardedSalt(launcher,…), LaunchToken.initCode)│
+   └────────────┼───────────────────────────────────────────────────────────────────┘
+                ▼                              ┌────────────────────────────────┐
+        LaunchToken (identical runtime code)   │ BondingCurve (singleton/chain) │
+        constructor: _mint(curve, 1e27)  ────▶ │ per-token {R,S,status,fees}    │
+                                               │ buy/sell/claim/graduate        │
+                                               └──────────────┬─────────────────┘
+                                                              │ graduate{value:R}(token, X_res)
+                                                              ▼
+                                     GraduationExecutor (chain-specific implementation)
+                                     RH:  PoolManager.initialize + PositionManager mint ×2 → PermanentLocker
+                                     GIWA: NativePool.create + seed → PermanentLocker (component 3)
+</code></pre>
+<p>Deployment order per chain (all via CreateX CREATE3 from the owner EOA, salt byte 21 = <code>0x00</code> so the <em>same</em> address is produced on every chain): predict all five addresses first, then deploy <code>PermanentLocker</code>, <code>LaunchHook</code> (Robinhood only; its address must additionally carry the <code>BEFORE_INITIALIZE | AFTER_SWAP | AFTER_SWAP_RETURNS_DELTA</code> bits — mined salt, so the hook is CREATE2-mined per chain and <em>not</em> address-identical, which is fine because pools are chain-local), <code>GraduationExecutor</code>, <code>BondingCurve</code>, <code>LaunchFactory</code>. Circular immutables (curve ↔ factory) are resolved by passing predicted addresses into constructors; each constructor asserts the counter-party's <code>address</code> matches once deployed (a <code>wire()</code>-free design: the last-deployed contract's constructor performs a read-back check <code>require(curve.factory() == address(this))</code>).</p>
+<p>Why the factory must be address-identical: the token address under CREATE3 is <code>f(CreateX, guardedSalt)</code> and CreateX's permissioned guard folds <code>msg.sender</code> (= our factory) into <code>guardedSalt</code>. If the factory were at different addresses, the token addresses would differ. The curve, executor and locker may differ per chain (they hold chain-specific immutables anyway), but deploying them through the same guarded-CREATE3 path costs nothing and keeps the ops story simple.</p>
+<hr>
+<h2 id="2-launchtoken">2. LaunchToken</h2>
+<h3 id="21-requirements-code-shape">2.1 Requirements → code shape</h3>
+<ul>
+<li>Fixed supply <code>1_000_000_000e18</code>, 18 decimals, minted <strong>once, in the constructor, to the curve singleton</strong>. No <code>owner</code>, no <code>mint</code>, no <code>pause</code>, no blacklist, no transfer hooks, no fee-on-transfer.</li>
+<li>Runtime bytecode identical for every launch and on both chains: <strong>no immutables at all</strong> in the token (an immutable is inlined into runtime code; OZ <code>ERC20</code> stores <code>_name</code>/<code>_symbol</code> in storage so plain OZ is fine; OZ <code>ERC20Permit</code>/<code>EIP712</code> would inline <code>_hashedName</code>, <code>_cachedDomainSeparator</code>, <code>_cachedThis</code> as immutables — see the cited <code>EIP712.sol</code> — so Permit is out unless we write a storage-only EIP-712 variant. Not worth it: Permit2 is canonical on both chains and the Universal Router uses it).</li>
+<li><code>ERC20Burnable</code> retained (≈ 200 bytes) so any holder can burn and so the executor/hook can burn token-side dust or fees without a dead-address transfer (owner rule: "token-side fees retained or burned").</li>
+<li>Metadata (logo, description, socials) is <strong>not</strong> stored on the token; the factory emits it in <code>TokenCreated</code> (calldata → log). This keeps the token at ≈ 2.4 KB runtime and launch gas low. Name ≤ 64 bytes, symbol ≤ 16 bytes (Pons's caps); note ≤ 31 bytes keeps each in a single slot (Korean UTF-8 is 3 bytes/char → 10 chars).</li>
+</ul>
+<pre><code class="language-solidity">// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.26;
+
+import {ERC20} from &quot;@openzeppelin/contracts/token/ERC20/ERC20.sol&quot;;
+import {ERC20Burnable} from &quot;@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol&quot;;
+
+/// @notice Fixed-supply meme token. Entire supply is minted to the launchpad's bonding curve.
+///         No owner, no mint, no pause, no hooks, no immutables (runtime bytecode is identical for every launch).
+contract LaunchToken is ERC20, ERC20Burnable {
+    uint256 public constant SUPPLY = 1_000_000_000e18;
+    /// @dev stored, not immutable, so runtime code stays identical across launches/chains.
+    address public launchpad; // the BondingCurve singleton that received the supply (indexers use it)
+
+    constructor(string memory name_, string memory symbol_, address curve_) ERC20(name_, symbol_) {
+        launchpad = curve_;
+        _mint(curve_, SUPPLY);
+    }
+}
+</code></pre>
+<p>Bytecode identity check: <code>type(LaunchToken).runtimeCode</code> has no immutable references; constructor args live only in creation code. Blockscout matches new deployments to an already-verified bytecode twin (<code>verified_twin_address_hash</code> field in its <code>/api/v2/smart-contracts/{addr}</code> response, seen on the Pons JSON) — so after verifying the first token, every later token shows as verified with decoded constructor args.</p>
+<h3 id="22-same-address-on-4663-and-913491342-salt-scheme-and-front-running">2.2 Same address on 4663 and 9134/91342 — salt scheme and front-running</h3>
+<p>CreateX rules (README): salt layout <code>[20 bytes deployer][1 byte flag][11 bytes entropy]</code>.
+- deployer bytes == <code>msg.sender</code> and flag <code>0x00</code> → <strong>"solely a permissioned deploy protection"</strong>, guardedSalt = hash(msg.sender, salt). Only that sender can ever land that address, on any chain.
+- deployer bytes == <code>msg.sender</code> and flag <code>0x01</code> → also mixes <code>block.chainid</code> → <em>different</em> address per chain — <strong>we must not use it</strong> for the token.
+- deployer bytes == zero and flag <code>0x00</code> → guardedSalt = <code>keccak256(abi.encode(salt))</code>, unguarded: <strong>anyone</strong> on chain B can pre-deploy garbage at "our" address → rejected.
+- flag &gt; <code>0x01</code> → <code>InvalidSalt</code> revert.
+- <code>deployCreate3</code> "deploys via the CREATE3 pattern (i.e. without an initcode factor)"; <code>computeCreate3Address(bytes32 salt)</code> / <code>(salt, deployer)</code> are the predictors. README: "we strongly recommend implementing a permissioned deploy protection by setting the first 20 bytes equal to msg.sender in the salt" (to prevent cross-chain front-running).</p>
+<p>Our scheme (factory is <code>msg.sender</code> to CreateX):</p>
+<pre><code class="language-solidity">function _tokenSalt(address launcher, bytes32 userSalt, string calldata name, string calldata symbol)
+    internal view returns (bytes32 salt)
+{
+    bytes11 entropy = bytes11(keccak256(abi.encode(launcher, userSalt, keccak256(bytes(name)), keccak256(bytes(symbol)))));
+    // [ factory (20) ][ 0x00 (1) ][ entropy (11) ]
+    salt = bytes32(bytes20(address(this))) | (bytes32(entropy) &gt;&gt; 168);
+}
+// guardedSalt as CreateX computes it for (MsgSender, flag 0x00): keccak256(abi.encodePacked(bytes32(uint256(uint160(msg.sender))), salt))
+// (mirror CreateX._guard exactly in predictTokenAddress; verify against the deployed CreateX source before shipping)
+function predictTokenAddress(address launcher, bytes32 userSalt, string calldata name, string calldata symbol)
+    external view returns (address)
+{
+    bytes32 guarded = keccak256(abi.encodePacked(bytes32(uint256(uint160(address(this)))), _tokenSalt(launcher, userSalt, name, symbol)));
+    return CREATEX.computeCreate3Address(guarded, address(CREATEX));
+}
+</code></pre>
+<p>Threat analysis:
+- <strong>Cross-chain squat</strong> (attacker sees the launch on Robinhood, races to claim the same address on GIWA): impossible — only our factory (same address on both chains, only deployable by the owner EOA's guarded salt) can produce that guardedSalt, and the factory only does so for <code>msg.sender == launcher</code> with the same <code>(userSalt, name, symbol)</code>.
+- <strong>Same-chain salt front-run</strong> (attacker copies calldata to grab the launcher's predicted address): the entropy is namespaced by <code>msg.sender</code>, so a copied call lands at a different address. (Pons does the same: <code>_launchSalt = keccak(originalDeployer, salt)</code>, comment: "any caller may name an arbitrary payout address and could otherwise squat another creator's deployment".)
+- <strong>Launcher re-uses a salt</strong>: CREATE3 proxy already exists → CreateX reverts (<code>FailedContractCreation</code>); the factory checks <code>predictTokenAddress(...).code.length == 0</code> first to give a clean <code>SaltAlreadyUsed()</code> error.
+- <strong>Different metadata on chain B</strong>: because <code>keccak(name)</code>/<code>keccak(symbol)</code> are in the entropy, the same address implies the same name/symbol on both chains — the address is a commitment to the ticker.
+- 11-byte entropy = 2^88 space; collisions are irrelevant because the namespace is already launcher-bound.
+- Why not plain CREATE2 from the factory: the token's init code contains the curve address (chain-specific) → different address per chain unless the whole stack were address-identical; CREATE3 makes the address independent of init code, and CreateX is already deployed and audited on both chains. Cost: one extra CALL + a 16-byte proxy deploy (≈ 50–60k gas) per launch.</p>
+<p>Cross-chain trap worth stating in ops docs: the launcher must call <code>createToken</code> <strong>from the same EOA</strong> on both chains. Smart-account launchers (ERC-4337) are fine as long as the account address is the same on both chains.</p>
+<hr>
+<h2 id="3-bondingcurve-singleton">3. BondingCurve (singleton)</h2>
+<h3 id="31-singleton-vs-per-launch-decision">3.1 Singleton vs per-launch — decision</h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Singleton (chosen)</th>
+<th>Per-launch clones (EIP-1167)</th>
+<th>Per-launch full contracts (Pons)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Launch gas</td>
+<td>≈ 3 fresh slots ≈ 66k + registry</td>
+<td>≈ 45k clone + init SSTOREs</td>
+<td>≈ 2.5–3.2M (measured 3.71M with token)</td>
+</tr>
+<tr>
+<td>Trade gas</td>
+<td>direct SSTOREs on warm mapping</td>
+<td>+ <code>DELEGATECALL</code> (≈ 2.6k) + cold code</td>
+<td>same as singleton, cold code load</td>
+</tr>
+<tr>
+<td>Blast radius of a bug</td>
+<td>all curves' ETH in one balance</td>
+<td>isolated balances, shared logic</td>
+<td>isolated balances, shared logic</td>
+</tr>
+<tr>
+<td>Indexing</td>
+<td>one address, <code>token</code> indexed in events</td>
+<td>one address per token</td>
+<td>one address per token</td>
+</tr>
+<tr>
+<td>Bytecode</td>
+<td>must stay &lt; 24,576 B → trading only</td>
+<td>same</td>
+<td>Pons had to split into 5 helper contracts</td>
+</tr>
+</tbody>
+</table>
+<p>The singleton wins on gas (≈ 3.5× cheaper launches; with 25k launches/day on Pons, most of them bots, per-launch cost is the product's price tag) and operational simplicity. The "one balance" risk is real and is mitigated structurally: every ETH movement is bounded by a per-token accounted amount (<code>R</code>, <code>creatorFees[token]</code>) or the global <code>protocolFees</code>; nothing ever reads <code>address(this).balance</code> to decide a payout; and the invariant <code>address(this).balance ≥ Σ R_i + Σ creatorFees_i + protocolFees</code> is a fuzz/invariant test target. Donated tokens/ETH are ignored by the accounting (they are simply stranded, as in Pons's <code>graduate()</code> comment "a donation cannot move the price the pool opens at").</p>
+<h3 id="32-math">3.2 Math</h3>
+<p>Notation (all in wei / 18-dec units):
+- <code>X0 = 1e27</code> supply on the curve at launch (constant), <code>V</code> virtual quote (immutable), <code>Q</code> graduation threshold (immutable).
+- <code>R</code> real ETH held for the token (excludes fees), <code>S</code> tokens sold so far, curve token balance = <code>X0 − S</code>.
+- Invariant: <strong><code>(V + R)·(X0 − S) = k = V·X0</code></strong>, i.e. <code>R(S) = V·S/(X0 − S)</code>, <code>S(R) = X0·R/(V + R)</code>.
+- Marginal price <code>p(S) = (V+R)/(X0−S) = V·X0/(X0−S)^2</code> ETH per token.</p>
+<p>Graduation point and the general relation between <code>X0, V, Q</code>:
+- Trigger at <code>R = Q</code> ⇔ <code>S* = X_sell = X0·Q/(V+Q)</code>; reserved (never sold) <code>X_res = X0 − X_sell = X0·V/(V+Q)</code>.
+- With <code>r = Q/V</code>: sold fraction <code>r/(1+r)</code>, so <strong>71.43 % ⇔ r = 2.5</strong>; <code>V = 1.68 ⇒ Q = 4.2</code> (Pons). Final price <code>p* = (V+Q)^2/(V·X0)</code>, graduation FDV <code>= (V+Q)^2/V</code>, start FDV <code>= V</code>, price multiple curve-start→graduation <code>= (1+r)^2 = 12.25×</code>.
+- Pool seed at <code>p*</code>: ETH <code>Q</code>, tokens <code>Q/p* = X0·V·Q/(V+Q)^2</code> (<strong>20.41 %</strong>), overhang <code>X_res − that = X0·V^2/(V+Q)^2</code> (<strong>8.16 %</strong>).</p>
+<p>Numbers (computed in integer arithmetic; reproducible with <code>docs/launchpad_v1_design/curve_numbers.py</code>, output in <code>_curve_numbers.txt</code>):</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Robinhood (<code>V=1.68, Q=4.2</code>)</th>
+<th>GIWA day-1 (<code>V=0.6, Q=1.5</code>)</th>
+<th>GIWA alt (<code>V=0.4, Q=1.0</code>)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>X_sell</code></td>
+<td>714,285,714.285714 (71.4286 %)</td>
+<td>same</td>
+<td>same</td>
+</tr>
+<tr>
+<td><code>X_res</code></td>
+<td>285,714,285.714286 (28.5714 %)</td>
+<td>same</td>
+<td>same</td>
+</tr>
+<tr>
+<td>pool tokens</td>
+<td>204,081,632.653061 (20.4082 %)</td>
+<td>same</td>
+<td>same</td>
+</tr>
+<tr>
+<td>overhang</td>
+<td>81,632,653.061224 (8.1633 %)</td>
+<td>same</td>
+<td>same</td>
+</tr>
+<tr>
+<td>start FDV</td>
+<td>1.68 ETH ≈ $4.2k</td>
+<td>0.60 ETH ≈ $1.5k</td>
+<td>0.40 ETH ≈ $1.0k</td>
+</tr>
+<tr>
+<td>graduation FDV</td>
+<td>20.58 ETH ≈ $51k</td>
+<td>7.35 ETH ≈ $18k</td>
+<td>4.90 ETH ≈ $12k</td>
+</tr>
+<tr>
+<td>final price</td>
+<td>2.058e-8 ETH</td>
+<td>7.35e-9 ETH</td>
+<td>4.90e-9 ETH</td>
+</tr>
+<tr>
+<td>5 % of supply (dev-buy cap) costs</td>
+<td>0.0884 net / 0.0893 gross ETH</td>
+<td>0.0316 / 0.0319</td>
+<td>0.0211 / 0.0213</td>
+</tr>
+<tr>
+<td>1 % of supply costs</td>
+<td>0.0170 ETH</td>
+<td>0.0061</td>
+<td>0.0040</td>
+</tr>
+<tr>
+<td><code>sqrtPriceX96</code> (ETH = c0)</td>
+<td>552,276,925,551,777,206,918,806,258,182,653</td>
+<td>924,136,054,372,615,167,873,322,703,057,504</td>
+<td>1,131,830,893,060,919,108,479,199,286,722,652</td>
+</tr>
+<tr>
+<td>tick</td>
+<td>176,998</td>
+<td>187,295</td>
+<td>191,349</td>
+</tr>
+<tr>
+<td>full-range <code>L</code></td>
+<td>2.9277e22</td>
+<td>1.7496e22</td>
+<td>1.4286e22</td>
+</tr>
+</tbody>
+</table>
+<p>Cross-check against reality: the NEST graduation (Pons, block 54,862,888) minted <code>liquidityDelta = 29,277,002,188,455,995,613,652</code>; the formula above gives <code>29,277,002,188,455,995,380,631</code> — equal to 8 significant digits (the residual is the wei-level rounding of Pons's actual <code>R</code>). The median <code>PoolGraduated.tokenAmount</code> over 1,351 Pons graduations is 204,081,632.65 — the same number as the "pool tokens" row. So this parameterisation reproduces Pons's economics exactly.</p>
+<p>GIWA mainnet-day rationale: on day 1, ETH on GIWA arrives only via the L1 deposit bridge (1–3 min), so a 4.2 ETH bar would leave most launches un-graduated; <code>Q = 1.5</code> (≈ $3.7k) still opens a pool worth the hook fee. Keep <code>Q = 2.5·V</code> so every percentage and the 12.25× multiple are identical on both chains — the Korean UI can explain one curve.</p>
+<p>Buy (exact input, gross <code>g</code> wei of ETH, fee <code>f</code>, creator tax <code>c</code>, snipe <code>z</code>, all bps):</p>
+<pre><code>fee   = g·f / 10000            (floor)
+tax   = g·c / 10000            (floor)
+snipe = g·z / 10000            (floor)
+net   = g − fee − tax − snipe
+out   = (X0 − S)·net / (V + R + net)          (floor → curve keeps dust, k' ≥ k)
+if out ≥ X_sell − S:                          (crossing buy)
+    out      = X_sell − S
+    netNeed  = (V + R)·out / (X0 − S − out) + 1                     (ceil)
+    spent    = ceil(netNeed·10000 / (10000 − f − c − z)),  min(spent, g)
+    recompute fee/tax/snipe on `spent`; net = spent − fee − tax − snipe
+    refund   = g − spent
+R += net;  S += out;  creatorFees[token] += (fee+snipe)·8000/10000 + tax;  protocolFees += rest
+</code></pre>
+<p>Sell (exact input <code>t</code> tokens):</p>
+<pre><code>gross = (V + R)·t / (X0 − S + t)      (floor)
+fee   = gross·f / 10000 ; tax = gross·c / 10000
+out   = gross − fee − tax
+R −= gross ;  S −= t ;  accrue fee/tax as above
+</code></pre>
+<p>Rounding direction: every amount paid <em>out</em> by the curve (tokens on buy, ETH on sell) is floored; every amount <em>required</em> from the buyer (crossing buy) is ceiled (+1). Fees are floored on the gross leg, so fee buckets never exceed what was actually received. Consequence: <code>R</code> at the crossing point is <code>Q</code> plus at most a few wei (worked example below: <code>R_final − Q = 2 wei</code>), never below.</p>
+<p>Invariants (fuzz targets):
+1. <code>(V+R)(X0−S) ≥ V·X0</code> after every trade; equality at launch.
+2. <code>S ≤ X_sell</code>; <code>R ≤ Q + dust</code> while <code>status == Trading</code>.
+3. <code>token.balanceOf(curve) ≥ X0 − S</code> (equality unless someone donates tokens).
+4. <code>curve.balance ≥ Σ R + Σ creatorFees + protocolFees</code>.
+5. A buy followed by the immediate sale of the same tokens returns ≤ the ETH spent (fees + rounding), never more.
+6. <code>status</code> moves only <code>Trading → Closed → Graduated</code>, or <code>Closed → WindDown</code> after the grace period.</p>
+<p>Slippage: <code>buy(token, minTokensOut, recipient, deadline)</code> uses Pons's <em>price-bound</em> check <code>spent·minTokensOut ≤ received·tokensOut</code> so a partial (crossing) fill honours the caller's price rather than failing; <code>sell(token, tokensIn, minEthOut, recipient, deadline)</code> uses a plain <code>out ≥ minEthOut</code>. <code>deadline</code> is <code>block.timestamp</code>-based (1 s granularity on both chains).</p>
+<h3 id="33-fees-on-the-curve">3.3 Fees on the curve</h3>
+<ul>
+<li><strong>Trading fee</strong> 100 bps on the ETH leg both ways; split 8000 / 2000 bps creator / protocol at accrual time (integer split, protocol gets the remainder so the two shares sum exactly).</li>
+<li><strong>Creator tax</strong> 0–200 bps, chosen at <code>createToken</code>, immutable, curve phase only, 100 % to <code>creatorFees[token]</code> (Pons applies it on curve swaps only; we copy that so the post-graduation pool has a single, uniform 1 % hook fee).</li>
+<li><strong>Snipe tax</strong> joins the trading-fee bucket (80/20). Considered and rejected: (a) 100 % to protocol — invites "the protocol profits from bots" criticism and misaligns with Pons, whose docs say the tax "joins the launch's trading fee"; (b) donate it to <code>R</code> — would break invariant 1 (<code>k</code> would drift), move the graduation seed price, and make the crossing-buy math config-dependent. Creator self-sniping is unprofitable: 99 % tax, 80 % of which returns to the creator ⇒ net loss ≥ 20 % of the spend for ~1 % of the tokens.</li>
+<li><strong>Creation fee</strong> <code>0.0005 ETH</code> is accrued to <code>protocolFees</code> (not pushed) — one fewer external call in <code>createToken</code> and no revert vector.</li>
+<li><strong>Claims</strong> are pull-based, callable by anyone (funds always go to the registered recipient): <code>claimCreatorFees(token)</code> pays <code>factory.creatorRecipient(token)</code>; <code>claimProtocolFees()</code> pays the immutable <code>PROTOCOL_RECIPIENT</code>. Payout via <code>call{value}</code>; a reverting recipient just fails the claim and keeps the balance accrued — the creator's remedy is the 3-day recipient change.</li>
+<li>The <strong>protocol recipient</strong> is an immutable constructor argument of the curve (and of the hook); there is no setter.</li>
+</ul>
+<p>Fee accrual is two warm <code>SSTORE</code>s per trade (<code>creatorFees[token]</code>, <code>protocolFees</code>) — no escrow call. If the escrow/claim UI component wants a single claim surface across curve + hook, it reads both contracts; the curve does not push.</p>
+<h3 id="34-snipe-tax">3.4 Snipe tax</h3>
+<p>Formula (Pons's, verified in <code>currentSnipeTaxBps</code>): <code>taxBps(t) = START &gt;&gt; floor(t·H / T)</code> with <code>START = 9900</code>, <code>H = 14</code> halvings (2^14 &gt; 9900 ⇒ reaches 0 inside the window), <code>T</code> = window seconds, <code>t</code> = elapsed since <code>launchedAt</code>. Then <code>taxBps = min(taxBps, 10000 − f − c − 100)</code> so the buyer always keeps ≥ 1 % of the spend (avoids a zero-denominator gross-up and a 100 % take).</p>
+<p>Schedules at 1 s granularity:</p>
+<table>
+<thead>
+<tr>
+<th><code>T</code></th>
+<th>t=0</th>
+<th>1 s</th>
+<th>2 s</th>
+<th>3 s</th>
+<th>4 s</th>
+<th>5 s</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>3 (Pons on-chain)</td>
+<td>99 %</td>
+<td>6.18 %</td>
+<td>0.19 %</td>
+<td>0</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>4 (proposed GIWA)</td>
+<td>99 %</td>
+<td>12.37 %</td>
+<td>0.77 %</td>
+<td>0.09 %</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td>5 (Pons docs)</td>
+<td>99 %</td>
+<td>24.75 %</td>
+<td>3.09 %</td>
+<td>0.38 %</td>
+<td>0.04 %</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+<p>Block-timestamp granularity, chain by chain:
+- <strong>Robinhood (Nitro, ~0.1 s blocks)</strong>: measured 10 blocks per timestamp second; <code>block.timestamp</code> is "updated every child chain block based on the sequencer's clock", monotonic, bounded to [−24 h, +1 h] of real time (Arbitrum docs). The launch second therefore spans ~10 blocks at 99 %, and the <em>next</em> second drops to 6 % — an FCFS bot that lands at <code>t=1</code> pays 6.18 % (worked example: 0.5 ETH at t=1 buys 20.5 % of supply for 0.031 ETH tax). To make the decay actually exponential at block resolution, the Robinhood curve interpolates inside the second with <code>ArbSys(0x64).arbBlockNumber()</code> (own-chain height; <code>block.number</code> is the <em>Ethereum</em> height and moves every 13–15 s, per Arbitrum docs and confirmed by the 25.9M vs 55.5M reads above):</p>
+<p><code>tsMs  = (block.timestamp − launchedAt) · 1000
+  blkMs = (arbBlockNumber() − launchBlock) · 100          // nominal 100 ms per block
+  elapsedMs = max(tsMs, min(blkMs, tsMs + 999))           // blocks refine within the current second, never past it
+  n = elapsedMs · H · 8 / (T · 1000)                       // eighth-halvings
+  taxBps = (START · FRAC8[n % 8]) &gt;&gt; (n / 8),   FRAC8[i] = floor(2^(−i/8) · 2^16) / 2^16</code>
+  With <code>T = 3</code>: 99 % → 49.5 % at 0.4 s → 24.7 % at 0.6 s → 6.2 % at 1.0 s → 0.8 % at 1.6 s → 0.2 % at 2.0 s → 0 at 3.0 s. Blocks come faster than 100 ms when busy (0.07 s measured) — the <code>tsMs + 999</code> clamp stops the block clock from running ahead of wall time; quiet periods (no blocks) fall back to the timestamp floor. This is the only chain-specific code in the curve, isolated behind an <code>IClock</code> immutable (<code>RobinhoodClock</code> uses ArbSys; <code>GiwaClock</code> returns <code>tsMs</code>).
+- <strong>GIWA (OP Stack, 1 s blocks)</strong>: all transactions in a block share one timestamp; Flashblocks (200 ms) are pre-confirmations inside that block and do not change <code>block.timestamp</code>; <code>block.number</code> is the L2 height and adds nothing beyond the timestamp. The sequencer orders by priority fee (docs), so the launch block is a fee auction that all pays 99 %. <code>T = 4</code> gives 99 / 12.4 / 0.8 / 0.1 / 0 — coarse but adequate.</p>
+<p>Why exponential rather than linear (o1: 99→1 % linear over 20 s; Zora: linear 10 s): the sniper's edge is concentrated in the first block(s) — on an FCFS chain it is latency, on a fee-ordered chain it is the first block's fee auction — so the penalty should be concentrated there too. A linear ramp still charges 50 % at <code>T/2</code>, which mostly taxes humans who react in 1–3 s, delays price discovery (rational traders just wait), and creates a "snipe the ramp" game; the exponential is ~0 by 2 s, is one <code>SHR</code> opcode (no overflow, no fixed-point library), and is the schedule Robinhood volume already accepts (Pons $8.75M fees/24h). The tax buys the launcher ~2–3 s for the disclosed dev buy to be the only cheap fill; after that the curve's own convexity (price already 1.78e-9 after a 0.05 ETH dev buy vs 1.68e-9 at start) is the protection.</p>
+<p>Exemption: <strong>none by address</strong>. The only untaxed buy is the internal dev buy executed inside <code>createToken</code> (call-path exemption, <code>snipeBps = 0</code> argument to <code>_buy</code>). Since <code>launchedAt</code> is set in the same transaction, every other buy — including any other call in the same block, from the launcher or anyone else — pays the full launch-second tax. This is what makes "no bundles" true by construction rather than by policy.</p>
+<h3 id="35-dev-buy-cap">3.5 Dev buy cap</h3>
+<p><code>createToken</code> accepts <code>devBuyEth</code> (<code>msg.value = CREATION_FEE + devBuyEth</code>). The internal buy runs on the fresh curve with <code>snipeBps = 0</code>, tokens go to <code>launcher</code> (not to an arbitrary <code>recipient</code> — the disclosed bag must sit in the launching wallet), and **<code>tokensOut &gt; MAX_DEV_BUY_TOKENS (= 50,000,000e18) ⇒ revert</code>DevBuyExceedsCap(tokensOut)<code>**. On a fresh curve this is deterministic:</code>net = V·cap/(X0−cap)<code>⇒ 0.08842 ETH net, 0.08931 ETH gross at 0 % tax, 0.09116 ETH gross at 2 % tax (</code>V=1.68<code>). Reverting (not clamping) keeps the launch atomic and predictable; the UI shows the cap in ETH.</code>DevBuy(token, launcher, ethIn, tokensOut)` is a dedicated event so indexers can label the bag.</p>
+<h3 id="36-sells-on-the-curve">3.6 Sells on the curve</h3>
+<p>Allowed while <code>status == Trading</code>, same 1 % fee on the ETH output, same creator tax, no snipe tax on sells (a seller cannot "snipe"). Sells revert in <code>Closed</code>/<code>Graduated</code> (Pons: <code>if (graduated || readyToGraduate()) revert CurveGraduated()</code>); they re-open only in <code>WindDown</code> (§5.4).</p>
+<h3 id="37-storage-layout-singleton">3.7 Storage layout (singleton)</h3>
+<pre><code class="language-solidity">enum Status { None, Trading, Closed, Graduated, WindDown }
+
+struct CurveState {                 // 3 slots per token
+    uint128 realQuote;              // R, wei. Q=4.2e18 ≪ 2^128
+    uint128 tokensSold;             // S, ≤ 1e27 ≪ 2^128
+    uint64  launchedAt;             // block.timestamp at createToken
+    uint64  launchBlock;            // IClock.blockNumber() at createToken (arbBlockNumber on RH)
+    uint64  closedAt;               // when status became Closed (WindDown grace anchor)
+    uint16  creatorTaxBps;          // ≤ 200, immutable per token
+    Status  status;                 // uint8
+    // 5 bytes spare in slot 1
+    uint128 creatorFees;            // claimable, wei
+    uint128 reserved;               // spare (e.g. snipe-tax total for analytics)
+}
+mapping(address token =&gt; CurveState) internal _curves;
+uint256 public protocolFees;        // claimable by PROTOCOL_RECIPIENT
+
+// immutables (constructor): X0, V, Q, X_SELL, FEE_BPS=100, MAX_CREATOR_TAX_BPS=200,
+// SNIPE_START_BPS=9900, SNIPE_HALVINGS=14, SNIPE_WINDOW_SECONDS (3 RH / 4 GIWA),
+// MAX_DEV_BUY_TOKENS=5e25, FACTORY, EXECUTOR, CLOCK, PROTOCOL_RECIPIENT, WINDDOWN_GRACE=7 days
+</code></pre>
+<p>Reentrancy guard: OZ <code>ReentrancyGuardTransient</code> (TSTORE, Cancun) on <code>buy</code>, <code>sell</code>, <code>claim*</code>, <code>graduate</code>, <code>windDown</code>. Checks-effects-interactions: all state writes happen before the token transfer, the ETH refund and the executor call.</p>
+<h3 id="38-interface">3.8 Interface</h3>
+<pre><code class="language-solidity">interface IBondingCurve {
+    // --- trading ---
+    function buy(address token, uint256 minTokensOut, address recipient, uint256 deadline)
+        external payable returns (uint256 tokensOut, uint256 ethSpent, uint256 ethRefunded);
+    function sell(address token, uint256 tokensIn, uint256 minEthOut, address recipient, uint256 deadline)
+        external returns (uint256 ethOut);
+    // --- factory-only ---
+    function open(address token, uint16 creatorTaxBps, uint256 devBuyEth, address launcher)
+        external payable returns (uint256 devTokensOut);           // sets launchedAt/launchBlock, runs the exempt dev buy
+    // --- graduation (permissionless retry) ---
+    function graduate(address token) external;                      // Closed → Graduated via executor
+    function windDown(address token) external;                      // Closed → WindDown after grace, only if graduate() still reverts
+    // --- fees ---
+    function claimCreatorFees(address token) external returns (uint256);
+    function claimProtocolFees() external returns (uint256);
+    // --- views ---
+    function getState(address token) external view returns (CurveState memory);
+    function quoteBuy(address token, uint256 ethIn, address buyer) external view
+        returns (uint256 tokensOut, uint256 ethSpent, uint256 fee, uint256 creatorTax, uint256 snipeTax, bool crosses);
+    function quoteSell(address token, uint256 tokensIn) external view returns (uint256 ethOut, uint256 fee, uint256 creatorTax);
+    function currentSnipeTaxBps(address token) external view returns (uint256);
+    function price(address token) external view returns (uint256 ethPerTokenWad);
+    function sellableTokens(address token) external view returns (uint256);
+    function graduationProgressBps(address token) external view returns (uint256); // S / X_SELL
+}
+</code></pre>
+<p>Events (curve):</p>
+<pre><code class="language-solidity">event CurveOpened(address indexed token, uint64 launchedAt, uint64 launchBlock, uint16 creatorTaxBps);
+event DevBuy(address indexed token, address indexed launcher, uint256 ethIn, uint256 tokensOut);
+event Buy(address indexed token, address indexed sender, address indexed recipient,
+          uint256 ethIn, uint256 ethSpent, uint256 tokensOut, uint256 fee, uint256 creatorTax, uint256 snipeTax);
+event Sell(address indexed token, address indexed sender, address indexed recipient,
+           uint256 tokensIn, uint256 ethOut, uint256 fee, uint256 creatorTax);
+event Refund(address indexed token, address indexed to, uint256 amount);
+event CurveClosed(address indexed token, uint256 realQuote, uint256 tokensSold);           // crossing buy landed
+event GraduationDeferred(address indexed token, bytes reason, uint256 gasLeft);             // atomic attempt failed; call graduate()
+event Graduated(address indexed token, bytes32 poolId, uint256 positionIdFull, uint256 positionIdOverhang,
+                uint256 ethSeeded, uint256 tokensSeeded, uint256 tokensOverhang, uint160 sqrtPriceX96, int24 tick);
+event WindDownStarted(address indexed token, uint256 realQuote);
+event CreatorFeesClaimed(address indexed token, address indexed to, uint256 amount);
+event ProtocolFeesClaimed(address indexed to, uint256 amount);
+</code></pre>
+<p>Errors (curve): <code>NotFactory()</code>, <code>UnknownToken()</code>, <code>NotTrading(Status)</code>, <code>ZeroAmount()</code>, <code>ZeroAddress()</code>, <code>Expired()</code>, <code>SlippageExceeded(uint256 got, uint256 min)</code>, <code>DevBuyExceedsCap(uint256 tokensOut)</code>, <code>CreatorTaxTooHigh(uint16)</code>, <code>NotClosed()</code>, <code>GraduationNotStuck()</code>, <code>EthTransferFailed()</code>, <code>NothingToClaim()</code>, <code>Reentrancy()</code>.</p>
+<hr>
+<h2 id="4-launchfactory">4. LaunchFactory</h2>
+<p>Responsibilities: create the token (CreateX CREATE3), open its curve (with the dev buy), keep the registry (launcher, creator recipient + 3-day timelock, tax), emit metadata, expose prediction. No owner, no config setters.</p>
+<pre><code class="language-solidity">interface ILaunchFactory {
+    struct CreateParams {
+        string  name;              // ≤ 64 bytes
+        string  symbol;            // ≤ 16 bytes
+        bytes32 userSalt;          // launcher-chosen; address = f(launcher, userSalt, name, symbol)
+        address creatorRecipient;  // fee wallet; may differ from launcher; 0 ⇒ launcher
+        uint16  creatorTaxBps;     // 0..200, immutable
+        uint256 minDevTokensOut;   // slippage for the dev buy (deterministic, but explicit)
+        string  metadataURI;       // ipfs://…; emitted, not stored
+    }
+    function createToken(CreateParams calldata p) external payable returns (address token, uint256 devTokensOut);
+        // msg.value = CREATION_FEE + devBuyEth; devBuyEth may be 0
+    function predictTokenAddress(address launcher, bytes32 userSalt, string calldata name, string calldata symbol)
+        external view returns (address);
+
+    // --- creator recipient, 3-day timelock, no admin ---
+    function proposeCreatorRecipient(address token, address newRecipient) external;   // only current recipient
+    function executeCreatorRecipient(address token) external;                         // anyone, after RECIPIENT_DELAY
+    function cancelCreatorRecipient(address token) external;                          // only current recipient
+
+    // --- registry views (read by curve, executor, hook, UI) ---
+    function creatorRecipient(address token) external view returns (address);
+    function getLaunch(address token) external view returns (Launch memory);
+    function isLaunchToken(address token) external view returns (bool);
+
+    struct Launch {
+        address launcher;
+        address creatorRecipient;
+        address pendingRecipient;
+        uint64  pendingAt;          // 0 when none
+        uint64  createdAt;
+        uint16  creatorTaxBps;
+        bytes32 userSalt;
+    }
+    // immutables: CREATEX, CURVE, EXECUTOR, CREATION_FEE = 0.0005 ether, RECIPIENT_DELAY = 3 days, MAX_CREATOR_TAX_BPS = 200
+}
+</code></pre>
+<p><code>createToken</code> sequence (one transaction):
+1. Validate lengths, tax ≤ 200, <code>msg.value ≥ CREATION_FEE</code>; <code>devBuyEth = msg.value − CREATION_FEE</code>.
+2. <code>token = CREATEX.deployCreate3(_tokenSalt(...), abi.encodePacked(type(LaunchToken).creationCode, abi.encode(name, symbol, CURVE)))</code> — the constructor mints 1e27 to <code>CURVE</code>. (Predicted address checked for empty code first → <code>SaltAlreadyUsed()</code>.)
+3. Write <code>Launch</code> (4 slots), then <code>CURVE.open{value: devBuyEth}(token, tax, devBuyEth, msg.sender)</code>, which records <code>launchedAt/launchBlock</code>, credits <code>CREATION_FEE</code> to <code>protocolFees</code> (the factory forwards it in the same call: <code>open{value: devBuyEth + CREATION_FEE}</code> with an explicit <code>creationFee</code> argument), and runs the exempt dev buy with the 5 % cap.
+4. Emit <code>TokenCreated(token, launcher, creatorRecipient, creatorTaxBps, userSalt, name, symbol, metadataURI)</code> and <code>DevBuy</code> (from the curve).</p>
+<p>Ordering matters for the exemption: the curve's <code>open()</code> sets <code>launchedAt</code> <em>before</em> the dev buy but the dev buy passes <code>snipeBps = 0</code>; any later <code>buy()</code> in the same block computes <code>elapsed = 0 ⇒ 99 %</code>.</p>
+<p>Events (factory): <code>TokenCreated(...)</code>, <code>CreatorRecipientProposed(token, current, proposed, executableAt)</code>, <code>CreatorRecipientChanged(token, old, new)</code>, <code>CreatorRecipientCancelled(token, proposed)</code>.
+Errors (factory): <code>InsufficientCreationFee()</code>, <code>NameTooLong()</code>, <code>SymbolTooLong()</code>, <code>CreatorTaxTooHigh(uint16)</code>, <code>SaltAlreadyUsed(address predicted)</code>, <code>NotCreatorRecipient()</code>, <code>NoPendingRecipient()</code>, <code>TimelockActive(uint64 executableAt)</code>, <code>UnknownToken()</code>.</p>
+<p>Timelock notes: proposer = current recipient (the launcher initially). There is deliberately no "owner override" path (Pons has an owner-driven <code>setCreatorFeeRecipient</code> with a 3-day delay for CTOs; we cannot have it without an admin). If the creator key is compromised the attacker and creator race on cancel/propose — the delay at least makes the fee-stream transfer public 3 days ahead, which is the market-transparency purpose the owner's rule serves. Open question in §8.</p>
+<hr>
+<h2 id="5-graduation">5. Graduation</h2>
+<h3 id="51-the-crossing-buy-atomic-path">5.1 The crossing buy (atomic path)</h3>
+<p>Inside <code>buy()</code> when <code>out ≥ X_sell − S</code>:
+1. Clamp <code>out</code>, compute <code>spent</code> with the exact-out formula (§3.2), <code>refund = received − spent</code>.
+2. Effects: <code>R += net</code>, <code>S = X_sell</code>, fees accrued, <code>status = Closed</code>, <code>closedAt = now</code>. Emit <code>Buy</code>, <code>CurveClosed</code>.
+3. Interactions: transfer tokens to the buyer; <code>try this.graduate(token) {} catch (bytes reason) { emit GraduationDeferred(token, reason, gasleft()); }</code> — an <em>external self-call</em> so the try/catch boundary is a real call frame; then refund ETH to <code>msg.sender</code>.
+4. <code>graduate()</code> (also callable by anyone while <code>status == Closed</code>): <code>status = Graduated</code> (effect first), then <code>EXECUTOR.graduate{value: R}(token, X_res, R)</code> after <code>token.transfer(EXECUTOR, X_res)</code>; sets <code>R = 0</code> for the token. If the executor reverts, the whole <code>graduate()</code> frame reverts, so <code>status</code> stays <code>Closed</code> and the assets stay in the curve — no partial state.</p>
+<p>Why try/catch: the crossing buyer must not be denied their fill because pool creation failed; Pons does exactly this (<code>_tryAutoGraduate</code>, comment: "if graduation reverts for any reason … the underlying buy must still succeed, and graduation stays permissionlessly retryable"). 63/64 rule: a buyer can starve the inner call by setting a low gas limit; the catch then emits <code>GraduationDeferred</code> with <code>gasleft()</code> so a keeper/UI notices; the buyer gains nothing (curve closed, nobody can trade until <code>graduate()</code> runs, which anyone can call).</p>
+<p>Gas griefing trade-off (who pays the ~0.9M gas): the crossing buyer, as on Pons (measured 952k–986k gas total for the crossing tx) and Bags. At 0.425 gwei that is ≈ 0.0004 ETH ≈ $1 — on Robinhood/GIWA this is not a real grief. The alternative — always two-step with a bounty — would leave every launch untradeable for at least one extra block and needs a funded bounty; rejected. We keep the atomic attempt and the permissionless retry, and the UI's "Graduate now" button for the rare deferred case. Wallets' <code>eth_estimateGas</code> simulates the full path, so the buyer's gas limit normally already includes it.</p>
+<h3 id="52-executor-robinhood-uniswap-v4">5.2 Executor (Robinhood: Uniswap v4)</h3>
+<p>Fixed pool key: <code>currency0 = Currency.wrap(address(0))</code> (native ETH), <code>currency1 = token</code>, <code>fee = 0</code>, <code>tickSpacing = 200</code>, <code>hooks = LAUNCH_HOOK</code>. Native ETH is <code>address(0)</code> in v4 and always sorts first (<code>initialize</code> reverts if <code>currency0 &gt;= currency1</code>; any token address &gt; 0), so the key never needs sorting logic and the price is always <code>token per ETH</code> (tick ≈ +177k).</p>
+<p>Native ETH over WETH (decision D9): Robinhood's WETH <code>0x0Bd7…AD73</code> is a 2,202-byte <strong>upgradeable aeWETH proxy</strong> — an admin could change its semantics, which contradicts the "no admin anywhere" rule for a pool that is supposed to be locked forever; native ETH has no such dependency. v4 supports native settlement (<code>SETTLE</code> with <code>msg.value</code>, <code>SWEEP</code> for change); the curve already holds ETH so no wrap/unwrap gas; Pons V2 pools are <code>(ETH, token)</code> on chain (NEST: <code>currency0 = 0x0</code>), so every Robinhood router/indexer already handles native pairs; and Permit2 is needed only for the token leg. On GIWA the same choice holds for our own pool (component 3) — WETH9 there is an immutable predeploy, but native is still simpler.</p>
+<p>Seed computation (the executor knows <code>V</code>, <code>Q</code> at construction; per graduation it receives <code>R</code> and <code>X_res</code>):</p>
+<pre><code>tokensFull   = X_res · R / (V + R)           // 204,081,632.65e18 at R = 4.2e18
+tokensOver   = X_res − tokensFull            // 81,632,653.06e18
+ratioX192    = mulDiv(tokensFull, 2^192, R)  // amount1 / amount0 in Q192 (fits: tokens/ETH ≈ 4.86e7 &amp;lt; 2^64)
+sqrtPriceX96 = uint160(sqrt(ratioX192))      // 552,276,925,551,777,206,918,806,258,182,653
+tick         = TickMath.getTickAtSqrtPrice(sqrtPriceX96)   // 176,998
+tickLowerFull = (MIN_TICK / 200) * 200 = −887,200 ;  tickUpperFull = +887,200
+tickUpperOver = floor(tick / 200) * 200 = 176,800   // strictly below current tick ⇒ token-only position
+liqFull = LiquidityAmounts.getLiquidityForAmounts(sqrtP, sqrt(tickLowerFull), sqrt(tickUpperFull), R, tokensFull)
+liqOver = LiquidityAmounts.getLiquidityForAmount1(sqrt(MIN), sqrt(tickUpperOver), tokensOver)
+</code></pre>
+<p>Orientation check (easy to get backwards): with <code>currency1 = token</code>, price <code>P = token/ETH</code>; a token pump means fewer tokens per ETH ⇒ <code>P</code> falls ⇒ tick <strong>decreases</strong>. A range entirely <em>below</em> the current tick holds only <code>currency1</code> (token) and is consumed — converted into ETH that stays in the pool — as the token pumps. So the overhang goes in <code>[MIN_TICK, 176,800]</code> (gap to current price ≤ 200 ticks ≈ 2 %), not above.</p>
+<p>Steps in <code>graduate</code> (executor, <code>onlyCurve</code>):
+1. <code>POOL_MANAGER.initialize(key, sqrtPriceX96)</code> — no unlock needed (<code>initialize</code> is <code>noDelegateCall</code> only). The hook's <code>beforeInitialize(sender, key, sqrtPriceX96)</code> <strong>reverts unless <code>sender == EXECUTOR</code></strong> (the <code>sender</code> passed is <code>msg.sender</code> of <code>initialize</code>, i.e. the executor — Hooks.sol encodes <code>(msg.sender, key, sqrtPriceX96)</code>), so nobody can pre-create <em>our</em> pool key at another price; <code>PoolAlreadyInitialized</code> therefore cannot occur. Belt-and-braces: read <code>slot0</code> via <code>StateView</code>/<code>extsload</code> and <code>require(sqrtPriceX96Read == sqrtPriceX96)</code>.
+2. <code>LAUNCH_HOOK.registerPool(key, token, graduatedAt = block.timestamp)</code> — hook stores per-pool <code>token</code>, <code>graduatedAt</code> (for its optional post-graduation snipe window) and reads the creator recipient from the factory registry at claim time (component 2).
+3. Token leg approvals: <code>token.approve(PERMIT2, X_res)</code>; <code>PERMIT2.approve(token, POSITION_MANAGER, uint160(X_res), uint48(now + 300))</code> (Pons's <code>_approvePermit2</code>).
+4. One <code>POSITION_MANAGER.modifyLiquidities{value: R}(abi.encode(actions, params), now + 300)</code> with actions
+   <code>MINT_POSITION(key, −887200, 887200, liqFull, uint128(R), uint128(tokensFull), LOCKER, "")</code>,
+   <code>MINT_POSITION(key, −887200, 176800, liqOver, 0, uint128(tokensOver), LOCKER, "")</code>,
+   <code>SETTLE_PAIR(ETH, token)</code>,
+   <code>SWEEP(ETH, EXECUTOR)</code>.
+   The recipient of both mints is the <code>PermanentLocker</code>; <code>PositionManager</code> mints with plain <code>_mint</code> (no <code>onERC721Received</code> callback — Pons documents this), so custody is verified afterwards.
+5. <code>positionIdFull = nextTokenId_before</code>, <code>positionIdOverhang = +1</code>; <code>LOCKER.register(token, positionIdFull, positionIdOverhang)</code> which <code>require(ownerOf(id) == LOCKER)</code> for both.
+6. Dust: ETH returned by <code>SWEEP</code> (liquidity rounding, a few wei) → <code>CURVE.creditProtocolFees{value}()</code>; token dust left in the executor → <code>LaunchToken(token).burn(dust)</code> (<code>ERC20Burnable</code>). Never revert on dust (Pons: "letting it revert would leave a launch that has already surrendered its reserves unable to ever complete").
+7. Emit <code>Graduated(...)</code> (curve emits with the executor's return values).</p>
+<p>Direct <code>PoolManager.unlock</code> callback instead of <code>PositionManager</code>? Cheaper (no NFT, no Permit2, ≈ −100k gas) but the position would be a raw <code>(owner = executor/locker, salt)</code> entry that third-party tooling cannot attribute — the whole Robinhood custody-verification practice (<code>05_lp_burn_signal.md</code> §3 step 2: "v4: <code>PositionManager.ownerOf(tokenId)</code>") keys on the NFT. Pons, Clanker, SPRM all use PositionManager NFTs. We keep the NFT.</p>
+<p>Preflight once, not per launch: because <code>V, Q, X0</code> are immutables, the seed <code>(R ≈ Q, tokensFull, tokensOver)</code> is the same for every launch up to wei-level dust. The executor constructor runs Pons's guard logic on the nominal seed (<code>sqrtPrice</code> strictly inside <code>(MIN_SQRT_PRICE, MAX_SQRT_PRICE)</code>; <code>liqFull, liqOver &gt; 0</code>; <code>liq ≤ Pool.tickSpacingToMaxLiquidityPerTick(200) = 3.8e34</code> — ours is 2.9e22; amounts <code>&amp;lt; 2^127</code> — ours ≤ 1e27 ≪ 1.7e38) and reverts deployment otherwise. Per-graduation, only the <code>int128</code>/<code>uint128</code> casts are re-checked.</p>
+<h3 id="53-permanentlocker-interface-only-this-is-the-sink">5.3 PermanentLocker (interface only — this is the sink)</h3>
+<pre><code class="language-solidity">interface IPermanentLocker {          // no owner, no withdraw, no decreaseLiquidity, no transfer-out, no approve, no ERC-1271
+    function register(address token, uint256 positionIdFull, uint256 positionIdOverhang) external; // onlyExecutor; verifies ownerOf
+    function onERC721Received(address, address, uint256, bytes calldata) external returns (bytes4);  // only from POSITION_MANAGER
+    function positions(address token) external view returns (uint256 full, uint256 overhang);
+    function isLocked(address token) external view returns (bool);
+}
+</code></pre>
+<p>Two properties that make "permanent" checkable from the ABI: (1) there is no function that calls <code>modifyLiquidities</code>, <code>transferFrom</code>, <code>approve</code>, <code>setApprovalForAll</code>, <code>subscribe</code>, or <code>permit</code>; (2) the locker does <strong>not</strong> implement ERC-1271, so <code>IERC721Permit_v4.permit</code> can never be signed on its behalf. Because the pool fee is 0 and the hook takes its fee outside the position, the locker never needs a <code>collect</code> path either (Pons's locker: "there is no <code>collectFees()</code> here").</p>
+<h3 id="54-non-atomic-states-and-the-no-admin-escape-valve">5.4 Non-atomic states and the no-admin escape valve</h3>
+<p>State machine per token: <code>None → Trading → Closed → Graduated</code>, plus <code>Closed → WindDown</code>.
+- <code>Closed</code>: no buys, no sells, <code>graduate(token)</code> callable by anyone. Expected duration: 0 (atomic) or until the first keeper/UI call (seconds).
+- <code>WindDown</code> (defence in depth for the no-admin design): if <code>graduate()</code> has been <em>impossible</em> for <code>WINDDOWN_GRACE = 7 days</code> (the call itself first re-tries <code>graduate</code> in a try/catch and only proceeds if that reverts <em>and</em> <code>now ≥ closedAt + 7 days</code>), sells re-open against the curve's own reserves (<code>R ≈ Q</code>), buys stay closed, so holders can exit along the curve. Pons solves the same case with owner-only <code>rescueSweptGraduation</code> behind a timelock; we cannot, so the valve must be permissionless and must only be reachable when graduation is genuinely broken. Reachability requires a revert from immutable v4 core/periphery or our own executor — i.e. a bug — so it never triggers in normal operation.</p>
+<h3 id="55-pool-exists-collision-and-copycat-pools">5.5 Pool-exists collision and copycat pools</h3>
+<ul>
+<li>Our key (with our hook): protected by the <code>beforeInitialize</code> gate — the pool with our hook can only be initialized by our executor, at our price.</li>
+<li>Other keys on the same token (no hook, other fees): permissionless and unpreventable (v4 <code>initialize</code> is open to anyone; 05_lp_burn_signal shows VIBES/NEST with 4–30 side pools). They are different pools; routers pick by liquidity. The UI must route by our <code>poolId</code> (<code>Graduated</code> event), never by token pair alone.</li>
+<li>Hook flags: the hook address must encode exactly the permissions it implements (<code>BEFORE_INITIALIZE_FLAG = 1&amp;lt;&amp;lt;13</code>, <code>AFTER_SWAP_FLAG = 1&amp;lt;&amp;lt;6</code>, <code>AFTER_SWAP_RETURNS_DELTA_FLAG = 1&amp;lt;&amp;lt;2</code>; <code>isValidHookAddress</code> rejects mismatches and requires a static fee or ≥ 1 flag). <code>fee = 0</code> is a valid static fee. Mining is a CREATE2 salt search (<code>HookMiner</code>), per chain.</li>
+</ul>
+<h3 id="56-reentrancy-and-token-handling">5.6 Reentrancy and token handling</h3>
+<ul>
+<li><code>buy</code>/<code>sell</code>/<code>graduate</code>/<code>windDown</code>/claims share one transient reentrancy lock; the executor is <code>onlyCurve</code> and itself non-reentrant.</li>
+<li>The only ERC-20 this component touches is <code>LaunchToken</code> (OZ: reverts on failure, returns <code>true</code>), and we still use <code>SafeERC20</code> (<code>safeTransfer</code>, <code>forceApprove</code>) so a future quote-token variant needs no rewrite. No fee-on-transfer or non-returning tokens can enter: v1 supports native ETH only (no USDG/stock pairs — §8).</li>
+<li>ETH out (refund, sell proceeds, claims) uses <code>call{value}</code> after all effects; failure reverts the trade (<code>EthTransferFailed</code>) — a contract buyer with a reverting <code>receive()</code> can only hurt itself. The dev buy sends tokens to <code>launcher</code> and never sends ETH back except the crossing-refund case, which cannot happen for a capped dev buy.</li>
+<li>The curve calls out to exactly two trusted contracts (token, executor) plus ETH sends; the executor calls PoolManager/PositionManager/Permit2/hook/locker. The v4 <code>unlockCallback</code> lands on PositionManager, not on us.</li>
+</ul>
+<h3 id="57-gas-per-step-arbitrum-nitro-l1-component-reported-as-0-on-robinhood-receipts">5.7 Gas per step (Arbitrum Nitro; L1 component reported as 0 on Robinhood receipts)</h3>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>Estimate</th>
+<th>Basis</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>createToken</code> (no dev buy)</td>
+<td>≈ 0.95–1.1M</td>
+<td>CreateX CREATE3 proxy ≈ 50–60k; token creation ≈ 600–650k (2.4 KB runtime × 200 gas/B ≈ 480k + constructor: 2 short-string SSTOREs, <code>_mint</code> 2 SSTOREs, event); curve <code>open</code> 3 fresh slots ≈ 66k; registry 4 slots ≈ 90k; events/calldata ≈ 20k; Pons's measured 3.71M deploys two full contracts</td>
+</tr>
+<tr>
+<td>+ dev buy</td>
+<td>+ ≈ 40–60k</td>
+<td>warm curve slots + first <code>balanceOf(launcher)</code> SSTORE (20k)</td>
+</tr>
+<tr>
+<td><code>buy</code> (repeat holder)</td>
+<td>≈ 60–75k</td>
+<td>21k base + cold <code>_curves[token]</code> (2 slots) + R/S packed write + 2 fee SSTOREs + token transfer (2 balance writes) + event; Pons's router buy measured 213k includes router hops and per-launch cold code</td>
+</tr>
+<tr>
+<td><code>buy</code> (new holder)</td>
+<td>≈ 80–95k</td>
+<td>+ 20k for the zero→nonzero balance</td>
+</tr>
+<tr>
+<td><code>sell</code></td>
+<td>≈ 80–95k</td>
+<td>+ allowance SSTORE + ETH <code>call</code> (≈ 9k)</td>
+</tr>
+<tr>
+<td>crossing <code>buy</code> + atomic graduation</td>
+<td>≈ 0.9–1.1M</td>
+<td>Pons measured 952k / 986k for initialize + one full-range mint + locker + hook registration; ours adds a second (single-sided) mint ≈ +150–200k and drops Pons's fee-sweep/buyback logic</td>
+</tr>
+<tr>
+<td><code>initialize</code> alone</td>
+<td>≈ 60–90k</td>
+<td>slot0 + hook before/after calls + <code>registerPool</code> SSTOREs</td>
+</tr>
+<tr>
+<td>two <code>MINT_POSITION</code> + settle</td>
+<td>≈ 550–700k</td>
+<td>3 tick inits (≈ 25k each), 2 position slots, 2 NFT mints, position info, native settle, Permit2 pull of the token</td>
+</tr>
+<tr>
+<td><code>locker.register</code></td>
+<td>≈ 50k</td>
+<td>2 slots + 2 <code>ownerOf</code> reads</td>
+</tr>
+<tr>
+<td><code>claimCreatorFees</code></td>
+<td>≈ 35–45k</td>
+<td>1 SSTORE + <code>call</code></td>
+</tr>
+</tbody>
+</table>
+<p>Cost in money at 0.425 gwei: launch ≈ $1.1, trade ≈ $0.08, graduation ≈ $1.0. Robinhood's block gas limit is effectively unbounded (2^50) with Nitro's 32M per-tx cap, so a 1.1M graduation is never at risk of not fitting; GIWA's 60M block limit likewise.</p>
+<hr>
+<h2 id="6-worked-example-robinhood-v-168-q-42-fee-1-creator-tax-0-exact-integer-math">6. Worked example (Robinhood, <code>V = 1.68</code>, <code>Q = 4.2</code>, fee 1 %, creator tax 0; exact integer math)</h2>
+<p>Sequence: creation with a 0.05 ETH dev buy → a 1 ETH buy → a 4.2 ETH buy that crosses graduation.</p>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>ETH sent</th>
+<th>ETH spent</th>
+<th>fee (1 %)</th>
+<th>net into <code>R</code></th>
+<th>tokens out</th>
+<th>% supply</th>
+<th>avg price paid</th>
+<th><code>R</code> after</th>
+<th><code>S</code> after</th>
+<th>marginal price after</th>
+<th>FDV after</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>dev buy (exempt)</td>
+<td>0.05</td>
+<td>0.05</td>
+<td>0.0005</td>
+<td>0.0495</td>
+<td>28,620,988.73</td>
+<td>2.862 %</td>
+<td>1.7295e-9</td>
+<td>0.0495</td>
+<td>28.62M</td>
+<td>1.7805e-9</td>
+<td>1.78 ETH</td>
+</tr>
+<tr>
+<td>buy 1 ETH</td>
+<td>1.0</td>
+<td>1.0</td>
+<td>0.01</td>
+<td>0.99</td>
+<td>353,618,393.51</td>
+<td>35.362 %</td>
+<td>2.7996e-9</td>
+<td>1.0395</td>
+<td>382.24M</td>
+<td>4.4022e-9</td>
+<td>4.40 ETH</td>
+</tr>
+<tr>
+<td>buy 4.2 ETH (crosses)</td>
+<td>4.2</td>
+<td><strong>3.192424</strong></td>
+<td>0.031924</td>
+<td>3.1605</td>
+<td>332,046,332.05</td>
+<td>33.205 %</td>
+<td>9.5183e-9</td>
+<td><strong>4.200000</strong> (+2 wei)</td>
+<td>714,285,714.29 = <code>X_sell</code></td>
+<td>2.0580e-8</td>
+<td>20.58 ETH</td>
+</tr>
+<tr>
+<td><strong>refund</strong> to the last buyer</td>
+<td></td>
+<td><strong>1.007576</strong></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Fees accrued on the curve: 0.042424 ETH → creator 0.033939 (80 %), protocol 0.008485 (20 %) — plus the 0.0005 ETH creation fee to protocol.</p>
+<p>Graduation seed from <code>R = 4.200000000000000002</code>: <code>tokensFull = 204,081,632.653061</code>, <code>tokensOver = 81,632,653.061224</code> (sum with <code>S</code> = exactly 1,000,000,000), <code>sqrtPriceX96 = 552,276,925,551,777,206,824,881,611,623,729</code> (the 2 wei of extra ETH move the 21st digit), <code>tick = 176,998</code>, pool opening price 2.0580e-8 ETH/token = curve final price (checked equal to 17 digits), <code>L_full ≈ 2.9277e22</code>, overhang range <code>[−887,200, 176,800]</code>.</p>
+<p>Same three buys with a 2 % creator tax: dev buy nets 28,059,010.70 tokens (tax 0.001 ETH), the 1 ETH buy nets 349,372,895.91 (tax 0.02), the crossing buy spends 3.279897 ETH (fee 0.032799, tax 0.065598) and refunds 0.920103; <code>R_final</code> is again 4.2 ETH exactly; creator receives 0.086598 (tax) + 0.034639 (80 % of fees).</p>
+<p>Snipe tax illustration (after the 0.05 ETH dev buy): a 0.5 ETH bot buy at <code>t = 0</code> pays 0.49 ETH tax + 0.005 fee and receives 2,800,170 tokens (0.28 %) for 0.005 ETH net; the same buy at <code>t = 1 s</code> with the 1-s schedule (<code>T=3</code>) pays 0.0309 ETH tax and receives 205.5M tokens (20.5 %) — which is why the Robinhood curve interpolates sub-second (at 1.0 s the interpolated schedule is still 6.2 %, at 0.6 s 24.7 %, at 0.4 s 49.5 %).</p>
+<p>Sell illustration right after the 1 ETH buy: selling 10,000,000 tokens returns gross 0.043321 ETH, fee 0.000433, net 0.042887; <code>R</code> 1.0395 → 0.9962.</p>
+<hr>
+<h2 id="7-cross-component-interfaces-this-design-assumes">7. Cross-component interfaces this design assumes</h2>
+<pre><code class="language-solidity">interface IGraduationExecutor {           // one implementation per chain
+    function graduate(address token, uint256 tokensTotal, uint256 ethAmount) external payable
+        returns (bytes32 poolId, uint256 positionIdFull, uint256 positionIdOverhang,
+                 uint256 tokensSeeded, uint256 tokensOverhang, uint160 sqrtPriceX96, int24 tick);
+    // preconditions: msg.sender == CURVE; token.balanceOf(this) ≥ tokensTotal; msg.value == ethAmount
+}
+interface ILaunchHookRegistrar {          // component 2 (Robinhood only)
+    function registerPool(PoolKey calldata key, address token, uint64 graduatedAt) external; // onlyExecutor
+}
+interface ILaunchRegistry {               // implemented by LaunchFactory, read by hook/UI
+    function creatorRecipient(address token) external view returns (address);
+    function isLaunchToken(address token) external view returns (bool);
+}
+</code></pre>
+<p>The GIWA executor (component 3) implements the same <code>IGraduationExecutor</code> against the minimal native pool; the curve and factory bytecode are chain-agnostic except for the <code>IClock</code> immutable.</p>
+<hr>
+<h2 id="8-open-questions-for-the-owner">8. Open questions for the owner</h2>
+<ol>
+<li><strong>Overhang disposition</strong> (D11): single-sided locked position (chosen: "100 % in the pool", adds ~40 % ask-side depth in the first 2 % above graduation, converting into permanent ETH depth as price rises) vs burn (simplest, supply becomes 918.37M, no ask overhang, but breaks the "exactly 1e9" narrative) vs Pons-style idle lock (weakest). This is a compile-time constant; decide before audit.</li>
+<li><strong>Snipe window</strong>: Robinhood <code>T = 3 s</code> with sub-second interpolation, GIWA <code>T = 4 s</code> coarse — or the same <code>T</code> on both for a simpler story?</li>
+<li><strong>Creator-tax scope</strong>: curve only (chosen, = Pons) or also inside the v4 hook (would need the hook to read <code>creatorTaxBps</code> per pool and stack it on the 1 %)?</li>
+<li><strong>Recipient timelock proposer</strong>: current recipient only (chosen) or launcher OR recipient? And should the pending change be cancellable by anyone holding ≥ x % of supply (a CTO-like path without an admin)?</li>
+<li><strong>Quote assets</strong>: v1 = native ETH only. Pons's USDG and stock-token pairs produced 3 of its 5 largest tokens this week (01 §3). Adding ERC-20 quotes touches the curve (fee-on-transfer/decimals), the executor (currency ordering becomes data-dependent, Permit2 on both legs) and the hook; propose v1.1.</li>
+<li><strong>WindDown valve</strong> (§5.4): keep (holder protection with no admin) or drop (one more state to audit)?</li>
+<li><strong>Metadata</strong>: event-only (chosen) vs a <code>bytes32 metadataHash</code> slot in the registry for on-chain provenance (+22k gas per launch).</li>
+<li><strong>Dev-buy recipient</strong>: hard-wired to the launching wallet (chosen; the disclosed bag is where the market expects it) vs <code>creatorRecipient</code>.</li>
+</ol>
+<h2 id="9-risks">9. Risks</h2>
+<ul>
+<li>Singleton ETH pooling: an accounting bug affects every live curve at once; mitigated by per-token bounded payouts and the balance invariant, but it must be a first-class invariant test and audit focus.</li>
+<li>CreateX guard mirroring: <code>predictTokenAddress</code> re-implements CreateX's <code>_guard</code>; a mismatch would only mispredict (deploy still lands where CreateX says), but the UI/cross-chain story depends on it — verify against the deployed CreateX bytecode's source on both chains.</li>
+<li>Hook address mining per chain: the <code>beforeInitialize</code> gate is what protects the initialize race; a hook deployed with wrong flag bits makes <code>initialize</code> revert forever (<code>HookAddressNotValid</code>) → every graduation deferred → WindDown. Deployment script must assert <code>isValidHookAddress</code> and run one full graduation on testnet (46630 / 91342) before mainnet.</li>
+<li>Nitro timestamp drift: <code>block.timestamp</code> may lag real time (sequencer clock, bounded −24 h/+1 h); a stalled sequencer clock would keep the snipe tax at 99 % longer than intended — safe direction. The <code>arbBlockNumber</code> interpolation can only <em>reduce</em> tax within the current second, never below the timestamp schedule.</li>
+<li>GIWA mainnet parameters are guesses until the chain exists (<code>Q = 1.5</code> assumes day-1 ETH scarcity); the immutables can only be changed by redeploying the curve (new factory) — a v1 GIWA deployment should wait for the chain's gas/ETH reality if that is at all possible.</li>
+<li>Modified Universal Router on Robinhood (Bags docs: extra <code>minHopPriceX36</code> field) — trading UI routing for the graduated pool needs its own testing; not this component, but graduation success is only useful if swaps route.</li>
+<li>No admin means no kill switch for a discovered curve bug: the only lever is to stop advertising the factory and deploy v2 at a new address; tokens already created keep trading on the old singleton.</li>
+<li>1-s timestamp granularity on GIWA plus fee-ordered inclusion: the whole first block is a priority-fee auction at 99 % tax — bots may still bid for <code>t = 1</code> at 12.4 %; if that proves insufficient, <code>T</code> or <code>H</code> can only change via redeploy.</li>
+</ul></article>
+    </main>
+    <footer>
+      <span>research_only=true</span>
+      <span>strategy_consumption_allowed=false</span>
+      <span>order_input=false</span>
+    </footer>
+  </body>
+</html>

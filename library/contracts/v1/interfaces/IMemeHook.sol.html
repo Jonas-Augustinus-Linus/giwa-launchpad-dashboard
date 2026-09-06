@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex,nofollow,noarchive" />
+    <meta name="theme-color" content="#090c0e" />
+    <title>IMemeHook.sol · GIWA · Robinhood Launchpad</title>
+    <link rel="stylesheet" href="../../../../assets/document.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#document">본문으로 바로가기</a>
+    <header class="document-header">
+      <a class="brand" href="../../../../development.html" aria-label="GIWA 대시보드로 돌아가기">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span><strong>GIWA · RH</strong><small>LAUNCHPAD ROOM</small></span>
+      </a>
+      <nav aria-label="문서 동작">
+        <a href="../../../../development.html">← 대시보드</a>
+      </nav>
+    </header>
+    <main id="document" class="document-shell">
+      <div class="document-meta">
+        <span>PROJECT FILE</span>
+        <span>SHA256 ec24eacf921d</span>
+      </div>
+      <h1>IMemeHook.sol</h1>
+      <p class="source-path">contracts/v1/interfaces/IMemeHook.sol</p>
+      <article class="code-body"><pre class="source-code"><span class="code-line"><i>1</i><code>// SPDX-License-Identifier: MIT</code></span>
+<span class="code-line"><i>2</i><code>pragma solidity ^0.8.26;</code></span>
+<span class="code-line"><i>3</i><code></code></span>
+<span class="code-line"><i>4</i><code>/// @title IMemeHook — the Uniswap v4 hook attached to every graduated pool on Robinhood Chain (launchpad v1)</code></span>
+<span class="code-line"><i>5</i><code>/// @notice Singleton hook, NO owner, NO setters, NO rescue. Per-pool terms are written exactly once by the</code></span>
+<span class="code-line"><i>6</i><code>///         graduation target (`register`) BEFORE `PoolManager.initialize`; `beforeInitialize` reverts unless</code></span>
+<span class="code-line"><i>7</i><code>///         `sender == TARGET` and the key is registered and not yet initialised, so nobody can pre-create our</code></span>
+<span class="code-line"><i>8</i><code>///         pool key at another price and exactly ONE hooked pool exists per token forever.</code></span>
+<span class="code-line"><i>9</i><code>/// @dev    Permissions (low 14 bits of the hook address) = 0x22CC:</code></span>
+<span class="code-line"><i>10</i><code>///           beforeInitialize (1&lt;&lt;13) | beforeRemoveLiquidity (1&lt;&lt;9) | beforeSwap (1&lt;&lt;7) | afterSwap (1&lt;&lt;6)</code></span>
+<span class="code-line"><i>11</i><code>///           | beforeSwapReturnDelta (1&lt;&lt;3) | afterSwapReturnDelta (1&lt;&lt;2).</code></span>
+<span class="code-line"><i>12</i><code>///           Drop beforeRemoveLiquidity (defence-in-depth only) =&gt; 0x20CC. Flag values from</code></span>
+<span class="code-line"><i>13</i><code>///           https://github.com/Uniswap/v4-core/blob/main/src/libraries/Hooks.sol ; deployment rule from</code></span>
+<span class="code-line"><i>14</i><code>///           https://developers.uniswap.org/docs/protocols/v4/concepts/hooks (address encodes permissions).</code></span>
+<span class="code-line"><i>15</i><code>///         Fee (always in the QUOTE, never in the memecoin — Clanker pattern, not Pons&#x27; afterSwap-only):</code></span>
+<span class="code-line"><i>16</i><code>///           quote is the *specified* currency  (exact-in buy, exact-out sell)  -&gt; beforeSwap  + beforeSwapReturnDelta</code></span>
+<span class="code-line"><i>17</i><code>///           quote is the *unspecified* currency (exact-out buy, exact-in sell) -&gt; afterSwap   + afterSwapReturnDelta</code></span>
+<span class="code-line"><i>18</i><code>///           fee = bps * G where G = gross quote on the paying side; exact-out cases use fee = net * p / (1 - p),</code></span>
+<span class="code-line"><i>19</i><code>///           rounded up, so exact-in and exact-out quote identically (custom-accounting guide:</code></span>
+<span class="code-line"><i>20</i><code>///           https://developers.uniswap.org/docs/protocols/v4/guides/custom-accounting).</code></span>
+<span class="code-line"><i>21</i><code>///           bps = BASE_FEE_BPS (100) + snipe(t) on buys, where t = block.timestamp - initTimestamp, whole seconds,</code></span>
+<span class="code-line"><i>22</i><code>///           SnipeSchedule table [9900, 9900, 2475, 309, 38] then 0; total capped at MAX_TOTAL_BPS (9900).</code></span>
+<span class="code-line"><i>23</i><code>///           Sells never pay more than 100 bps. No creator tax post-graduation (curve-only). No exempt addresses.</code></span>
+<span class="code-line"><i>24</i><code>///         Settlement per swap: poolManager.take(quote, hook, fee) then</code></span>
+<span class="code-line"><i>25</i><code>///           ESCROW.credit{value: base}(token, base, 0, snipe)  [shared 80/20 + snipe 100 % protocol].</code></span>
+<span class="code-line"><i>26</i><code>///           If the escrow call reverts (must be impossible for a registered + bound token — tested), the fee is</code></span>
+<span class="code-line"><i>27</i><code>///           kept in `stranded[token]` and `FeeStranded` is emitted; anyone can `flush(token)` later. A swap is</code></span>
+<span class="code-line"><i>28</i><code>///           therefore NEVER reverted by the fee path.</code></span>
+<span class="code-line"><i>29</i><code>///         Pool LP fee is static 0; third-party liquidity is allowed (earns nothing); `donate` is allowed (value</code></span>
+<span class="code-line"><i>30</i><code>///           accrues to in-range liquidity, i.e. the uncollectable locked position).</code></span>
+<span class="code-line"><i>31</i><code>///         beforeRemoveLiquidity: reverts iff sender == POSITION_MANAGER &amp;&amp; params.salt == bytes32(lockedId) &amp;&amp;</code></span>
+<span class="code-line"><i>32</i><code>///           liquidityDelta &lt; 0 for either locked id read from LOCKER.lockInfo(token). PositionManager passes</code></span>
+<span class="code-line"><i>33</i><code>///           salt = bytes32(tokenId) (https://github.com/Uniswap/v4-periphery/blob/main/src/PositionManager.sol).</code></span>
+<span class="code-line"><i>34</i><code>///         The implementation also implements v4-core `IHooks` (beforeInitialize / beforeRemoveLiquidity /</code></span>
+<span class="code-line"><i>35</i><code>///           beforeSwap / afterSwap; all other callbacks revert HookNotImplemented). Those callbacks use v4 types</code></span>
+<span class="code-line"><i>36</i><code>///           and are not repeated here so this file compiles in isolation.</code></span>
+<span class="code-line"><i>37</i><code>///         Deployment: CreateX `deployCreate2` with a permissioned salt whose 11 entropy bytes are mined so that</code></span>
+<span class="code-line"><i>38</i><code>///           keccak256(0xFF ++ CreateX ++ guardedSalt ++ keccak256(initCode)) has low bits 0x22CC. Robinhood only.</code></span>
+<span class="code-line"><i>39</i><code>interface IMemeHook {</code></span>
+<span class="code-line"><i>40</i><code>    // ------------------------------------------------------------------ types</code></span>
+<span class="code-line"><i>41</i><code>    /// @notice ABI-identical to v4-core `PoolKey` (address,address,uint24,int24,address). For our pools:</code></span>
+<span class="code-line"><i>42</i><code>    ///         currency0 = address(0) (native ETH), currency1 = token, fee = 0, tickSpacing = 200, hooks = this.</code></span>
+<span class="code-line"><i>43</i><code>    struct PoolKey {</code></span>
+<span class="code-line"><i>44</i><code>        address currency0;</code></span>
+<span class="code-line"><i>45</i><code>        address currency1;</code></span>
+<span class="code-line"><i>46</i><code>        uint24  fee;</code></span>
+<span class="code-line"><i>47</i><code>        int24   tickSpacing;</code></span>
+<span class="code-line"><i>48</i><code>        address hooks;</code></span>
+<span class="code-line"><i>49</i><code>    }</code></span>
+<span class="code-line"><i>50</i><code></code></span>
+<span class="code-line"><i>51</i><code>    struct PoolTerms {</code></span>
+<span class="code-line"><i>52</i><code>        address token;            // the launched memecoin</code></span>
+<span class="code-line"><i>53</i><code>        bool    tokenIsCurrency0; // always false for ETH pairs (address(0) sorts first); kept for ERC-20 quotes (v1.1)</code></span>
+<span class="code-line"><i>54</i><code>        bool    initialized;      // set in beforeInitialize</code></span>
+<span class="code-line"><i>55</i><code>        uint40  initTimestamp;    // block.timestamp at beforeInitialize; post-graduation snipe anchor</code></span>
+<span class="code-line"><i>56</i><code>    }</code></span>
+<span class="code-line"><i>57</i><code></code></span>
+<span class="code-line"><i>58</i><code>    // ------------------------------------------------------------------ events</code></span>
+<span class="code-line"><i>59</i><code>    event PoolRegistered(address indexed token, bytes32 indexed poolId, address quote, bool tokenIsCurrency0);</code></span>
+<span class="code-line"><i>60</i><code>    event PoolInitialized(bytes32 indexed poolId, address indexed token, uint40 initTimestamp, uint160 sqrtPriceX96);</code></span>
+<span class="code-line"><i>61</i><code>    /// @notice Source of truth for creator revenue indexers. grossQuote * bps / 10_000 == baseFee + snipeFee.</code></span>
+<span class="code-line"><i>62</i><code>    event FeeTaken(</code></span>
+<span class="code-line"><i>63</i><code>        bytes32 indexed poolId, address indexed token, bool isBuy, bool exactIn,</code></span>
+<span class="code-line"><i>64</i><code>        uint256 grossQuote, uint256 baseFee, uint256 snipeFee</code></span>
+<span class="code-line"><i>65</i><code>    );</code></span>
+<span class="code-line"><i>66</i><code>    /// @notice The escrow refused a credit; the fee is held in the hook until flush(token) succeeds.</code></span>
+<span class="code-line"><i>67</i><code>    event FeeStranded(address indexed token, uint256 amount, bytes reason);</code></span>
+<span class="code-line"><i>68</i><code>    event FeeFlushed(address indexed token, uint256 amount);</code></span>
+<span class="code-line"><i>69</i><code></code></span>
+<span class="code-line"><i>70</i><code>    // ------------------------------------------------------------------ errors</code></span>
+<span class="code-line"><i>71</i><code>    error OnlyTarget();</code></span>
+<span class="code-line"><i>72</i><code>    error OnlyPoolManager();</code></span>
+<span class="code-line"><i>73</i><code>    error AlreadyRegistered(address token);</code></span>
+<span class="code-line"><i>74</i><code>    error NotRegistered(bytes32 poolId);</code></span>
+<span class="code-line"><i>75</i><code>    error AlreadyInitialized(bytes32 poolId);</code></span>
+<span class="code-line"><i>76</i><code>    error BadPoolKey();                 // fee != 0, tickSpacing != TICK_SPACING, hooks != this, or currency mismatch</code></span>
+<span class="code-line"><i>77</i><code>    error QuoteMismatch(address expected, address got); // escrow.quoteOf(token) != the key&#x27;s quote currency</code></span>
+<span class="code-line"><i>78</i><code>    error VenueMismatch();              // escrow.venueOf(token) != address(this)</code></span>
+<span class="code-line"><i>79</i><code>    error LockedPosition(uint256 tokenId);</code></span>
+<span class="code-line"><i>80</i><code>    error NothingStranded(address token);</code></span>
+<span class="code-line"><i>81</i><code>    error InexactQuoteReceipt();        // ERC-20 quote delivered less than `fee` (fee-on-transfer) — v1 quote is native only</code></span>
+<span class="code-line"><i>82</i><code></code></span>
+<span class="code-line"><i>83</i><code>    // ------------------------------------------------------------------ target-only</code></span>
+<span class="code-line"><i>84</i><code>    /// @notice Registers the canonical pool for `token`. Called by TARGET in the graduation transaction, BEFORE</code></span>
+<span class="code-line"><i>85</i><code>    ///         `PoolManager.initialize(key, sqrtPriceX96)`. Verifies key shape, ESCROW.quoteOf(token) and</code></span>
+<span class="code-line"><i>86</i><code>    ///         ESCROW.venueOf(token) == address(this).</code></span>
+<span class="code-line"><i>87</i><code>    function register(PoolKey calldata key, address token) external;</code></span>
+<span class="code-line"><i>88</i><code></code></span>
+<span class="code-line"><i>89</i><code>    // ------------------------------------------------------------------ permissionless</code></span>
+<span class="code-line"><i>90</i><code>    /// @notice Retries crediting a stranded fee to the escrow.</code></span>
+<span class="code-line"><i>91</i><code>    function flush(address token) external;</code></span>
+<span class="code-line"><i>92</i><code></code></span>
+<span class="code-line"><i>93</i><code>    // ------------------------------------------------------------------ views</code></span>
+<span class="code-line"><i>94</i><code>    function terms(bytes32 poolId) external view returns (PoolTerms memory);</code></span>
+<span class="code-line"><i>95</i><code>    /// @notice The one hooked pool for `token` (bytes32(0) if none).</code></span>
+<span class="code-line"><i>96</i><code>    function poolOf(address token) external view returns (bytes32 poolId);</code></span>
+<span class="code-line"><i>97</i><code>    /// @notice Total fee bps a swap would pay right now (100 + snipe on buys; 100 on sells).</code></span>
+<span class="code-line"><i>98</i><code>    function feeBpsNow(bytes32 poolId, bool isBuy) external view returns (uint256 bps);</code></span>
+<span class="code-line"><i>99</i><code>    /// @notice Fee in quote for a hypothetical swap: exactIn =&gt; amount is the quote in/out; exactOut =&gt; amount is the</code></span>
+<span class="code-line"><i>100</i><code>    ///         quote the pool would pay/take, fee = amount * bps / (10_000 - bps) rounded up.</code></span>
+<span class="code-line"><i>101</i><code>    function quoteFee(bytes32 poolId, bool isBuy, bool exactIn, uint256 amount) external view returns (uint256 fee);</code></span>
+<span class="code-line"><i>102</i><code>    function stranded(address token) external view returns (uint256);</code></span>
+<span class="code-line"><i>103</i><code></code></span>
+<span class="code-line"><i>104</i><code>    // immutables / constants</code></span>
+<span class="code-line"><i>105</i><code>    function POOL_MANAGER() external view returns (address);      // 0x8366a39CC670B4001A1121B8F6A443A643e40951 (4663)</code></span>
+<span class="code-line"><i>106</i><code>    function POSITION_MANAGER() external view returns (address);  // 0x58daec3116aae6D93017bAAea7749052E8a04fA7 (4663)</code></span>
+<span class="code-line"><i>107</i><code>    function TARGET() external view returns (address);            // UniswapV4Target (CREATE3)</code></span>
+<span class="code-line"><i>108</i><code>    function ESCROW() external view returns (address);            // FeeEscrow (CREATE3)</code></span>
+<span class="code-line"><i>109</i><code>    function LOCKER() external view returns (address);            // PermanentLocker (CREATE3)</code></span>
+<span class="code-line"><i>110</i><code>    function TICK_SPACING() external view returns (int24);        // 200</code></span>
+<span class="code-line"><i>111</i><code>    function BASE_FEE_BPS() external view returns (uint16);       // 100</code></span>
+<span class="code-line"><i>112</i><code>    function MAX_TOTAL_BPS() external view returns (uint16);      // 9_900</code></span>
+<span class="code-line"><i>113</i><code>    function SNIPE_WINDOW_SECONDS() external view returns (uint8);// 5</code></span>
+<span class="code-line"><i>114</i><code>    function HOOK_FLAGS() external view returns (uint16);         // 0x22CC</code></span>
+<span class="code-line"><i>115</i><code>}</code></span></pre></article>
+    </main>
+    <footer>
+      <span>research_only=true</span>
+      <span>strategy_consumption_allowed=false</span>
+      <span>order_input=false</span>
+    </footer>
+  </body>
+</html>

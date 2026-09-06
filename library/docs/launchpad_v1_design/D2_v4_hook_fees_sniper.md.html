@@ -1,0 +1,649 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex,nofollow,noarchive" />
+    <meta name="theme-color" content="#090c0e" />
+    <title>D2 — MemeHook: the Uniswap v4 hook that makes the graduated pool pay the creator (Robinhood Chain) · GIWA · Robinhood Launchpad</title>
+    <link rel="stylesheet" href="../../../assets/document.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#document">본문으로 바로가기</a>
+    <header class="document-header">
+      <a class="brand" href="../../../development.html" aria-label="GIWA 대시보드로 돌아가기">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span><strong>GIWA · RH</strong><small>LAUNCHPAD ROOM</small></span>
+      </a>
+      <nav aria-label="문서 동작">
+        <a href="../../../development.html">← 대시보드</a>
+      </nav>
+    </header>
+    <main id="document" class="document-shell">
+      <div class="document-meta">
+        <span>REPORT</span>
+        <span>SHA256 6841dd753c43</span>
+      </div>
+      <h1>D2 — MemeHook: the Uniswap v4 hook that makes the graduated pool pay the creator (Robinhood Chain)</h1>
+      <p class="source-path">docs/launchpad_v1_design/D2_v4_hook_fees_sniper.md</p>
+      <article class="markdown-body"><h1 id="d2-memehook-the-uniswap-v4-hook-that-makes-the-graduated-pool-pay-the-creator-robinhood-chain">D2 — <code>MemeHook</code>: the Uniswap v4 hook that makes the graduated pool pay the creator (Robinhood Chain)</h1>
+<p>Design v1 · 2026-09-06 KST · component 2 of launchpad v1 · <strong>design only, nothing here deploys anything</strong>.</p>
+<p>Scope: the singleton v4 hook attached to every graduated pool on Robinhood Chain (chain 4663, canonical PoolManager <code>0x8366a39CC670B4001A1121B8F6A443A643e40951</code>), the fee escrow it pays into, the post-graduation sniper fee, hook-address mining, and the GIWA mirror (fee taken inside our own V2-style pair; component 3 owns that pair). Component 1 owns the curve/factory, component 4 owns the locker; where this document depends on them the dependency is called out.</p>
+<p>Owner rules this component must satisfy (fixed): 1% trading fee in the quote currency, split <strong>80% creator / 20% protocol</strong>; protocol recipient immutable at deploy; creator recipient changeable only through the escrow's 3-day timelock; optional per-token creator tax ≤ 2%, immutable; <strong>no owner, no pause, no upgrade, no fee switch, no exempt list post-graduation</strong>; liquidity permanently locked; sniper tax 99%→~0 over a few seconds, "optionally for the first seconds after graduation".</p>
+<p>Sources are cited inline. Primary code was read from <code>Uniswap/v4-core@main</code> (<code>src/libraries/Hooks.sol</code>, <code>LPFeeLibrary.sol</code>, <code>Pool.sol</code>, <code>PoolManager.sol</code>, <code>licenses/BUSL_LICENSE</code>), <code>Uniswap/v4-periphery@main</code> (<code>test/shared/HookMiner.sol</code>, <code>HookMinerCreate3.sol</code>, <code>LICENSE</code>), the Uniswap docs (<code>developers.uniswap.org/llms.mdx/docs/protocols/v4/…</code>), the CreateX README, Arbitrum and GIWA docs, and the verified <code>PonsV2MemeHook</code> / <code>PonsV2FeeEscrow</code> sources on Robinhood Blockscout (scratchpad <code>launch/sc_0xE5e7…e044.json</code>, <code>sc_0xd3AF…Ac9e.json</code>) plus <code>ClankerHookV2.sol</code> (<code>launch/hookv2.sol</code>).</p>
+<hr>
+<h2 id="0-decisions-in-one-screen">0. Decisions in one screen</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Question</th>
+<th>Decision</th>
+<th>Why (short)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>D2-1</td>
+<td>Where is the 1% taken?</td>
+<td><strong><code>beforeSwap</code> + <code>beforeSwapReturnDelta</code> when the quote is the <em>specified</em> currency; <code>afterSwap</code> + <code>afterSwapReturnDelta</code> when the quote is the <em>unspecified</em> currency.</strong> Fee is always in quote, never in the memecoin.</td>
+<td>Pons takes the fee in <code>afterSwap</code> only, so on the most common trade (exact-input ETH buy) its fee lands in the memecoin and needs a trusted <code>feeSweepOperator</code> to convert it. We have no operator, so the fee must be quote-only at the moment it is taken — the Clanker pattern (both callbacks).</td>
+</tr>
+<tr>
+<td>D2-2</td>
+<td>Pool LP fee</td>
+<td><strong>Static <code>fee = 0</code></strong> in the PoolKey (not the dynamic-fee flag).</td>
+<td>All economics go through the hook; LP fee 0 means no JIT/LP games, exactly 1% total cost for traders, and the locker never needs a fee-collect path.</td>
+</tr>
+<tr>
+<td>D2-3</td>
+<td>Third-party liquidity</td>
+<td><strong>Allowed</strong> (no <code>beforeAddLiquidity</code>). They earn nothing (LP fee 0); they can remove their own liquidity.</td>
+<td>Cannot be blocked reliably anyway (the hook only sees the PositionManager as <code>sender</code>); with LP fee 0 there is no incentive to farm; UI shows the locker's position separately from total TVL.</td>
+</tr>
+<tr>
+<td>D2-4</td>
+<td><code>beforeRemoveLiquidity</code></td>
+<td><strong>Implemented, defence-in-depth only:</strong> reverts a liquidity decrease of the registered locked position (<code>sender == PositionManager &amp;&amp; params.salt == bytes32(lockedTokenId) &amp;&amp; liquidityDelta &amp;lt; 0</code>).</td>
+<td>The locker (component 4) is the real lock; this makes the "no withdraw path" claim verifiable from the hook too, at the cost of one permission bit.</td>
+</tr>
+<tr>
+<td>D2-5</td>
+<td>Fee settlement</td>
+<td><strong>Per swap:</strong> <code>poolManager.take(quote, hook, fee)</code> → <code>FeeEscrow.accrue{value}(token, sharedFee, creatorOnlyFee)</code>. No ERC-6909 batching, no sweep step, no internal swaps, no <code>unlockCallback</code>.</td>
+<td>Operator-less and O(1). Cost ≈ 40–50k gas per swap on top of the swap (≈ $0.1 at ~1 gwei). ERC-6909 accrual + permissionless <code>flush</code> is the documented optimisation if gas ever matters.</td>
+</tr>
+<tr>
+<td>D2-6</td>
+<td>Split</td>
+<td>Escrow does <strong>80/20</strong> at accrual; creator tax (if any) 100% to creator; protocol recipient immutable; creator recipient per <strong>token address</strong> with a 3-day timelock. Pull claims, O(1).</td>
+<td>Owner rule. Keying by token address makes the same config valid on GIWA.</td>
+</tr>
+<tr>
+<td>D2-7</td>
+<td>Post-graduation sniper fee</td>
+<td><strong>Yes, buy-side only, integer-second table</strong> <code>SNIPE_BPS = [9800, 2400, 200]</code> for elapsed seconds 0/1/2 after <code>initialize</code>, 0 afterwards; total fee capped at 9,900 bps so a buyer always receives ≥ 1%. Proceeds go through the same 80/20 split. No exemptions.</td>
+<td>Graduation is a public, predictable event and the first pool blocks are a pure latency race on an FCFS sequencer; a 3-second 98%→24%→2% staircase removes the prize. Sells are never taxed above 1%.</td>
+</tr>
+<tr>
+<td>D2-8</td>
+<td>Hook address</td>
+<td>Mined for flags <strong><code>0x22CC</code></strong> (beforeInitialize, beforeRemoveLiquidity, beforeSwap, afterSwap, beforeSwapReturnDelta, afterSwapReturnDelta) and deployed through <strong>CreateX <code>deployCreate2</code></strong> with a <em>permissioned</em> salt; escrow and factory deployed via CreateX <strong><code>deployCreate3</code></strong> (permissioned salt, no cross-chain byte) so their addresses are known before the hook is mined. Only Robinhood has v4, so cross-chain determinism of the hook is not a goal; the <strong>escrow address is the same on both chains</strong>.</td>
+<td>Breaks the hook↔factory↔escrow constructor cycle without any one-shot <code>set*</code> function.</td>
+</tr>
+<tr>
+<td>D2-9</td>
+<td>Immutability</td>
+<td>Hook has <strong>no owner and no setters</strong>. Per-pool terms are written once by the factory in <code>register()</code> and checked in <code>beforeInitialize</code>. Recipients are not stored in the hook at all.</td>
+<td>Owner rule; also shrinks the audit surface vs Pons (9 <code>onlyOwner</code> setters, <code>rescuePoolFees</code>, operator).</td>
+</tr>
+<tr>
+<td>D2-10</td>
+<td>Parallel pools for the same token</td>
+<td>Cannot be prevented on-chain; mitigated by depth (100% of graduation liquidity sits in the hooked pool), a <code>PoolRegistered(token, poolId)</code> event/registry, and the UI routing only to the canonical pool.</td>
+<td>v4 lets anyone initialise any PoolKey. Copycat pools are already common on Robinhood (VIBES 1 v3 + 4 v4, NEST 30 pairs — <code>docs/launch_research_2026-09-06/05_lp_burn_signal.md</code> §1.3).</td>
+</tr>
+<tr>
+<td>D2-11</td>
+<td>Quote currency</td>
+<td><strong>Native ETH (<code>Currency.wrap(address(0))</code>)</strong> for the ETH pair; hook is currency-agnostic (USDG/stock pairs possible later) but reverts on inexact receipt (no fee-on-transfer quotes).</td>
+<td>Avoids depending on the upgradeable aeWETH proxy in the fee path; matches Pons/pools.trade; fees arrive as raw ETH via <code>take</code>.</td>
+</tr>
+<tr>
+<td>D2-12</td>
+<td>GIWA mirror</td>
+<td>Same numbers inside the V2-style pair: 1% of gross quote on both directions, same snipe table, same escrow contract at the same address keyed by token.</td>
+<td>Identical creator economics on both chains without v4.</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="1-why-beforeswap-afterswap-and-not-one-of-them">1. Why <code>beforeSwap</code> + <code>afterSwap</code> (and not one of them)</h2>
+<h3 id="11-the-v4-facts-that-force-the-design">1.1 The v4 facts that force the design</h3>
+<ul>
+<li>A swap specifies one currency (<code>amountSpecified &amp;lt; 0</code> = exact input of the input currency; <code>&gt; 0</code> = exact output of the output currency). The other currency is "unspecified". The quote (ETH) is therefore <em>specified</em> on exact-input buys and exact-output sells, and <em>unspecified</em> on exact-output buys and exact-input sells.</li>
+<li><code>beforeSwap</code> may return a <code>BeforeSwapDelta(specifiedDelta, unspecifiedDelta)</code>; the PoolManager applies the specified part <strong>before</strong> the swap: <code>amountToSwap += hookDeltaSpecified</code>, reverting <code>HookDeltaExceedsSwapAmount</code> if the sign flips (<code>Hooks.sol</code> <code>beforeSwap</code>, quoted verbatim in §4). Any unspecified part returned here is only merged into the hook delta after the swap.</li>
+<li><code>afterSwap</code> may return an <code>int128</code> that is added to <code>hookDeltaUnspecified</code>; the PoolManager then builds <code>hookDelta</code> on (specified, unspecified) according to direction and does <code>swapDelta = swapDelta - hookDelta</code>; the hook is credited <code>hookDelta</code> via <code>_accountPoolBalanceDelta(key, hookDelta, address(key.hooks))</code> (<code>PoolManager.swap</code>).</li>
+<li>So: a hook that wants the fee <strong>always in the quote</strong> needs <code>beforeSwap</code> (quote specified) <em>and</em> <code>afterSwap</code> (quote unspecified). A hook that only has <code>afterSwap</code> (Pons) takes the fee in whatever is unspecified — on an exact-input ETH buy that is the memecoin. Pons' verified source says exactly this: "If either cut lands in the memecoin, it is left untouched here and only converted to the quote currency later, in a batched <code>sweepPoolFees</code> call" — gated to <code>feeSweepOperator</code> because the conversion is price-sensitive. Clanker takes the fee in both callbacks and never holds the memecoin (<code>ClankerHookV2._beforeSwap</code> / <code>_afterSwap</code>, four cases).</li>
+<li>Docs (custom-accounting guide): "exactIn → unspecified = output token → take the fee in output; user receives less output. exactOut → unspecified = input token → take the fee in input; user must pay more input." and for <code>beforeSwap</code>: the returned delta "will be added to the hook's delta and subtracted from the swap delta". Source: http://developers.uniswap.org/llms.mdx/docs/protocols/v4/guides/custom-accounting</li>
+</ul>
+<h3 id="12-comparison">1.2 Comparison</h3>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Fee currency</th>
+<th>Needs operator / internal swap</th>
+<th>Extra permission bits</th>
+<th>Verdict</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>afterSwap</code> only (Pons)</td>
+<td>unspecified → memecoin on exact-in buys</td>
+<td>yes (conversion)</td>
+<td>2</td>
+<td>rejected: needs a trusted sweeper</td>
+</tr>
+<tr>
+<td><code>beforeSwap</code> only</td>
+<td>specified → memecoin on exact-out buys and exact-in sells</td>
+<td>yes</td>
+<td>2</td>
+<td>rejected, same reason</td>
+</tr>
+<tr>
+<td><strong>both, quote-side selection (Clanker)</strong></td>
+<td><strong>always quote</strong></td>
+<td><strong>no</strong></td>
+<td>4</td>
+<td><strong>adopted</strong></td>
+</tr>
+<tr>
+<td>dynamic LP fee override in <code>beforeSwap</code></td>
+<td>LP fee → accrues to in-range liquidity, i.e. the locked position (and any third-party LP)</td>
+<td>no, but the creator would only be paid if the locker collects and forwards</td>
+<td>1 (+ dynamic flag)</td>
+<td>rejected: puts creator revenue behind a locker collect path and lets third-party LPs skim the sniper fee (Clanker blocks liquidity adds during its MEV window for exactly this reason)</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="2-hook-interface-permissions-storage-events">2. Hook interface, permissions, storage, events</h2>
+<h3 id="21-permission-table">2.1 Permission table</h3>
+<p>Flag values from <code>v4-core/src/libraries/Hooks.sol</code> (<code>ALL_HOOK_MASK = (1 &amp;lt;&amp;lt; 14) - 1</code>):</p>
+<table>
+<thead>
+<tr>
+<th>Permission</th>
+<th>Bit</th>
+<th>Value</th>
+<th>MemeHook</th>
+<th>Used for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>beforeInitialize</td>
+<td>13</td>
+<td><code>0x2000</code></td>
+<td><strong>yes</strong></td>
+<td>only the factory may initialise, and only a registered key</td>
+</tr>
+<tr>
+<td>afterInitialize</td>
+<td>12</td>
+<td><code>0x1000</code></td>
+<td>no</td>
+<td>(init timestamp is recorded in <code>beforeInitialize</code>)</td>
+</tr>
+<tr>
+<td>beforeAddLiquidity</td>
+<td>11</td>
+<td><code>0x0800</code></td>
+<td>no</td>
+<td>third-party liquidity allowed</td>
+</tr>
+<tr>
+<td>afterAddLiquidity</td>
+<td>10</td>
+<td><code>0x0400</code></td>
+<td>no</td>
+<td></td>
+</tr>
+<tr>
+<td>beforeRemoveLiquidity</td>
+<td>9</td>
+<td><code>0x0200</code></td>
+<td><strong>yes</strong></td>
+<td>refuse decreases of the locked position (defence-in-depth)</td>
+</tr>
+<tr>
+<td>afterRemoveLiquidity</td>
+<td>8</td>
+<td><code>0x0100</code></td>
+<td>no</td>
+<td></td>
+</tr>
+<tr>
+<td>beforeSwap</td>
+<td>7</td>
+<td><code>0x0080</code></td>
+<td><strong>yes</strong></td>
+<td>fee when quote is specified; snipe fee schedule</td>
+</tr>
+<tr>
+<td>afterSwap</td>
+<td>6</td>
+<td><code>0x0040</code></td>
+<td><strong>yes</strong></td>
+<td>fee when quote is unspecified</td>
+</tr>
+<tr>
+<td>beforeDonate</td>
+<td>5</td>
+<td><code>0x0020</code></td>
+<td>no</td>
+<td>donations only enrich in-range liquidity; harmless</td>
+</tr>
+<tr>
+<td>afterDonate</td>
+<td>4</td>
+<td><code>0x0010</code></td>
+<td>no</td>
+<td></td>
+</tr>
+<tr>
+<td>beforeSwapReturnDelta</td>
+<td>3</td>
+<td><code>0x0008</code></td>
+<td><strong>yes</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>afterSwapReturnDelta</td>
+<td>2</td>
+<td><code>0x0004</code></td>
+<td><strong>yes</strong></td>
+<td></td>
+</tr>
+<tr>
+<td>afterAddLiquidityReturnDelta</td>
+<td>1</td>
+<td><code>0x0002</code></td>
+<td>no</td>
+<td></td>
+</tr>
+<tr>
+<td>afterRemoveLiquidityReturnDelta</td>
+<td>0</td>
+<td><code>0x0001</code></td>
+<td>no</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Required low 14 bits of the hook address: <code>0x2000|0x0200|0x0080|0x0040|0x0008|0x0004 = 0x22CC</code></strong> (binary <code>10 0010 1100 1100</code>). <code>Hooks.isValidHookAddress</code> additionally requires that return-delta flags come with their action flags (they do) and, because <code>key.fee = 0</code> is static, that the hook has at least one flag (it has six). <code>BaseHook</code>'s constructor calls <code>Hooks.validateHookPermissions</code>, so a wrongly mined address cannot even deploy. (Docs: "A hook contract must be deployed to an address whose low bits encode exactly the permissions it implements" — http://developers.uniswap.org/llms.mdx/docs/protocols/v4/concepts/hooks.)</p>
+<p>Dropping <code>beforeRemoveLiquidity</code> (if component 4 prefers the locker to be the single source of truth) changes the flags to <code>0x20CC</code>; nothing else in this document changes.</p>
+<h3 id="22-interface">2.2 Interface</h3>
+<pre><code class="language-solidity">// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.26;   // evm_version cancun (transient storage is used by PoolManager, not by us)
+
+interface IMemeHook {
+    struct PoolTerms {
+        address token;            // the launched memecoin (18 dec, 1e9 fixed supply, no FoT)
+        bool    tokenIsCurrency0; // derived from key
+        uint16  creatorTaxBps;    // 0..200, snapshotted from the launch config; 100% to creator
+        uint40  initTimestamp;    // block.timestamp at beforeInitialize; snipe clock
+        uint256 lockedTokenId;    // PositionManager tokenId held by the Locker (0 until set)
+    }
+
+    // --- factory-only, each callable exactly once per pool -------------------
+    function register(PoolKey calldata key, address token, uint16 creatorTaxBps) external; // before poolManager.initialize
+    function setLockedPosition(PoolId id, uint256 tokenId) external;                        // after the locker minted
+
+    // --- views ----------------------------------------------------------------
+    function terms(PoolId id) external view returns (PoolTerms memory);
+    function poolOf(address token) external view returns (PoolId);          // one hooked pool per token, forever
+    function feeBpsNow(PoolId id, bool isBuy) external view returns (uint256); // 100 + tax + snipe(t)
+    function quoteFee(PoolId id, bool isBuy, bool exactIn, uint256 amount) external view returns (uint256 fee);
+
+    // --- constants (immutables) ------------------------------------------------
+    function FACTORY() external view returns (address);
+    function ESCROW() external view returns (IFeeEscrow);
+    function POSITION_MANAGER() external view returns (address);
+    function BASE_FEE_BPS() external pure returns (uint16);   // 100
+    function MAX_TAX_BPS() external pure returns (uint16);    // 200
+    function MAX_TOTAL_BPS() external pure returns (uint16);  // 9_900
+    function SNIPE_SECONDS() external pure returns (uint8);   // 3
+}
+</code></pre>
+<p>Everything is <code>immutable</code> or write-once. There is <strong>no</strong> <code>Ownable</code>, no <code>IUnlockCallback</code> (the hook never opens an unlock of its own — it never swaps), no <code>receive()</code> beyond what <code>take</code> of native ETH needs, and no token-sweep function (a stray token sent to the hook is simply lost; the hook never holds fee balances between transactions).</p>
+<h3 id="23-storage">2.3 Storage</h3>
+<pre><code class="language-solidity">mapping(PoolId =&gt; PoolTerms) internal _terms;   // 2 slots per pool (token+bool+tax+ts pack into one; tokenId in the next)
+mapping(address =&gt; PoolId)   internal _poolOf;  // token → canonical pool; non-zero ⇒ registered
+</code></pre>
+<p>That is the entire state. No pending balances (fees leave the hook in the same call), no recipients (escrow), no policy variables (constants).</p>
+<h3 id="24-events">2.4 Events</h3>
+<pre><code class="language-solidity">event PoolRegistered(address indexed token, PoolId indexed poolId, Currency quote, bool tokenIsCurrency0, uint16 creatorTaxBps);
+event PoolInitialized(PoolId indexed poolId, uint40 initTimestamp, uint160 sqrtPriceX96);
+event LockedPositionSet(PoolId indexed poolId, uint256 tokenId);
+event FeeTaken(PoolId indexed poolId, address indexed token, bool isBuy, bool exactIn,
+               uint256 grossQuote, uint256 baseFee, uint256 snipeFee, uint256 taxFee);
+</code></pre>
+<p><code>FeeTaken</code> is the indexer's source of truth for creator revenue; <code>grossQuote</code> is defined in §3.1 so that <code>baseFee == grossQuote / 100</code> always holds.</p>
+<h3 id="25-escrow-interface-the-part-the-hook-depends-on">2.5 Escrow interface (the part the hook depends on)</h3>
+<pre><code class="language-solidity">interface IFeeEscrow {
+    // hook (Robinhood) or pair (GIWA) → escrow. `sharedFee` splits 80/20, `creatorOnlyFee` goes 100% to creator.
+    function accrue(address token, uint256 sharedFee, uint256 creatorOnlyFee) external payable; // msg.value for native quote
+    function quoteOf(address token) external view returns (Currency);
+    // claims (pull, O(1))
+    function claimCreator(address token) external;
+    function claimProtocol(Currency quote) external;
+    // 3-day timelock on the creator recipient (owner rule)
+    function queueCreatorRecipient(address token, address newRecipient) external;  // by current recipient
+    function executeCreatorRecipient(address token) external;                     // after 3 days
+    function cancelCreatorRecipient(address token) external;                      // by current recipient
+}
+</code></pre>
+<p>Accrual accounting in the escrow: <code>creatorClaimable[token] += 0.8·shared + creatorOnly</code>, <code>protocolClaimable[quote] += shared − 0.8·shared</code> (rounding goes to the protocol). Both are single SSTOREs; claims zero one slot and transfer. The protocol recipient is an <code>immutable</code>. <code>accrue</code> is restricted to the hook (immutable) and, for the curve phase, to the token's registered curve (component 1 registers <code>curveOf[token]</code> when it launches — the escrow's <code>FACTORY</code> is immutable too). This mirrors Pons' <code>PonsV2FeeEscrow</code> ("Both the bonding curve and the post-graduation PonsV2MemeHook credit the same way, so a recipient's balance is denominated identically before and after graduation") minus its permissionless <code>credit</code> (we do not want third parties inflating balances).</p>
+<hr>
+<h2 id="3-exact-fee-accounting">3. Exact fee accounting</h2>
+<h3 id="31-definition-of-the-fee">3.1 Definition of the fee</h3>
+<p>Let <code>p = feeBps/10_000</code> (normally 0.01; more during the snipe window; plus tax). Define <strong>gross quote <code>G</code></strong> as the quote amount on the <em>paying</em> side of the trade — what the swapper pays on a buy, what the pool pays on a sell. The fee is always <code>p·G</code>:</p>
+<table>
+<thead>
+<tr>
+<th>Case</th>
+<th>Specified</th>
+<th>Where taken</th>
+<th>Known amount</th>
+<th><code>G</code></th>
+<th>fee</th>
+<th>Delta returned</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A. exact-in <strong>buy</strong> (ETH in, token out)</td>
+<td>quote (input)</td>
+<td><code>beforeSwap</code></td>
+<td><code>X = -amountSpecified</code></td>
+<td><code>X</code></td>
+<td><code>X·p</code></td>
+<td><code>BeforeSwapDelta(+fee, 0)</code></td>
+</tr>
+<tr>
+<td>B. exact-out <strong>buy</strong> (token out exact)</td>
+<td>token (output)</td>
+<td><code>afterSwap</code></td>
+<td>pool took <code>Q = -delta.quote</code></td>
+<td><code>Q/(1-p)</code></td>
+<td><code>Q·p/(1-p)</code> (round up)</td>
+<td><code>int128(+fee)</code></td>
+</tr>
+<tr>
+<td>C. exact-in <strong>sell</strong> (token in, ETH out)</td>
+<td>token (input)</td>
+<td><code>afterSwap</code></td>
+<td>pool gave <code>Y = +delta.quote</code></td>
+<td><code>Y</code></td>
+<td><code>Y·p</code></td>
+<td><code>int128(+fee)</code></td>
+</tr>
+<tr>
+<td>D. exact-out <strong>sell</strong> (ETH out exact)</td>
+<td>quote (output)</td>
+<td><code>beforeSwap</code></td>
+<td><code>S = amountSpecified</code></td>
+<td><code>S/(1-p)</code></td>
+<td><code>S·p/(1-p)</code> (round up)</td>
+<td><code>BeforeSwapDelta(+fee, 0)</code></td>
+</tr>
+</tbody>
+</table>
+<p>Why this normalisation: cases A and C are the natural "1% of what crosses the boundary"; B and D are the same trades expressed exact-out, and dividing by <code>(1−p)</code> makes the fee identical to what the exact-in form would have charged for the same fill (Clanker uses the same <code>1/(1−p)</code> correction in its exact-out paired-out case). A trader therefore sees exactly 1% whichever way the router quotes the trade.</p>
+<h3 id="32-mechanics-per-case-using-the-verbatim-poolmanager-semantics">3.2 Mechanics per case (using the verbatim PoolManager semantics)</h3>
+<p><code>Hooks.beforeSwap</code> (v4-core, quoted): <code>amountToSwap = params.amountSpecified; … hookDeltaSpecified = hookReturn.getSpecifiedDelta(); if (hookDeltaSpecified != 0) { bool exactInput = amountToSwap &amp;lt; 0; amountToSwap += hookDeltaSpecified; if (exactInput ? amountToSwap &gt; 0 : amountToSwap &amp;lt; 0) HookDeltaExceedsSwapAmount…revert }</code>.</p>
+<p><code>Hooks.afterSwap</code> (quoted): <code>hookDeltaUnspecified += callHookWithReturnDelta(...).toInt128(); … hookDelta = (params.amountSpecified &amp;lt; 0 == params.zeroForOne) ? toBalanceDelta(hookDeltaSpecified, hookDeltaUnspecified) : toBalanceDelta(hookDeltaUnspecified, hookDeltaSpecified); swapDelta = swapDelta - hookDelta;</code></p>
+<ul>
+<li><strong>A (exact-in buy, quote specified):</strong> <code>amountSpecified = −X</code>. Hook returns <code>(+fee, 0)</code>. <code>amountToSwap = −X + fee = −(X−fee)</code>: the pool only swaps <code>X−fee</code>. After the swap the PoolManager subtracts <code>hookDelta = (fee on quote)</code> from the swapper's delta → swapper's quote delta is <code>−(X−fee) − fee = −X</code> (pays the full X) and the hook's delta is <code>+fee</code>. The hook <code>take</code>s <code>fee</code> during the callback (transiently <code>−fee</code>, netted to 0 once <code>_accountPoolBalanceDelta</code> credits it; the only invariant is <code>NonzeroDeltaCount == 0</code> at the end of <code>unlock</code>).</li>
+<li><strong>D (exact-out sell, quote specified):</strong> <code>amountSpecified = +S</code>. Hook returns <code>(+fee, 0)</code>. <code>amountToSwap = S + fee = G</code>: the pool pays out <code>G</code> quote and charges tokens for <code>G</code>. Swapper's delta: <code>+G − fee = +S</code> (receives exactly S). Hook: <code>+fee</code>.</li>
+<li><strong>B (exact-out buy, quote unspecified):</strong> the pool's swap already ran; <code>delta.quote = −Q</code>. Hook returns <code>int128(+fee)</code> with <code>fee = ⌈Q·p/(1−p)⌉</code>; <code>swapDelta − hookDelta</code> makes the swapper's quote delta <code>−Q − fee</code>. Hook: <code>+fee</code>.</li>
+<li><strong>C (exact-in sell, quote unspecified):</strong> <code>delta.quote = +Y</code>. Hook returns <code>+fee = Y·p</code>; swapper receives <code>Y − fee</code>. Hook: <code>+fee</code>.</li>
+</ul>
+<p>The v4 swap never touches the memecoin side of the hook. The hook's delta after every swap is exactly <code>+fee</code> in quote, consumed by <code>take</code>. No ERC-6909 claim tokens are minted.</p>
+<h3 id="33-solidity-sketch-core-of-the-hook">3.3 Solidity sketch (core of the hook)</h3>
+<pre><code class="language-solidity">uint16 constant BASE_FEE_BPS = 100;
+uint16 constant MAX_TAX_BPS  = 200;
+uint16 constant MAX_TOTAL_BPS = 9_900;   // buyer always keeps ≥ 1% — never a 100% fee
+uint16[3] constant SNIPE_BPS = [9_800, 2_400, 200]; // elapsed whole seconds 0,1,2 after initialize (buys only)
+
+function _feeBps(PoolTerms memory t, bool isBuy) internal view returns (uint256 bps, uint256 snipe) {
+    bps = BASE_FEE_BPS + t.creatorTaxBps;
+    if (isBuy) {
+        uint256 dt = block.timestamp - t.initTimestamp;      // Arbitrum: sequencer clock, monotonic, 1-second granularity
+        if (dt &amp;lt; 3) { snipe = SNIPE_BPS[dt]; if (bps + snipe &gt; MAX_TOTAL_BPS) snipe = MAX_TOTAL_BPS - bps; }
+        bps += snipe;
+    }
+}
+
+function _beforeSwap(address, PoolKey calldata key, SwapParams calldata p, bytes calldata)
+    internal override returns (bytes4, BeforeSwapDelta, uint24)
+{
+    PoolId id = key.toId();
+    PoolTerms memory t = _terms[id];
+    bool quoteIs0 = !t.tokenIsCurrency0;
+    bool isBuy = (p.zeroForOne == quoteIs0);               // quote → token
+    bool exactIn = p.amountSpecified &amp;lt; 0;
+    if (exactIn != isBuy) return (BaseHook.beforeSwap.selector, BeforeSwapDeltaLibrary.ZERO_DELTA, 0); // quote unspecified → afterSwap
+    (uint256 bps, uint256 snipe) = _feeBps(t, isBuy);
+    uint256 fee = exactIn
+        ? uint256(-p.amountSpecified) * bps / 10_000                                   // A: X·p
+        : FullMath.mulDivRoundingUp(uint256(p.amountSpecified), bps, 10_000 - bps);    // D: S·p/(1−p)
+    _collect(id, t, quoteIs0 ? key.currency0 : key.currency1, fee, bps, snipe, isBuy, exactIn);
+    return (BaseHook.beforeSwap.selector, toBeforeSwapDelta(int128(int256(fee)), 0), 0);
+}
+
+function _afterSwap(address, PoolKey calldata key, SwapParams calldata p, BalanceDelta d, bytes calldata)
+    internal override returns (bytes4, int128)
+{
+    PoolId id = key.toId();
+    PoolTerms memory t = _terms[id];
+    bool quoteIs0 = !t.tokenIsCurrency0;
+    bool isBuy = (p.zeroForOne == quoteIs0);
+    bool exactIn = p.amountSpecified &amp;lt; 0;
+    if (exactIn == isBuy) return (BaseHook.afterSwap.selector, 0);                     // already taken in beforeSwap
+    int128 q = quoteIs0 ? d.amount0() : d.amount1();                                   // swapper's quote delta
+    (uint256 bps, uint256 snipe) = _feeBps(t, isBuy);
+    uint256 fee = isBuy
+        ? FullMath.mulDivRoundingUp(uint256(uint128(-q)), bps, 10_000 - bps)           // B: Q·p/(1−p)
+        : uint256(uint128(q)) * bps / 10_000;                                          // C: Y·p
+    _collect(id, t, quoteIs0 ? key.currency0 : key.currency1, fee, bps, snipe, isBuy, exactIn);
+    return (BaseHook.afterSwap.selector, int128(int256(fee)));
+}
+
+function _collect(PoolId id, PoolTerms memory t, Currency quote, uint256 fee,
+                  uint256 bps, uint256 snipe, bool isBuy, bool exactIn) internal {
+    if (fee == 0) return;
+    uint256 taxFee   = fee * t.creatorTaxBps / bps;      // proportional slices of the one fee
+    uint256 snipeFee = fee * snipe / bps;
+    uint256 baseFee  = fee - taxFee - snipeFee;
+    if (quote.isAddressZero()) {
+        poolManager.take(quote, address(this), fee);                       // ETH lands in the hook…
+        ESCROW.accrue{value: fee}(t.token, baseFee + snipeFee, taxFee);    // …and leaves in the same call
+    } else {
+        uint256 before = IERC20(Currency.unwrap(quote)).balanceOf(address(ESCROW));
+        poolManager.take(quote, address(ESCROW), fee);
+        if (IERC20(Currency.unwrap(quote)).balanceOf(address(ESCROW)) - before != fee) revert InexactQuote(); // no FoT quotes
+        ESCROW.accrue(t.token, baseFee + snipeFee, taxFee);
+    }
+    emit FeeTaken(id, t.token, isBuy, exactIn, fee * 10_000 / bps, baseFee, snipeFee, taxFee);
+}
+</code></pre>
+<p>Notes: <code>take</code> while the hook's delta is not yet credited is allowed — the docs' own fee example does it in <code>beforeSwap</code>; the debt is netted by <code>_accountPoolBalanceDelta</code> after <code>afterSwap</code>. <code>HookDeltaExceedsSwapAmount</code> cannot trigger: for exact-in <code>fee = X·p &amp;lt; X</code> because <code>p ≤ 0.99</code>; for exact-out the specified delta only increases the magnitude. When <code>X·(1−p)</code> rounds to zero the pool swaps 0 and returns early ("when the amount swapped is 0, there is no protocolFee applied" — <code>Pool.sol</code>) — the buyer paid the fee for nothing, which is the intended sniper outcome at <code>t = 0</code> for dust trades.</p>
+<h3 id="34-native-eth-vs-weth">3.4 Native ETH vs WETH</h3>
+<ul>
+<li>A v4 native pool uses <code>currency0 = Currency.wrap(address(0))</code>; <code>take</code> of a native currency sends ETH. The hook then forwards it with <code>accrue{value: fee}</code> — two value transfers per swap (~2 × 9k gas incl. the calls). With WETH (<code>0x0Bd7…AD73</code>, an <em>upgradeable</em> aeWETH proxy) the transfers are ERC-20 <code>transfer</code>s at similar cost but the fee path would depend on an upgradeable third-party contract. <strong>Native ETH is recommended</strong> for the ETH pair; Universal Router, Pons and pools.trade already trade native v4 pools on this chain. Escrow claims of native ETH use <code>call{value}</code> with reentrancy guard and checks-effects-interactions.</li>
+<li>ERC-20 quotes (USDG <code>0x5fc5…d168</code>, stock tokens) work unchanged, but the exact-receipt check means a quote that takes a transfer fee, rebases, or pauses transfers will make every swap revert — the factory's quote whitelist (component 1) is the control. Pons hit exactly this and added an owner-only <code>rescuePoolFees</code>; we have no owner, so the whitelist must be strict (v1: native ETH only; USDG after verifying its implementation).</li>
+</ul>
+<h3 id="35-gas-estimate-to-be-measured-in-foundry">3.5 Gas (estimate, to be measured in Foundry)</h3>
+<p>Baseline v4 swap through Universal Router ≈ 120–150k. Hook adds: two callbacks (~8k), one <code>take</code> + native transfer (~12k), <code>accrue</code> with two warm/cold SSTOREs (~25–30k), event (~2k) ⇒ <strong>≈ 45–55k</strong>. At Robinhood's 0.5–1.35 gwei and ETH ≈ $2.5k that is $0.06–0.19 per swap. The ERC-6909 variant (mint claims per swap, <code>flush(token)</code> permissionless) saves ~20k per swap; keep it as a v1.1 option, not in v1.</p>
+<hr>
+<h2 id="4-post-graduation-sniper-fee-decision-yes-3-seconds-buy-side-staircase">4. Post-graduation sniper fee — decision: <strong>yes, 3 seconds, buy-side, staircase</strong></h2>
+<p>Reasoning:</p>
+<ul>
+<li>Graduation is deterministic and observable (the last curve buy crosses the threshold; the pool is created in that same transaction — component 1). Bots watching the curve will submit pool buys the instant the graduation tx is sequenced. With 0.1-s blocks and FCFS ordering the only skill is latency; the prize is a small first-mover edge on a pool that opens at the curve's end price (no discount, unlike a fresh single-sided pool). The fee removes the prize; humans who buy a few seconds later pay 1%.</li>
+<li>Pons: 99% → 0 exponential, <code>snipeTaxSeconds() = 3</code> on-chain (docs say 5 s; on-chain governs), proceeds join the fee split; o1: 99% → 1% linear over 20 s, surcharge to platform; Zora: 99% → base over 10 s; Clanker: MEV modules up to 2 minutes with 80% max fee. Three seconds is the shortest in production and enough at 0.1-s blocks (30 blocks).</li>
+<li>Timestamp source: on Arbitrum "block timestamps … are updated every child chain block based on the sequencer's clock", must be non-decreasing and "within the established boundaries (24 hours earlier than the current time or one hour in the future)"; "timing assumptions … unreliable in the shorter term (minutes)" (https://docs.arbitrum.io/build-decentralized-apps/arbitrum-vs-ethereum/block-numbers-and-time). That warning is about drift relative to L1 time, which we do not care about — we only need "seconds elapsed since the pool's own init timestamp on the same clock", which is monotonic and second-granular. <code>block.number</code> is unusable here (it approximates the L1 block); <code>ArbSys(0x64).arbBlockNumber()</code> would give 0.1-s granularity but adds a precompile dependency and is not portable to GIWA — rejected.</li>
+<li>Integer-second staircase instead of an exponential: with second granularity a continuous curve is a lie anyway; three constants are auditable and identical on both chains. Chosen table (bps added to the 1% base on buys): <code>t=0 → 9,800</code> (total 9,900), <code>t=1 → 2,400</code> (2,500), <code>t=2 → 200</code> (300), <code>t≥3 → 0</code> (100). Roughly Pons' "near 25% one second in and around 3% at two seconds".</li>
+<li>Total is capped at 9,900 bps so a 100% fee (which would make exact-out swaps impossible — <code>Pool.sol</code> reverts <code>InvalidFeeForExactOut</code> for a 100% <em>LP</em> fee, and a 100% hook fee would simply burn the buyer's input) never occurs.</li>
+<li><strong>No exemptions</strong>: the owner's single disclosed dev-buy happens on the curve (component 1) and is already in the wallet at graduation; there is no address list in the hook (Pons allows 32 exempt wallets — a bundling vector we deliberately do not have).</li>
+<li>Sells: never above <code>100 + tax</code> bps. A holder can always exit at 1%.</li>
+<li>Proceeds: same 80/20 split as the base fee (Pons does the same; o1 keeps the surcharge). This is the owner's call; the hook passes <code>snipeFee</code> inside <code>sharedFee</code> so switching it to 100% protocol (or burning it) is a one-line escrow change before deploy.</li>
+</ul>
+<p>Turning it <strong>off</strong> is a compile-time change (<code>SNIPE_BPS = [0,0,0]</code>); v1 ships with it on.</p>
+<hr>
+<h2 id="5-hook-address-mining-and-deployment-ceremony">5. Hook address mining and deployment ceremony</h2>
+<h3 id="51-mining">5.1 Mining</h3>
+<p><code>HookMiner.find(deployer, flags, creationCode, constructorArgs)</code> (v4-periphery <code>test/shared/HookMiner.sol</code>) loops <code>salt = 0 … 160_443</code> computing <code>keccak256(0xFF ‖ deployer ‖ salt ‖ keccak256(creationCode ‖ args))</code> until <code>addr &amp; 0x3FFF == flags &amp;&amp; addr.code.length == 0</code>. For six flags the expected number of trials is 2¹⁴ = 16,384; the chance of exhausting <code>MAX_LOOP</code> is ≈ e^(−160444/16384) ≈ 5·10⁻⁵ — mine off-chain (Python/Rust) anyway, it is instant.</p>
+<h3 id="52-through-createx-0xba5ed099633d3b313e4d5f7bdc1305d3c28ba5ed-present-on-both-chains">5.2 Through CreateX (<code>0xba5Ed099633D3B313e4D5F7bdc1305d3c28ba5Ed</code>, present on both chains)</h3>
+<ul>
+<li><code>deployCreate2(bytes32 salt, bytes initCode)</code>: CreateX is the CREATE2 deployer, so <code>deployer = CreateX</code> in the formula, <strong>and the salt CreateX actually uses is the <em>guarded</em> salt</strong>: "it is essential to provide the guarded salt value, meaning the value after being processed by the <code>_guard</code> function" (README). With the permissioned form (first 20 bytes = our deployer EOA, byte 21 = <code>0x00</code>) the guarded salt is <code>keccak256(abi.encode(msg.sender, salt))</code>; with byte 21 = <code>0x01</code> it is <code>keccak256(abi.encode(msg.sender, block.chainid, salt))</code>. Mining therefore iterates the 11 free entropy bytes of the raw salt and evaluates <code>addr = keccak256(0xFF ‖ CreateX ‖ guardedSalt ‖ initCodeHash)</code>. <strong>Verify the exact <code>_guard</code> branches against CreateX source before mining</strong> (open question OQ-4).</li>
+<li>Permissioned salt is not strictly needed for CREATE2 (an address is bound to the init-code hash, so a front-runner can only deploy our identical bytecode at our address), but it is free and avoids a stranger burning the address with a different constructor arg set. Use it.</li>
+<li><code>initCode</code> includes the constructor args <code>(PoolManager, FACTORY, ESCROW, POSITION_MANAGER)</code>, so the mined salt is specific to those addresses. Robinhood testnet (46630) will have different PoolManager/PositionManager addresses ⇒ a different salt ⇒ a different hook address there. Only mainnet needs a "pretty" address; testnet just needs valid flags.</li>
+</ul>
+<h3 id="53-breaking-the-constructor-cycle-without-setters">5.3 Breaking the constructor cycle without setters</h3>
+<p>hook needs <code>FACTORY</code> and <code>ESCROW</code>; factory needs <code>hook</code> and <code>escrow</code>; escrow needs <code>hook</code> and <code>factory</code>. Pons breaks this with <code>setFactory()</code> (one-shot, owner-only). We break it with <strong>CREATE3</strong>, whose address does not depend on init code ("Any change in the salt value will result in a new destination address" — CreateX README; <code>HookMinerCreate3</code> in v4-periphery does the same for hooks):</p>
+<ol>
+<li>Choose permissioned CREATE3 salts <code>S_escrow</code>, <code>S_factory</code> (first 20 bytes = deployer EOA; byte 21 = <code>0x00</code> so the <em>same</em> addresses are reproducible on GIWA). Compute <code>ESCROW = computeCreate3Address(guard(S_escrow))</code>, <code>FACTORY = computeCreate3Address(guard(S_factory))</code>. <strong>Permissioned salts are mandatory for CREATE3</strong>: the address is independent of bytecode, so an unpermissioned salt would let anyone deploy arbitrary code at our predicted escrow address first.</li>
+<li>Mine <code>S_hook</code> for <code>MemeHook(POOL_MANAGER, FACTORY, ESCROW, POSITION_MANAGER)</code> → <code>HOOK</code> (low bits <code>0x22CC</code>).</li>
+<li><code>deployCreate3(S_escrow, FeeEscrow(HOOK, FACTORY, PROTOCOL_RECIPIENT, WETH?…))</code>, <code>deployCreate3(S_factory, Factory(HOOK, ESCROW, …))</code>, <code>deployCreate2(S_hook, MemeHook(...))</code>. Each constructor asserts the others' addresses have code <strong>only where ordering allows</strong> (hook last: it can <code>require(FACTORY.code.length &gt; 0 &amp;&amp; ESCROW.code.length &gt; 0)</code>; escrow/factory cannot check the hook yet — they store the predicted address as <code>immutable</code>; the launch script verifies all three after step 3 and refuses to open launches otherwise).</li>
+<li>On GIWA: same <code>S_escrow</code> ⇒ same escrow address; the pair factory replaces the hook (component 3).</li>
+</ol>
+<p>No <code>set*</code> functions exist anywhere in the three contracts.</p>
+<h3 id="54-reentrancy-unlock-semantics">5.4 Reentrancy / unlock semantics</h3>
+<ul>
+<li>All hook callbacks are <code>onlyPoolManager</code> (BaseHook). They run inside the router's <code>unlock</code>; <code>take</code> requires <code>onlyWhenUnlocked</code>, satisfied. The hook never calls <code>unlock</code> itself and never swaps, so <code>Hooks</code>' "<code>if (msg.sender == address(self)) return</code>" bypass (which Pons relies on to make its internal conversion swaps fee-free) is irrelevant to us — and there is no code path by which a fee-free swap through this pool can exist.</li>
+<li>During <code>_collect</code> the hook makes one external call to the escrow. The escrow does not call back into the PoolManager or the hook; <code>accrue</code> is <code>onlyHook</code>/<code>onlyCurve</code>, non-payable for ERC-20 quotes, and does only arithmetic + SSTORE. Native <code>take</code> to the hook triggers the hook's <code>receive()</code> — a no-op.</li>
+<li>Escrow claims: <code>nonReentrant</code>, zero the balance before <code>call{value}</code>; ERC-20 claims use <code>safeTransfer</code>. No permissionless <code>credit</code> (unlike Pons), so balances cannot be inflated by outsiders.</li>
+<li><code>donate</code> is permissionless on any pool; it can only credit in-range liquidity (the locked position, which has no collect path — donated value is stuck; harmless). The hook reads no balances and no prices, so donate/flash-loan manipulation cannot change any fee.</li>
+<li>Uniswap governance's protocol fee: <code>Pool.swap</code> applies <code>protocolFee</code> (set by Uniswap's <code>ProtocolFeeController</code>, max 0.1% per direction) <em>in addition</em> to the LP fee, even on <code>lpFee = 0</code> pools. If Uniswap ever switches it on for this chain, traders pay up to +0.1% to Uniswap; our 1% is unaffected. External, not controllable — disclose in the UI.</li>
+</ul>
+<h3 id="55-fee-on-transfer">5.5 Fee-on-transfer</h3>
+<p>The launched token has no transfer hook, no tax, no rebase (component 1). The hook never takes the memecoin, so even a hostile token could not break fee collection; only the <em>quote</em> matters (see §3.4). The exact-receipt check reverts the whole swap rather than mis-accounting.</p>
+<h3 id="56-licence-note-not-legal-advice">5.6 Licence note (not legal advice)</h3>
+<p><code>v4-core</code> is BUSL-1.1: Licensor Universal Navigation Inc.; "Change Date: The earlier of 2027-06-15 or a date specified at v4-core-license-date.uniswap.eth"; "Change License: MIT"; "Additional Use Grant: Any uses listed and defined at v4-core-license-grants.uniswap.eth" (<code>licenses/BUSL_LICENSE</code>, read via GitHub API 2026-09-06). <code>v4-periphery</code> (BaseHook, PositionManager, HookMiner) is MIT. Writing a hook that <em>calls the canonical PoolManager</em> and compiles <code>Hooks.sol</code>/<code>BalanceDelta.sol</code> as libraries is the use the Uniswap docs actively invite; the restricted act is running your own copy of core in production — which is exactly why GIWA gets our own pair instead of a PoolManager fork. Hook source licence: MIT.</p>
+<hr>
+<h2 id="6-parallel-pools-registry-and-why-the-hook-cannot-own-the-token">6. Parallel pools, registry, and why the hook cannot "own" the token</h2>
+<ul>
+<li>Anyone can call <code>PoolManager.initialize</code> with any <code>PoolKey</code> for our token — hookless, other hooks, other fee tiers, other quotes. Pools are keyed by the whole <code>PoolKey</code>, so ours (<code>token/ETH, fee 0, tickSpacing 200 (TBD component 1), hooks = MemeHook</code>) is one of possibly many. Observed on Robinhood: VIBES 1 v3 + 4 v4 pools, NEST 30 v4 pairs (<code>docs/launch_research_2026-09-06/05_lp_burn_signal.md</code> §1.3). Nothing at the token level can stop it without transfer restrictions, which the owner rules forbid.</li>
+<li>What the hook <em>does</em> guarantee: exactly one pool with <strong>this hook</strong> per token (<code>_poolOf[token]</code> set once by <code>register</code>; <code>beforeInitialize</code> reverts unless <code>sender == FACTORY</code> and the key is registered and not yet initialised), and that pool can never be re-initialised (v4 forbids it).</li>
+<li>Economic mitigation: 100% of graduation liquidity (all the raised ETH + reserved tokens; component 1) sits in the hooked pool; a parallel hookless pool needs someone to seed both sides at market price and then earns them an LP fee — which becomes rational only for large tokens, exactly where copycat pools appear today. Routers (Universal Router, aggregators, GMGN) split by depth; the leak is bounded by the share of volume the parallel pool can absorb.</li>
+<li>UI/registry mitigation: the <code>PoolRegistered(token, poolId, …)</code> event is the canonical mapping; the UI, the API and the launch page link only that <code>poolId</code>; the token page shows "canonical pool / other pools" with the locker's position highlighted. This is the same situation every hook launchpad lives with (Pons, Clanker, Zora).</li>
+</ul>
+<hr>
+<h2 id="7-mev-on-robinhoods-fcfs-sequencer-01-s-blocks">7. MEV on Robinhood's FCFS sequencer (0.1-s blocks)</h2>
+<ul>
+<li>Ordering: "Transactions are ordered by the order in which they are received" (default FCFS); chains "can override this default … with Timeboost, which auctions an 'express lane'"; non-express transactions then get "a default 200-millisecond artificial delay" (https://docs.arbitrum.io/how-arbitrum-works/sequencer, …/timeboost/gentle-introduction). Whether Robinhood Chain has enabled Timeboost is <strong>not verified</strong> (OQ-1); the chain docs site refused TLS from here.</li>
+<li>Sandwich profile: there is no public mempool to read pending swaps from — third parties see a transaction only once the sequencer has ordered it. Classical sandwiching (front-run + back-run around a <em>pending</em> victim) is therefore unavailable to outsiders; only the sequencer operator could do it, which is an honesty assumption we share with every venue on the chain. What remains: (a) <strong>back-running</strong> (arbitrage after a large buy) — harmless to the trader, and with LP fee 0 the arb's cost is our 1% both ways, so small imbalances persist rather than being arbed; (b) <strong>latency races</strong> to be first after a public event — graduation (handled by §4), and any predictable large buy such as a public "buy at 12:00" — nothing on-chain can fix that; (c) with Timeboost, an express-lane holder gets a 200-ms head start on <em>events</em>, not on other users' pending transactions — it would sharpen (b) but does not create sandwiches.</li>
+<li>Hook-specific: fees are pure functions of <code>(amount, direction, timestamp)</code>; no oracle, no TWAP, no balance reads ⇒ no manipulation surface. Slippage protection remains the router's <code>amountOutMinimum</code> as usual.</li>
+<li>GIWA (OP Stack): "The Sequencer executes transactions from the mempool in priority fee order (highest fee first)" and "OP Stack chains do not have a public mempool" (https://docs.optimism.io/stack/differences). Flashblocks give "preconfirmation … (최대 200ms)" but "are not about creating blocks faster" (https://docs.giwa.io/network-information/flashblocks.md). Consequence: the post-graduation race on GIWA is a priority-fee auction within the first 1-s block rather than a latency race; the same 3-second staircase applies (the whole first block is <code>t = 0</code> or <code>t = 1</code>), and outsiders still cannot sandwich.</li>
+</ul>
+<hr>
+<h2 id="8-swap-walk-through-with-numbers">8. Swap walk-through with numbers</h2>
+<p>Assumptions (component 1's numbers are not final; these mirror the Pons V2 graduation observed on-chain so they are realistic): graduation deposits <strong>4.2 ETH + 204,081,633 tokens</strong> into a full-range fee-0 pool at the curve's end price <code>P₀ = 4.2 / 204.08M = 2.058e-8 ETH/token</code> (FDV ≈ 20.6 ETH ≈ $51k at $2,476/ETH). Full-range v4 liquidity behaves as <code>x·y = k</code> with <code>k = 4.2 × 204,081,633 = 8.5714e8</code>.</p>
+<h3 id="81-case-a-exact-input-1-eth-buy-10-seconds-after-graduation-snipe-over">8.1 Case A — exact-input <strong>1 ETH buy</strong>, 10 seconds after graduation (snipe over)</h3>
+<ol>
+<li>Router calls <code>swap(key, {zeroForOne: true (ETH is currency0), amountSpecified: −1e18, limit})</code>.</li>
+<li><code>beforeSwap</code>: quote specified, <code>isBuy</code>, <code>bps = 100</code>, <code>fee = 1e18 × 100 / 10 000 = 0.01 ETH</code>. Hook <code>take</code>s 0.01 ETH and calls <code>accrue{value: 0.01}(token, 0.01, 0)</code>. Returns <code>BeforeSwapDelta(+0.01e18, 0)</code>. <code>amountToSwap = −0.99e18</code>.</li>
+<li>Pool swap with LP fee 0: tokens out <code>= y − k/(x + 0.99) = 204,081,633 − 8.5714e8 / 5.19 = 204,081,633 − 165,152,767 = 38,928,866 tokens</code> (3.89% of supply). New reserves 5.19 ETH / 165.15M tokens; new spot <code>3.143e-8</code> (+52.7%); effective price paid <code>1 / 38.93M = 2.569e-8</code> (24.8% worse than spot, of which 1% is fee).</li>
+<li><code>afterSwap</code>: quote was specified → returns 0.</li>
+<li>PoolManager: <code>swapDelta = (−0.99e18, +38,928,866e18) − hookDelta(+0.01e18, 0) = (−1.00e18, +38,928,866e18)</code>. Hook delta: <code>+0.01e18 − 0.01e18 (take) = 0</code>. Router settles 1 ETH, takes the tokens.</li>
+<li>Escrow: <code>creatorClaimable[token] += 0.008 ETH</code>, <code>protocolClaimable[ETH] += 0.002 ETH</code>. <code>FeeTaken(poolId, token, isBuy=true, exactIn=true, gross=1e18, base=0.01e18, snipe=0, tax=0)</code>.</li>
+</ol>
+<h3 id="82-same-1-eth-buy-1-second-after-graduation-snipe-tier-1">8.2 Same 1 ETH buy, <strong>1 second</strong> after graduation (snipe tier 1)</h3>
+<p><code>bps = 100 + 2,400 = 2,500</code> → fee 0.25 ETH (0.20 creator / 0.05 protocol); pool receives 0.75 ETH → tokens out <code>= 204,081,633 × 0.75 / 4.95 = 30,921,460</code>. At <code>t = 0</code> the fee is 0.99 ETH and the buyer gets <code>204,081,633 × 0.01 / 4.21 = 484,754</code> tokens for 1 ETH — the sniper's expected edge is gone.</p>
+<h3 id="83-case-c-the-buyer-of-81-sells-everything-back-exact-input-38928866-tokens">8.3 Case C — the buyer of 8.1 sells everything back (exact-input 38,928,866 tokens)</h3>
+<p>Pool gives <code>Y = x − k/(y + 38,928,866) = 5.19 − 8.5714e8/204,081,633 = 5.19 − 4.2 = 0.99 ETH</code>. <code>afterSwap</code>: <code>q = +0.99e18</code>, <code>fee = 0.0099 ETH</code>, returns <code>+0.0099e18</code>; swapper receives <strong>0.9801 ETH</strong>. Round trip cost 1.99% = two 1% fees, zero LP fee, zero price drift. Creator earns 0.008 + 0.00792 = 0.01592 ETH on the round trip.</p>
+<h3 id="84-case-b-exact-output-buy-of-exactly-10000000-tokens-from-the-graduation-state">8.4 Case B — exact-output buy of exactly 10,000,000 tokens from the graduation state</h3>
+<p>Pool needs <code>Q = k/(y − 1e7) − x = 8.5714e8 / 194,081,633 − 4.2 = 0.216404 ETH</code>. <code>afterSwap</code>: <code>fee = ⌈0.216404 × 100 / 9 900⌉ = 0.0021859 ETH</code>; swapper pays <code>0.218590 ETH</code>, of which the fee is exactly 1.000%.</p>
+<h3 id="85-case-d-exact-output-sell-for-exactly-05-eth">8.5 Case D — exact-output sell for exactly 0.5 ETH</h3>
+<p><code>beforeSwap</code>: <code>fee = ⌈0.5 × 100 / 9 900⌉ = 0.0050505 ETH</code>; <code>amountToSwap = 0.5050505 ETH</code> leaves the pool; the swapper receives 0.5 ETH and pays tokens for 0.5050505 ETH — again fee = 1% of the gross quote leaving the pool.</p>
+<hr>
+<h2 id="9-giwa-mirror-brief-component-3-owns-the-pair">9. GIWA mirror (brief; component 3 owns the pair)</h2>
+<ul>
+<li>No Uniswap on GIWA (v4-core BUSL until 2027-06-15; no v2/v3 deployment either), so component 3 ships a minimal constant-product pair: <strong>no LP token, no <code>burn</code>, no <code>skim</code>, <code>mint</code> only by the factory at graduation, <code>sync</code> only for donations</strong>, liquidity permanent by construction.</li>
+<li>Fee inside <code>swap(amountOut…)</code>: on a buy (ETH/WETH in) the pair computes <code>fee = amountIn × bps / 10 000</code> first, forwards it to the escrow, and checks the invariant on <code>amountIn − fee</code>; on a sell it computes <code>amountOut</code> from <code>x·y = k</code>, forwards <code>amountOut × bps / 10 000</code> to the escrow and pays the rest. Exact-output paths use the same <code>1/(1−p)</code> normalisation as §3.1 so quotes match Robinhood. Snipe table identical (<code>block.timestamp − createdAt</code>, 1-s blocks: tier 0 is the graduation block, tier 1 the next).</li>
+<li>Quote on GIWA: WETH9 predeploy <code>0x4200…0006</code> (not upgradeable, unlike Robinhood's aeWETH) or native ETH via a thin wrapper in the pair — component 3's call; the escrow accepts both (<code>quoteOf[token]</code>).</li>
+<li>Escrow: <strong>same bytecode, same CREATE3 salt, same address</strong> on GIWA (Sepolia 91342 today; mainnet 9134 reserved); <code>accrue</code> callers are the pair factory's pairs instead of the hook; creator recipient/timelock state is per chain (no bridging), but keyed by the same token address so the UI can show one config.</li>
+<li>GIWA sequencer context in §7.</li>
+</ul>
+<hr>
+<h2 id="10-interfaces-the-other-components-must-honour">10. Interfaces the other components must honour</h2>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Must do</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1 (curve/factory)</td>
+<td>Call <code>hook.register(key, token, creatorTaxBps)</code> <strong>before</strong> <code>poolManager.initialize(key, sqrtPrice)</code> and call <code>initialize</code> <strong>directly</strong> (not through <code>PositionManager.initializePool</code>, whose <code>sender</code> would be the PositionManager). Decide tick spacing (Pons: 200) and whether <code>creatorTaxBps</code> also applies post-graduation (OQ-3). Register <code>curveOf[token]</code> in the escrow at launch so curve-phase fees use the same ledger.</td>
+</tr>
+<tr>
+<td>4 (locker)</td>
+<td>Mint the full-range position via PositionManager with <code>recipient = locker</code>, then have the factory call <code>hook.setLockedPosition(poolId, tokenId)</code>; expose <code>ownerOf(tokenId) == locker</code> and no decrease/burn/transfer path. Confirm PositionManager uses <code>salt = bytes32(tokenId)</code> in <code>ModifyLiquidityParams</code> (OQ-5) — the <code>beforeRemoveLiquidity</code> guard relies on it.</td>
+</tr>
+<tr>
+<td>UI/indexer</td>
+<td>Index <code>PoolRegistered</code>, <code>PoolInitialized</code>, <code>LockedPositionSet</code>, <code>FeeTaken</code>; show canonical pool vs other pools; show the snipe countdown (3 s) after graduation; disclose Uniswap's possible protocol fee.</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="11-risks">11. Risks</h2>
+<ol>
+<li><strong>Parallel hookless pool</strong> for a big token drains fee volume (bounded by routing; cannot be prevented on-chain).</li>
+<li><strong>Uniswap protocol fee switch</strong> (≤ 0.1%/direction) can be enabled by Uniswap governance on any pool — traders pay more, creator unaffected.</li>
+<li><strong>Quote token hazards</strong> (ERC-20 quotes only): pausable/FoT/rebasing quote ⇒ every swap reverts, no rescue path by design. v1: native ETH only.</li>
+<li><strong>Timestamp staircase edge</strong>: the graduation block and the next ~9 blocks share <code>t = 0</code>; a human who buys in the same second as graduation pays 99%. UI must block buys until <code>t ≥ 3</code> and show the countdown.</li>
+<li><strong>Timeboost on Robinhood (unverified)</strong>: would give an express-lane holder a 200-ms head start on graduation snipes; the staircase still makes <code>t = 0</code> unprofitable.</li>
+<li><strong>CreateX guard formula / CREATE3 front-running</strong>: a mistake in the salt guard mis-predicts the escrow address; an unpermissioned CREATE3 salt lets a stranger squat the address. Mitigation: permissioned salts, dry-run on testnet 46630, <code>code.length</code> assertions in the hook constructor.</li>
+<li><strong>No rescue at all</strong>: any bug in <code>accrue</code> bricks swaps on every pool of this hook forever (there is no upgrade). Mitigation: minimal surface (≈150 lines of hook logic), Foundry invariant tests against the real v4 bytecode, and a factory that can be <em>retired</em> by deploying a new hook+factory+escrow trio for future launches (existing pools keep the old hook).</li>
+<li><strong>Licence</strong> (low): hook compiles against BUSL-licensed v4-core libraries; use is the documented, intended one; GIWA avoids core entirely.</li>
+</ol>
+<hr>
+<h2 id="12-open-questions">12. Open questions</h2>
+<ul>
+<li><strong>OQ-1</strong> Is Timeboost enabled on Robinhood Chain (chain 4663)? (docs.chain.robinhood.com refused TLS; not answerable this session.)</li>
+<li><strong>OQ-2</strong> Sniper proceeds: 80/20 like the base fee (this draft), 100% protocol (o1 style), or burned? Owner's call; one escrow constant.</li>
+<li><strong>OQ-3</strong> Does the creator tax (≤ 2%) apply post-graduation, or curve-only (Pons)? Draft supports both via <code>creatorTaxBps</code> in <code>register()</code>; a 1% + tax pool reads as a "tax token" on GMGN-style scanners — recommend curve-only unless the owner wants the revenue.</li>
+<li><strong>OQ-4</strong> Exact CreateX <code>_guard</code> branch formulas (permissioned / cross-chain / permissionless) — verify against the deployed source before mining.</li>
+<li><strong>OQ-5</strong> Confirm <code>PositionManager</code> passes <code>salt = bytes32(tokenId)</code> to <code>modifyLiquidity</code> on the deployed Robinhood build (<code>0x58da…4fA7</code>), and whether Robinhood testnet 46630 has the same PoolManager/PositionManager addresses (affects the mined salt only).</li>
+<li><strong>OQ-6</strong> USDG (<code>0x5fc5…d168</code>) implementation: pausable? fee-on-transfer? If either, exclude from the v1 quote whitelist.</li>
+<li><strong>OQ-7</strong> Per-swap direct settlement (this draft) vs ERC-6909 accrual + permissionless <code>flush</code> — decide after measuring gas in Foundry.</li>
+<li><strong>OQ-8</strong> Keep <code>beforeRemoveLiquidity</code> defence-in-depth (flags <code>0x22CC</code>) or drop it (<code>0x20CC</code>) and rely solely on the locker?</li>
+</ul>
+<hr>
+<h3 id="source-list">Source list</h3>
+<ul>
+<li>Uniswap v4 core: <code>src/libraries/Hooks.sol</code> (flags, <code>beforeSwap</code>/<code>afterSwap</code>, self-call skip), <code>LPFeeLibrary.sol</code> (<code>DYNAMIC_FEE_FLAG 0x800000</code>, <code>OVERRIDE_FEE_FLAG 0x400000</code>, <code>MAX_LP_FEE 1_000_000</code>), <code>Pool.sol</code> (fee split, <code>InvalidFeeForExactOut</code>, zero-amount early return), <code>PoolManager.sol</code> (<code>swap</code>, <code>unlock</code>, <code>take</code>), <code>licenses/BUSL_LICENSE</code> — https://github.com/Uniswap/v4-core</li>
+<li>Uniswap v4 periphery: <code>test/shared/HookMiner.sol</code>, <code>test/shared/HookMinerCreate3.sol</code>, <code>LICENSE</code> (MIT) — https://github.com/Uniswap/v4-periphery</li>
+<li>Uniswap docs: hooks concept — http://developers.uniswap.org/llms.mdx/docs/protocols/v4/concepts/hooks ; custom accounting — http://developers.uniswap.org/llms.mdx/docs/protocols/v4/guides/custom-accounting ; dynamic fees — http://developers.uniswap.org/llms.mdx/docs/protocols/v4/concepts/dynamic-fees ; hook deployment/mining — http://developers.uniswap.org/llms.mdx/docs/protocols/v4/guides/hooks/hook-deployment ; PositionManager — http://developers.uniswap.org/llms.mdx/docs/protocols/v4/guides/position-manager ; deployments — http://developers.uniswap.org/llms.mdx/docs/protocols/v4/deployments</li>
+<li>CreateX README (salt guard, CREATE2/CREATE3, address <code>0xba5Ed099…ba5Ed</code>) — https://github.com/pcaversaccio/createx</li>
+<li>Arbitrum: sequencer/FCFS — https://docs.arbitrum.io/how-arbitrum-works/sequencer ; Timeboost — https://docs.arbitrum.io/how-arbitrum-works/timeboost/gentle-introduction ; block numbers and time — https://docs.arbitrum.io/build-decentralized-apps/arbitrum-vs-ethereum/block-numbers-and-time</li>
+<li>OP Stack: differences (priority-fee ordering, private mempool) — https://docs.optimism.io/stack/differences ; GIWA Flashblocks — https://docs.giwa.io/network-information/flashblocks.md ; GIWA contracts (WETH9 <code>0x4200…0006</code>, Multicall3, CreateX, Permit2) — https://docs.giwa.io/network-information/contracts.md</li>
+<li>Pons V2 verified sources on Robinhood Blockscout: <code>PonsV2MemeHook</code> <code>0xE5e702641Ea86F4ae6cC3cDaeD2B886f976Be044</code>, <code>PonsV2FeeEscrow</code> <code>0xd3AFEB2a57f70eF218Aa82451c51B2fb0416Ac9e</code> (scratchpad <code>launch/sc_*.json</code>); Clanker <code>ClankerHookV2.sol</code> (scratchpad <code>launch/hookv2.sol</code>); research memos <code>docs/launch_research_2026-09-06/01_robinhood_launchpads.md</code>, <code>docs/launch_research_2026-09-06/02_launch_structure_norms.md</code>, <code>docs/launch_research_2026-09-06/05_lp_burn_signal.md</code>.</li>
+</ul></article>
+    </main>
+    <footer>
+      <span>research_only=true</span>
+      <span>strategy_consumption_allowed=false</span>
+      <span>order_input=false</span>
+    </footer>
+  </body>
+</html>

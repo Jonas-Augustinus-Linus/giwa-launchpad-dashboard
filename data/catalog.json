@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "catalog_revision": "acad868215e1",
+  "catalog_revision": "9b209fc7ce14",
   "as_of": "2026-09-06",
   "project": {
     "title": "GIWA · Robinhood Launchpad Control Room",
@@ -14,7 +14,7 @@
     "decision_headline": "지금은 로빈후드 체인 Pons V2에서 창작자로 론칭하고, GIWA 메인넷은 리허설로 준비한다.",
     "decision_points": [
       "지금: 로빈후드 체인(DEX $1.89B/일) Pons V2에서 창작자로 론칭 · 수입 = 거래량의 0.7 %",
-      "다음(W1–3): 우리 런치패드 v1을 로빈후드에 · 1 % 수수료 → 창작자 80 / 프로토콜 20",
+      "다음(W1–3): 우리 런치패드 v1 · 설계 정본 완료(컨트랙트 6+2, 인터페이스 9) · 1 % 수수료 → 창작자 80 / 프로토콜 20",
       "GIWA(W4–6): 메인넷 없음 → Joseon.fun Sepolia 리허설 + CreateX 동일 주소 키트",
       "두 체인 모두 ETH가 기본 통화 · 컨트랙트 구조 동일 → 코드 1벌로 두 체인",
       "원칙: 관리자 키·일시정지·수수료 스위치 없음 · 수수료는 배포 전 확정, 배포 후 불변",
@@ -1528,7 +1528,7 @@
     "unresolved_claims": 33,
     "refuted_claims": 25,
     "implemented_tracks": 5,
-    "total_tracks": 14
+    "total_tracks": 15
   },
   "network_observation": {
     "observed_at": "2026-09-03T03:53:09.216084+00:00",
@@ -3231,6 +3231,40 @@
       ]
     },
     {
+      "id": "launchpad-v1-contracts",
+      "name": "런치패드 v1 컨트랙트 설계 (2026-09-06)",
+      "status": "spec_only",
+      "progress": 30,
+      "summary": "설계 정본 완료: 컨트랙트 6개 + 어댑터 2개 · 인터페이스 .sol 9개 · 파라미터 표 · 권한 표 · 위협 모델 · 테스트·배포 계획 · 구현 코드 없음",
+      "next": "오너가 미결 18건(정본 §10) 결정 → Foundry 구현 + 불변식·퍼즈 → 테스트넷 46630·91342 스모크 졸업 → 감사",
+      "files": [
+        {
+          "path": "docs/LAUNCHPAD_V1_CONTRACT_DESIGN.md",
+          "label": "LAUNCHPAD_V1_CONTRACT_DESIGN.md",
+          "url": "./library/docs/LAUNCHPAD_V1_CONTRACT_DESIGN.md.html",
+          "exists": true
+        },
+        {
+          "path": "contracts/v1/interfaces/IBondingCurve.sol",
+          "label": "IBondingCurve.sol",
+          "url": "./library/contracts/v1/interfaces/IBondingCurve.sol.html",
+          "exists": true
+        },
+        {
+          "path": "contracts/v1/interfaces/IMemeHook.sol",
+          "label": "IMemeHook.sol",
+          "url": "./library/contracts/v1/interfaces/IMemeHook.sol.html",
+          "exists": true
+        },
+        {
+          "path": "docs/launchpad_v1_design/README.md",
+          "label": "README.md",
+          "url": "./library/docs/launchpad_v1_design/README.md.html",
+          "exists": true
+        }
+      ]
+    },
+    {
       "id": "locker-launcher",
       "name": "정액 수수료 락커 런처 (Sepolia fee 0)",
       "status": "spec_only",
@@ -3592,6 +3626,54 @@
           "path": "docs/launch_research_2026-09-06/05_lp_burn_signal.md",
           "label": "05_lp_burn_signal.md",
           "url": "./library/docs/launch_research_2026-09-06/05_lp_burn_signal.md.html",
+          "exists": true
+        }
+      ]
+    },
+    {
+      "name": "런치패드 v1 설계",
+      "description": "두 체인 공통 컨트랙트 정본 · 파라미터·권한·미결 질문 · 초안과 리뷰",
+      "files": [
+        {
+          "path": "docs/LAUNCHPAD_V1_CONTRACT_DESIGN.md",
+          "label": "LAUNCHPAD_V1_CONTRACT_DESIGN.md",
+          "url": "./library/docs/LAUNCHPAD_V1_CONTRACT_DESIGN.md.html",
+          "exists": true
+        },
+        {
+          "path": "docs/launchpad_v1_design/README.md",
+          "label": "README.md",
+          "url": "./library/docs/launchpad_v1_design/README.md.html",
+          "exists": true
+        },
+        {
+          "path": "docs/launchpad_v1_design/A1_security_review.md",
+          "label": "A1_security_review.md",
+          "url": "./library/docs/launchpad_v1_design/A1_security_review.md.html",
+          "exists": true
+        },
+        {
+          "path": "docs/launchpad_v1_design/A2_economics_review.md",
+          "label": "A2_economics_review.md",
+          "url": "./library/docs/launchpad_v1_design/A2_economics_review.md.html",
+          "exists": true
+        },
+        {
+          "path": "docs/launchpad_v1_design/D1_curve_factory_graduation.md",
+          "label": "D1_curve_factory_graduation.md",
+          "url": "./library/docs/launchpad_v1_design/D1_curve_factory_graduation.md.html",
+          "exists": true
+        },
+        {
+          "path": "docs/launchpad_v1_design/D2_v4_hook_fees_sniper.md",
+          "label": "D2_v4_hook_fees_sniper.md",
+          "url": "./library/docs/launchpad_v1_design/D2_v4_hook_fees_sniper.md.html",
+          "exists": true
+        },
+        {
+          "path": "docs/launchpad_v1_design/D3_locker_escrow_giwa_adapter.md",
+          "label": "D3_locker_escrow_giwa_adapter.md",
+          "url": "./library/docs/launchpad_v1_design/D3_locker_escrow_giwa_adapter.md.html",
           "exists": true
         }
       ]

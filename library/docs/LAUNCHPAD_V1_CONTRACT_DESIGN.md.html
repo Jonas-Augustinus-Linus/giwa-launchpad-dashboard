@@ -1,0 +1,1454 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex,nofollow,noarchive" />
+    <meta name="theme-color" content="#090c0e" />
+    <title>런치패드 v1 컨트랙트 설계서 — Robinhood Chain(4663) · GIWA(9134 / 91342) · GIWA · Robinhood Launchpad</title>
+    <link rel="stylesheet" href="../../assets/document.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#document">본문으로 바로가기</a>
+    <header class="document-header">
+      <a class="brand" href="../../development.html" aria-label="GIWA 대시보드로 돌아가기">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span><strong>GIWA · RH</strong><small>LAUNCHPAD ROOM</small></span>
+      </a>
+      <nav aria-label="문서 동작">
+        <a href="../../development.html">← 대시보드</a>
+      </nav>
+    </header>
+    <main id="document" class="document-shell">
+      <div class="document-meta">
+        <span>REPORT</span>
+        <span>SHA256 9f5e2062a304</span>
+      </div>
+      <h1>런치패드 v1 컨트랙트 설계서 — Robinhood Chain(4663) · GIWA(9134 / 91342)</h1>
+      <p class="source-path">docs/LAUNCHPAD_V1_CONTRACT_DESIGN.md</p>
+      <article class="markdown-body"><h1 id="v1-robinhood-chain4663-giwa9134-91342">런치패드 v1 컨트랙트 설계서 — Robinhood Chain(4663) · GIWA(9134 / 91342)</h1>
+<p>문서 상태: <strong>설계 정본(spec) v1, 2026-09-06 KST.</strong> 아무것도 배포되지 않았다. 이 문서와 <code>interfaces/I*.sol</code> 9개 파일이 구현의 기준이다. 세 컴포넌트 설계 초안(D1 커브/팩토리/졸업, D2 v4 훅, D3 락커/에스크로/GIWA 어댑터 — <code>docs/launchpad_v1_design/</code>)과 두 리뷰(A1 보안, A2 경제)를 통합했고, 리뷰의 must-change 항목은 모두 반영했다(§0 표). 초안끼리 충돌하던 항목은 여기서 하나로 확정했다.</p>
+<p>대상 독자: (1) 이 문서만 보고 구현할 Solidity 엔지니어, (2) 훑어보고 결정을 내릴 비개발 협업자. §1(한 장 요약)·§2(파라미터)·§5(권한)·§10(미결)은 비개발자용, 나머지는 구현용이다.</p>
+<p>표기 규약
+- <strong>불변</strong>: 배포 후 아무도 바꿀 수 없음(immutable/constant). <strong>런처 선택</strong>: 토큰 생성 시 런처가 한 번 정하고 이후 불변. <strong>타임락</strong>: 3일 지연 후 변경 가능한 유일한 상태.
+- 금액 단위는 ETH(1e18 wei), 토큰은 18 decimals. USD 환산은 ETH = $2,476(2026-09-05 Blockscout)로 고정.
+- 1차 출처 URL은 해당 주장 옆에 그대로 둔다. 리서치 메모(<code>launch_research_2026-09-06/01</code>, <code>02</code>, <code>05</code>)와 검증된 Pons V2 소스(<code>Pons V2 검증 소스(robinhoodchain.blockscout.com, 저장소 미포함)/</code>)에서 온 사실은 파일명으로 표기한다.
+- 컴파일러: solc <strong>0.8.30</strong>, <code>evm_version = cancun</code>, <code>bytecode_hash = none</code>, 최적화 runs 고정. 인터페이스는 <code>pragma ^0.8.26</code>, SPDX MIT.</p>
+<p>오너의 고정 규칙(입력): 고정 공급 1e9·18dec, 팀 배분 0 %, 커브/풀 100 %, 공개 데브바이 1회(온체인 상한, 스나이퍼세 면제), 그 외 면제 목록 없음(번들 없음), 크리에이터세 선택(≤2 %, 토큰별 불변), 거래 수수료 1 % → 크리에이터 80 / 프로토콜 20(프로토콜 수취인 불변, 크리에이터 수취인 3일 타임락), 바이백 없음, 관리자 키·일시정지·업그레이드·수수료 스위치·블랙리스트·민트 없음, 유동성 영구 잠금(인출 경로 없는 락커, 토큰 측 수수료 보유 또는 소각), 생성 수수료 0.0005 ETH → 프로토콜, 스나이퍼세 99 %→~0 수 초, 두 체인 동일 토큰 주소(CreateX salt).</p>
+<hr>
+<h2 id="0-must-change">0. 리뷰 must-change → 이 문서의 결정</h2>
+<table>
+<thead>
+<tr>
+<th>리뷰 ID</th>
+<th>요구</th>
+<th>결정 (반영 위치)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A1-01 (Critical)</td>
+<td>크로싱 매수 안의 원자적 졸업이 <code>nonReentrant</code> 자기호출로 항상 실패</td>
+<td>졸업 시도는 <strong>내부 함수 <code>_tryGraduate</code></strong>(가드 미통과)로, 외부 <code>graduate()</code> 재시도는 가드 통과 후 같은 내부 경로. TARGET이 <strong>자기 프레임 안에서 <code>transferFrom</code>으로 토큰을 끌어감</strong>, 명시적 가스 스타이펜드 <code>GRADUATE_GAS</code>. EOA <code>estimateGas</code> 테스트 추가 (§3.3, §7 T15)</td>
+</tr>
+<tr>
+<td>A1-02 (High)</td>
+<td><code>windDown</code> 가스 기아 공격</td>
+<td><strong>WindDown 삭제.</strong> 상태 기계는 <code>None→Trading→Closed→Graduated</code>뿐. 브릭 위험은 배포 의식(스모크 졸업, <code>isReady()</code>)으로 봉쇄 (§3.3, §6, §10 Q6)</td>
+</tr>
+<tr>
+<td>A1-04 (High)</td>
+<td>에스크로 revert → 모든 풀 영구 브릭</td>
+<td><code>register</code>가 <code>creator == 0</code>·비허용 quote 거부, <code>createToken</code> 안에서 호출; <code>credit</code>은 GIWA에서 WETH9로 <strong>래핑</strong>(revert 아님); 훅/페어는 풀 생성 전 <code>escrow.quoteOf/venueOf</code> 검증; 훅·페어에 <strong>stranded-fee 폴백</strong>(<code>flush</code>)이 있어 에스크로가 스왑을 되돌릴 수 없음 (§3.5, §3.6, §3.8)</td>
+</tr>
+<tr>
+<td>A1-05 (High)</td>
+<td>11개 문서 간 모순</td>
+<td>이 문서 + <code>interfaces/</code>가 정본. 졸업 호출자 = 커브, <code>initialize</code> 호출자 = TARGET(훅 <code>beforeInitialize</code>는 TARGET만 허용); 에스크로가 유일한 원장·수취인 레지스트리·타임락; 훅 플래그 <strong>0x22CC</strong>(토큰 측 소각 폴백 없음); 토큰은 CreateX CREATE3(D1 salt); 훅은 CreateX <code>deployCreate2</code> + 가드 salt 마이닝; 락커 API는 id 2개; TARGET이 <code>sqrtPriceX96</code> 계산; 분할 반올림은 프로토콜 내림·크리에이터 나머지 (§3 전체)</td>
+</tr>
+<tr>
+<td>A1-03 + A1-08 (High/Medium)</td>
+<td>번들 불가 주장 과장, ArbSys 보간 오류</td>
+<td><strong>단일 정수-초 계단</strong> <code>[9900, 9900, 2475, 309, 38]</code>(t≥5 → 0), 앵커 <code>launchedAt</code>(커브) / <code>initTimestamp</code>(풀), 두 체인·세 장소(커브·훅·페어) 동일, <code>ArbSys</code> 제거. 정량 문구: "런칭 후 2초 이내 모든 매수는 99 %, 3초째 24.75 %, 4초째 3.09 %, 5초째 0.38 %" (§3.4, §4.5)</td>
+</tr>
+<tr>
+<td>A1-06 / A1-07 (Medium)</td>
+<td>LaunchPair 주소 계산 불가·이중 지불·개장가 조작</td>
+<td>생성자 인자 <code>(token)</code>만(나머지는 배포자에서 읽음), <code>openedAt</code>은 <code>mint</code>에서 설정, <strong>단일 pull 크레딧 모드</strong>, <code>mint(amount0, amount1)</code> 명시 수량, 불변식 <code>balance ≥ reserve</code> (§3.6)</td>
+</tr>
+<tr>
+<td>A1-09 (Medium)</td>
+<td>먼지 전달이 커브 가드에 걸림, <code>receive</code> 없음</td>
+<td>TARGET <code>receive()</code>는 PositionManager/PoolManager만; 먼지 → <code>escrow.credit</code>; 커브에는 <code>buy</code>/<code>open</code> 외 payable 없음 (§3.9)</td>
+</tr>
+<tr>
+<td>A1-15 (Low)</td>
+<td>Permit2 만료·배포 순서</td>
+<td>Permit2 <code>now + 300</code>; 팩토리 <strong>마지막</strong> 배포; <code>createToken</code>이 <code>TARGET.isReady()</code> 검사; 주소 공개 전 각 체인 스모크 졸업 (§8)</td>
+</tr>
+<tr>
+<td>A2-1</td>
+<td>오버행 8.16 % 처분 모순</td>
+<td><strong>Robinhood: 잠긴 단측 토큰 포지션</strong> <code>[MIN_TICK, floor(tick/200)·200]</code>(커브 동등 상방 깊이 복원). <strong>GIWA: 소각</strong>(x·y=k는 단측 범위를 못 가짐). 컴파일 타임 <code>OverhangMode</code> (§3.9, §4.4, §10 Q1)</td>
+</tr>
+<tr>
+<td>A2-2</td>
+<td>수수료 원장 이원화</td>
+<td>커브는 거래마다 <code>escrow.credit{value}</code>; 팩토리는 수취인 상태 없음; 졸업 호출자 하나(커브→TARGET), 먼지 싱크 하나(에스크로) (§3.3, §3.8)</td>
+</tr>
+<tr>
+<td>A2-3</td>
+<td>D1의 afterSwap-only 플래그</td>
+<td>D2의 0x22CC + <code>register()</code>-before-<code>initialize</code> 채택 (§3.5)</td>
+</tr>
+<tr>
+<td>A2-4</td>
+<td>스나이퍼 스케줄 3종</td>
+<td><code>SnipeSchedule</code> 라이브러리 하나, 표 하나, T 하나 (§3.4). A2의 서브초 보간 요구는 A1-08과 충돌 → <strong>보간 제거, 대신 t=0·1초를 모두 99 %로 앵커</strong>하여 A2가 우려한 "1초 경계 절벽"을 봉쇄</td>
+</tr>
+<tr>
+<td>A2-5</td>
+<td>GIWA 영구 Q=1.5</td>
+<td><strong>불변 티어 테이블 3단</strong>(0.6/1.5, 1.68/4.2, 2.8/7.0; 모두 Q=2.5V) 런처 선택 (§2, §4.1)</td>
+</tr>
+<tr>
+<td>A2-6</td>
+<td>스나이퍼세 수익 라우팅</td>
+<td><strong>100 % 프로토콜</strong>(에스크로 <code>protocolOnly</code> 레그). 크리에이터 봇의 자기 런칭 스나이핑 할인 제거 (§2, §10 Q3)</td>
+</tr>
+<tr>
+<td>A2-7</td>
+<td>크리에이터세 결정</td>
+<td><strong>커브 전용, ≤200 bps, 기본 0, 토큰별 불변</strong>; 훅·페어에는 세금 경로 없음. v1 완전 삭제 여부는 오너 결정(§10 Q2)</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="1">1. 한 장 요약</h2>
+<p><strong>무엇인가.</strong> 런처가 토큰 이름·심볼·salt·(선택) 데브바이·(선택) 크리에이터세·커브 티어를 정해 <code>createToken</code>을 호출하면, 같은 트랜잭션에서 (1) 토큰이 CreateX CREATE3로 두 체인 동일 주소에 만들어지고 전량 1e9가 커브 싱글턴에 민팅되며, (2) 수수료 원장(FeeEscrow)에 크리에이터 수취인이 등록되고, (3) 커브가 열리며 스나이퍼세 면제인 유일한 매수(데브바이, ≤5 %)가 실행된다. 이후 누구나 커브에서 사고판다(ETH 레그 1 % 수수료, 초반 5초 스나이퍼세). 판매 가능 물량 71.43 %가 소진되는 매수(크로싱 매수)가 같은 트랜잭션에서 졸업을 실행한다: 모은 ETH(Q)와 남은 토큰 20.41 %가 커브 마지막 가격 그대로 영구 풀에 들어가고(Robinhood: Uniswap v4 fee-0 풀 + MemeHook, GIWA: 자체 LaunchPair), 포지션은 인출 경로가 없는 PermanentLocker가 영원히 보유한다. 풀에서도 1 %가 quote로 징수되어 같은 에스크로에 80/20으로 쌓이고, 수취인이 pull-claim 한다. <strong>배포 후 존재하는 권한은 "수취인이 자기 몫을 claim 한다"와 "크리에이터 수취인이 3일 타임락으로 지갑을 바꾼다" 둘뿐이다.</strong></p>
+<pre><code class="language-mermaid">flowchart LR
+  subgraph deploy[&quot;배포 (CreateX 0xba5Ed099…a5Ed, 두 체인 동일 주소)&quot;]
+    CX[CreateX]
+  end
+  L((런처 EOA)) --&gt;|&quot;createToken{0.0005 ETH + devBuy}&quot;| F[LaunchFactory]
+  F --&gt;|&quot;deployCreate3(salt)&quot;| CX --&gt; T[LaunchToken&amp;lt;br/&gt;1e9 → 커브]
+  F --&gt;|&quot;register(token, creator)&quot;| E[FeeEscrow&amp;lt;br/&gt;유일한 원장·타임락]
+  F --&gt;|&quot;open{devBuy}(token, tier, tax)&quot;| C[BondingCurve&amp;lt;br/&gt;싱글턴/체인]
+  F --&gt;|&quot;credit{0.0005}(protocolOnly)&quot;| E
+  B((트레이더)) --&gt;|&quot;buy / sell&quot;| C
+  C --&gt;|&quot;credit{fee, tax, snipe}&quot;| E
+  C --&gt;|&quot;크로싱 매수 → graduate{R}(token, X_RES, R, V)&quot;| G[GraduationTarget&amp;lt;br/&gt;RH: UniswapV4Target&amp;lt;br/&gt;GIWA: LaunchPairTarget]
+  G --&gt;|&quot;bindVenue + register + initialize + mint×2&quot;| P[영구 풀&amp;lt;br/&gt;RH: v4 PoolManager + MemeHook&amp;lt;br/&gt;GIWA: LaunchPair]
+  G --&gt;|&quot;lockV4Positions / lockPairShares&quot;| K[PermanentLocker&amp;lt;br/&gt;인출 경로 없음]
+  P --&gt;|&quot;스왑마다 1 % quote → credit&quot;| E
+  B2((트레이더)) --&gt;|&quot;UniversalRouter(RH) / LaunchRouter(GIWA)&quot;| P
+  E --&gt;|&quot;claim / claimFor (pull)&quot;| CR((크리에이터 수취인 80 %))
+  E --&gt;|&quot;claim (pull)&quot;| PR((프로토콜 수취인 20 %&amp;lt;br/&gt;불변))
+</code></pre>
+<p>자금 흐름(ASCII, tier 1 기준):</p>
+<pre><code>  런처 ──0.0005 ETH 생성비──────────────────────────────▶ FeeEscrow[protocol]
+  런처 ──devBuy ≤0.0893 ETH(면제, ≤5 %)──▶ BondingCurve ──1 %──▶ FeeEscrow[80/20]
+  매수자 ──ETH──▶ BondingCurve ──1 % fee + (0~2 %) tax + snipe(t)──▶ FeeEscrow[fee 80/20 · tax 100 % creator · snipe 100 % protocol]
+  매도자 ◀──ETH── BondingCurve ──1 % fee + tax──▶ FeeEscrow
+  크로싱 매수 ──▶ 커브 Closed ──▶ Target.graduate{R=4.2 ETH}:
+        4.2 ETH + 204,081,632.65 토큰 ──▶ 풀(전범위)          ─┐ 포지션/지분 ──▶ PermanentLocker (영원히)
+        81,632,653.06 토큰 ──▶ RH: 단측 ask 포지션 / GIWA: 소각 ─┘
+  풀 스왑 ──▶ 1 % quote(+ 졸업 후 5초 snipe, 매수만) ──▶ FeeEscrow
+  FeeEscrow ──claim──▶ 크리에이터 수취인(80 %) / 프로토콜 수취인(20 %, 불변)
+</code></pre>
+<p>컨트랙트 6개(+어댑터 2개):</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>컨트랙트</th>
+<th>체인</th>
+<th>주소 결정</th>
+<th>역할 한 줄</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>LaunchToken</code></td>
+<td>둘 다</td>
+<td>팩토리가 CreateX CREATE3, salt=(launcher, userSalt, name, symbol) → <strong>두 체인 동일</strong></td>
+<td>OZ ERC20+Burnable, 불변 0개, 전량을 커브에 민팅</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>LaunchFactory</code></td>
+<td>둘 다</td>
+<td>오너 EOA가 CreateX CREATE3(가드 salt) → <strong>두 체인 동일</strong></td>
+<td>토큰 생성·에스크로 등록·커브 개시·생성비 크레딧. 상태는 레지스트리뿐</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>BondingCurve</code></td>
+<td>둘 다</td>
+<td>CREATE3 → 동일</td>
+<td>체인당 싱글턴, 토큰별 2슬롯, 매수/매도/졸업 트리거</td>
+</tr>
+<tr>
+<td>4a</td>
+<td><code>MemeHook</code></td>
+<td>Robinhood</td>
+<td>CreateX CREATE2, 플래그 0x22CC 마이닝(체인별)</td>
+<td>v4 풀 수수료 1 % quote 징수, 졸업 후 스나이퍼세, initialize 게이트, 잠긴 포지션 감소 거부</td>
+</tr>
+<tr>
+<td>4b</td>
+<td><code>LaunchPair</code> + <code>LaunchRouter</code></td>
+<td>GIWA</td>
+<td>페어: TARGET이 CREATE2(salt=token) / 라우터: CREATE3</td>
+<td>자체 x·y=k 풀(LP 이동 불가) + 무상태 라우터</td>
+</tr>
+<tr>
+<td>5</td>
+<td><code>PermanentLocker</code></td>
+<td>둘 다</td>
+<td>CREATE3 → 동일</td>
+<td>커스터디 전용, 인출·승인·전송 경로 없음</td>
+</tr>
+<tr>
+<td>6</td>
+<td><code>FeeEscrow</code></td>
+<td>둘 다</td>
+<td>CREATE3 → 동일</td>
+<td>유일한 수수료 원장·수취인 레지스트리·3일 타임락</td>
+</tr>
+<tr>
+<td>어댑터</td>
+<td><code>UniswapV4Target</code> / <code>LaunchPairTarget</code></td>
+<td>RH / GIWA</td>
+<td>CREATE3(같은 salt) → <strong>동일 주소, 다른 바이트코드</strong></td>
+<td><code>IGraduationTarget</code> 구현, 풀 생성·시딩·락커 등록</td>
+</tr>
+</tbody>
+</table>
+<p>토큰별 상태 기계(커브): <code>None → Trading → Closed → Graduated</code>. <code>Closed</code>는 크로싱 매수가 성공했지만 원자적 졸업이 실패한 경우에만 관측되며, 누구나 <code>graduate(token)</code>으로 재시도한다. 되돌아가는 전이는 없다.</p>
+<hr>
+<h2 id="2">2. 파라미터 표</h2>
+<table>
+<thead>
+<tr>
+<th>파라미터</th>
+<th>값</th>
+<th>성격</th>
+<th>근거</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>총공급 <code>SUPPLY</code></td>
+<td>1,000,000,000 × 1e18</td>
+<td>불변(토큰 상수)</td>
+<td>오너 규칙; Pons/Bags/o1과 동일 (<code>launch_research_2026-09-06/02</code> §1)</td>
+</tr>
+<tr>
+<td>팀 배분</td>
+<td>0 %</td>
+<td>불변</td>
+<td>오너 규칙; 2026년 모든 주요 패드의 규범 (<code>launch_research_2026-09-06/02</code> §3(a))</td>
+</tr>
+<tr>
+<td>커브 형태</td>
+<td><code>(V+R)(X0−S) = V·X0</code>, 가상 quote만</td>
+<td>불변</td>
+<td>Pons V2 검증 소스와 동일 형태 → 봇·트레이더가 이미 가격을 안다 (<code>_ref_ponsv2/PonsV2BondingCurveMath.sol</code>)</td>
+</tr>
+<tr>
+<td>티어 테이블 <code>{V, Q}</code></td>
+<td>tier0 <strong>0.6 / 1.5</strong>, tier1 <strong>1.68 / 4.2</strong>, tier2 <strong>2.8 / 7.0</strong> ETH</td>
+<td>불변 테이블 / <strong>런처가 티어 선택</strong></td>
+<td>A2 §9·§12-5: 단일 불변 Q=1.5는 GIWA 메인넷 수 주 내 틀린 값이 되고, 바꾸려면 팩토리 재배포(=토큰 주소 네임스페이스 상실). 모든 티어 Q=2.5V라 비율·토큰 수량 동일</td>
+</tr>
+<tr>
+<td>판매/풀/오버행 비율</td>
+<td>71.4286 % / 20.4082 % / 8.1633 % (모든 티어)</td>
+<td>불변(비율에서 유도)</td>
+<td><code>Q/(V+Q)</code>, <code>VQ/(V+Q)²</code>, <code>V²/(V+Q)²</code>; NEST 온체인 졸업과 8자리 일치 (A2 §1)</td>
+</tr>
+<tr>
+<td>시작 FDV / 졸업 FDV</td>
+<td>tier0 0.6 → 7.35 ETH ($1.5k→$18k) · tier1 1.68 → 20.58 ETH ($4.2k→$51k) · tier2 2.8 → 34.3 ETH ($6.9k→$85k)</td>
+<td>유도</td>
+<td><code>V</code>, <code>(V+Q)²/V</code>; 배수 12.25× 공통</td>
+</tr>
+<tr>
+<td>거래 수수료 <code>FEE_BPS</code></td>
+<td>100 (1 %), ETH 레그, 매수·매도, 커브·풀 모두</td>
+<td>불변</td>
+<td>오너 규칙; Robinhood 셸링 포인트(Pons/o1/PAIR 1 %) (A2 §3.1)</td>
+</tr>
+<tr>
+<td>분할</td>
+<td>크리에이터 8000 / 프로토콜 2000 bps; 프로토콜 몫 내림, 나머지 크리에이터</td>
+<td>불변</td>
+<td>오너 규칙; 체인 최고 크리에이터 비율(Pons 70, o1 50, Bags 50)</td>
+</tr>
+<tr>
+<td>프로토콜 수취인 <code>PROTOCOL</code></td>
+<td>배포 시 확정(Safe 권장)</td>
+<td>불변</td>
+<td>오너 규칙; 키 분실 = 20 % 영구 동결 → Safe</td>
+</tr>
+<tr>
+<td>크리에이터 수취인</td>
+<td>런처 지정(0이면 런처)</td>
+<td>런처 선택 → <strong>3일 타임락</strong>(propose → 3d → 새 지갑이 accept, 3d 창)</td>
+<td>오너 규칙; 관리자 없는 2단계 (D3 §2.5, A1-10)</td>
+</tr>
+<tr>
+<td>생성 수수료 <code>CREATION_FEE</code></td>
+<td>0.0005 ETH → 100 % 프로토콜</td>
+<td>불변</td>
+<td>오너 규칙; Pons 동일</td>
+</tr>
+<tr>
+<td>데브바이 상한 <code>MAX_DEV_BUY_TOKENS</code></td>
+<td>50,000,000 × 1e18 (5 %) — 초과 시 <strong>revert</strong></td>
+<td>불변 / 런처가 금액 선택</td>
+<td>관측된 Pons 첫 매수 p90 6.9 % 안쪽, GMGN top-10&lt;30 %·Pons V1 5 % 규칙 (A2 §5); tier1 최대 0.0893 ETH</td>
+</tr>
+<tr>
+<td>데브바이 수취인</td>
+<td><code>msg.sender</code>(런칭 지갑)</td>
+<td>고정</td>
+<td>공개된 가방이 수취인·런처와 같은 지갑에 있어야 인사이더 탐지기가 기대하는 모양 (<code>launch_research_2026-09-06/02</code> §3(c))</td>
+</tr>
+<tr>
+<td>크리에이터세 <code>creatorTaxBps</code></td>
+<td>0–200, <strong>커브 전용</strong>, 기본 0</td>
+<td>런처 선택, 토큰별 불변</td>
+<td>오너 규칙(≤2 %); A2 §7은 삭제 권고 → §10 Q2</td>
+</tr>
+<tr>
+<td>스나이퍼세 표 <code>SNIPE_BPS</code></td>
+<td>t=0: 9900, 1: 9900, 2: 2475, 3: 309, 4: 38, t≥5: 0 (정수 초, <code>block.timestamp − 앵커</code>)</td>
+<td>불변</td>
+<td>오너 규칙(99 %→~0 수 초); A1-03 앵커(+1초), A2 §4.2 T=5 값(Pons 문서 "1초 ≈25 %, 2초 ≈3 %"를 1초 밀어 적용); 커브·훅·페어 동일</td>
+</tr>
+<tr>
+<td>총 수수료 상한 <code>MAX_TOTAL_BPS</code></td>
+<td>9900 (매수자는 항상 ≥1 % 수령)</td>
+<td>불변</td>
+<td>100 % 수수료는 exact-out을 불가능하게 함(D2 §4)</td>
+</tr>
+<tr>
+<td>스나이퍼세 수익</td>
+<td><strong>100 % 프로토콜</strong></td>
+<td>불변</td>
+<td>A2 §4.3: 80/20 버킷이면 크리에이터 봇이 자기 런칭을 7.8 % 유효 비용으로 스나이핑 가능</td>
+</tr>
+<tr>
+<td>졸업 후 스나이퍼세</td>
+<td>예, 같은 표, <strong>매수만</strong>, 앵커 = 풀 <code>initTimestamp</code></td>
+<td>불변</td>
+<td>졸업은 예측 가능한 공개 이벤트; 매도 99 %는 허니팟으로 읽힘 (<code>launch_research_2026-09-06/02</code> LS-25)</td>
+</tr>
+<tr>
+<td>면제 목록</td>
+<td><strong>없음.</strong> 유일한 면제 = <code>open()</code> 안의 데브바이(호출 경로 면제)</td>
+<td>불변</td>
+<td>오너 규칙; Pons의 32개 화이트리스트(번들 벡터)를 갖지 않음</td>
+</tr>
+<tr>
+<td>Quote 자산</td>
+<td>Robinhood: <strong>네이티브 ETH</strong>(v4 <code>currency0 = address(0)</code>); GIWA: 커브는 네이티브, 에스크로·페어 원장은 <strong>WETH9 프리디플로이</strong> <code>0x4200…0006</code></td>
+<td>불변(체인당 1개)</td>
+<td>Robinhood WETH <code>0x0Bd7…AD73</code>은 업그레이드 가능 aeWETH 프록시 → 회피; GIWA WETH9는 프리디플로이 (<code>launch_research_2026-09-06/01</code> §4, D3-4)</td>
+</tr>
+<tr>
+<td>v4 풀 키</td>
+<td><code>{ETH(0), token, fee 0, tickSpacing 200, MemeHook}</code></td>
+<td>불변</td>
+<td>Pons와 같은 형태 → 인덱서 호환; LP fee 0 → 락커에 collect 경로 불필요 (A2 §6)</td>
+</tr>
+<tr>
+<td>훅 플래그</td>
+<td><strong>0x22CC</strong> = beforeInitialize·beforeRemoveLiquidity·beforeSwap·afterSwap·beforeSwapReturnDelta·afterSwapReturnDelta</td>
+<td>불변(주소에 각인)</td>
+<td>https://github.com/Uniswap/v4-core/blob/main/src/libraries/Hooks.sol ; §10 Q5(0x20CC 대안)</td>
+</tr>
+<tr>
+<td>오버행 처분</td>
+<td>RH: 잠긴 단측 포지션 <code>[−887200, floor(tick/200)·200]</code>; GIWA: 소각 <code>burn()</code></td>
+<td>컴파일 타임</td>
+<td>A2 §2.3: 상방 깊이 <code>L_pool+L_over = 1.003·L_curve</code>, 2×~100×에서 ETH 깊이 +12~37 %</td>
+</tr>
+<tr>
+<td>제3자 LP</td>
+<td>허용(수익 0)</td>
+<td>불변</td>
+<td>막을 수 없음(훅은 <code>sender</code>로 PositionManager만 봄) (D2-3)</td>
+</tr>
+<tr>
+<td>그레듀에이션 가스 스타이펜드 <code>GRADUATE_GAS</code></td>
+<td>3,000,000 (측정치 ≥2×; Foundry 측정 후 확정)</td>
+<td>불변</td>
+<td>A1-01</td>
+</tr>
+<tr>
+<td>Permit2 허용 만료</td>
+<td><code>uint48(block.timestamp + 300)</code></td>
+<td>불변</td>
+<td>A1-15</td>
+</tr>
+<tr>
+<td>이름/심볼</td>
+<td>≤64 / ≤16 bytes</td>
+<td>불변 상한 / 런처 선택</td>
+<td>Pons 상한; ≤31 bytes면 1슬롯</td>
+</tr>
+<tr>
+<td>메타데이터</td>
+<td>이벤트 전용(<code>metadataURI</code>)</td>
+<td>런처 선택</td>
+<td>저장 안 함(+22k gas 절감); §10 Q11</td>
+</tr>
+<tr>
+<td>CreateX salt</td>
+<td><code>[deployer:20][0x00][entropy:11]</code>, 가드 = <code>keccak256(bytes32(uint160(sender)) ‖ salt)</code></td>
+<td>불변</td>
+<td>https://github.com/pcaversaccio/createx (README "permissioned deploy protection"; <code>_guard</code> 소스 A1 확인). 플래그 0x01(chainid 혼합)·비가드 salt 거부</td>
+</tr>
+<tr>
+<td>WindDown</td>
+<td><strong>없음</strong></td>
+<td>—</td>
+<td>A1-02</td>
+</tr>
+<tr>
+<td>타임락</td>
+<td><code>TIMELOCK</code> 3d, <code>ACCEPT_WINDOW</code> 3d, 타임스탬프 기반</td>
+<td>불변</td>
+<td>Robinhood <code>block.number</code>는 L1 추정치 https://docs.arbitrum.io/build-decentralized-apps/arbitrum-vs-ethereum/block-numbers-and-time</td>
+</tr>
+</tbody>
+</table>
+<p>런처가 고를 수 있는 것 전부: <code>name, symbol, userSalt, metadataURI, creatorRecipient(타임락으로 변경 가능), tier ∈ {0,1,2}, creatorTaxBps ∈ [0,200], devBuy 금액(≤상한)</code>. 그 외 모든 것은 불변이다. 특히 스나이퍼 스케줄·졸업 후 창·수수료·분할·티어 값은 런처가 건드릴 수 없다(건드릴 수 있으면 "자기 런칭만 끄는 면제 목록"이 된다, A2 §10).</p>
+<hr>
+<h2 id="3">3. 컴포넌트별 사양</h2>
+<p>각 소절은 <strong>책임 → 스토리지 → 함수 → 이벤트/에러 → 불변식</strong> 순서다. 함수 시그니처는 <code>interfaces/I*.sol</code>이 정본이며 여기서는 의미만 적는다.</p>
+<h3 id="31-launchtoken-ilaunchtokensol">3.1 LaunchToken (<code>ILaunchToken.sol</code>)</h3>
+<p><strong>책임.</strong> 고정 공급 밈코인. OZ <code>ERC20 + ERC20Burnable</code>. 소유자·민트·일시정지·블랙리스트·전송 훅·FoT 없음. <code>ERC20Permit</code> 없음 — OZ <code>EIP712</code>가 <code>_hashedName</code> 등을 immutable로 인라인하여 런칭마다 런타임 바이트코드가 달라진다(https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/cryptography/EIP712.sol). Permit2가 두 체인 모두 canonical(<code>0x000000000022D473030F116dDEE9F6B43aC78BA3</code>).</p>
+<p><strong>스토리지.</strong> OZ ERC20 표준(<code>_balances</code>, <code>_allowances</code>, <code>_totalSupply</code>, <code>_name</code>, <code>_symbol</code>) + <code>address launchpad</code>(저장, 커브 주소). <strong>immutable 0개</strong> → 모든 런칭·모든 체인에서 런타임 코드 동일 → Blockscout <code>verified_twin</code> 자동 검증.</p>
+<pre><code class="language-solidity">contract LaunchToken is ERC20, ERC20Burnable {
+    uint256 public constant SUPPLY = 1_000_000_000e18;
+    address public launchpad;
+    constructor(string memory name_, string memory symbol_, address curve_) ERC20(name_, symbol_) {
+        launchpad = curve_;
+        _mint(curve_, SUPPLY);
+    }
+}
+</code></pre>
+<p><strong>함수.</strong> ERC-20 표준 + <code>burn</code>, <code>burnFrom</code>, <code>SUPPLY()</code>, <code>launchpad()</code>.
+<strong>이벤트/에러.</strong> OZ 표준만.
+<strong>불변식.</strong> <code>totalSupply ≤ SUPPLY</code>이며 <code>burn</code>으로만 감소; 런타임 바이트코드는 <code>type(LaunchToken).runtimeCode</code>와 바이트 단위 동일(CI 검사); 생성자 인자는 creation code에만 존재.</p>
+<p><strong>주소.</strong> 팩토리가 CreateX <code>deployCreate3(salt, creationCode ‖ abi.encode(name, symbol, CURVE))</code>. CREATE3는 init code 인자를 주소에서 제거하므로 체인별 <code>CURVE</code> 인자가 달라도 주소가 같다. salt = <code>[factory:20][0x00][bytes11(keccak256(abi.encode(launcher, userSalt, keccak256(name), keccak256(symbol))))]</code>. 같은 주소는 같은 (런처, salt, 이름, 심볼)에 대한 <strong>약속</strong>이다 — 체인 B에서 다른 티커로 같은 주소를 만들 수 없다.</p>
+<h3 id="32-launchfactory-ilaunchfactorysol">3.2 LaunchFactory (<code>ILaunchFactory.sol</code>)</h3>
+<p><strong>책임.</strong> 토큰 생성, 에스크로 등록, 커브 개시(데브바이 포함), 생성비 크레딧, 레지스트리·주소 예측. <strong>소유자 없음, setter 없음, 수취인 상태 없음, 잔고 없음.</strong></p>
+<p><strong>스토리지.</strong> <code>mapping(address token =&gt; Launch)</code>(launcher, createdAt, tier, creatorTaxBps, userSalt: 2슬롯), <code>uint256 launchCount</code>. immutable: <code>CREATEX, CURVE, ESCROW, TARGET, CREATION_FEE=0.0005e18, MAX_NAME_BYTES=64, MAX_SYMBOL_BYTES=16, MAX_CREATOR_TAX_BPS=200</code>.</p>
+<p><strong><code>createToken(CreateParams p)</code> payable nonReentrant — 한 트랜잭션:</strong>
+1. 검증: 이름/심볼 길이, <code>tier &amp;lt; CURVE.tierCount()</code>, <code>creatorTaxBps ≤ 200</code>, <code>msg.value ≥ CREATION_FEE</code>; <code>devBuy = msg.value − CREATION_FEE</code>; <code>require(TARGET.isReady())</code>(A1-15: 훅/타깃이 아직 없는 창에서 "졸업 불가능한 런칭"을 막음).
+2. <code>predicted = predictTokenAddress(...)</code>; <code>predicted.code.length != 0</code>이면 <code>SaltAlreadyUsed</code>.
+3. <code>token = CREATEX.deployCreate3(tokenSalt(...), initCode)</code>; <code>require(token == predicted)</code>.
+4. <code>ESCROW.register(token, p.creatorRecipient == 0 ? msg.sender : p.creatorRecipient)</code>.
+5. <code>devTokensOut = CURVE.open{value: devBuy}(token, tier, tax, msg.sender, p.minDevTokensOut)</code>.
+6. <code>ESCROW.credit{value: CREATION_FEE}(token, 0, 0, CREATION_FEE)</code> — 100 % 프로토콜, <code>source = factory</code>.
+7. <code>Launch</code> 기록, <code>launchCount++</code>, <code>emit TokenCreated</code>.</p>
+<p><strong>뷰.</strong> <code>predictTokenAddress</code>(CreateX <code>_guard</code>를 그대로 미러: <code>guarded = keccak256(abi.encodePacked(bytes32(uint256(uint160(address(this)))), salt))</code>; <code>CREATEX.computeCreate3Address(guarded, CREATEX)</code>), <code>tokenSalt</code>, <code>getLaunch</code>, <code>isLaunchToken</code>, <code>launchCount</code>.
+<strong>이벤트.</strong> <code>TokenCreated(token, launcher, creatorRecipient, tier, creatorTaxBps, userSalt, devBuyQuote, devTokensOut, name, symbol, metadataURI)</code>.
+<strong>에러.</strong> <code>InsufficientCreationFee, EmptyName, EmptySymbol, NameTooLong, SymbolTooLong, CreatorTaxTooHigh, InvalidTier, SaltAlreadyUsed, TargetNotReady, UnknownToken</code>.
+<strong>불변식.</strong> 팩토리 ETH 잔고는 트랜잭션 끝에 항상 0; <code>isLaunchToken(t)</code> ⇔ <code>ESCROW.creatorOf(t) != 0</code> ⇔ <code>CURVE.getState(t).status != None</code>; 같은 (launcher, userSalt, name, symbol)은 두 체인에서 같은 주소(포크 테스트 T22).</p>
+<p><strong>위협 분석(주소).</strong> 크로스체인 스쿼팅: CreateX 가드가 <code>msg.sender = 팩토리</code>를 접고, 팩토리는 오너 EOA 가드 salt로만 존재 → 제3자 불가. 동일 체인 프런트런: entropy가 <code>launcher</code>로 네임스페이스 → 복사 호출은 다른 주소. salt 재사용: <code>SaltAlreadyUsed</code>. <strong>오너 자신</strong>은 아직 배포하지 않은 체인(9134)에서 같은 주소에 다른 코드를 둘 수 있다(A1-16) → 검증자는 체인별 <code>extcodehash</code> 비교, 오너는 9134 공개 즉시 배포(§8, §10 Q13).</p>
+<h3 id="33-bondingcurve-ibondingcurvesol">3.3 BondingCurve (<code>IBondingCurve.sol</code>)</h3>
+<p><strong>책임.</strong> 체인당 싱글턴. 토큰별 상태 매핑, 매수/매도, 스나이퍼세, 데브바이, 졸업 트리거. <strong>수수료를 보유하지 않는다</strong> — 거래마다 에스크로에 크레딧. 소유자·설정자 없음.</p>
+<p><strong>스토리지.</strong></p>
+<pre><code class="language-solidity">enum Status { None, Trading, Closed, Graduated }
+struct CurveState {                 // 2 슬롯
+    uint128 realQuote;              // R
+    uint128 tokensSold;             // S
+    uint64  launchedAt; uint64 closedAt; uint8 tier; uint16 creatorTaxBps; Status status;
+}
+mapping(address =&gt; CurveState) internal _curves;
+// immutable: X0=1e27, X_SELL=X0*5/7, X_RES=X0-X_SELL, FEE_BPS=100, MAX_CREATOR_TAX_BPS=200, MAX_TOTAL_BPS=9900,
+//            MAX_DEV_BUY_TOKENS=5e25, SNIPE_WINDOW_SECONDS=5, GRADUATE_GAS, FACTORY, TARGET, ESCROW
+// 티어 테이블: 생성자 인자로 받아 immutable 6개(V0,Q0,V1,Q1,V2,Q2)에 저장; tierParams(i)로 노출
+</code></pre>
+<p><code>X_SELL = X0·Q/(V+Q)</code>는 모든 티어에서 <code>X0·2.5/3.5 = 714,285,714.285714…e18</code>로 같다(정수: <code>X0*5/7</code>). 따라서 티어는 <code>V</code>(가격 스케일)만 바꾸고 토큰 수량은 바꾸지 않는다.</p>
+<p><strong>함수.</strong>
+- <code>open(token, tier, tax, launcher, minDevOut)</code> payable <strong>onlyFactory</strong> nonReentrant: <code>require(status == None &amp;&amp; token.balanceOf(this) == X0)</code>; 상태 기록(<code>launchedAt = block.timestamp</code>); <code>token.approve(TARGET, X_RES)</code>(졸업 때 TARGET이 끌어감); <code>emit CurveOpened</code>; <code>msg.value &gt; 0</code>이면 <code>_buy(token, msg.value, launcher, snipeBps = 0)</code> → <code>require(out ≤ MAX_DEV_BUY_TOKENS)</code> 아니면 <code>DevBuyExceedsCap</code>(클램프 아님 — 런칭이 원자적·예측 가능해야 함), <code>require(out ≥ minDevOut)</code>, <code>emit DevBuy</code>. 데브바이가 졸업을 넘을 수는 없다(5 % ≪ 71 %).
+- <code>buy(token, minTokensOut, recipient, deadline)</code> payable nonReentrant: §4.2 산식. 슬리피지는 가격 경계 검사 <code>tokensOut·quoteIn ≥ minTokensOut·quoteSpent</code>(크로싱 부분 체결이 가격 조건을 만족하면 실패하지 않음, Pons 방식). 효과(<code>R, S, status</code>) → <code>ESCROW.credit{value: fee+tax+snipe}(token, fee, tax, snipe)</code> → <code>token.transfer(recipient, out)</code> → <code>emit Buy</code> → 크로싱이면 <code>emit CurveClosed; _tryGraduate(token)</code> → 환불 <code>call{value: refund}(msg.sender)</code>(수취인이 아니라 보낸 사람에게). 환불은 졸업 시도 <strong>뒤</strong>.
+- <code>sell(token, tokensIn, minQuoteOut, recipient, deadline)</code> nonReentrant: <code>Trading</code>에서만; 스나이퍼세 없음; <code>gross → fee/tax</code> 내림; 효과 → <code>transferFrom</code> → <code>credit{value: fee+tax}(token, fee, tax, 0)</code> → <code>call{value: out}(recipient)</code>.
+- <code>graduate(token)</code> external nonReentrant: <code>require(status == Closed)</code>; <code>_graduate(token)</code>를 <strong>try/catch 없이</strong> 호출(실패는 revert로 올라와 호출자가 이유를 본다).
+- 내부 <code>_graduate(token)</code>: 효과 먼저 <code>status = Graduated; r = R; R = 0;</code> → <code>res = TARGET.graduate{value: r, gas: GRADUATE_GAS}(token, X_RES, r, V_tier)</code> → <code>emit Graduated(res…)</code>.
+- 내부 <code>_tryGraduate(token)</code>(크로싱 매수 안): 같은 효과 → <code>try TARGET.graduate{value: r, gas: GRADUATE_GAS}(…) returns (res) { emit Graduated } catch (bytes reason) { status = Closed; R = r; closedAt = now; emit GraduationDeferred(token, reason, gasleft()); }</code>. 가드를 다시 타지 않는 <strong>내부 경로</strong>이므로 A1-01의 <code>Reentrancy()</code>가 발생하지 않는다. TARGET은 자기 프레임에서 <code>transferFrom(CURVE, TARGET, X_RES)</code>를 하므로 revert 시 커브 토큰 잔고는 자동 복원되고 ETH도 되돌아온다 — 커브가 수동 롤백할 것은 자기 2슬롯뿐이다.
+- 뷰: <code>getState, tierParams, tierCount, quoteBuy, quoteSell, currentSnipeBps, price, sellableTokens, graduationProgressBps</code> + 상수.</p>
+<p><strong>이벤트.</strong> <code>CurveOpened, DevBuy, Buy, Sell, Refund, CurveClosed, GraduationDeferred, Graduated</code>.
+<strong>에러.</strong> <code>NotFactory, UnknownToken, NotTrading, NotClosed, ZeroAmount, ZeroAddress, Expired, SlippageExceeded, DevBuyExceedsCap, CreatorTaxTooHigh, InvalidTier, AlreadyOpen, QuoteTransferFailed, Reentrancy</code>.</p>
+<p><strong>불변식(퍼즈/핸들러 타깃).</strong>
+1. 거래 후 <code>(V+R)(X0−S) ≥ V·X0</code>(개시 시 등호).
+2. <code>S ≤ X_SELL</code>; <code>Trading</code>일 때 <code>R ≤ Q + dust</code>.
+3. <code>token.balanceOf(curve) ≥ X0 − S</code>(기부 없으면 등호); <code>Graduated</code> 후 <code>≤ dust</code>.
+4. <code>curve.balance ≥ Σ_Trading/Closed R_i</code>(수수료는 여기 없음 — 크레딧은 같은 트랜잭션에서 나간다).
+5. 매수 직후 같은 수량 매도 ≤ 지출(수수료+반올림).
+6. 상태 전이는 <code>None→Trading→Closed→Graduated</code>만; <code>Graduated</code>는 종단.
+7. 에스크로에 크레딧된 총액 = <code>Σ(fee+tax+snipe)</code> 이벤트 합(wei 단위 일치).</p>
+<p><strong>가스(추정, Robinhood 0.425 gwei; Foundry 측정으로 대체).</strong> <code>createToken</code> ≈ 1.0–1.2M(CREATE3 프록시 50–60k + 토큰 600–650k + 에스크로 등록 2슬롯 + 커브 개시 2슬롯 + 레지스트리), <code>buy</code> 90–125k(커브 60–95k + 에스크로 크레딧 ~30k), <code>sell</code> 110–125k, 크로싱 매수+졸업 ≈ 1.0–1.3M(Pons 실측 952k–986k + 두 번째 민트 +150–200k). Pons <code>launchAndBuy</code> 실측 3.71M 대비 ≈3.5× 저렴(<code>_rh_gas_probe.json</code>).</p>
+<h3 id="34-snipeschedule">3.4 SnipeSchedule (공용 순수 라이브러리)</h3>
+<p>커브·훅·페어가 <strong>같은 함수</strong>를 링크한다. 체인·장소별 상수 분기 없음.</p>
+<pre><code class="language-solidity">library SnipeSchedule {
+    uint16 internal constant START_BPS = 9_900;
+    uint8  internal constant WINDOW_SECONDS = 5;
+    /// t = block.timestamp - anchor (정수 초). 표: [9900, 9900, 2475, 309, 38], t &gt;= 5 -&gt; 0.
+    /// t &gt;= 1 구간은 9900 &gt;&gt; floor(14 * (t - 1) / 5) 와 같다 (Pons 검증 소스 currentSnipeTaxBps의 14-halving 형태를 1초 뒤로 앵커).
+    function snipeBps(uint256 t) internal pure returns (uint256) {
+        if (t &amp;lt; 2) return 9_900;
+        if (t == 2) return 2_475;
+        if (t == 3) return 309;
+        if (t == 4) return 38;
+        return 0;
+    }
+    /// 총 bps가 maxTotal(9900)을 넘지 않도록 잘라 매수자가 항상 &gt;= 1 %를 받게 한다.
+    function capped(uint256 snipe, uint256 otherBps, uint256 maxTotal) internal pure returns (uint256) {
+        return otherBps + snipe &gt; maxTotal ? maxTotal - otherBps : snipe;
+    }
+}
+</code></pre>
+<p>앵커: 커브 = <code>launchedAt</code>(<code>open()</code>의 <code>block.timestamp</code>), 풀 = <code>initTimestamp</code>(훅 <code>beforeInitialize</code> / 페어 <code>mint</code>의 <code>block.timestamp</code>). 매수에만 적용, 매도는 절대 아님. 수익은 100 % 프로토콜(<code>protocolOnly</code> 레그).</p>
+<p>왜 이 모양인가(A1-03·A1-08·A2 §4를 합친 결론): Robinhood 타임스탬프는 초 단위이고(10블록/초 실측), <code>ArbSys.arbBlockNumber()</code> 보간은 벽시계가 아니라 <strong>트랜잭션 부하 시계</strong>라 런칭 순간(봇 스팸) 정확히 그때 세금이 더 빨리 줄고, 런처가 자기 트랜잭션을 뿌려 시계를 돌릴 수 있다(A1-08). 보간 없이 1초 표만 쓰면 "런칭 초 .8에 쏘고 다음 초에 두 번째 지갑으로 산다"가 6 %에 가능하다(A1-03). 그래서 <strong>t=0과 t=1을 모두 99 %로 앵커</strong>한다: 인간은 1초 안에 반응하지 못하므로 비용이 없고, 런처의 타이밍 트릭은 무력해진다. 이후 값은 Pons가 문서화한 T=5 스케줄(≈25 %, ≈3 %)이다. GIWA(1초 블록, 우선수수료 정렬)에서는 런칭 블록 t=0, 다음 블록 t=1(둘 다 99 %), 그다음 24.75 %.</p>
+<p>UI 정량 문구(A1-03 (a)): "공개 데브바이를 제외한 런칭 후 2초 이내의 모든 매수는 99 % 세금을 냅니다. 3초째 24.75 %, 4초째 3.09 %, 5초째 0.38 %, 그 후 0 %. 세금은 전액 프로토콜로 가며 크리에이터에게 돌아가지 않습니다. 면제 지갑 목록은 존재하지 않습니다." — "번들이 구조적으로 불가능하다"고 쓰지 않는다.</p>
+<h3 id="35-memehook-robinhood-imemehooksol">3.5 MemeHook (Robinhood, <code>IMemeHook.sol</code>)</h3>
+<p><strong>책임.</strong> 졸업한 모든 v4 풀에 붙는 싱글턴 훅. (a) 1 % quote 징수 → 에스크로, (b) 졸업 후 5초 매수 스나이퍼세, (c) <code>initialize</code> 게이트(TARGET만, 등록된 키만, 한 번만), (d) 잠긴 포지션 감소 거부(방어 심층). <strong>소유자·setter·rescue 없음.</strong> 수취인은 훅에 없다(에스크로).</p>
+<p><strong>권한 비트(주소 하위 14비트) = 0x22CC.</strong> <code>BEFORE_INITIALIZE 1&amp;lt;&amp;lt;13 | BEFORE_REMOVE_LIQUIDITY 1&amp;lt;&amp;lt;9 | BEFORE_SWAP 1&amp;lt;&amp;lt;7 | AFTER_SWAP 1&amp;lt;&amp;lt;6 | BEFORE_SWAP_RETURNS_DELTA 1&amp;lt;&amp;lt;3 | AFTER_SWAP_RETURNS_DELTA 1&amp;lt;&amp;lt;2</code> (https://github.com/Uniswap/v4-core/blob/main/src/libraries/Hooks.sol). <code>isValidHookAddress</code>는 return-delta 비트에 action 비트 동반과 static fee 0 풀에 ≥1 비트를 요구 — 0x22CC·0x20CC 모두 통과(A1 §2 확인). <code>BaseHook</code> 생성자가 <code>validateHookPermissions</code>를 호출하므로 잘못 마이닝된 주소는 배포조차 안 된다. 훅 주소가 권한을 각인해야 한다는 규칙: https://developers.uniswap.org/docs/protocols/v4/concepts/hooks</p>
+<p><strong>스토리지.</strong> <code>mapping(bytes32 poolId =&gt; PoolTerms{token, tokenIsCurrency0, initialized, initTimestamp})</code>(1슬롯), <code>mapping(address token =&gt; bytes32 poolId)</code>, <code>mapping(address token =&gt; uint256 stranded)</code>(정상 경로에서는 항상 0). immutable: <code>POOL_MANAGER, POSITION_MANAGER, TARGET, ESCROW, LOCKER, TICK_SPACING=200, BASE_FEE_BPS=100, MAX_TOTAL_BPS=9900</code>.</p>
+<p><strong>수수료 위치 — 왜 before + after 둘 다인가.</strong> v4 스왑은 한 통화를 <em>specified</em>로 지정한다(<code>amountSpecified &amp;lt; 0</code> = 정확 입력, <code>&gt; 0</code> = 정확 출력). quote(ETH)는 정확입력 매수·정확출력 매도에서 specified, 정확출력 매수·정확입력 매도에서 unspecified다. <code>beforeSwap</code>의 반환 델타는 specified 쪽에만 스왑 전에 적용되고(<code>amountToSwap += hookDeltaSpecified</code>, <code>Hooks.sol beforeSwap</code>), <code>afterSwap</code>의 반환값은 unspecified에 더해진다(<code>hookDeltaUnspecified += …; swapDelta = swapDelta − hookDelta</code>, <code>Hooks.sol afterSwap</code>). 그러므로 <strong>항상 quote로</strong> 받으려면 두 콜백이 모두 필요하다. Pons처럼 <code>afterSwap</code>만 쓰면 정확입력 ETH 매수(가장 흔한 거래)에서 수수료가 밈코인으로 들어와 신뢰된 <code>feeSweepOperator</code>가 변환해야 한다(검증 소스 주석 "converted … in a batched sweepPoolFees call") — 우리는 운영자가 없으므로 불가. Clanker <code>ClankerHookV2</code>가 이 4-케이스 패턴이다(<code>launch/hookv2.sol</code>). 커스텀 어카운팅 가이드: https://developers.uniswap.org/docs/protocols/v4/guides/custom-accounting</p>
+<table>
+<thead>
+<tr>
+<th>케이스</th>
+<th>specified</th>
+<th>징수 위치</th>
+<th>알려진 양</th>
+<th>총량 G</th>
+<th>fee</th>
+<th>반환</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A 정확입력 매수</td>
+<td>quote</td>
+<td>beforeSwap</td>
+<td>X</td>
+<td>X</td>
+<td><code>X·p</code></td>
+<td><code>BeforeSwapDelta(+fee, 0)</code></td>
+</tr>
+<tr>
+<td>B 정확출력 매수</td>
+<td>token</td>
+<td>afterSwap</td>
+<td>풀이 가져간 Q</td>
+<td><code>Q/(1−p)</code></td>
+<td><code>⌈Q·p/(1−p)⌉</code></td>
+<td><code>int128(+fee)</code></td>
+</tr>
+<tr>
+<td>C 정확입력 매도</td>
+<td>token</td>
+<td>afterSwap</td>
+<td>풀이 준 Y</td>
+<td>Y</td>
+<td><code>Y·p</code></td>
+<td><code>int128(+fee)</code></td>
+</tr>
+<tr>
+<td>D 정확출력 매도</td>
+<td>quote</td>
+<td>beforeSwap</td>
+<td>S</td>
+<td><code>S/(1−p)</code></td>
+<td><code>⌈S·p/(1−p)⌉</code></td>
+<td><code>BeforeSwapDelta(+fee, 0)</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>p = bps/10000</code>, <code>bps = 100 + snipe(t)</code>(매수) 또는 <code>100</code>(매도), <code>capped</code>로 총 ≤ 9900. B·D의 <code>1/(1−p)</code> 보정으로 정확입력·정확출력이 같은 체결에 같은 수수료를 낸다. <code>HookDeltaExceedsSwapAmount</code>는 <code>p ≤ 0.99</code>에서 도달 불가(A1 §2 확인). 캐스트는 <code>SafeCast.toInt128</code>(A1-11).</p>
+<p><strong>정산(스왑마다, 배치 없음).</strong></p>
+<pre><code class="language-solidity">function _collect(bytes32 id, PoolTerms memory t, Currency quote, uint256 fee, uint256 bps, uint256 snipeBps_, bool isBuy, bool exactIn) internal {
+    if (fee == 0) return;
+    uint256 snipeFee = fee * snipeBps_ / bps;          // 비례 슬라이스
+    uint256 baseFee  = fee - snipeFee;
+    poolManager.take(quote, address(this), fee);        // 네이티브 ETH가 훅으로 (receive: POOL_MANAGER만)
+    try ESCROW.credit{value: fee}(t.token, baseFee, 0, snipeFee) {}
+    catch (bytes memory reason) { stranded[t.token] += fee; emit FeeStranded(t.token, fee, reason); }
+    emit FeeTaken(id, t.token, isBuy, exactIn, fee * 10_000 / bps, baseFee, snipeFee);
+}
+</code></pre>
+<p><code>take</code>는 콜백 안에서 허용된다(문서의 수수료 예제가 <code>beforeSwap</code>에서 그렇게 함); 훅의 일시적 <code>−fee</code>는 <code>_accountPoolBalanceDelta</code>가 <code>+fee</code>를 크레딧하며 상쇄된다. 에스크로 <code>credit</code>은 등록·바인딩된 토큰에 대해 <strong>총함수</strong>(revert 없음)로 설계·증명하지만(§3.8), <code>catch</code>는 "불변 시스템에서 수수료 경로가 스왑을 되돌리는 일은 없어야 한다"는 A1-04에 대한 마지막 보루다. <code>flush(token)</code>은 누구나 재시도.</p>
+<p><strong>콜백.</strong>
+- <code>beforeInitialize(sender, key, sqrtPriceX96)</code>: <code>require(sender == TARGET)</code>; <code>terms[id].token != 0 &amp;&amp; !initialized</code>; <code>initialized = true; initTimestamp = uint40(block.timestamp)</code>; <code>emit PoolInitialized</code>. <code>PoolManager.initialize</code>는 <code>msg.sender</code>를 그대로 넘기므로(<code>Hooks.sol beforeInitialize</code>) <code>PositionManager.initializePool</code> 경유는 거부된다 → 우리 키의 <code>PoolAlreadyInitialized</code>는 도달 불가.
+- <code>beforeSwap</code>/<code>afterSwap</code>: 위 표.
+- <code>beforeRemoveLiquidity(sender, key, params, …)</code>: <code>sender == POSITION_MANAGER &amp;&amp; params.liquidityDelta &amp;lt; 0 &amp;&amp; LOCKER.isLockedPosition(terms[id].token, uint256(params.salt))</code>이면 <code>LockedPosition</code>. PositionManager는 <code>_decrease/_burn</code>에서 <code>salt = bytes32(tokenId)</code>를 넘긴다(https://github.com/Uniswap/v4-periphery/blob/main/src/PositionManager.sol; A1 §2 확인). 실제 잠금은 락커의 <code>onlyIfApproved</code> 불통과다; 이 가드는 "훅에서도 검증 가능"하게 만드는 방어 심층.
+- 나머지 콜백: <code>HookNotImplemented</code>.</p>
+<p><strong><code>register(key, token)</code> onlyTarget.</strong> 키 형태 검사(<code>fee == 0</code>, <code>tickSpacing == 200</code>, <code>hooks == this</code>, <code>currency0 == address(0)</code>, <code>currency1 == token</code>), <code>poolOf[token] == 0</code>, <code>ESCROW.quoteOf(token) == address(0)</code>, <code>ESCROW.venueOf(token) == address(this)</code>. 기록 후 <code>emit PoolRegistered</code>.</p>
+<p><strong>이벤트.</strong> <code>PoolRegistered, PoolInitialized, FeeTaken(poolId, token, isBuy, exactIn, grossQuote, baseFee, snipeFee), FeeStranded, FeeFlushed</code>.
+<strong>에러.</strong> <code>OnlyTarget, OnlyPoolManager, AlreadyRegistered, NotRegistered, AlreadyInitialized, BadPoolKey, QuoteMismatch, VenueMismatch, LockedPosition, NothingStranded, InexactQuoteReceipt</code>.</p>
+<p><strong>불변식.</strong> 스왑 후 훅의 PoolManager 델타 0; 훅 ETH 잔고 = <code>Σ stranded</code>(정상 경로 0); 토큰당 훅 풀 정확히 1개, 재초기화 불가; 매도 bps ≤ 100 모든 t; <code>FeeTaken.grossQuote·bps/10000 == baseFee + snipeFee</code>.</p>
+<p><strong>가스.</strong> 베이스 v4 스왑(UR) ≈ 120–150k + 훅 45–55k(콜백 2회, take+전송, 에스크로 SSTORE, 이벤트). ERC-6909 배치는 v1.1 옵션.</p>
+<p><strong>병렬 풀.</strong> 누구나 다른 키(훅 없음, 다른 fee tier, USDG 페어)로 같은 토큰의 풀을 만들 수 있다(v4 <code>initialize</code>는 개방; 관측: NEST 30 페어, VIBES 1 v3 + 4 v4, <code>launch_research_2026-09-06/05</code> §1.3). 막을 수 없다. 완화: 졸업 유동성 100 %가 훅 풀에 있음, <code>PoolRegistered(token, poolId)</code>가 canonical 매핑, UI는 그 <code>poolId</code>로만 라우팅.</p>
+<p><strong>Uniswap 거버넌스 프로토콜 수수료.</strong> <code>PoolManager</code> 소유자가 풀별 최대 0.1 %/방향의 프로토콜 수수료를 켤 수 있다(LP fee 0 풀에도). 트레이더 부담, 우리 1 %와 무관 — 공시.</p>
+<p><strong>배포.</strong> CreateX <code>deployCreate2(salt, initCode)</code>; CreateX가 CREATE2 배포자이고 salt는 <strong>가드된</strong> salt를 쓴다("it is essential to provide the guarded salt value", README). 마이너는 raw salt의 entropy 11바이트를 돌리며 <code>keccak256(0xFF ‖ CreateX ‖ guard(salt) ‖ keccak256(initCode))</code>의 하위 14비트가 0x22CC인지 본다(기대 시행 2¹⁴). initCode에 <code>(POOL_MANAGER, POSITION_MANAGER, TARGET, ESCROW, LOCKER)</code>가 들어가므로 테스트넷(46630, 같은 v4 주소)과 메인넷의 salt는 다를 수 있다. 훅 주소는 체인 간 동일하지 않아도 된다(풀은 체인 로컬).</p>
+<h3 id="36-launchpair-launchrouter-giwa-ilaunchpairsol-ilaunchroutersol">3.6 LaunchPair + LaunchRouter (GIWA, <code>ILaunchPair.sol</code>, <code>ILaunchRouter.sol</code>)</h3>
+<p><strong>왜 자체 페어인가.</strong> GIWA에는 Uniswap이 없고 v4-core는 BUSL-1.1(변경일 2027-06-15 또는 <code>v4-core-license-date.uniswap.eth</code>, 변경 라이선스 MIT: https://github.com/Uniswap/v4-core/blob/main/licenses/BUSL_LICENSE) → 자체 PoolManager 배포 불가. v2-core는 GPL-3.0이고 0.3 %-입력 수수료·<code>feeTo</code>·<code>skim</code>·플래시스왑을 끌고 온다. 우리 수수료(quote 1 %)는 어차피 <code>swap</code>을 다시 써야 하므로 <strong>MIT 자체 페어 ~250줄</strong>(D3-5).</p>
+<p><strong>LaunchPair — 책임.</strong> <code>token0 = 런칭 토큰</code>, <code>token1 = WETH9(0x4200…0006)</code>. x·y=k, 1 % quote 수수료 → 에스크로, 졸업 후 5초 매수 스나이퍼세, LP 지분 이동 불가.</p>
+<p><strong>스토리지.</strong> <code>uint112 reserve0; uint112 reserve1; uint32 blockTimestampLast</code>(v2 레이아웃, <code>getReserves()</code> 호환), <code>uint64 openedAt</code>, <code>uint256 strandedFee</code>, <code>mapping(address =&gt; uint256) balanceOf</code>(락커만 0이 아님), <code>uint256 totalSupply</code>. immutable: <code>token0, token1(WETH9), escrow, locker, target</code>(생성자에서 <code>msg.sender = target</code>의 <code>quote()/ESCROW()/LOCKER()</code>를 읽음 — 생성자 인자는 <code>(token)</code> 하나뿐이라 <code>pairFor(token)</code>가 순수 계산이 된다, A1-06).</p>
+<p><strong>함수.</strong>
+- <code>mint(amount0, amount1)</code> onlyTarget, <strong>한 번</strong>: <code>require(totalSupply == 0)</code>; <code>reserve := (amount0, amount1)</code> <strong>명시 수량</strong>(잔고에서 읽지 않음 → 졸업 전 기부로 개장가를 못 움직인다, A1-07); <code>shares = sqrt(amount0·amount1)</code>를 <strong>LOCKER에</strong> 민팅; <code>openedAt = block.timestamp</code>. <code>MINIMUM_LIQUIDITY</code> 소각 없음(단일·영구·이동 불가 예치자라 첫 예치자 인플레이션 공격이 없다). 초과 잔고는 예비량이 아니다(첫 스왑이 입력으로 흡수 — v2와 같은 의미).
+- <code>swap(amount0Out, amount1Out, to)</code> nonReentrant: 정확히 한쪽만; <code>to ∉ {this, token0, token1}</code>; <code>b0 = token0.balanceOf(this)</code>, <code>b1 = token1.balanceOf(this) − strandedFee</code>.
+  - 매수(<code>amount0Out &gt; 0</code>): <code>q = b1 − r1 &gt; 0</code>; <code>bps = 100 + capped(snipe(now − openedAt), 100, 9900)</code>; <code>f = ⌈q·bps/10000⌉</code>; <code>require((b1 − f)(b0 − amount0Out) ≥ r1·r0)</code>; 크레딧 <code>escrow.creditToken(token0, base, 0, snipeFee)</code>(pull; 생성자에서 max approve) — 실패 시 <code>strandedFee += f</code>; <code>token0.transfer(to, amount0Out)</code>; <code>_update(b0 − amount0Out, b1 − f)</code>.
+  - 매도(<code>amount1Out &gt; 0</code>): <code>x = b0 − r0 &gt; 0</code>; <code>yGross = ⌈amount1Out·10000/9900⌉</code>, <code>f = yGross − amount1Out</code>; <code>require((b1 − yGross)·b0 ≥ r1·r0)</code>; <code>token1.transfer(to, amount1Out)</code>; 크레딧 <code>f</code>; <code>_update(b0, b1 − yGross)</code>.
+  - 출력 전송은 <strong>k 검사 후</strong>(v2의 낙관적 전송 순서 제거 → 플래시스왑·콜백·재진입 창 없음, 입력은 선불).
+- <code>sync()</code> nonReentrant: <code>reserve := balance − strandedFee</code>. 토큰은 <code>swap</code>으로만 나가고 그때 예비량이 갱신되므로 <strong>낮출 수 없다</strong>(A1-06 이중지불이 제거된 지금은 참). "LP에 기부" = 전송 + <code>sync</code>를 한 트랜잭션에.
+- <code>flush()</code>: <code>strandedFee</code>를 에스크로에 재시도.
+- 뷰: <code>getReserves, getAmountOut(amountIn, quoteIn), getAmountIn(amountOut, quoteOut), feeBpsNow(isBuy), strandedFee, openedAt, name/symbol/decimals/totalSupply/balanceOf</code>.
+- <strong>없는 것</strong>: <code>transfer, transferFrom, approve, permit, burn, skim, feeTo, uniswapV2Call</code>.</p>
+<p><strong>이벤트.</strong> <code>Mint, Swap(sender, in0, in1, out0, out1, fee, to), Sync, FeeCredited, FeeStranded, FeeFlushed</code>. <strong>에러.</strong> <code>OnlyTarget, AlreadyMinted, NotOpen, OneSideOnly, InsufficientOutput, InsufficientInput, InvalidTo, K, Overflow, NothingStranded, Reentrancy</code>.</p>
+<p><strong>불변식.</strong> <code>r0·r1</code> 스왑 후 단조 비감소; <code>token0.balanceOf ≥ r0</code>, <code>token1.balanceOf ≥ r1 + strandedFee</code>; <code>balanceOf(locker) == totalSupply &gt; 0</code>(<code>mint</code> 후 영원히); <code>getAmountOut</code>으로 나온 수량의 스왑은 <code>K()</code>에 걸리지 않음; 에스크로 크레딧 합 == <code>Σ fee</code> 이벤트; 매도 bps == 100 모든 t; 예비량 <code>uint112</code> 초과 시 <code>Overflow</code>.</p>
+<p><strong>LaunchRouter — 책임.</strong> 무상태·불변·소유자 없음. <code>buyExactIn/Out</code>(ETH → WETH9 → 페어, 정확출력은 잉여 환불), <code>sellExactIn/Out</code>(allowance 또는 Permit2 → 페어 → 선택적 unwrap), <code>quoteBuy/Sell</code>, <code>pairFor(token) = CREATE2(TARGET, bytes32(uint160(token)), keccak256(pairInitCode ‖ abi.encode(token)))</code>. <code>deadline</code> 먼저 검사. <code>receive</code>는 WETH9에서만. 불변식: 모든 호출 후 라우터 잔고 0. 제3자 v2 라우터는 0.3 %-입력을 가정해 우리 페어에서 <code>K()</code>로 실패한다 — v1의 알려진 제한(어그리게이터는 <code>getAmountOut</code>을 부르는 30줄 어댑터로 해결).</p>
+<h3 id="37-permanentlocker-ipermanentlockersol">3.7 PermanentLocker (<code>IPermanentLocker.sol</code>)</h3>
+<p><strong>책임.</strong> <strong>커스터디만.</strong> Robinhood: v4 포지션 NFT 2개(전범위 + 오버행)를, GIWA: 페어 지분 100 %를 영원히 보유. 소유자·setter·claim/collect·PositionManager 호출·ETH/ERC-20 이동 경로 <strong>전무</strong>. <code>IPermanentLocker.sol</code> 상단 주석 블록이 "존재하면 안 되는 함수" 목록이다(CI N1–N5).</p>
+<p><strong>스토리지.</strong> <code>mapping(address token =&gt; LockInfo{venue, venueContract, positionIdFull, positionIdOverhang, poolId, lockedAt})</code>만. immutable: <code>GRADUATION_TARGET, POSITION_MANAGER(RH)/address(0)(GIWA), FEE_ESCROW</code>.</p>
+<p><strong>함수.</strong>
+- <code>lockV4Positions(token, poolId, idFull, idOver)</code> onlyTarget, 토큰당 1회: <code>require(ownerOf(idFull) == this &amp;&amp; (idOver == 0 || ownerOf(idOver) == this))</code>; 기록; 이벤트. <code>ownerOf</code>는 STATICCALL.
+- <code>lockPairShares(token, pair)</code> onlyTarget, 1회: <code>require(pair.balanceOf(this) &gt; 0 &amp;&amp; == pair.totalSupply())</code>.
+- <code>onERC721Received</code>: <code>msg.sender == POSITION_MANAGER</code>만 허용. PositionManager는 <code>_mint</code>(콜백 없음)를 쓰므로 졸업 경로에 없다(https://github.com/Uniswap/v4-periphery/blob/main/src/PositionManager.sol). 이 게이트는 <strong>외부 컬렉션</strong>을 막을 뿐이며 어떤 PositionManager NFT든 <code>safeTransferFrom</code>으로 밀어 넣을 수는 있다(무해한 싱크; <code>lockInfo</code>는 TARGET만 쓰므로 검증자는 영향 없음 — A1-12의 N9 문구 수정).
+- 뷰: <code>lockInfo, positionOwner, lockedForever, isLockedPosition(token, id), feeRecipients(token)</code>(에스크로 pass-through: creator, PROTOCOL, 8000, 2000), <code>hasWithdrawPath() pure → false</code>, <code>supportsInterface</code>.</p>
+<p><strong>이벤트/에러.</strong> <code>PositionLocked</code>; <code>OnlyGraduationTarget, AlreadyLocked, NotHeld, OnlyPositionManager</code>.</p>
+<p><strong>불변식(부정 테스트 N1–N12, A1-12 반영).</strong>
+| # | 단언 | 검사 |
+|---|---|---|
+| N1 | ABI에 다음 셀렉터 없음: <code>decreaseLiquidity, increaseLiquidity, burn, burnPosition, collect*, modifyLiquidities*, unlock*, withdraw*, rescue*, sweep*, transfer*, safeTransferFrom, approve, setApprovalForAll, permit, permitForAll, subscribe, unsubscribe, isValidSignature, execute, call, multicall, upgradeTo*, initialize, owner, transferOwnership, renounceOwnership, pause, unpause, set*</code> | <code>forge inspect PermanentLocker abi</code> 교집합 공집합 |
+| N2 | <code>receive</code>/<code>fallback</code>/payable 없음 | ABI + <code>call{value:1}</code> revert |
+| N3 | 런타임에 <code>DELEGATECALL, CALLCODE, SELFDESTRUCT</code> 없음 | 바이트코드 디스어셈블 |
+| N4 | 런타임에 <code>CALL</code>(0xF1) 없음 — STATICCALL만 | 동일 |
+| N5 | 프록시 아님(EIP-1967 슬롯 0) | 슬롯 읽기 |
+| N6 | <code>lock*</code>는 TARGET만, 2회째 revert, <code>ownerOf ≠ this</code>면 revert | 유닛+퍼즈 10k 호출자 |
+| N7 | 잠긴 후 어떤 주소(TARGET·팩토리·훅·에스크로·PROTOCOL 포함)의 <code>DECREASE_LIQUIDITY</code>/<code>BURN_POSITION</code>도 revert(<code>onlyIfApproved</code>) | 46630 포크 |
+| N8 | <code>transferFrom(locker, x, id)</code>, <code>safeTransferFrom</code>, <code>permit</code>/<code>permitForAll</code> 위조 서명 모두 revert | 포크 |
+| N9 | <code>onERC721Received</code>는 <code>msg.sender ≠ POSITION_MANAGER</code>면 revert | 유닛 |
+| N10 | 스토리지 변수는 <code>_info</code> 매핑 하나 | <code>forge inspect storage-layout</code> |
+| N11 | <code>hasWithdrawPath()</code> pure false; <code>lockedForever</code>는 true가 된 뒤 false로 못 돌아감 | 인바리언트 |
+| N12 | GIWA: 페어 ABI에 <code>transfer/transferFrom/approve/permit/burn</code> 없음; <code>pair.balanceOf(locker) == totalSupply</code> | ABI + 인바리언트 |</p>
+<p><strong>검증자 워크(<code>launch_research_2026-09-06/05</code> §3).</strong> ① <code>PoolRegistered</code>/<code>Graduated</code>의 <code>poolId</code>·훅 주소, 훅 <code>getHookPermissions()</code> ② <code>PositionManager.ownerOf(id) == locker</code>(GIWA: <code>pair.balanceOf(locker) == totalSupply</code>) ③ 락커 ABI 부정 목록 + <code>hasWithdrawPath() == false</code> + 소유자 없음 ④ <code>locker.feeRecipients(token)</code> ⑤ 토큰 소스(OZ 표준, 소유자 없음) ⑧ 복제 풀은 <code>lockInfo(token).poolId</code>로 구분.</p>
+<h3 id="38-feeescrow-ifeeescrowsol">3.8 FeeEscrow (<code>IFeeEscrow.sol</code>)</h3>
+<p><strong>책임.</strong> <strong>유일한</strong> 수수료 원장·수취인 레지스트리·타임락. 소스(커브·훅·페어·팩토리)가 모두 같은 원장에 크레딧. 소유자·일시정지·sweep·rescue 없음. 가치는 토큰의 크리에이터 수취인 또는 불변 <code>PROTOCOL</code>로만 나간다.</p>
+<p><strong>스토리지.</strong> <code>mapping(address token =&gt; Ledger{quote, creator, pendingCreator, pendingEta, venue, creatorAccrued, protocolAccrued, creatorLifetime, protocolLifetime})</code>(4슬롯). immutable: <code>PROTOCOL, FACTORY, CURVE, TARGET, QUOTE(address(0) RH / WETH9 GIWA), WETH9, CREATOR_BPS=8000, PROTOCOL_BPS=2000, TIMELOCK=3d, ACCEPT_WINDOW=3d</code>. 같은 바이트코드·같은 CREATE3 salt → 두 체인 같은 주소(생성자 인자만 다름).</p>
+<p><strong>함수.</strong>
+- <code>register(token, creator)</code> onlyFactory, 1회: <code>require(creator != 0)</code>; <code>quote := QUOTE</code>(v1 화이트리스트 = 체인당 1개). <code>createToken</code> 안에서 호출되므로 원장 없는 토큰이 커브에 존재할 수 없다(A1-04 #3).
+- <code>bindVenue(token, venue)</code> onlyTarget, 1회: 졸업 트랜잭션에서 풀 생성 <strong>전</strong>.
+- <code>credit(token, shared, creatorOnly, protocolOnly)</code> payable — <strong>허가된 소스만</strong>: <code>msg.sender ∈ {CURVE, FACTORY, TARGET, venueOf(token)}</code>(A1-13: 대시보드 스푸핑·제3자 크레딧 경로 제거). <code>require(msg.value == shared + creatorOnly + protocolOnly)</code>; <code>msg.value == 0</code>이면 no-op; <code>QUOTE == WETH9</code>면 <code>WETH9.deposit{value}()</code>(GIWA; A1-04 #2의 <code>WrongQuote</code> revert 제거). <code>protocolPart = shared·2000/10000</code>(내림), <code>creatorPart = shared − protocolPart + creatorOnly</code>, <code>protocolPart += protocolOnly</code>; 누적; <code>emit FeesAccrued(token, quote, msg.sender, creatorPart, protocolPart)</code>.
+- <code>creditToken(token, shared, creatorOnly, protocolOnly)</code> — 소스 제한 동일; <code>safeTransferFrom(msg.sender, this, sum)</code> 후 <strong>잔고 차이</strong>로 회계(FoT 안전); 0이면 no-op.
+- <code>claim(token, role, unwrap)</code> nonReentrant: <code>role</code>을 명시(A1-10 #3: 크리에이터가 PROTOCOL 주소이기도 한 경우); 잔고 0으로 만든 뒤 <code>call{value}</code>(모든 가스; Safe 호환) 또는 <code>safeTransfer</code>/<code>WETH9.withdraw</code> 후 전송.
+- <code>claimFor(token, unwrap)</code> nonReentrant, 누구나: 저장된 두 수취인에게 지급 — <strong>리다이렉트 불가</strong>; 한쪽 전송 실패 시 전체 revert(손실 없음; 수취인이 직접 <code>claim</code> 가능).
+- <code>claimMany(tokens, role, unwrap)</code>.
+- <code>proposeCreator(token, new)</code> 현재 수취인만: <code>new ∉ {0, current}</code>; 대기 중 제안이 있으면 <code>CreatorProposalCancelled</code> 먼저 emit 후 교체(A1-10 #4); <code>pendingEta = now + 3d</code>.
+- <code>cancelProposal(token)</code> 현재 수취인만. <code>acceptCreator(token)</code> <code>pendingCreator</code>만, <code>[eta, eta + 3d]</code>.
+- 뷰: <code>ledger, quoteOf, creatorOf, venueOf, claimable(token, role), isAuthorisedSource</code>.
+- <code>receive()</code>: <code>msg.sender == WETH9</code>만(unwrap 경로).</p>
+<p><strong>이벤트.</strong> <code>Registered, VenueBound, FeesAccrued(token, quote, source, creatorAmount, protocolAmount), Claimed(token, recipient, role, quote, amount), CreatorProposed(token, from, to, eta, expiry), CreatorProposalCancelled, CreatorChanged</code>.
+<strong>에러.</strong> <code>OnlyFactory, OnlyTarget, NotAuthorisedSource, AlreadyRegistered, NotRegistered, VenueAlreadyBound, ZeroCreator, BadValue, WrongQuote, NotRecipient, NotPending, TooEarly, ProposalExpired, BadRecipient, NoBalance, TransferFailed, DirectEthNotAccepted, Reentrancy</code>.</p>
+<p><strong>불변식.</strong> 지급능력: 네이티브 원장 <code>address(this).balance ≥ Σ(creatorAccrued + protocolAccrued)</code>, WETH9 원장 <code>WETH9.balanceOf(this) ≥ Σ</code>(unwrap 트랜짓 제외); 크레딧마다 <code>creator:protocol</code> = 8000:2000 ± 1 wei(<code>shared</code> 레그); <code>creatorOnly</code>는 100 % 크리에이터, <code>protocolOnly</code>는 100 % 프로토콜; 가치는 <code>creator</code> 또는 <code>PROTOCOL</code> 외 주소로 절대 이동 없음(모든 외부 함수·무작위 호출자 속성 테스트); <code>pendingEta</code> 단조; <code>creator != 0</code> 등록 후 영원히; <strong>총함수성</strong>: 등록·바인딩된 토큰과 허가된 소스에 대해 <code>credit/creditToken</code>은 quote 전송 실패 외에 revert하지 않음(퍼즈 T18).</p>
+<p><strong>타임락 의미.</strong> 제안자는 현재 수취인뿐(프로토콜 관리자·CTO 역할 없음). 새 지갑이 직접 <code>accept</code>해야 하므로 오타로 스트림이 좌초되지 않는다. 키 탈취 시: 공격자는 누적분을 즉시 claim하고 제안할 수 있고, 크리에이터는 같은 키로 cancel할 수 있다 → 교착이며 <strong>스트림은 잃는다</strong>(A1-10 #1). 키 분실 시 80 % 스트림 영구 동결(A1-10 #2). 따라서 UI는 크리에이터 수취인으로 Safe를 <strong>필수 단계</strong>로 안내한다(§10 Q10). Robinhood 시퀀서는 타임스탬프를 [−24h, +1h] 안에서 정하므로 3일 락은 최대 ~1h 짧아질 수 있다(https://docs.arbitrum.io/build-decentralized-apps/arbitrum-vs-ethereum/block-numbers-and-time).</p>
+<p><strong>DefiLlama 어댑터(≈20줄).</strong> <code>FeesAccrued</code> 하나로 <code>dailyFees = creator + protocol</code>, <code>dailyRevenue = protocol</code>, <code>dailySupplySideRevenue = creator</code>; <code>source</code>로 커브/훅/페어/팩토리 분리. 두 체인 같은 에스크로 주소.</p>
+<h3 id="39-igraduationtarget-uniswapv4target-launchpairtarget-igraduationtargetsol">3.9 IGraduationTarget — UniswapV4Target / LaunchPairTarget (<code>IGraduationTarget.sol</code>)</h3>
+<p><strong>책임.</strong> 커브가 아는 유일한 졸업 인터페이스. 체인별 구현 2개, <strong>같은 CREATE3 salt → 같은 주소, 다른 바이트코드</strong>(CREATE3는 init code 무관). <code>graduate(token, tokenReserve=X_RES, quoteAmount=R, virtualQuote=V)</code> payable <strong>onlyCurve</strong>, 토큰당 1회.</p>
+<p><strong>공통 시드 수학(§4.3).</strong> <code>tokensSeeded = X_RES·R/(V+R)</code>, <code>tokensOverhang = X_RES − tokensSeeded</code>, <code>sqrtPriceX96 = √(tokensSeeded·2¹⁹²/R)</code>(ETH = currency0, token = currency1), <code>tick = getTickAtSqrtPrice</code>. 생성자에서 세 티어의 명목 시드를 한 번 preflight(<code>sqrtPrice ∈ (MIN, MAX)</code>, <code>liq &gt; 0 &amp;&amp; ≤ maxLiquidityPerTick(200) = 3.8e34</code>, 수량 <code>&amp;lt; 2¹²⁷</code>) — 실패 시 배포 revert.</p>
+<p><strong>UniswapV4Target(Robinhood) 단계.</strong>
+1. <code>require(msg.value == quoteAmount)</code>; <code>token.transferFrom(CURVE, this, tokenReserve)</code> — <strong>자기 프레임에서 pull</strong>(A1-01).
+2. <code>ESCROW.bindVenue(token, HOOK)</code>; <code>HOOK.register(key, token)</code>; <code>key = {ETH(0), token, 0, 200, HOOK}</code>.
+3. <code>POOL_MANAGER.initialize(key, sqrtPriceX96)</code> — <strong>직접 호출</strong>(<code>PositionManager.initializePool</code> 경유 시 <code>sender</code>가 PositionManager가 되어 훅이 거부). <code>unlock</code> 불필요(<code>initialize</code>는 <code>noDelegateCall</code>만). 벨트+멜빵: <code>StateView</code>/<code>extsload</code>로 <code>slot0</code> 읽어 <code>PriceMismatch</code> 검사.
+4. <code>token.forceApprove(PERMIT2, tokenReserve)</code>; <code>PERMIT2.approve(token, POSITION_MANAGER, uint160(tokenReserve), uint48(block.timestamp + 300))</code>.
+5. <code>idFull = POSITION_MANAGER.nextTokenId()</code>; <code>modifyLiquidities{value: quoteAmount}</code> 액션: <code>MINT_POSITION(key, −887200, 887200, liqFull, quoteAmount, tokensSeeded, LOCKER, "")</code>, <code>MINT_POSITION(key, −887200, floor(tick/200)·200, liqOver, 0, tokensOverhang, LOCKER, "")</code>(<code>OverhangMode.LOCKED_POSITION</code>; <code>BURN</code>이면 <code>token.burn(tokensOverhang)</code>으로 대체), <code>SETTLE_PAIR(ETH, token)</code>, <code>SWEEP(ETH, this)</code>. 인코딩: https://developers.uniswap.org/docs/protocols/v4/guides/position-manager . <code>liqFull = getLiquidityForAmounts(sqrtP, √MIN, √MAX, R, tokensSeeded)</code>, <code>liqOver = getLiquidityForAmount1(√MIN, √tickUpperOver, tokensOverhang)</code>.
+   방향 확인(헷갈리기 쉬움): <code>currency1 = token</code>이므로 가격 <code>P = token/ETH</code>; 토큰이 오르면 ETH당 토큰이 줄어 <code>P</code>가 <strong>내려가고 tick이 감소</strong>한다. 현재 tick <strong>아래</strong> 범위는 currency1(토큰)만 담고, 펌프 시 소비되어 ETH로 바뀌어 풀에 남는다. 그래서 오버행은 <code>[MIN_TICK, 176,800]</code>(tier1)이다 — 위가 아니라.
+6. <code>LOCKER.lockV4Positions(token, poolId, idFull, idOver)</code>(<code>idOver = idFull + 1</code>; <code>OverhangMode.BURN</code>이면 0; 락커가 <code>ownerOf</code> 검증).
+7. 먼지: SWEEP으로 돌아온 ETH → <code>ESCROW.credit{value}(token, dust, 0, 0)</code>; 토큰 먼지 → <code>burn</code>. <strong>절대 revert하지 않음</strong>(Pons: "letting it revert would leave a launch that has already surrendered its reserves unable to ever complete"). <code>receive()</code>는 <code>POSITION_MANAGER</code>/<code>POOL_MANAGER</code>만(A1-09).
+8. <code>GraduationResult</code> 반환; <code>emit GraduationExecuted</code>.</p>
+<p>PositionManager NFT를 쓰는 이유(raw <code>PoolManager</code> 포지션 대신, −100k gas 포기): Robinhood 커스터디 검증 관행이 <code>ownerOf(tokenId)</code>에 키잉(<code>launch_research_2026-09-06/05</code> §3 ②); Pons·Clanker·SPRM 모두 NFT.</p>
+<p><strong>LaunchPairTarget(GIWA) 단계.</strong> ① <code>transferFrom</code> pull; ② <code>pair = new LaunchPair{salt: bytes32(uint160(token))}(token)</code>; <code>ESCROW.bindVenue(token, pair)</code>; ③ <code>WETH9.deposit{value: R}</code>; <code>WETH9.transfer(pair, R)</code>; <code>token.transfer(pair, tokensSeeded)</code>; ④ <code>pair.mint(tokensSeeded, R)</code>(지분 → LOCKER, <code>openedAt</code> 설정); ⑤ <code>token.burn(tokensOverhang)</code>(<code>OverhangMode.BURN</code> 강제 — x·y=k는 단측 범위를 못 가짐); ⑥ <code>LOCKER.lockPairShares(token, pair)</code>; ⑦ 결과 반환(<code>poolId = keccak256(abi.encodePacked(pair))</code>).</p>
+<p><strong>뷰.</strong> <code>isReady()</code>(의존 컨트랙트 코드 존재: RH = PoolManager·PositionManager·Permit2·Hook, GIWA = WETH9; 락커·에스크로), <code>previewSeed</code>, <code>venueKind</code>, <code>overhangMode</code>, <code>quote</code>, <code>dependencies()</code>, <code>CURVE/LOCKER/ESCROW</code>, <code>TICK_SPACING</code>.
+<strong>에러.</strong> <code>OnlyCurve, BadValue, NotReady, PriceMismatch, CustodyCheckFailed, OnlyPositionManagerOrPoolManager</code>.
+<strong>불변식.</strong> <code>graduate</code> 후 타깃의 ETH·토큰 잔고 0; 토큰당 1회(락커의 <code>AlreadyLocked</code>가 재실행을 막음); 개장가 == 커브 마지막 한계가격(§4.3); 졸업 전 페어 주소로의 기부가 개장가를 1 wei도 못 움직임(T19).</p>
+<hr>
+<h2 id="4">4. 수학</h2>
+<h3 id="41">4.1 커브 공식과 티어</h3>
+<p>표기: <code>X0 = 1e27</code>(커브 위 초기 토큰), <code>V</code> 가상 quote, <code>Q</code> 졸업 임계, <code>R</code> 실제 quote, <code>S</code> 판매량, 커브 잔고 <code>X0 − S</code>.</p>
+<ul>
+<li>불변식 <code>(V + R)(X0 − S) = k = V·X0</code> ⇒ <code>R(S) = V·S/(X0 − S)</code>, <code>S(R) = X0·R/(V + R)</code>.</li>
+<li>한계가격 <code>p(S) = (V + R)/(X0 − S) = V·X0/(X0 − S)²</code>.</li>
+<li>졸업 <code>R = Q</code> ⇔ <code>S* = X_SELL = X0·Q/(V + Q)</code>; 예비 <code>X_RES = X0·V/(V + Q)</code>.</li>
+<li><code>r = Q/V</code>일 때 판매 비율 <code>r/(1 + r)</code>, 종가 <code>p* = (V + Q)²/(V·X0)</code>, 졸업 FDV <code>(V + Q)²/V</code>, 시작 FDV <code>V</code>, 배수 <code>(1 + r)²</code>.</li>
+<li>풀 시딩(종가 <code>p*</code>에서 <code>Q</code>와 짝): 토큰 <code>Q/p* = X0·V·Q/(V + Q)²</code>, 오버행 <code>X_RES − 그것 = X0·V²/(V + Q)²</code>.</li>
+</ul>
+<p><code>r = 2.5</code>(모든 티어): 판매 71.4286 %, 풀 20.4082 %, 오버행 8.1633 %, 배수 12.25×.</p>
+<table>
+<thead>
+<tr>
+<th>티어</th>
+<th>V</th>
+<th>Q</th>
+<th>시작 FDV</th>
+<th>졸업 FDV</th>
+<th>종가 (ETH/token)</th>
+<th>5 % 데브바이 총비용</th>
+<th><code>sqrtPriceX96</code></th>
+<th>tick</th>
+<th>오버행 상단 tick</th>
+<th><code>L_full</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0 seed</td>
+<td>0.6</td>
+<td>1.5</td>
+<td>0.6 ETH ($1.5k)</td>
+<td>7.35 ETH ($18.2k)</td>
+<td>7.35e-9</td>
+<td>0.031898 ETH</td>
+<td>924,136,054,372,615,167,873,322,703,057,504</td>
+<td>187,295</td>
+<td>187,200</td>
+<td>1.7496e22</td>
+</tr>
+<tr>
+<td>1 standard</td>
+<td>1.68</td>
+<td>4.2</td>
+<td>1.68 ETH ($4.2k)</td>
+<td>20.58 ETH ($51.0k)</td>
+<td>2.058e-8</td>
+<td>0.089314 ETH</td>
+<td>552,276,925,551,777,206,918,806,258,182,653</td>
+<td>176,998</td>
+<td>176,800</td>
+<td>2.9277e22</td>
+</tr>
+<tr>
+<td>2 deep</td>
+<td>2.8</td>
+<td>7.0</td>
+<td>2.8 ETH ($6.9k)</td>
+<td>34.3 ETH ($84.9k)</td>
+<td>3.43e-8</td>
+<td>0.148857 ETH</td>
+<td>427,791,867,031,333,308,550,652,658,092,945</td>
+<td>171,889</td>
+<td>171,800</td>
+<td>3.7796e22</td>
+</tr>
+</tbody>
+</table>
+<p>공통: <code>X_SELL = 714,285,714.285714e18</code>, <code>X_RES = 285,714,285.714286e18</code>, 풀 토큰 <code>204,081,632.653061e18</code>, 오버행 <code>81,632,653.061224e18</code>(재현: <code>docs/launchpad_v1_design/curve_numbers.py</code>, <code>_a2_econ.py</code>). NEST 졸업(Pons, 블록 54,862,888)의 <code>liquidityDelta = 29,277,002,188,455,995,613,652</code>와 공식값 <code>29,277,002,188,455,995,380,631</code>이 8자리 일치; Pons 1,351건 졸업의 <code>PoolGraduated.tokenAmount</code> 중앙값 = 204,081,632.65.</p>
+<h3 id="42">4.2 매수·매도·크로싱 정수 산식</h3>
+<p>매수(정확 입력 <code>g</code> wei, fee <code>f=100</code>, tax <code>c</code>, snipe <code>z</code> bps; 모두 내림):</p>
+<pre><code>fee = g·f/1e4;  tax = g·c/1e4;  snipe = g·z/1e4;  net = g − fee − tax − snipe
+out = (X0 − S)·net / (V + R + net)                       // 내림 → 커브가 먼지 보유, k' ≥ k
+if out ≥ X_SELL − S:                                      // 크로싱
+    out     = X_SELL − S
+    netNeed = (V + R)·out / (X0 − S − out) + 1             // 올림
+    spent   = min( ceil(netNeed·1e4 / (1e4 − f − c − z)), g )
+    fee/tax/snipe를 spent로 재계산; net = spent − fee − tax − snipe; refund = g − spent
+R += net;  S += out
+에스크로: credit{value: fee+tax+snipe}(token, shared=fee, creatorOnly=tax, protocolOnly=snipe)
+</code></pre>
+<p>매도(정확 입력 <code>t</code> 토큰): <code>gross = (V + R)·t/(X0 − S + t)</code>(내림); <code>fee = gross·f/1e4; tax = gross·c/1e4; out = gross − fee − tax; R −= gross; S −= t</code>. <code>gross ≤ R</code>은 <code>t ≤ S</code>에서 대수적으로 보장된다(<code>R − gross = V(S − t)/(X0 − S + t) ≥ 0</code>), 반올림은 <code>R</code>을 키우는 방향.</p>
+<p>반올림 방향: 커브가 <strong>내보내는</strong> 양(매수 토큰, 매도 ETH)은 내림, 매수자에게 <strong>요구하는</strong> 양(크로싱)은 올림(+1), 수수료는 총량에 내림 → 수수료 버킷이 실제 수령액을 넘지 않는다. 결과 <code>R_final − Q = 2 wei</code>(§4.7), 절대 음수 아님. 먼지 매도(<code>gross &amp;lt; 100 wei</code>)는 수수료 0 — 추출 불가(A1 §2).</p>
+<h3 id="43">4.3 졸업 가격 연속성 증명</h3>
+<p>커브 마지막 한계가격 <code>p* = (V + R)/(X0 − S*) = (V + R)/X_RES</code>(<code>S* = X_SELL</code>). 타깃은 <code>tokensSeeded = X_RES·R/(V + R)</code>를 <code>R</code>과 짝지어 시딩한다. 풀 개장가 = <code>R/tokensSeeded = R·(V + R)/(X_RES·R) = (V + R)/X_RES = p*</code>. <strong>비(比)가 항등적으로 1</strong>이며 반올림이 아니다(<code>R = Q + 2 wei</code>가 21번째 자리를 움직일 뿐, A2 §2.1). <code>sqrtPriceX96 = √(tokensSeeded/R)·2⁹⁶</code>은 Pons <code>PonsV2GraduationMath.sqrtPriceX96FromAmounts</code>와 같은 식. 수수료는 경계 양쪽 모두 ETH 레그 1 %, 매도 서차지 없음, 크로싱 매수자의 환불은 풀 t=0 매수에 99 %가 붙어 재활용 불가 ⇒ <strong>졸업 차익거래 창 없음</strong>.</p>
+<h3 id="44">4.4 깊이 불연속과 오버행</h3>
+<p>유효 유동성: 커브 <code>L_curve = √((V+Q)·X_RES) = 4.099e22</code>(tier1), 전범위 풀 <code>L_pool = √(Q·tokensSeeded) = 2.928e22 = 0.714·L_curve</code>(양 예비량이 <code>Q/(V+Q)</code>로 스케일). 즉 매도 측은 졸업 직후 <strong>얇아진다</strong>(1 ETH 상당 매도: 커브 0.855 → 풀 0.808 ETH, −5.5 %; 10 ETH: −20 %). Pons도 같다. 구조적(가상 quote 커브는 가상 깊이의 <code>s</code>만 넘긴다) — UI 공시("졸업 풀은 커브보다 얇습니다; 가격 영향 ≈1.4×").</p>
+<p>오버행 포지션(Robinhood): <code>[MIN_TICK, floor(tick/200)·200]</code>, 현재가 위 ≤2 %(200틱)에서 시작하는 토큰 전용 ask 벽. <code>L_over = tokensOverhang/√P_upper ≈ 1.18e22 = 0.289·L_curve</code>, <code>L_pool + L_over = 1.003·L_curve</code> — <strong>상방 깊이가 커브와 같아진다</strong>(비자명 항등: <code>√(V(V+Q)) + √(Q·…)</code>가 커브 가상 <code>L</code>로 되돌아감, A2 §2.3). 가격 배수별 ETH 깊이 기여: 2× +12 %, 4× +20 %, 10× +28 %, 100× +37 %. 초기 펌프 가격 속도 ≈30 % 완화(1 ETH 매수: ×1.53 → ×1.37). 스캐너는 락커를 8.16 % 보유자로 표시(Pons 락커 28.57 %와 같은 부류). GIWA는 소각(공급 918,367,346.94e18).</p>
+<h3 id="45">4.5 스나이퍼세 곡선</h3>
+<table>
+<thead>
+<tr>
+<th>t (초, <code>now − 앵커</code>)</th>
+<th><code>snipe(t)</code></th>
+<th>커브 총 bps(fee 100, tax 0, cap 9900)</th>
+<th>풀 총 bps(매수)</th>
+<th>매수자 수령</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>9900</td>
+<td>9900 (snipe 9800)</td>
+<td>9900</td>
+<td>1 %</td>
+</tr>
+<tr>
+<td>1</td>
+<td>9900</td>
+<td>9900</td>
+<td>9900</td>
+<td>1 %</td>
+</tr>
+<tr>
+<td>2</td>
+<td>2475</td>
+<td>2575</td>
+<td>2575</td>
+<td>74.25 %</td>
+</tr>
+<tr>
+<td>3</td>
+<td>309</td>
+<td>409</td>
+<td>409</td>
+<td>95.91 %</td>
+</tr>
+<tr>
+<td>4</td>
+<td>38</td>
+<td>138</td>
+<td>138</td>
+<td>98.62 %</td>
+</tr>
+<tr>
+<td>≥5</td>
+<td>0</td>
+<td>100</td>
+<td>100</td>
+<td>99 %</td>
+</tr>
+</tbody>
+</table>
+<p>블록 해석: Robinhood ~10블록/초 → t=0·1은 ~20블록, 창 전체 ~50블록; GIWA 1블록/초. 매도 = 항상 100 bps.</p>
+<p>봇 EV(tier1, 0.05 ETH 데브바이 후 1 ETH 봇 매수, 졸업가 2.058e-8 기준): t=0/1: 세 98 %, 공급 0.56 %, 졸업 시 가치 0.115 ETH(손실); t=2: 24.75 %, 29.18 %, 6.0 ETH; t=3: 3.09 %, 34.65 %, 7.13 ETH; t≥5: 0 %, 35.36 %, 7.28 ETH. 즉 세금은 <strong>순수 지연 경주(첫 ~2초)를 죽이고 봇 진입을 스킴</strong>하되 인간을 보호하지는 않는다(인간은 2–5초에 도착; A2 §4.2). 오너 규칙("수 초") 안에서의 정직한 설명이며 UI 문구도 그렇게 쓴다.</p>
+<h3 id="46-v4">4.6 v4 훅 델타 검증(원문 의미)</h3>
+<p><code>Hooks.beforeSwap</code>: <code>amountToSwap = params.amountSpecified; … hookDeltaSpecified = hookReturn.getSpecifiedDelta(); if (hookDeltaSpecified != 0) { bool exactInput = amountToSwap &amp;lt; 0; amountToSwap += hookDeltaSpecified; if (exactInput ? amountToSwap &gt; 0 : amountToSwap &amp;lt; 0) revert HookDeltaExceedsSwapAmount; }</code>
+<code>Hooks.afterSwap</code>: <code>hookDeltaUnspecified += …toInt128(); … hookDelta = (params.amountSpecified &amp;lt; 0 == params.zeroForOne) ? toBalanceDelta(hookDeltaSpecified, hookDeltaUnspecified) : toBalanceDelta(hookDeltaUnspecified, hookDeltaSpecified); swapDelta = swapDelta − hookDelta;</code></p>
+<ul>
+<li>A: <code>amountSpecified = −X</code>, 훅 <code>(+fee, 0)</code> → <code>amountToSwap = −(X − fee)</code>; 스왑 후 스와퍼 quote 델타 <code>−(X − fee) − fee = −X</code>, 훅 <code>+fee</code>.</li>
+<li>D: <code>+S</code>, 훅 <code>(+fee, 0)</code> → 풀이 <code>S + fee</code> 지급, 스와퍼 <code>+S</code>, 훅 <code>+fee</code>.</li>
+<li>B: 스왑 후 <code>delta.quote = −Q</code>, 훅 <code>+⌈Q·p/(1−p)⌉</code> → 스와퍼 <code>−Q − fee</code>.</li>
+<li>C: <code>delta.quote = +Y</code>, 훅 <code>+Y·p</code> → 스와퍼 <code>Y − fee</code>.
+훅의 <code>take</code>로 생긴 <code>−fee</code>는 <code>_accountPoolBalanceDelta</code>의 <code>+fee</code>로 상쇄; <code>NonzeroDeltaCount == 0</code>만 <code>unlock</code> 끝에 요구된다. (A1 §2가 소스 대조로 확인.)</li>
+</ul>
+<h3 id="47-worked-example-robinhood-tier1-fee-1-tax-0-docslaunchpad_v1_designcurve_numberspy">4.7 Worked example (Robinhood tier1, fee 1 %, tax 0, 정수 산식; <code>docs/launchpad_v1_design/curve_numbers.py</code> 재현)</h3>
+<table>
+<thead>
+<tr>
+<th>단계</th>
+<th>보낸 ETH</th>
+<th>지출</th>
+<th>fee</th>
+<th>net→R</th>
+<th>토큰</th>
+<th>공급 %</th>
+<th>평균가</th>
+<th>R 후</th>
+<th>S 후</th>
+<th>한계가 후</th>
+<th>FDV</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>데브바이(면제, t=0)</td>
+<td>0.05</td>
+<td>0.05</td>
+<td>0.0005</td>
+<td>0.0495</td>
+<td>28,620,988.73</td>
+<td>2.862 %</td>
+<td>1.7295e-9</td>
+<td>0.0495</td>
+<td>28.62M</td>
+<td>1.7805e-9</td>
+<td>1.78 ETH</td>
+</tr>
+<tr>
+<td>매수 1 ETH (t≥5)</td>
+<td>1.0</td>
+<td>1.0</td>
+<td>0.01</td>
+<td>0.99</td>
+<td>353,618,393.51</td>
+<td>35.362 %</td>
+<td>2.7996e-9</td>
+<td>1.0395</td>
+<td>382.24M</td>
+<td>4.4022e-9</td>
+<td>4.40 ETH</td>
+</tr>
+<tr>
+<td>매수 4.2 ETH (크로싱)</td>
+<td>4.2</td>
+<td><strong>3.192424</strong></td>
+<td>0.031924</td>
+<td>3.1605</td>
+<td>332,046,332.05</td>
+<td>33.205 %</td>
+<td>9.5183e-9</td>
+<td><strong>4.2 (+2 wei)</strong></td>
+<td>714,285,714.29 = X_SELL</td>
+<td>2.0580e-8</td>
+<td>20.58 ETH</td>
+</tr>
+<tr>
+<td>환불</td>
+<td></td>
+<td><strong>1.007576</strong> → 마지막 매수자</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>에스크로: fee 합 0.042424 → 크리에이터 0.033939 / 프로토콜 0.008485; 생성비 0.0005 → 프로토콜. 스나이퍼세 예(데브바이 직후 0.5 ETH 봇): t=0·1: 세 0.49 + fee 0.005 → 2,800,170 토큰(0.28 %); t=2: 세 0.12375 → 171,664,624(17.17 %); t=3: 세 0.01545 → 210,871,101(21.09 %); t≥5: 216,153,118(21.62 %) — 세금은 전액 프로토콜.</p>
+<p>졸업(<code>R = 4.2e18 + 2</code>): <code>tokensSeeded = 204,081,632.653061</code>, <code>tokensOverhang = 81,632,653.061224</code>(합 + S = 정확히 1e9), <code>sqrtPriceX96 = 552,276,925,551,777,206,824,881,611,623,729</code>(2 wei가 21번째 자리를 움직임), <code>tick = 176,998</code>, 전범위 <code>[−887200, 887200]</code> <code>L ≈ 2.9277e22</code>, 오버행 <code>[−887200, 176800]</code>, 개장가 2.0580e-8 = 커브 종가(17자리 일치).</p>
+<p>풀 스왑 예(졸업 상태 4.2 ETH + 204,081,632.65): ① t≥5 정확입력 1 ETH 매수: fee 0.01, 풀에 0.99 → 38,928,866 토큰(3.89 %), 현물 3.1425e-8(+52.7 %), 에스크로 크리에이터 0.008 / 프로토콜 0.002. ② t=2 같은 매수: bps 2575 → fee 0.2575(base 0.01 → 80/20, snipe 0.2475 → 프로토콜), 풀에 0.7425 → 30,658,697 토큰. ③ t=0: fee 0.99, 484,754 토큰. ④ ①의 매수자가 전량 정확입력 매도: 풀이 0.99 지급, fee 0.0099, 수령 0.9801 ETH — 왕복 1.99 %. ⑤ 정확출력 10,000,000 토큰 매수: 풀 필요 0.216404, fee ⌈0.216404·100/9900⌉ = 0.0021859, 지불 0.218590(정확히 1.000 %). ⑥ 정확출력 0.5 ETH 매도: fee 0.0050505, 풀에서 0.5050505 나감, 수령 0.5.</p>
+<p>매도 예(1 ETH 매수 직후 10,000,000 토큰): gross 0.043321, fee 0.000433, net 0.042887; R 1.0395 → 0.996179.</p>
+<hr>
+<h2 id="5">5. 권한 표 — 배포 후 누가 무엇을 할 수 있는가</h2>
+<p>목표: <strong>수취인의 claim(+ 크리에이터의 3일 타임락 지갑 변경) 외 어떤 권한도 존재하지 않는다.</strong></p>
+<table>
+<thead>
+<tr>
+<th>주체</th>
+<th>할 수 있는 것</th>
+<th>효과</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>토큰별 <strong>크리에이터 수취인</strong></td>
+<td><code>FeeEscrow.claim(token, CREATOR)</code>, <code>claimMany</code>, <code>proposeCreator</code>, <code>cancelProposal</code></td>
+<td>자기 80 % 몫 이동; 3일 타임락 지갑 변경 시작/취소</td>
+</tr>
+<tr>
+<td>토큰별 <strong>대기 크리에이터</strong></td>
+<td><code>acceptCreator(token)</code> (eta ~ eta+3d)</td>
+<td>수취인이 됨</td>
+</tr>
+<tr>
+<td><strong>프로토콜 수취인</strong>(불변)</td>
+<td><code>claim(token, PROTOCOL)</code>, <code>claimMany</code></td>
+<td>자기 20 % 몫(+생성비·스나이퍼세) 이동 — <strong>그 외 아무것도</strong>(수수료·수취인·풀·정지 불가)</td>
+</tr>
+<tr>
+<td><strong>누구나</strong></td>
+<td><code>createToken</code>(0.0005 ETH), 커브 <code>buy/sell</code>, <code>graduate(token)</code>(지연 시 재시도), <code>claimFor</code>, 훅/페어 <code>flush</code>, 페어 <code>sync</code>, 라우터 전부, v4 풀 스왑(모든 라우터), v4 풀에 <strong>자기</strong> 유동성 추가/제거, <code>donate</code>(잠긴 포지션에 귀속, 회수 불가)</td>
+<td>일상 사용</td>
+</tr>
+<tr>
+<td><strong>컨트랙트 간 고정 배선</strong>(immutable)</td>
+<td>팩토리→에스크로 <code>register</code>·<code>credit</code>; 팩토리→커브 <code>open</code>; 커브→에스크로 <code>credit</code>; 커브→타깃 <code>graduate</code>; 타깃→에스크로 <code>bindVenue</code>·<code>credit</code>; 타깃→훅 <code>register</code>; 타깃→락커 <code>lock*</code>; 훅/페어→에스크로 <code>credit*</code></td>
+<td>사람이 아니라 코드 경로</td>
+</tr>
+<tr>
+<td><strong>아무도</strong></td>
+<td>수수료 bps, 80/20, 프로토콜 수취인, 스나이퍼 표, 생성비, 티어 값, 훅/타깃/락커/에스크로 주소, 일시정지, 업그레이드, 블랙리스트, 민트, 유동성 인출, 포지션 이동, 에스크로 sweep</td>
+<td><strong>함수가 존재하지 않는다</strong></td>
+</tr>
+<tr>
+<td><strong>외부(공시)</strong></td>
+<td>Uniswap 거버넌스: v4 프로토콜 수수료 ≤0.1 %/방향(트레이더 부담); Robinhood/GIWA 시퀀서: 정렬, 타임스탬프(3일 락 ≤1h 단축, 스나이퍼 창 신축), Timeboost(미확인); OP Stack 하드포크: 프리디플로이(WETH9) 교체 가능; ArbOS 업그레이드; PositionManager/Permit2/CreateX 불변 가정; <strong>오너 EOA</strong>: 아직 배포 안 한 체인(9134)의 CREATE3 주소에 임의 코드 배치 가능(A1-16) — 배포된 체인에서는 아무 권한 없음</td>
+<td>잔여 신뢰</td>
+</tr>
+<tr>
+<td>키 분실</td>
+<td>프로토콜 수취인 키 → 20 % 영구 동결; 크리에이터 키 → 해당 토큰 80 % 영구 동결(CTO 경로 없음, 설계상)</td>
+<td>둘 다 Safe 사용으로 완화</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="6">6. 위협 모델과 대응</h2>
+<table>
+<thead>
+<tr>
+<th>심각도</th>
+<th>위협</th>
+<th>대응(설계)</th>
+<th>검증</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Critical</strong></td>
+<td>원자적 졸업이 재진입 가드에 걸려 항상 지연(A1-01)</td>
+<td>내부 비가드 경로 <code>_tryGraduate</code>; 타깃이 자기 프레임에서 pull; 명시 가스</td>
+<td>T15: EOA <code>estimateGas</code> 크로싱 매수 → 같은 tx에서 <code>Graduated</code></td>
+</tr>
+<tr>
+<td><strong>Critical</strong></td>
+<td>에스크로 revert → 훅 풀 전부 영구 브릭(A1-04)</td>
+<td><code>register(creator≠0)</code>+<code>createToken</code> 내 호출; GIWA <code>credit</code> 래핑; 훅/페어의 <code>quoteOf/venueOf</code> 사전 검증; <strong>stranded-fee 폴백</strong></td>
+<td>T18: 등록·바인딩 토큰에 <code>credit</code> 무-revert 퍼즈; 모의 revert 에스크로로 폴백 경로</td>
+</tr>
+<tr>
+<td><strong>High</strong></td>
+<td>WindDown 가스 기아 → 영구 잠금 약속 위반(A1-02)</td>
+<td>삭제</td>
+<td>ABI에 <code>windDown</code> 부재(CI)</td>
+</tr>
+<tr>
+<td><strong>High</strong></td>
+<td>런처 타이밍 트릭으로 "번들 불가" 무력화(A1-03)</td>
+<td>t=0·1 모두 99 %; 정량 UI 문구</td>
+<td>T17: 런칭 T, T+1초 두 번째 지갑 → 99 %</td>
+</tr>
+<tr>
+<td><strong>High</strong></td>
+<td>훅 주소 플래그 오류 → 모든 <code>initialize</code> 실패 → 모든 졸업 지연</td>
+<td><code>BaseHook</code> 생성자 검증; <code>isReady()</code>; 배포 스크립트 <code>isValidHookAddress</code> 단언; 메인넷 스모크 졸업 후 주소 공개</td>
+<td>§8 의식</td>
+</tr>
+<tr>
+<td><strong>High</strong></td>
+<td>세 문서 불일치(A1-05)</td>
+<td>이 문서·<code>interfaces/</code> 정본; 인터페이스 적합성 테스트</td>
+<td>T23: 각 컨트랙트가 <code>I*.sol</code> 구현</td>
+</tr>
+<tr>
+<td>Medium</td>
+<td>페어 주소 계산 불가·이중 지불·개장가 조작(A1-06/07)</td>
+<td>생성자 <code>(token)</code>; pull 단일 모드; <code>mint(a0,a1)</code></td>
+<td>T19: 기부 후 개장가 == 종가 1 wei; <code>balance ≥ reserve</code></td>
+</tr>
+<tr>
+<td>Medium</td>
+<td>ArbSys 부하 시계·표 오류(A1-08)</td>
+<td>제거; 단일 표</td>
+<td>표 단위 테스트</td>
+</tr>
+<tr>
+<td>Medium</td>
+<td>먼지 전달/<code>receive</code> 부재로 졸업 revert(A1-09)</td>
+<td>타깃 <code>receive</code> 제한; 먼지 → 에스크로; 커브에 payable 없음</td>
+<td>T20: SWEEP 먼지 &gt; 0 → 성공, 에스크로 크레딧</td>
+</tr>
+<tr>
+<td>Medium</td>
+<td>수취인 키 탈취/분실 교착(A1-10)</td>
+<td><code>claim(role)</code>; 교체 시 cancel 이벤트; UI Safe 필수 안내; 공시</td>
+<td>T10</td>
+</tr>
+<tr>
+<td>Medium</td>
+<td>병렬 훅리스 풀 수수료 누수(D2 §6, A2 §6)</td>
+<td>수용: 깊이 100 % 훅 풀, <code>PoolRegistered</code> 레지스트리, UI 라우팅</td>
+<td>T1(다른 키 생성 가능 확인)</td>
+</tr>
+<tr>
+<td>Medium</td>
+<td>크로싱 매수자의 t=0 풀 덤프(매도는 비과세)</td>
+<td>수용·공시(Pons 형태 고유); 졸업 후 세는 매수자만 방어</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Medium</td>
+<td>졸업 깊이 절벽(−5~−20 % 대형 매도)</td>
+<td>수용·UI 공시</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Medium</td>
+<td>크리에이터 봇 자기 스나이핑</td>
+<td>스나이퍼세 100 % 프로토콜</td>
+<td>경제 테스트(유효 비용 = 외부자와 동일)</td>
+</tr>
+<tr>
+<td>Low</td>
+<td><code>take</code> 타이밍(PoolManager 풀 ETH 부족 시 t=0 대형 스나이프 revert)·캐스트(A1-11)</td>
+<td>무해(가스만 손실); <code>SafeCast</code>; 훅 <code>receive</code> POOL_MANAGER만</td>
+<td>단위</td>
+</tr>
+<tr>
+<td>Low</td>
+<td>락커 N1 누락(A1-12)</td>
+<td><code>isValidSignature, permitForAll, subscribe, unsubscribe</code> 추가</td>
+<td>T21</td>
+</tr>
+<tr>
+<td>Low</td>
+<td>무허가 <code>credit</code> 스푸핑·워시(A1-13)</td>
+<td>소스 제한(<code>venueOf</code> 바인딩)</td>
+<td>T9</td>
+</tr>
+<tr>
+<td>Low</td>
+<td>페어 위생(A1-14)</td>
+<td><code>to</code> 검사, <code>uint112</code> 검사, <code>sync</code> 의미, 라우터 전용 2단계</td>
+<td>T7</td>
+</tr>
+<tr>
+<td>Low</td>
+<td>Permit2 만료·배포 창(A1-15)</td>
+<td><code>+300</code>; 팩토리 마지막; <code>isReady</code></td>
+<td>§8</td>
+</tr>
+<tr>
+<td>Low</td>
+<td>CREATE3 "같은 주소 ≠ 같은 코드"(A1-16)</td>
+<td><code>Wiring.check</code>가 체인별 <code>extcodehash</code> 기록·비교; 9134 조기 배포; 하드웨어 지갑</td>
+<td>T22</td>
+</tr>
+<tr>
+<td>Low</td>
+<td>훅 CREATE2 프런트런(동일 바이트코드)</td>
+<td>가드 salt로 원천 차단(제3자는 다른 가드 값)</td>
+<td>T8</td>
+</tr>
+<tr>
+<td>Low</td>
+<td>싱글턴 커브 회계 버그 = 모든 커브 동시 노출</td>
+<td>잔고 기반 지급 없음; 토큰별 한정 지급; 인바리언트 4</td>
+<td>핸들러 인바리언트</td>
+</tr>
+<tr>
+<td>Info</td>
+<td>데브바이 컨트랙트 런처의 동일 tx 분할(A1-18)</td>
+<td>수용(상한 유지; <code>DevBuy</code>가 컨트랙트 주소 기록)</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Info</td>
+<td>오버행 optics(8.16 % 락커 보유, ask 벽)</td>
+<td>수용·공시; §10 Q1</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Info</td>
+<td>봇 스팸 런칭(가스 3.5× 저렴)</td>
+<td>수익 양(+생성비); UI는 데브바이·활동 순 정렬</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Info</td>
+<td>외부 권한(A1-17)</td>
+<td>§5 공시</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Info</td>
+<td>라이선스: 훅이 BUSL v4-core 라이브러리를 컴파일(문서가 권하는 용도), GIWA는 core 미사용; 훅·페어 소스 MIT</td>
+<td>—</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<p>MEV 맥락(변경 없음): Robinhood는 공개 멤풀 없는 FCFS(https://docs.arbitrum.io/how-arbitrum-works/sequencer)라 외부인의 샌드위치가 불가하고 백런·지연 경주만 남는다; Timeboost 활성 여부 미확인(https://docs.arbitrum.io/how-arbitrum-works/timeboost/gentle-introduction). GIWA는 우선수수료 정렬·비공개 멤풀(https://docs.optimism.io/stack/differences), Flashblocks 200 ms 프리컨펌은 타임스탬프를 바꾸지 않음(https://docs.giwa.io/network-information/flashblocks.md). 훅·커브의 수수료는 <code>(양, 방향, 타임스탬프)</code>의 순수 함수 — 오라클·TWAP·잔고 읽기 없음 ⇒ 조작면 없음.</p>
+<hr>
+<h2 id="7-foundry">7. 테스트 계획 (Foundry)</h2>
+<p><strong>매트릭스.</strong></p>
+<table>
+<thead>
+<tr>
+<th>컴포넌트</th>
+<th>유닛</th>
+<th>퍼즈</th>
+<th>인바리언트(핸들러)</th>
+<th>포크</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LaunchToken</td>
+<td>공급·burn·bytecode 동일성</td>
+<td>—</td>
+<td><code>totalSupply ≤ SUPPLY</code></td>
+<td>Blockscout twin 검증(테스트넷)</td>
+</tr>
+<tr>
+<td>LaunchFactory</td>
+<td>생성 경로 전부·revert 경로·예측 주소</td>
+<td>(name, symbol, salt, launcher)</td>
+<td>잔고 0; <code>isLaunchToken ⇔ registered ⇔ opened</code></td>
+<td>46630/91342 동일 주소</td>
+</tr>
+<tr>
+<td>BondingCurve</td>
+<td>매수/매도/크로싱/환불/데브바이 상한/티어별</td>
+<td>금액 1 wei~100 ETH, 시퀀스</td>
+<td>§3.3 불변식 1–7</td>
+<td>—</td>
+</tr>
+<tr>
+<td>SnipeSchedule</td>
+<td>표·cap</td>
+<td>t 전 범위</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td>MemeHook</td>
+<td>4 케이스·스나이퍼·게이트·remove 가드·stranded</td>
+<td>크기·방향·정확입출력·t</td>
+<td>델타 0; 훅 잔고 = stranded; 풀 1개/토큰</td>
+<td><strong>46630 실제 v4 바이트코드</strong></td>
+</tr>
+<tr>
+<td>LaunchPair/Router</td>
+<td>k·한쪽만·반올림 1-wei·mint 1회·sync·flush; 라우터 4경로·환불·deadline</td>
+<td>무작위 거래·적대 <code>to</code>·기부</td>
+<td><code>r0·r1</code> 비감소; <code>balance ≥ reserve</code>; 락커 = totalSupply; 라우터 잔고 0</td>
+<td>91342</td>
+</tr>
+<tr>
+<td>PermanentLocker</td>
+<td>N1–N12</td>
+<td>호출자 × 토큰 × id</td>
+<td><code>lockedForever</code> 단조; <code>ownerOf == locker</code></td>
+<td>46630 N7/N8</td>
+</tr>
+<tr>
+<td>FeeEscrow</td>
+<td>register/bind/credit/claim/타임락 전 경로; WETH unwrap; revert 수취인</td>
+<td>금액 ≤1e26; FoT 모의 quote; 무작위 호출자</td>
+<td>지급능력; 80/20 ±1 wei; 가치 유출 없음; eta 단조; accept 창</td>
+<td>91342 WETH9</td>
+</tr>
+<tr>
+<td>Targets</td>
+<td>시드·먼지·1회성·<code>isReady</code>·preflight</td>
+<td><code>sqrtPrice</code> 밴드·수량 극단</td>
+<td>타깃 잔고 0</td>
+<td>46630 전 흐름 / 91342</td>
+</tr>
+</tbody>
+</table>
+<p><strong>이름 있는 공격 테스트(T1–T23).</strong>
+T1 졸업 프런트런: 우리 키로 사전 <code>initialize</code> → <code>beforeInitialize</code> revert; 다른 키는 생성 가능함을 확인 · T2 다중 지갑 스나이퍼: N지갑 동일 초 동일 세율; 데브바이 면제는 <code>open()</code> 내 1회뿐 · T3 매도 서차지 0 모든 t(커브·훅·페어) · T4 먼지 반올림: 1-wei 매수/매도, <code>k</code> 비감소, 프로토콜 내림 · T5 네이티브 ETH 재진입: 에스크로 claim/claimFor, 라우터 unwrap, 훅 크레딧 중 스왑 재진입 · T6 훅 델타 회계 4 케이스 + <code>amountSpecified == 0</code> + 미등록 풀 · T7 페어 k 핸들러(buy/sell/sync/donate/transfer-then-swap) · T8 CreateX salt: 다른 EOA는 다른 주소; 가드 salt 프런트런 불가; 토큰은 (launcher, salt, name, symbol) 단위로만 동일 · T9 에스크로 등록/소스 스쿼팅 · T10 수취인 브릭: revert 수취인 → <code>claimFor</code> revert, <code>PROTOCOL.claim</code> 정상, 크리에이터 propose 가능 · T11 락커 NFT 싱크 · T12 졸업 가스 DoS: 가스 제한 라우터 → <code>GraduationDeferred</code> 후 <code>graduate()</code> 성공 · T13 타임스탬프 드리프트 ±1h · T14 FoT/이상 quote: v1 <code>register</code>는 QUOTE 하나만 · <strong>T15</strong> EOA estimateGas 크로싱 → 동일 tx <code>Graduated</code>(A1-01) · <strong>T16</strong> <code>windDown</code> 부재 · <strong>T17</strong> 런처 타이밍(T, T+1s, T+10블록) → 99 % · <strong>T18</strong> 등록·바인딩 토큰 <code>credit/creditToken</code> 무-revert; <code>register(0)</code> revert; 모의 revert 에스크로 → stranded/flush · <strong>T19</strong> 졸업 전 페어 기부 → 개장가 == 종가; <code>balance ≥ reserve</code> · <strong>T20</strong> SWEEP 먼지 → 졸업 성공·에스크로 크레딧 · <strong>T21</strong> <code>permit/permitForAll</code> 위조 → revert; ABI에 <code>isValidSignature</code> 없음 · <strong>T22</strong> 46630·91342 동일 토큰 주소; 팩토리/에스크로 <code>extcodehash</code> 차이는 <code>Wiring.check</code>가 탐지 · <strong>T23</strong> 인터페이스 적합성(<code>I*.sol</code> 셀렉터 ⊆ 구현 ABI).</p>
+<p><strong>정적·CI 게이트.</strong> <code>forge build --sizes</code>(훅·페어·커브 &lt; 24,576 B), <code>forge test</code>, 야간 <code>--fuzz-runs 10000</code> 인바리언트, <code>forge coverage ≥ 95 %</code>(에스크로·페어·락커·커브), <code>slither</code>(reentrancy-eth, arbitrary-send, unprotected-upgrade, suicidal), ABI 부정 목록 스크립트(N1), 옵코드 스캔(N3/N4), 스토리지 레이아웃 diff(N10), 토큰 런타임 바이트코드 동일성, 테스트넷 배포 후 <code>forge verify-check</code>.</p>
+<hr>
+<h2 id="8">8. 배포·검증 계획</h2>
+<p><strong>체인 사실(2026-09-06 재확인, <code>launch_research_2026-09-06/01</code>, D3 §4.1).</strong></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Robinhood 4663</th>
+<th>Robinhood 테스트넷 46630</th>
+<th>GIWA Sepolia 91342</th>
+<th>GIWA 메인넷 9134</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RPC</td>
+<td><code>https://rpc.mainnet.chain.robinhood.com</code></td>
+<td><code>https://rpc.testnet.chain.robinhood.com/rpc</code></td>
+<td><code>https://sepolia-rpc.giwa.io</code></td>
+<td>미공개</td>
+</tr>
+<tr>
+<td>탐색기(Blockscout)</td>
+<td><code>robinhoodchain.blockscout.com</code></td>
+<td><code>explorer.testnet.chain.robinhood.com</code></td>
+<td><code>sepolia-explorer.giwa.io</code></td>
+<td>미공개</td>
+</tr>
+<tr>
+<td>Uniswap v4</td>
+<td>PoolManager <code>0x8366a39CC670B4001A1121B8F6A443A643e40951</code>, PositionManager <code>0x58daec3116aae6D93017bAAea7749052E8a04fA7</code>, UR <code>0x8876…0904</code> (https://developers.uniswap.org/docs/protocols/v4/deployments)</td>
+<td><strong>같은 주소·같은 코드 크기 존재</strong>(프로브)</td>
+<td>없음</td>
+<td>—</td>
+</tr>
+<tr>
+<td>CreateX <code>0xba5Ed099633D3B313e4D5F7bdc1305d3c28ba5Ed</code></td>
+<td>11,838 B</td>
+<td>있음</td>
+<td>있음</td>
+<td>제네시스 프리인스톨 예상(https://docs.giwa.io/network-information/contracts.md)</td>
+</tr>
+<tr>
+<td>Permit2 / Multicall3</td>
+<td>있음</td>
+<td>있음</td>
+<td>있음</td>
+<td>예상</td>
+</tr>
+<tr>
+<td>WETH</td>
+<td>aeWETH 프록시(미사용)</td>
+<td>없음(무관)</td>
+<td>WETH9 <code>0x4200…0006</code></td>
+<td>프리디플로이</td>
+</tr>
+<tr>
+<td>가스가</td>
+<td>0.41 gwei</td>
+<td>0.01</td>
+<td>0.001</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Salt와 주소.</strong> 오너 배포 EOA(하드웨어 지갑) 하나. CREATE3 salt 6개 — <code>escrow-v1, locker-v1, target-v1, router-v1, curve-v1, factory-v1</code> — 모두 <code>[EOA:20][0x00][entropy:11]</code>(가드: <code>keccak256(bytes32(uint160(EOA)) ‖ salt)</code>; 플래그 0x01은 chainid를 섞어 주소가 달라지므로 <strong>금지</strong>). 주소는 <code>computeCreate3Address(guarded, CreateX)</code>로 <strong>배포 전에</strong> 전부 계산되고 모든 체인에서 같다. 순환 immutable(에스크로↔팩토리↔커브↔타깃↔락커)은 예측 주소를 생성자에 넣어 해결하고, 마지막 컨트랙트(팩토리)의 생성자가 <code>curve.FACTORY() == this</code>, <code>escrow.FACTORY() == this</code>를 읽어 확인한다. setter는 없다 — 배선 실수는 새 salt로 재배포(분 단위 비용).</p>
+<p><strong>순서(체인마다 동일 스크립트, 체인별 설정 파일).</strong></p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>컨트랙트</th>
+<th>방법</th>
+<th>생성자 인자</th>
+<th>체인 특수</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>(오프체인) 6개 CREATE3 주소 계산; <strong>훅 salt 마이닝</strong>(RH): initCode = <code>MemeHook(POOL_MANAGER, POSITION_MANAGER, TARGET*, ESCROW*, LOCKER*)</code>, <code>deployer = CreateX</code>, <code>salt = guard(raw)</code>, 하위 14비트 0x22CC</td>
+<td>—</td>
+<td>—</td>
+<td>RH</td>
+</tr>
+<tr>
+<td>1</td>
+<td><code>FeeEscrow</code></td>
+<td>CREATE3</td>
+<td><code>PROTOCOL, FACTORY*, CURVE*, TARGET*, QUOTE, WETH9</code></td>
+<td>인자만</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>PermanentLocker</code></td>
+<td>CREATE3</td>
+<td><code>TARGET*, POSITION_MANAGER / 0, ESCROW</code></td>
+<td>인자만</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>MemeHook</code></td>
+<td>CreateX <code>deployCreate2(minedSalt)</code></td>
+<td>위</td>
+<td>RH만; 생성자가 ESCROW·LOCKER 코드 존재 단언</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>UniswapV4Target</code> / <code>LaunchPairTarget</code></td>
+<td>CREATE3(같은 salt)</td>
+<td>RH: <code>CURVE*, LOCKER, ESCROW, POOL_MANAGER, POSITION_MANAGER, PERMIT2, HOOK</code>; GIWA: <code>CURVE*, LOCKER, ESCROW, WETH9</code></td>
+<td>바이트코드 다름, 주소 같음; 생성자 preflight(3티어) + 훅 코드 단언</td>
+</tr>
+<tr>
+<td>5</td>
+<td><code>LaunchRouter</code></td>
+<td>CREATE3</td>
+<td><code>WETH9, TARGET, PERMIT2</code></td>
+<td>GIWA만</td>
+</tr>
+<tr>
+<td>6</td>
+<td><code>BondingCurve</code></td>
+<td>CREATE3</td>
+<td><code>FACTORY*, TARGET, ESCROW, 티어 테이블, GRADUATE_GAS</code></td>
+<td>인자만</td>
+</tr>
+<tr>
+<td>7</td>
+<td><code>LaunchFactory</code></td>
+<td>CREATE3, <strong>마지막</strong></td>
+<td><code>CREATEX, CURVE, ESCROW, TARGET</code></td>
+<td>생성자 read-back 단언</td>
+</tr>
+<tr>
+<td>8</td>
+<td><code>Wiring.check()</code></td>
+<td>스크립트</td>
+<td>모든 immutable == 배포 주소; 훅 <code>getHookPermissions()</code> == 주소 비트; <code>TARGET.isReady()</code>; 상수(1 %, 8000/2000, 0.0005, 표); 체인별 <code>extcodehash</code> 기록</td>
+<td>—</td>
+</tr>
+<tr>
+<td>9</td>
+<td>Blockscout 검증</td>
+<td><code>forge verify-contract --verifier blockscout --verifier-url &amp;lt;explorer&gt;/api</code>, standard-json, solc 0.8.30, cancun, runs 고정, <code>bytecode_hash = none</code></td>
+<td>GIWA 문서 예시와 같은 플래그(https://docs.giwa.io/get-started/smart-contract/develop/foundry.md)</td>
+<td>두 탐색기</td>
+</tr>
+<tr>
+<td>10</td>
+<td>스모크 런칭</td>
+<td>테스트넷 → 메인넷(버리는 토큰): create → 데브바이 → 졸업까지 매수 → UR/라우터 스왑(4 케이스) → <code>claimFor</code> 둘 다 → <code>launch_research_2026-09-06/05</code> §3 검증자 읽기 전부</td>
+<td>—</td>
+<td><strong>주소 공개 전 필수</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>테스트넷.</strong> 46630은 v4가 메인넷 주소에 있어 Robinhood 경로가 1:1 리허설된다(훅 salt는 initCode 인자가 같으면 메인넷과 동일). 테스트 ETH 소스(브리지)는 <strong>미확인</strong>. 91342: CreateX/Permit2/Multicall3/WETH9 존재, faucet 0.005–0.01 ETH/일, 졸업 리허설엔 ≥ 티어 Q(tier0 1.5 ETH) 필요.</p>
+<p><strong>가스 예산.</strong> 배포 9–13M gas/체인(RH ≈0.005 ETH, GIWA 무시 가능); 런칭 1.0–1.2M; 졸업 RH 1.0–1.3M / GIWA 1.6–2.0M; 스왑 RH 180–260k / GIWA 110–140k. 배포 + 스모크 2회 ≤ <strong>0.05 ETH/체인</strong>.</p>
+<p><strong>GIWA 9134.</strong> RPC/탐색기가 나오는 즉시 같은 스크립트·같은 salt로 배포한다(오너 EOA의 CREATE3 권한이 살아 있는 "미배포 체인"을 없애기 위함, A1-16). 주소는 오늘 문서에 미리 적을 수 있다.</p>
+<hr>
+<h2 id="9">9. 감사 계획과 동결 범위</h2>
+<p><strong>동결(리뷰 시작 전 고정, 이후 변경 = 새 salt·새 v2).</strong> 수수료 상수(100 bps, 8000/2000), 생성비, 데브바이 상한, 크리에이터세 상한(및 유지/삭제 결정), 스나이퍼 표·앵커·수익 라우팅, 티어 테이블, 오버행 모드, tick spacing 200·풀 키 형태, 훅 플래그(0x22CC/0x20CC), <code>TIMELOCK/ACCEPT_WINDOW</code>, quote 화이트리스트(체인당 1개), <code>GRADUATE_GAS</code>(측정치 반영), 컴파일러 핀·최적화 설정, CreateX salt 6개·예측 주소·훅 salt, ABI 부정 목록, 테스트넷 배포(감사자는 정확한 커밋 + 검증된 46630/91342 배포를 본다), <code>interfaces/I*.sol</code>.</p>
+<p><strong>범위.</strong> 비라이브러리 Solidity ≈1,200–1,600줄: 토큰·팩토리·커브·SnipeSchedule·훅·페어·라우터·락커·에스크로·타깃 2개. 초점 순서: (1) 에스크로 총함수성과 지급능력, (2) 커브 정수 산식·크로싱·재진입·졸업 원자성, (3) 훅 델타 회계·initialize 게이트·remove 가드, (4) 락커 부정 목록, (5) 페어 k·반올림·mint 1회, (6) CreateX 가드·배선.</p>
+<p><strong>방식.</strong> 옵션 A: v4 훅 경험이 있는 부티크 1주 사적 리뷰(Macro·Cantina solo·Pashov급) <strong>$25–40k</strong> — "존재하면 안 되는 함수가 존재하는가"가 주 위험인 운영자 없는 시스템에 적합. 옵션 B: 공개 컨테스트(Cantina/Sherlock/Code4rena) <strong>$25–60k</strong>, 2–3주, 페어 수학·훅 델타에 더 많은 눈. 선례: Clanker v3.1 Macro(2025-03), v4 Cantina+Macro(https://clanker.gitbook.io/documentation/references/audits.md). 권장 A(§10 Q14).</p>
+<p><strong>공개.</strong> 보고서, ABI 부정 목록 CI 출력, Blockscout 검증 링크를 주소 옆에 게시(검증자가 읽는 것).</p>
+<p><strong>사후.</strong> 메인넷에는 <strong>패치가 없다.</strong> 감사 후 발견 = 새 salt로 v2 배포; v1은 영원히 동작(수수료는 계속 수취인에게). "불변은 양날"임을 문서에 명시.</p>
+<hr>
+<h2 id="10">10. 미결 질문 (오너 결정 필요) — 한 줄 + 권장 기본값</h2>
+<ol>
+<li><strong>오버행 8.16 %(Robinhood)</strong>: 잠긴 단측 ask 포지션 vs 소각 — 권장: <strong>포지션</strong>(상방 깊이 커브 동등, +12~37 % ETH 깊이); 펌프 optics를 우선하면 소각; 유휴 잠금은 금지.</li>
+<li><strong>크리에이터세</strong>: 유지(커브 전용·≤200 bps·기본 0) vs v1 삭제(A2 권고: 졸업 토큰엔 $200–600 수익, 실패 런칭 구매자에게서만 실질 징수, 스캐너 라벨) — 권장: <strong>오너 규칙대로 유지하되 기본 0·UI 빨간 표시</strong>; 삭제하면 코드 경로·escrow 레그 하나 감소.</li>
+<li><strong>스나이퍼세 수익</strong>: 100 % 프로토콜 vs 50/50 vs 80/20 — 권장: <strong>100 % 프로토콜</strong>(크리에이터 봇 할인 제거, 광고 가능한 신뢰 기능).</li>
+<li><strong>스나이퍼 표</strong>: <code>[99,99,24.75,3.09,0.38]</code> vs Pons 온체인 3초형 <code>[99,6.18,0.19]</code> — 권장: <strong>전자</strong>(1초 경계 트릭 봉쇄, GIWA에서도 의미 있는 스킴).</li>
+<li><strong><code>beforeRemoveLiquidity</code> 가드</strong>: 유지(0x22CC) vs 삭제(0x20CC) — 권장: <strong>유지</strong>(훅에서도 잠금 검증 가능; 비용 = 제거 시 STATICCALL 1회).</li>
+<li><strong>WindDown 밸브</strong>: 삭제 vs 30일·다중 실패 증거·<code>gasleft</code> 게이트 강화형 — 권장: <strong>삭제</strong>(A1-02; 브릭은 배포 의식으로 방지, 발생 시 v2).</li>
+<li><strong>티어 테이블</strong>: 3단(0.6/1.68/2.8) vs 단일(1.68) — 권장: <strong>3단</strong>(GIWA 재배포 회피; 토큰 주소 무관).</li>
+<li><strong>GIWA UI 기본 티어</strong>: 0 → 브리지 유동성 확인 후 1 — 권장: <strong>tier0 시작</strong>, 메인넷 Q=1.5 영구화는 하지 않음(UI 변경으로 이동).</li>
+<li><strong>프로토콜 수취인 주소</strong>: EOA vs Safe — 권장: <strong>Safe</strong>(키 분실 = 20 % 영구 동결).</li>
+<li><strong>크리에이터 수취인 UI</strong>: Safe 권고 문구 vs 필수 경고 — 권장: <strong>"Safe 사용을 강력 권고 + 키 분실/탈취 시 스트림 상실" 경고 필수</strong>(컨트랙트는 강제 불가).</li>
+<li><strong>메타데이터</strong>: 이벤트 전용 vs 온체인 <code>bytes32</code> 해시 슬롯(+22k gas) — 권장: <strong>이벤트 전용</strong>.</li>
+<li><strong>데브바이 수취인</strong>: <code>msg.sender</code> vs <code>creatorRecipient</code> — 권장: <strong><code>msg.sender</code></strong>(공개 가방 = 런칭 지갑; 컨트랙트 런처의 분할은 수용·공시).</li>
+<li><strong>GIWA 9134 조기 배포</strong>: 메인넷 공개 즉시 같은 salt로 배포 — 권장: <strong>예</strong>(미배포 체인의 오너 CREATE3 권한 소멸).</li>
+<li><strong>감사 방식</strong>: 부티크 1주 vs 컨테스트 — 권장: <strong>부티크</strong>(옵션 A), 여유 있으면 컨테스트 추가.</li>
+<li><strong>USDG 등 ERC-20 quote</strong>: v1 포함 vs v1.1 — 권장: <strong>v1.1</strong>(Pons 상위 5개 중 3개가 비-ETH 페어였으나 커브·타깃·훅 모두 영향).</li>
+<li><strong>Timeboost 활성 여부(Robinhood)</strong>: 조사 필요 — 설계 영향 없음(t=0·1 99 %가 express lane 이득을 없앰); 공시 문구만 좌우.</li>
+<li><strong><code>GRADUATE_GAS</code> 값</strong>: 3.0M 가안 — Foundry 측정 후 ≥2× 실측치로 확정.</li>
+<li><strong>크리에이터 키 분실 시 CTO 경로 없음</strong>: 수용 vs 홀더 투표형 무관리자 CTO(v2 연구) — 권장: <strong>v1 수용·공시</strong>.</li>
+</ol>
+<hr>
+<h2 id="a-1">부록 A. 출처(1차)</h2>
+<ul>
+<li>CreateX(README: salt 레이아웃·permissioned/cross-chain 가드·<code>deployCreate2/3</code>·<code>computeCreate3Address</code>; 소스 <code>_guard</code>): https://github.com/pcaversaccio/createx , https://raw.githubusercontent.com/pcaversaccio/createx/main/src/CreateX.sol</li>
+<li>Uniswap v4 core <code>Hooks.sol</code>(플래그·beforeSwap/afterSwap 델타 적용·<code>isValidHookAddress</code>): https://github.com/Uniswap/v4-core/blob/main/src/libraries/Hooks.sol ; <code>PoolManager.sol</code>(<code>initialize</code>, <code>swap</code>, <code>take</code>): https://github.com/Uniswap/v4-core/blob/main/src/PoolManager.sol ; BUSL: https://github.com/Uniswap/v4-core/blob/main/licenses/BUSL_LICENSE</li>
+<li>Uniswap v4 periphery <code>PositionManager.sol</code>(<code>_mint</code>, <code>nextTokenId</code>, <code>onlyIfApproved</code>, <code>salt = bytes32(tokenId)</code>): https://github.com/Uniswap/v4-periphery/blob/main/src/PositionManager.sol ; <code>HookMiner.sol</code>: https://github.com/Uniswap/v4-periphery/blob/main/test/shared/HookMiner.sol</li>
+<li>Uniswap 문서: 훅 개념 https://developers.uniswap.org/docs/protocols/v4/concepts/hooks ; 커스텀 어카운팅 https://developers.uniswap.org/docs/protocols/v4/guides/custom-accounting ; PositionManager 가이드 https://developers.uniswap.org/docs/protocols/v4/guides/position-manager ; 훅 배포 https://developers.uniswap.org/docs/protocols/v4/guides/hooks/hook-deployment ; 배포 주소 https://developers.uniswap.org/docs/protocols/v4/deployments</li>
+<li>Arbitrum: 블록 번호/시간 https://docs.arbitrum.io/build-decentralized-apps/arbitrum-vs-ethereum/block-numbers-and-time ; 시퀀서(FCFS) https://docs.arbitrum.io/how-arbitrum-works/sequencer ; Timeboost https://docs.arbitrum.io/how-arbitrum-works/timeboost/gentle-introduction</li>
+<li>OP Stack/GIWA: 차이(우선수수료 정렬·비공개 멤풀) https://docs.optimism.io/stack/differences ; 프리디플로이 https://docs.optimism.io/stack/smart-contracts ; GIWA Flashblocks https://docs.giwa.io/network-information/flashblocks.md ; GIWA 컨트랙트 https://docs.giwa.io/network-information/contracts.md ; GIWA Foundry 검증 https://docs.giwa.io/get-started/smart-contract/develop/foundry.md ; GIWA 이더리움 차이 https://docs.giwa.io/network-information/diffs-ethereum-giwa.md</li>
+<li>OpenZeppelin <code>EIP712.sol</code>(immutable <code>_hashedName</code>): https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/cryptography/EIP712.sol</li>
+<li>Pons V2: 문서 https://docs.ponsfamily.com/docs/v2 ; 검증 소스(Robinhood Blockscout) 팩토리 <code>0x7eD598BcEf8bd9Edd8C97A195C6d13f40801EC7e</code>, <code>PonsV2MemeHook 0xE5e702641Ea86F4ae6cC3cDaeD2B886f976Be044</code>, <code>PonsV2FeeEscrow 0xd3AFEB2a57f70eF218Aa82451c51B2fb0416Ac9e</code>, <code>PonsV2LaunchLocker 0x267444D099b10fB5Ed7c3Cc7B7c767AdcA574952</code>(로컬 사본 <code>Pons V2 검증 소스(robinhoodchain.blockscout.com, 저장소 미포함)/</code>, <code>launch/sc_*.json</code>)</li>
+<li>Clanker: <code>ClankerHookV2.sol</code> https://raw.githubusercontent.com/clanker-devco/v4-contracts/main/src/hooks/ClankerHookV2.sol ; 락커 <code>ClankerLpLockerFeeConversion.sol</code> https://github.com/clanker-devco/v4-contracts ; 감사 https://clanker.gitbook.io/documentation/references/audits.md</li>
+<li>기타 비교: o1 https://docs.o1.exchange/launchpad/trading/fees-referrals.md ; Bags RH https://docs.bags.fm/robinhood/overview.md ; GMGN 휴리스틱 https://docs.gmgn.ai/index/ca-security-checks.md ; Raydium 데브바이 https://docs.raydium.io/user-flows/creating-a-launchlab-token.md</li>
+<li>리서치 메모·측정: <code>docs/launch_research_2026-09-06/01_robinhood_launchpads.md</code>, <code>docs/launch_research_2026-09-06/02_launch_structure_norms.md</code>, <code>docs/launch_research_2026-09-06/05_lp_burn_signal.md</code>, <code>docs/launchpad_v1_design/rh_gas_probe.json</code>(2026-09-06 RPC), <code>docs/launchpad_v1_design/curve_numbers.py</code>, <code>docs/launchpad_v1_design/a2_econ.py</code>, <code>launch/ponsv2_firstbuys.json</code>, <code>launch/raw/grad3.log</code></li>
+</ul>
+<h2 id="b-contractsv1interfaces-pragma-0826-mit-import-solc-08280830">부록 B. 인터페이스 파일(정본, <code>contracts/v1/interfaces/</code>, <code>pragma ^0.8.26</code>, MIT, 외부 import 없음 — solc 0.8.28/0.8.30 단독 컴파일 확인)</h2>
+<p><code>ILaunchToken.sol</code>(+<code>IERC20</code>, <code>IERC20Metadata</code>) · <code>ILaunchFactory.sol</code> · <code>IBondingCurve.sol</code> · <code>IMemeHook.sol</code> · <code>ILaunchPair.sol</code> · <code>ILaunchRouter.sol</code> · <code>IPermanentLocker.sol</code>(상단에 "존재하면 안 되는 함수" 블록) · <code>IFeeEscrow.sol</code> · <code>IGraduationTarget.sol</code>.</p>
+<h2 id="c">부록 C. 구현 체크리스트(엔지니어용, 순서대로)</h2>
+<ol>
+<li><code>SnipeSchedule</code> + 단위 테스트 → 2. <code>LaunchToken</code>(바이트코드 동일성 테스트) → 3. <code>FeeEscrow</code>(총함수성·지급능력 인바리언트) → 4. <code>BondingCurve</code>(산식 퍼즈, 크로싱, <code>_tryGraduate</code> T15) → 5. <code>PermanentLocker</code>(N1–N12) → 6. <code>MemeHook</code>(46630 포크, 4 케이스, 게이트, 가드, stranded) → 7. <code>UniswapV4Target</code>(전 흐름 포크) → 8. <code>LaunchPair</code>/<code>LaunchRouter</code>/<code>LaunchPairTarget</code>(91342 포크) → 9. <code>LaunchFactory</code>(마지막; T22) → 10. <code>Wiring.check</code> + 배포 스크립트 + 훅 마이너 → 11. 테스트넷 배포·검증·스모크 → 12. 동결 → 감사.</li>
+</ol></article>
+    </main>
+    <footer>
+      <span>research_only=true</span>
+      <span>strategy_consumption_allowed=false</span>
+      <span>order_input=false</span>
+    </footer>
+  </body>
+</html>
