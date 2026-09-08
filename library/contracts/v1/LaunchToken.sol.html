@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex,nofollow,noarchive" />
+    <meta name="theme-color" content="#090c0e" />
+    <title>LaunchToken.sol · GIWA · Robinhood Launchpad</title>
+    <link rel="stylesheet" href="../../../assets/document.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#document">본문으로 바로가기</a>
+    <header class="document-header">
+      <a class="brand" href="../../../development.html" aria-label="GIWA 대시보드로 돌아가기">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span><strong>GIWA · RH</strong><small>LAUNCHPAD ROOM</small></span>
+      </a>
+      <nav aria-label="문서 동작">
+        <a href="../../../development.html">← 대시보드</a>
+      </nav>
+    </header>
+    <main id="document" class="document-shell">
+      <div class="document-meta">
+        <span>PROJECT FILE</span>
+        <span>SHA256 a3c14262183b</span>
+      </div>
+      <h1>LaunchToken.sol</h1>
+      <p class="source-path">contracts/v1/LaunchToken.sol</p>
+      <article class="code-body"><pre class="source-code"><span class="code-line"><i>1</i><code>// SPDX-License-Identifier: MIT</code></span>
+<span class="code-line"><i>2</i><code>pragma solidity 0.8.30;</code></span>
+<span class="code-line"><i>3</i><code></code></span>
+<span class="code-line"><i>4</i><code>import {ERC20} from &quot;@openzeppelin/contracts/token/ERC20/ERC20.sol&quot;;</code></span>
+<span class="code-line"><i>5</i><code>import {ERC20Burnable} from &quot;@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol&quot;;</code></span>
+<span class="code-line"><i>6</i><code></code></span>
+<span class="code-line"><i>7</i><code>/// @notice Launchpad v1 token component. The factory, curve and graduation path are separate work.</code></span>
+<span class="code-line"><i>8</i><code>/// @dev Entire initial supply goes to the distribution contract. No owner, additional mint,</code></span>
+<span class="code-line"><i>9</i><code>///      upgrade, pause or transfer-tax path. launchpad is stored so runtime code is identical.</code></span>
+<span class="code-line"><i>10</i><code>contract LaunchToken is ERC20, ERC20Burnable {</code></span>
+<span class="code-line"><i>11</i><code>    uint256 public constant SUPPLY = 1_000_000_000e18;</code></span>
+<span class="code-line"><i>12</i><code>    address public launchpad;</code></span>
+<span class="code-line"><i>13</i><code></code></span>
+<span class="code-line"><i>14</i><code>    error InvalidMetadata();</code></span>
+<span class="code-line"><i>15</i><code></code></span>
+<span class="code-line"><i>16</i><code>    constructor(string memory name_, string memory symbol_, address curve_) ERC20(name_, symbol_) {</code></span>
+<span class="code-line"><i>17</i><code>        if (bytes(name_).length == 0 || bytes(name_).length &gt; 64 ||</code></span>
+<span class="code-line"><i>18</i><code>            bytes(symbol_).length == 0 || bytes(symbol_).length &gt; 16) revert InvalidMetadata();</code></span>
+<span class="code-line"><i>19</i><code>        launchpad = curve_;</code></span>
+<span class="code-line"><i>20</i><code>        _mint(curve_, SUPPLY); // OpenZeppelin rejects the zero address.</code></span>
+<span class="code-line"><i>21</i><code>    }</code></span>
+<span class="code-line"><i>22</i><code>}</code></span></pre></article>
+    </main>
+    <footer>
+      <span>research_only=true</span>
+      <span>strategy_consumption_allowed=false</span>
+      <span>order_input=false</span>
+    </footer>
+  </body>
+</html>

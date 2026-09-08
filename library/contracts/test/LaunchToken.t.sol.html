@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex,nofollow,noarchive" />
+    <meta name="theme-color" content="#090c0e" />
+    <title>LaunchToken.t.sol · GIWA · Robinhood Launchpad</title>
+    <link rel="stylesheet" href="../../../assets/document.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#document">본문으로 바로가기</a>
+    <header class="document-header">
+      <a class="brand" href="../../../development.html" aria-label="GIWA 대시보드로 돌아가기">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span><strong>GIWA · RH</strong><small>LAUNCHPAD ROOM</small></span>
+      </a>
+      <nav aria-label="문서 동작">
+        <a href="../../../development.html">← 대시보드</a>
+      </nav>
+    </header>
+    <main id="document" class="document-shell">
+      <div class="document-meta">
+        <span>PROJECT FILE</span>
+        <span>SHA256 985b6ab5e88b</span>
+      </div>
+      <h1>LaunchToken.t.sol</h1>
+      <p class="source-path">contracts/test/LaunchToken.t.sol</p>
+      <article class="code-body"><pre class="source-code"><span class="code-line"><i>1</i><code>// SPDX-License-Identifier: MIT</code></span>
+<span class="code-line"><i>2</i><code>pragma solidity 0.8.30;</code></span>
+<span class="code-line"><i>3</i><code>import {LaunchToken} from &quot;../v1/LaunchToken.sol&quot;;</code></span>
+<span class="code-line"><i>4</i><code></code></span>
+<span class="code-line"><i>5</i><code>contract Holder {</code></span>
+<span class="code-line"><i>6</i><code>    function burn(LaunchToken token, uint256 amount) external { token.burn(amount); }</code></span>
+<span class="code-line"><i>7</i><code>    function delegatedBurn(LaunchToken token, address from, uint256 amount) external {token.burnFrom(from,amount);}</code></span>
+<span class="code-line"><i>8</i><code>}</code></span>
+<span class="code-line"><i>9</i><code>contract LaunchTokenTest {</code></span>
+<span class="code-line"><i>10</i><code>    function testSupplyAndDistribution() public {</code></span>
+<span class="code-line"><i>11</i><code>        LaunchToken t = new LaunchToken(&quot;Garden&quot;, &quot;GRDN&quot;, address(this));</code></span>
+<span class="code-line"><i>12</i><code>        require(t.totalSupply() == 1_000_000_000e18);</code></span>
+<span class="code-line"><i>13</i><code>        require(t.balanceOf(address(this)) == t.SUPPLY());</code></span>
+<span class="code-line"><i>14</i><code>        require(t.launchpad() == address(this) &amp;&amp; t.decimals() == 18);</code></span>
+<span class="code-line"><i>15</i><code>        require(keccak256(bytes(t.name())) == keccak256(&quot;Garden&quot;));</code></span>
+<span class="code-line"><i>16</i><code>    }</code></span>
+<span class="code-line"><i>17</i><code>    function testRuntimeIdenticalAcrossMetadataAndRecipients() public {</code></span>
+<span class="code-line"><i>18</i><code>        LaunchToken a = new LaunchToken(&quot;Garden&quot;, &quot;GRDN&quot;, address(this));</code></span>
+<span class="code-line"><i>19</i><code>        LaunchToken b = new LaunchToken(unicode&quot;기와 정원&quot;, &quot;B&quot;, address(new Holder()));</code></span>
+<span class="code-line"><i>20</i><code>        require(keccak256(address(a).code) == keccak256(address(b).code));</code></span>
+<span class="code-line"><i>21</i><code>    }</code></span>
+<span class="code-line"><i>22</i><code>    function testFuzzSupplyOnlyDecreases(uint256 raw) public {</code></span>
+<span class="code-line"><i>23</i><code>        LaunchToken t = new LaunchToken(&quot;Garden&quot;, &quot;GRDN&quot;, address(this));</code></span>
+<span class="code-line"><i>24</i><code>        Holder h = new Holder(); uint256 amount = raw % (t.SUPPLY()+1);</code></span>
+<span class="code-line"><i>25</i><code>        t.transfer(address(h), amount);</code></span>
+<span class="code-line"><i>26</i><code>        require(t.balanceOf(address(h)) == amount); // no transfer tax</code></span>
+<span class="code-line"><i>27</i><code>        require(t.totalSupply() == t.SUPPLY());</code></span>
+<span class="code-line"><i>28</i><code>        h.burn(t,amount);</code></span>
+<span class="code-line"><i>29</i><code>        require(t.totalSupply() == t.SUPPLY()-amount);</code></span>
+<span class="code-line"><i>30</i><code>        require(t.balanceOf(address(h)) == 0);</code></span>
+<span class="code-line"><i>31</i><code>    }</code></span>
+<span class="code-line"><i>32</i><code>    function testBurnFromNeedsAllowanceAndCannotMint() public {</code></span>
+<span class="code-line"><i>33</i><code>        LaunchToken t = new LaunchToken(&quot;Garden&quot;, &quot;GRDN&quot;, address(this)); Holder h = new Holder();</code></span>
+<span class="code-line"><i>34</i><code>        try h.delegatedBurn(t,address(this),1) {revert(&quot;unauthorized burn&quot;);} catch {}</code></span>
+<span class="code-line"><i>35</i><code>        t.approve(address(h),123);h.delegatedBurn(t,address(this),123);</code></span>
+<span class="code-line"><i>36</i><code>        require(t.allowance(address(this),address(h))==0);</code></span>
+<span class="code-line"><i>37</i><code>        require(t.totalSupply()==t.SUPPLY()-123);</code></span>
+<span class="code-line"><i>38</i><code>        (bool ok,) = address(t).call(abi.encodeWithSignature(&quot;mint(address,uint256)&quot;,address(this),100));require(!ok);</code></span>
+<span class="code-line"><i>39</i><code>        (ok,) = address(t).call(abi.encodeWithSignature(&quot;pause()&quot;));require(!ok);</code></span>
+<span class="code-line"><i>40</i><code>        (ok,) = address(t).call(abi.encodeWithSignature(&quot;transferOwnership(address)&quot;,address(h)));require(!ok);</code></span>
+<span class="code-line"><i>41</i><code>        (ok,) = address(t).call(abi.encodeWithSignature(&quot;upgradeTo(address)&quot;,address(h)));require(!ok);</code></span>
+<span class="code-line"><i>42</i><code>    }</code></span>
+<span class="code-line"><i>43</i><code>    function testRejectZeroDistribution() public {</code></span>
+<span class="code-line"><i>44</i><code>        try new LaunchToken(&quot;Garden&quot;,&quot;GRDN&quot;,address(0)) {revert(&quot;zero recipient accepted&quot;);} catch {}</code></span>
+<span class="code-line"><i>45</i><code>    }</code></span>
+<span class="code-line"><i>46</i><code>    function testRejectEmptyAndOversizedMetadata() public {</code></span>
+<span class="code-line"><i>47</i><code>        try new LaunchToken(&quot;&quot;,&quot;GRDN&quot;,address(this)) {revert(&quot;empty name&quot;);} catch {}</code></span>
+<span class="code-line"><i>48</i><code>        try new LaunchToken(&quot;Garden&quot;,&quot;&quot;,address(this)) {revert(&quot;empty symbol&quot;);} catch {}</code></span>
+<span class="code-line"><i>49</i><code>        try new LaunchToken(string(new bytes(65)),&quot;GRDN&quot;,address(this)) {revert(&quot;long name&quot;);} catch {}</code></span>
+<span class="code-line"><i>50</i><code>        try new LaunchToken(&quot;Garden&quot;,string(new bytes(17)),address(this)) {revert(&quot;long symbol&quot;);} catch {}</code></span>
+<span class="code-line"><i>51</i><code>    }</code></span>
+<span class="code-line"><i>52</i><code>}</code></span></pre></article>
+    </main>
+    <footer>
+      <span>research_only=true</span>
+      <span>strategy_consumption_allowed=false</span>
+      <span>order_input=false</span>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex,nofollow,noarchive" />
+    <meta name="theme-color" content="#090c0e" />
+    <title>내부 종합 런치패드: 빌드 작업 페이지 · GIWA · Robinhood Launchpad</title>
+    <link rel="stylesheet" href="../../assets/document.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#document">본문으로 바로가기</a>
+    <header class="document-header">
+      <a class="brand" href="../../development.html" aria-label="GIWA 대시보드로 돌아가기">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span><strong>GIWA · RH</strong><small>LAUNCHPAD ROOM</small></span>
+      </a>
+      <nav aria-label="문서 동작">
+        <a href="../../development.html">← 대시보드</a>
+      </nav>
+    </header>
+    <main id="document" class="document-shell">
+      <div class="document-meta">
+        <span>REPORT</span>
+        <span>SHA256 44b657836c3c</span>
+      </div>
+      <h1>내부 종합 런치패드: 빌드 작업 페이지</h1>
+      <p class="source-path">docs/INTERNAL_LAUNCH_WORKBENCH.md</p>
+      <article class="markdown-body"><h1 id="_1">내부 종합 런치패드: 빌드 작업 페이지</h1>
+<h2 id="2026-09-09">사이트 통합 · 2026-09-09</h2>
+<p>오너가 기존 GitHub Pages 사이트에서 모든 작업을 진행하도록 지시했다. 아래의
+09-08 로컬 전용 경계를 확장하여, 사이트 첫 화면을 빌드 작업실로 전환한다.
+<code>overview.html</code>에 이전 상황판을 보존하고 론칭 조사·리서치·노드·스왑풀·수익모델·개발
+탭을 양방향으로 연결한다. 기능을 쓰기 위해 localhost 서버를 켤 필요가 없다.</p>
+<ul>
+<li>solc 0.8.30(약 9.6MB)과 고정된 OpenZeppelin 계약 입력을 동일 사이트에서 제공한다.
+  Web Worker가 실제 컴파일하고 종료되므로 입력 내용이 빌드 서버로 전송되지 않는다.</li>
+<li>프로젝트·준비물·예산·관찰 원장은 브라우저 저장소에 남고 GitHub 게시에 포함되지 않는다.
+  기기 간 이동은 JSON 내보내기/가져오기이며 공동 편집·계정 동기화는 제공하지 않는다.</li>
+<li>공식 GIWA/RH RPC는 브라우저에서 직접 읽는다. CORS·오프라인·timeout·체인 불일치는
+  UNKNOWN으로 표시한다. 임의 RPC URL이나 쓰기 메서드는 받지 않는다.</li>
+<li>각 JS·컴파일 입력·compiler binary의 해시를 <code>workbench/manifest.json</code>에 기록한다.
+  <code>deployment.json</code>은 게시 원본 리비전을 기록한다. 이 둘은 사용자 초안과 별개다.</li>
+<li>배포 허용 범위는 기존 공개 사이트의 정적 UI·컴파일러·승인된 자료다. 지갑 서명,
+  컨트랙트 방송, 자금 집행이나 새로운 온체인 발행 승인이 아니다.</li>
+</ul>
+<pre><code class="language-sh">npm ci --prefix workbench --ignore-scripts
+npm run build:pages --prefix workbench
+python3 -m http.server 4173 --bind 127.0.0.1 --directory dashboard
+</code></pre>
+<p>아래는 최초 로컬 구현의 기록이며, 사이트 주소/운영 방식은 이 절이 우선한다.</p>
+<h2 id="2026-09-08">제품 결정 · 2026-09-08</h2>
+<p>오너 요청: 리서치 정보창에서 실제 빌드·론칭에 필요한 재료와 실행 흐름을 모으는
+내부 종합 런치패드로 전환한다. 시장의 반응을 빠르게 받아 다음 작업에 반영한다.
+이 문서는 해당 요청에 따른 CONSTITUTION의 범위 확장 기록이다. 과거 리서치 정책을
+현재 제품의 영구적인 구현 금지로 해석하지 않는다.</p>
+<p>제품의 기본 화면은 <code>workbench/</code>다. 프로젝트 입력 → 준비물 → 실제 빌드 → 론칭
+패키지 → 시장 관찰의 작업 흐름을 제공한다. 공개 <code>dashboard/</code>는 근거 자료실로 유지한다.
+코드 구현과 오프라인 검증은 이번 범위다. 실제 온체인 트랜잭션·자금 집행·공개 서비스
+배포는 수행하지 않았다. 최신 수수료·플랫폼 설계는 09-06 v1 사양을 따른다. 08월의
+zero-revenue 구상을 다시 현재 결정으로 강제하지 않는다.</p>
+<h2 id="_2">실행</h2>
+<p>Node 22 이상, 루트 체크아웃에서:</p>
+<pre><code class="language-sh">npm ci --prefix workbench --ignore-scripts
+npm start --prefix workbench
+</code></pre>
+<p><code>http://127.0.0.1:4318</code>을 연다. 저장소 원본이나 <code>.env</code>를 정적 서버로 노출하지 않는다.
+기본 포트가 사용 중이면 <code>LAUNCH_WORKBENCH_PORT</code>를 지정할 수 있다. Host와 Origin을
+검사하므로 <code>localhost</code> 대신 위의 정확한 주소를 사용한다. 앱은 <code>127.0.0.1</code>에만 바인딩한다.</p>
+<h2 id="_3">지금 작동하는 것</h2>
+<table>
+<thead>
+<tr>
+<th>작업</th>
+<th>결과</th>
+<th>의미와 한계</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>프로젝트 입력·저장·가져오기</td>
+<td>이름, 심볼, 소개, 이미지·소셜 링크, 체인, 경로</td>
+<td>브라우저 localStorage, 최대 20개. 다른 기기·브라우저와 동기화되지 않음</td>
+</tr>
+<tr>
+<td>준비물 관리</td>
+<td>상태, 검토 근거 링크, 다음 작업</td>
+<td>완료는 사용자 검토 기록이며 코드가 증명한 배포 준비도가 아님</td>
+</tr>
+<tr>
+<td>토큰 빌드</td>
+<td>Solidity, ABI, creation/runtime bytecode, compiler standard JSON, 소스·설정 해시</td>
+<td>v1 LaunchToken 컴포넌트만 구현. 생성자 curve 주소는 미지정</td>
+</tr>
+<tr>
+<td>예산 작성</td>
+<td>ETH 18자리 정밀 합계, 산정 근거</td>
+<td>사용자가 적은 준비 예산. 현재 가스 견적·플랫폼 수수료 보장이 아님</td>
+</tr>
+<tr>
+<td>현재 체인 확인</td>
+<td>공식 RPC의 chain ID, 블록, gas price, 관찰 시각</td>
+<td>버튼으로 갱신. 15초 캐시. 실패·다른 chain ID는 UNKNOWN</td>
+</tr>
+<tr>
+<td>Pons로 가져가기</td>
+<td>생성 화면 링크, 붙여넣을 콘텐츠, 검토 자료</td>
+<td>공식 화면에서 별도 입력·검토·서명. API 연동이나 바이트코드 가져오기 아님</td>
+</tr>
+<tr>
+<td>론칭 패키지</td>
+<td>launch-kit.json: 프로젝트, 실제 빌드, 메타데이터, 예산, 관찰, 남은 작업</td>
+<td>패키지 내부 files 맵에 compiler-input과 콘텐츠 포함. ZIP 아님</td>
+</tr>
+<tr>
+<td>반응 기록</td>
+<td>관찰/외부 보고/가설, 실제 관찰 시각, 기록 시각, 출처, 변경할 판단</td>
+<td>수동 원장. 자동 시장 피드·실거래 분석은 아직 미연결</td>
+</tr>
+</tbody>
+</table>
+<p>이름·심볼·체인을 바꾸면 현재 빌드 상태가 무효화된다. 프로젝트 가져오기로 이전의
+빌드 성공이나 실행 권한을 복원하지 않는다. 다운로드는 사용자가 직접 시작한다.
+토큰 소스 단독 파일은 OpenZeppelin import가 필요하며 전체 빌드 JSON에 모든 의존
+소스와 표준 compiler input이 담겨 있다. 수취 커브가 없는 creation bytecode는 서명할
+완성된 배포 트랜잭션이 아니다.</p>
+<h2 id="_4">가장 빠른 실행 경로</h2>
+<ol>
+<li><strong>기존 Pons 경로:</strong> 콘텐츠·이미지 원본·예산·수수료 선택 근거를 준비하고 공식
+   생성 화면에서 값을 재확인한다. Pons는 자체 토큰과 풀을 생성한다. 여기서 만든
+   LaunchToken을 가져가 거래하는 경로가 아니다. 생성 화면은 2026-09-08에 재확인했다.</li>
+<li><strong>우리 자체 경로:</strong> LaunchToken 구현 다음으로 기존
+   <code>LAUNCHPAD_V1_CONTRACT_DESIGN.md</code>의 팩토리·커브·졸업·영구 잠금 컴포넌트를 구현한다.
+   전량 배분, 매수·매도, 가격 연속성, 원자적 졸업, fee 원장, LP 인출 불가를 실제 EVM에서
+   검증한다. 토큰 단독 성공을 전체 프로토콜의 준비 완료로 승격하지 않는다.</li>
+<li><strong>화면 내 직접 실행:</strong> 선택한 플랫폼의 정확한 ABI·주소·runtime hash·체인과 최종
+   파라미터를 결속한 트랜잭션 미리보기, 견적/시뮬레이션, 사용자 지갑 서명, 제출·영수증
+   대조를 연결한다. 서명 후 응답 유실은 UNKNOWN으로 남기고 자동 재전송하지 않는다.</li>
+<li><strong>출시 후 피드:</strong> 확정된 토큰·풀·생성 tx를 관찰 대상으로 등록하고 생성/매수/매도,
+   홀더 집중, LP·졸업 상태를 소스별로 수집한다. 관찰 시각과 수집 지연을 표시하고
+   테스트넷 이벤트는 시장 수요에 합산하지 않는다. 이번 버전은 수동 관찰 원장까지다.</li>
+</ol>
+<h2 id="_5">구현 우선순위와 완료 기준</h2>
+<table>
+<thead>
+<tr>
+<th>순서</th>
+<th>남은 구현</th>
+<th>완료 기준</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>P0</td>
+<td>선택한 플랫폼의 페이지 내 생성 어댑터</td>
+<td>실제 upstream ABI·코드 검증, 입력→견적→서명→영수증 E2E, 실패·사용자 거절·중복 제출 테스트</td>
+</tr>
+<tr>
+<td>P0</td>
+<td>자체 팩토리·커브·분배·졸업</td>
+<td>v1 사양의 must-change 및 경제 불변식 통과, 로컬 buy/sell/graduate 전 과정 재현</td>
+</tr>
+<tr>
+<td>P1</td>
+<td>메타데이터 이미지·게시 패키지</td>
+<td>원본 해시, MIME/크기 검사, 명시적 게시 목적지, 게시 후 내용 대조</td>
+</tr>
+<tr>
+<td>P1</td>
+<td>론칭 기록과 반응 자동 수집</td>
+<td>tx와 토큰·풀을 검증 후 등록, 출처·지연·UNKNOWN 제공, 잘못된 체인 거부</td>
+</tr>
+<tr>
+<td>P1</td>
+<td>공동 작업 저장소·인증</td>
+<td>인증된 내부 호스트, 프로젝트별 접근제어, 백업·동시편집 충돌·복구 검증</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_6">검증과 운영 경계</h2>
+<pre><code class="language-sh">npm test --prefix workbench
+forge test
+PYTHONPATH=src .venv/bin/python -m unittest discover -s tests -v
+.venv/bin/python -m compileall -q src
+.venv/bin/python -m json.tool data/ecosystem.json &gt;/dev/null
+</code></pre>
+<p>Solidity 0.8.30, OpenZeppelin 5.4.0, optimizer 200, Cancun, metadata bytecode hash none를
+고정한다. npm lockfile을 체크인하며 solc의 간접 의존성 tmp는 경로 탐색 취약점이 수정된
+0.2.7으로 고정한다. Foundry EVM 테스트는 공급 배분·소각·allowance·추가 민트 부재·동일
+runtime·잘못된 메타데이터를 검사한다. 보안 감사나 전체 런치패드 E2E를 대신하지 않는다.</p>
+<p>서버는 저장소 고정 소스만 컴파일하고 사용자 코드·shell 명령·RPC 주소를 받지 않는다.
+빌드 API는 same-origin JSON POST만 허용한다. RPC 메서드는 chainId/blockNumber/gasPrice로
+고정된다. 지갑·키·서명·faucet·자금 이동 API가 없다. 내부 초안은 공개 대시보드의
+게시 allowlist나 CI 업로드 경로에 포함되지 않는다. localStorage는 암호화 금고가 아니므로
+키나 비공개 계정 정보를 입력하지 않는다.</p>
+<h2 id="2026-09-08_1">2026-09-08에 확인한 연결 근거</h2>
+<ul>
+<li>GIWA 공식 네트워크 문서: &lt;https://docs.giwa.io/giwa-chain/en/get-started/connect-to-giwa&gt;
+  — Sepolia chain 91342, 공개 RPC, mainnet under development 표기.</li>
+<li>Robinhood 공식 연결 문서: &lt;https://docs.robinhood.com/chain/connecting/&gt;
+  — mainnet 4663 및 testnet 46630. 이 앱은 4663 관찰만 추가한다.</li>
+<li>Pons 공식 생성 화면: &lt;https://www.ponsfamily.com/launchpad/create&gt;
+  — 이름·심볼·소개·이미지·공개 링크, 개발자 매수, 수취 지갑·세금과 wallet 연결 화면.</li>
+<li>Pons 공식 문서: &lt;https://docs.ponsfamily.com/&gt;
+  — 별도 프로토콜의 동작 설명. 이 저장소의 배포/검증 승인으로 취급하지 않는다.</li>
+</ul>
+<p>주소·ABI·fee·졸업 조건은 실제 생성 어댑터 구현 시 다시 검증한다. 과거 대시보드의
+시장 숫자를 현재값으로 복사하지 않았다.</p></article>
+    </main>
+    <footer>
+      <span>research_only=true</span>
+      <span>strategy_consumption_allowed=false</span>
+      <span>order_input=false</span>
+    </footer>
+  </body>
+</html>

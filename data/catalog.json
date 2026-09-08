@@ -1,26 +1,25 @@
 {
   "schema_version": 1,
-  "catalog_revision": "9b209fc7ce14",
-  "as_of": "2026-09-06",
+  "catalog_revision": "aab223b546fb",
+  "as_of": "2026-09-09",
   "project": {
     "title": "GIWA · Robinhood Launchpad Control Room",
-    "subtitle": "로빈후드 즉시 론칭 + GIWA 메인넷 리허설 — 근거부터 발사대까지 한 화면",
+    "subtitle": "브라우저에서 준비·빌드·론칭 패키지·반응 기록까지",
     "network": "GIWA Sepolia · 로빈후드 체인(관찰)",
     "mode": "research_only",
-    "decision": "오너 방향(2026-09-06): 로빈후드 체인(라이브 메인넷, DEX ≈ $1.9B/일)에서 Pons V2로 크리에이터 역할로 즉시 론칭하고, GIWA는 메인넷 부재이므로 Joseon.fun Sepolia 리허설과 CreateX 동일 주소 키트로 병행 준비한다(두 체인 모두 ETH 기본통화, 컨트랙트 구조 동일). 법인·FIU·법령해석 경로는 추진하지 않는다(2026-09-04 결정 유지). 공유 엔진 읽기 계층과 불변 풀 계층·락커 런처(fee=0) 준비는 계속한다.",
+    "decision": "오너 방향(2026-09-09): 기존 GitHub Pages 사이트의 첫 화면에서 모든 빌드 준비 작업을 진행한다. 설치 없이 브라우저에서 프로젝트·준비물·컴파일·예산·실행 패키지·관찰을 처리하며 기존 조사 탭을 연결한다. v1 토큰 컴포넌트는 실제 컴파일되고 Pons는 공식 생성 화면 연결, 자체 팩토리·커브·풀과 페이지 내 직접 서명은 미연결이다.",
     "product_hypothesis": "로빈후드 창작자 론칭 → GIWA 리허설 키트 → 메인넷 열리면 불변 풀 + 락커 런처",
     "fee_policy": "1 % 거래 수수료 → 창작자 80 / 프로토콜 20 · Sepolia는 0 · 스위치·관리자 키 없음 · 배포 전 확정 후 불변",
     "default_branch": "main",
-    "decision_headline": "지금은 로빈후드 체인 Pons V2에서 창작자로 론칭하고, GIWA 메인넷은 리허설로 준비한다.",
+    "decision_headline": "프로젝트를 만들고, 실제 코드를 빌드하고, 론칭 패키지로 연결한다.",
     "decision_points": [
-      "지금: 로빈후드 체인(DEX $1.89B/일) Pons V2에서 창작자로 론칭 · 수입 = 거래량의 0.7 %",
-      "다음(W1–3): 우리 런치패드 v1 · 설계 정본 완료(컨트랙트 6+2, 인터페이스 9) · 1 % 수수료 → 창작자 80 / 프로토콜 20",
-      "GIWA(W4–6): 메인넷 없음 → Joseon.fun Sepolia 리허설 + CreateX 동일 주소 키트",
-      "두 체인 모두 ETH가 기본 통화 · 컨트랙트 구조 동일 → 코드 1벌로 두 체인",
-      "원칙: 관리자 키·일시정지·수수료 스위치 없음 · 수수료는 배포 전 확정, 배포 후 불변",
-      "하지 않음: 법인·FIU 신고 · 워시트레이딩·번들·매집-매도 · 관리자 권한이 남는 설계"
+      "현재: 사이트 첫 화면에서 프로젝트 저장·준비물·실제 브라우저 컴파일·패키지 내보내기",
+      "기존 플랫폼: Pons 공식 생성 화면에 입력 내용을 가져가서 검토",
+      "자체 경로: v1 토큰 구현 완료, 팩토리·커브·졸업·영구 잠금은 다음 구현",
+      "반응: 출처·관찰 시각·근거 수준을 기록, 자동 시장 수집은 미연결",
+      "서명·배포·실제 자금 사용은 구체적인 실행 내용과 별도 사용자 권한에 결속"
     ],
-    "content_ref": "main"
+    "content_ref": "d4805989b23c7a34f2dc30a427cd4b74b3ccc1c1"
   },
   "publication": {
     "public_pages": true,
@@ -1527,8 +1526,8 @@
     "verified_claims": 204,
     "unresolved_claims": 33,
     "refuted_claims": 25,
-    "implemented_tracks": 5,
-    "total_tracks": 15
+    "implemented_tracks": 7,
+    "total_tracks": 16
   },
   "network_observation": {
     "observed_at": "2026-09-03T03:53:09.216084+00:00",
@@ -3203,6 +3202,28 @@
   ],
   "build_tracks": [
     {
+      "id": "internal-build-workbench",
+      "name": "사이트 빌드 작업 페이지",
+      "status": "implemented",
+      "progress": 100,
+      "summary": "설치 없이 브라우저에서 프로젝트·준비물·실제 컴파일·예산·Pons 연결·패키지·수동 관찰. 직접 서명과 자동 시장 피드는 미연결.",
+      "next": "검증한 생성 어댑터와 지갑 검토·영수증 연결",
+      "files": [
+        {
+          "path": "docs/INTERNAL_LAUNCH_WORKBENCH.md",
+          "label": "INTERNAL_LAUNCH_WORKBENCH.md",
+          "url": "./library/docs/INTERNAL_LAUNCH_WORKBENCH.md.html",
+          "exists": true
+        },
+        {
+          "path": "dashboard/index.html",
+          "label": "index.html",
+          "url": "./library/dashboard/index.html.html",
+          "exists": true
+        }
+      ]
+    },
+    {
       "id": "robinhood-launch-prep",
       "name": "로빈후드·GIWA 론칭 준비 (2026-09-06)",
       "status": "implemented",
@@ -3235,7 +3256,7 @@
       "name": "런치패드 v1 컨트랙트 설계 (2026-09-06)",
       "status": "spec_only",
       "progress": 30,
-      "summary": "설계 정본 완료: 컨트랙트 6개 + 어댑터 2개 · 인터페이스 .sol 9개 · 파라미터 표 · 권한 표 · 위협 모델 · 테스트·배포 계획 · 구현 코드 없음",
+      "summary": "v1 사양·인터페이스 정본 + LaunchToken 구현. 팩토리·커브·풀·졸업은 설계 단계.",
       "next": "오너가 미결 18건(정본 §10) 결정 → Foundry 구현 + 불변식·퍼즈 → 테스트넷 46630·91342 스모크 졸업 → 감사",
       "files": [
         {
@@ -3475,13 +3496,13 @@
       "name": "리서치 대시보드",
       "status": "implemented",
       "progress": 100,
-      "summary": "완료: 리서치·생태계·코드 상태·메인넷 게이트를 정적 페이지 1개로 연결",
+      "summary": "빌드 작업실과 리서치·생태계·코드 상태·메인넷 게이트를 연결한 사이트",
       "next": "리서치 변경 시 카탈로그 생성 검사 통과",
       "files": [
         {
-          "path": "dashboard/index.html",
-          "label": "index.html",
-          "url": "./library/dashboard/index.html.html",
+          "path": "dashboard/overview.html",
+          "label": "overview.html",
+          "url": "./library/dashboard/overview.html.html",
           "exists": true
         },
         {
@@ -3506,16 +3527,28 @@
     },
     {
       "id": "token-contract",
-      "name": "토큰 컨트랙트",
-      "status": "spec_only",
-      "progress": 25,
-      "summary": "요구사항만: 총량 고정 ERC-20(표준 토큰 규격) · Solidity 구현 없음",
-      "next": "Phase 1 승인 후 로컬 Anvil 구현 + 불변식·퍼즈 테스트",
+      "name": "v1 토큰 컴포넌트 · 로컬 구현",
+      "status": "implemented",
+      "progress": 100,
+      "summary": "구현·로컬 검증: 고정 공급 ERC-20 + Burnable, 전량 커브 배분, 동일 런타임, solc 0.8.30. 전체 런치패드·배포 검증은 아님.",
+      "next": "팩토리·커브·졸업 통합 후 전체 EVM 시나리오 검증",
       "files": [
         {
-          "path": "contracts/specs/TOKEN.md",
-          "label": "TOKEN.md",
-          "url": "./library/contracts/specs/TOKEN.md.html",
+          "path": "contracts/v1/LaunchToken.sol",
+          "label": "LaunchToken.sol",
+          "url": "./library/contracts/v1/LaunchToken.sol.html",
+          "exists": true
+        },
+        {
+          "path": "contracts/test/LaunchToken.t.sol",
+          "label": "LaunchToken.t.sol",
+          "url": "./library/contracts/test/LaunchToken.t.sol.html",
+          "exists": true
+        },
+        {
+          "path": "docs/INTERNAL_LAUNCH_WORKBENCH.md",
+          "label": "INTERNAL_LAUNCH_WORKBENCH.md",
+          "url": "./library/docs/INTERNAL_LAUNCH_WORKBENCH.md.html",
           "exists": true
         }
       ]

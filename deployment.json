@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "source_repository": "Jonas-Augustinus-Linus/giwa-launchpad",
+  "source_revision": "d4805989b23c7a34f2dc30a427cd4b74b3ccc1c1",
+  "prepared_at": "2026-09-08T18:15:21.057456+00:00",
+  "mode": "browser_build_and_readonly_rpc",
+  "transaction_signing": false,
+  "manifest_sha256": "a5088d2cdd6f5baac7eae7eaa29d4f4b4e1e6ef63c9444737e962e6c9f1cd444"
+}

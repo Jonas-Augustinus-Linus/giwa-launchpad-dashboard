@@ -4,7 +4,7 @@
     {
       "path": "CONSTITUTION.md",
       "url": "./library/CONSTITUTION.md.html",
-      "sha256": "3fececbbb6d2adc46e5665d51335116846cb9889f07b75e1ee315b5a94b63a40"
+      "sha256": "83b7c27ec953f0e676e9a9c34fcfaef976df6154f47dc9d7eaa407589779e1a0"
     },
     {
       "path": "RESEARCH/GIWA_dex_fee_jurisdictions_2026_20260903_144748/artifacts/claim_ledger.jsonl",
@@ -157,6 +157,16 @@
       "sha256": "e99a2ecc2f6646329a24a2344ea3a9f8e48635ad5a5e1e19c8a9b1db4540efa7"
     },
     {
+      "path": "contracts/test/LaunchToken.t.sol",
+      "url": "./library/contracts/test/LaunchToken.t.sol.html",
+      "sha256": "985b6ab5e88b04870167666db0bdcd8dc248f660a56121ab6f12561dbaa53587"
+    },
+    {
+      "path": "contracts/v1/LaunchToken.sol",
+      "url": "./library/contracts/v1/LaunchToken.sol.html",
+      "sha256": "a3c14262183b24ea6d84fb875fe8a5ceb3d7ea23ff369ee0a170b5e235c7a66a"
+    },
+    {
       "path": "contracts/v1/interfaces/IBondingCurve.sol",
       "url": "./library/contracts/v1/interfaces/IBondingCurve.sol.html",
       "sha256": "67ac5bd59046652572ebb97e004afd47411e5852c307c8eafafed08509d814c9"
@@ -179,7 +189,12 @@
     {
       "path": "dashboard/index.html",
       "url": "./library/dashboard/index.html.html",
-      "sha256": "232d7a0089d699be69ab9bf98d7b79b48ffc69beeb36b4ca9869cc643d03a250"
+      "sha256": "0675cad668dac02e0dbe040d416b24dbf0d27021e4b1182d423c1c8930c6b523"
+    },
+    {
+      "path": "dashboard/overview.html",
+      "url": "./library/dashboard/overview.html.html",
+      "sha256": "8b8d721e3118f551908c49bfa6a28b56978a9d491162813c0ad3a3357d007358"
     },
     {
       "path": "data/ecosystem.json",
@@ -217,6 +232,11 @@
       "sha256": "e22fb26436d13cbe84cc8e60a4836c15a6b66e9ea84efd1583a72000379e5f65"
     },
     {
+      "path": "docs/INTERNAL_LAUNCH_WORKBENCH.md",
+      "url": "./library/docs/INTERNAL_LAUNCH_WORKBENCH.md.html",
+      "sha256": "44b657836c3c20e4a999054eb034e97a441ff44f4660df0548b62fe1c12b2e57"
+    },
+    {
       "path": "docs/LAUNCHPAD_V1_CONTRACT_DESIGN.md",
       "url": "./library/docs/LAUNCHPAD_V1_CONTRACT_DESIGN.md.html",
       "sha256": "9f5e2062a304edb541fed2831d2ab94e703aac6c211c4a8f1bb77cd2ff2c7a01"
@@ -239,7 +259,7 @@
     {
       "path": "docs/ROADMAP.md",
       "url": "./library/docs/ROADMAP.md.html",
-      "sha256": "a15d7da4917a13e3e352552ad20cd91552b93efa4503c580799c5e03eb4d67b2"
+      "sha256": "203a340901752af0d618bc657a3d85fb984e7b1182ae4709851bb075be2024cd"
     },
     {
       "path": "docs/SIMPLE_DEX_VOLUME_STRATEGY_2026-09-03.md",

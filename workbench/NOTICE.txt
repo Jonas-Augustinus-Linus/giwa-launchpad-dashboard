@@ -1,0 +1,4 @@
+Solidity compiler 0.8.30 (GPL-3.0), source: https://github.com/ethereum/solidity/tree/v0.8.30
+solc-js 0.8.30 (MIT), source: https://github.com/ethereum/solc-js/tree/v0.8.30
+OpenZeppelin Contracts 5.4.0 (MIT), source: https://github.com/OpenZeppelin/openzeppelin-contracts/tree/v5.4.0
+Full notices in licenses/. Contract input sources are included in compiler-input.json. Corresponding Solidity compiler source: https://github.com/ethereum/solidity/releases/download/v0.8.30/solidity_0.8.30.tar.gz. No project drafts are published.

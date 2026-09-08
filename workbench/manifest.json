@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "compiler": "0.8.30",
+  "files": {
+    "workbench/app.mjs": {
+      "sha256": "fee602777e426941c91a1ee9a7e11cf83bf0b2716d2be830e9e571f3dab1c5d0",
+      "bytes": 17484
+    },
+    "workbench/model.mjs": {
+      "sha256": "fefe716194672bbb38260dc463adc19d287430241b40b1bfd74d2498c36ed308",
+      "bytes": 7942
+    },
+    "workbench/network.mjs": {
+      "sha256": "98b28b74904d14686c8bf0ad869deb03238016ddc55cd2bfa4d29257d0be01cd",
+      "bytes": 1326
+    },
+    "workbench/runtime.mjs": {
+      "sha256": "7cc4373fd4b8a092e67d7ccc7de5a674e16297f05ec8090abee4d91dac7bc076",
+      "bytes": 1011
+    },
+    "workbench/artifact-core.mjs": {
+      "sha256": "cf8211aa3c703c244117d3c53a03d25bdb0125d15159bda420b6b3e1c5f3dc43",
+      "bytes": 1428
+    },
+    "workbench/compiler-worker.js": {
+      "sha256": "fa1a2cd21db677f3707f7db7856a0931e879f0699466214976dbd95aedc193a3",
+      "bytes": 1500
+    },
+    "workbench/style.css": {
+      "sha256": "7f0835795bfd44575ce863b2c0d8aad96937a514a2a2c641b66fb197f430b643",
+      "bytes": 8837
+    },
+    "workbench/vendor/soljson-0.8.30.js": {
+      "sha256": "3bb491a777f76dff9b2fe73ce29ca20e21a971b59a2f2cf8f73415424f00be06",
+      "bytes": 9607046
+    },
+    "workbench/compiler-input.json": {
+      "sha256": "5ac3c1266c83cb8e487172d8a4c2398db76afaa59ec78d0dc9cc0df6d355880b",
+      "bytes": 25429
+    },
+    "workbench/licenses/solidity-GPL-3.0.txt": {
+      "sha256": "8ceb4b9ee5adedde47b31e975c1d90c73ad27b6b165a1dcd80c7c545eb65b903",
+      "bytes": 35147
+    },
+    "workbench/licenses/openzeppelin-MIT.txt": {
+      "sha256": "13cd784a6c31361f0e0c6aa3b410a1cb9a079868b7314c13e3eb8a75351746b9",
+      "bytes": 1090
+    },
+    "workbench/licenses/solc-js-MIT.txt": {
+      "sha256": "2cb1d5fde9ca1ebab1e23d5f29d2462dcc5532a9cb296cc9ddc8b5d1e3ce9bac",
+      "bytes": 1066
+    },
+    "workbench/NOTICE.txt": {
+      "sha256": "b9c4b26afc1618fed8d3ba141e417d20e20c5dfc89c3d21e47f94dcca40bd3de",
+      "bytes": 531
+    },
+    "index.html": {
+      "sha256": "0675cad668dac02e0dbe040d416b24dbf0d27021e4b1182d423c1c8930c6b523",
+      "bytes": 10991
+    }
+  }
+}
