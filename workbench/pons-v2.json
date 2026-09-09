@@ -1,0 +1,6972 @@
+{
+  "schemaVersion": 1,
+  "chainId": 4663,
+  "observedAt": "2026-09-09T06:13:39.789Z",
+  "block": "0x379f3b1",
+  "upstreamRepository": "https://github.com/ponsdotdev/ponsfamily",
+  "upstreamRevision": "8b9bf371030279133017b5c1b713823f5889c5d2",
+  "contracts": {
+    "factory": {
+      "address": "0x7eD598BcEf8bd9Edd8C97A195C6d13f40801EC7e",
+      "codeHash": "0x89a27da6f703e0a7cdd4f233e7cb57604ff75b164530962d3ff7cf8483a67d84",
+      "abi": [
+        {
+          "type": "constructor",
+          "inputs": [
+            {
+              "name": "initialOwner",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "poolManager_",
+              "type": "address",
+              "internalType": "contract IPoolManager"
+            },
+            {
+              "name": "positionManager_",
+              "type": "address",
+              "internalType": "contract IPositionManager"
+            },
+            {
+              "name": "permit2_",
+              "type": "address",
+              "internalType": "contract IAllowanceTransfer"
+            },
+            {
+              "name": "locker_",
+              "type": "address",
+              "internalType": "contract PonsV2LaunchLocker"
+            },
+            {
+              "name": "memeHook_",
+              "type": "address",
+              "internalType": "contract PonsV2MemeHook"
+            },
+            {
+              "name": "feeEscrow_",
+              "type": "address",
+              "internalType": "contract IPonsV2FeeEscrow"
+            },
+            {
+              "name": "buybackVault_",
+              "type": "address",
+              "internalType": "contract PonsV2BuybackVault"
+            },
+            {
+              "name": "initialLaunchFee",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "AlreadySet",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "CombinedFeeTooHigh",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "CoreLpFeeMustBeZero",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "CreatorTaxTooHigh",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "CurveFeeTooHigh",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "CurveNotQuotable",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "ExemptionListTooLong",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "FeeTransferFailed",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "GraduationExecutorNotSet",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "GraduationRescueTooEarly",
+          "type": "error",
+          "inputs": [
+            {
+              "name": "availableAt",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ]
+        },
+        {
+          "name": "GraduationSeedNotViable",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "GraduationStillViable",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "InexactTransfer",
+          "type": "error",
+          "inputs": [
+            {
+              "name": "token",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "expected",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "received",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ]
+        },
+        {
+          "name": "InvalidBasisPoints",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "InvalidGraduationThreshold",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "InvalidLaunchConfigId",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "InvalidPhantomQuote",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "InvalidSnipeTaxWindow",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "InvalidTickSpacing",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "InvalidTokenParams",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "LaunchConfigDisabled",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "LaunchDependenciesNotWired",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "LaunchDeployerNotSet",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "LaunchEconomicsMismatch",
+          "type": "error",
+          "inputs": [
+            {
+              "name": "expected",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            },
+            {
+              "name": "actual",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            }
+          ]
+        },
+        {
+          "name": "LaunchFeeNotPaid",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "NoPendingChange",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "NotBuybackController",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "NotCreatorFeeRecipient",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "NotLaunchForwarder",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "NotReadyToGraduate",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "NotWhitelisted",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "NothingToGraduate",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "OwnableInvalidOwner",
+          "type": "error",
+          "inputs": [
+            {
+              "name": "owner",
+              "type": "address",
+              "internalType": "address"
+            }
+          ]
+        },
+        {
+          "name": "OwnableUnauthorizedAccount",
+          "type": "error",
+          "inputs": [
+            {
+              "name": "account",
+              "type": "address",
+              "internalType": "address"
+            }
+          ]
+        },
+        {
+          "name": "OwnershipCannotBeRenounced",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "PairTokenDecimalsMismatch",
+          "type": "error",
+          "inputs": [
+            {
+              "name": "expected",
+              "type": "uint8",
+              "internalType": "uint8"
+            },
+            {
+              "name": "actual",
+              "type": "uint8",
+              "internalType": "uint8"
+            }
+          ]
+        },
+        {
+          "name": "PairTokenDecimalsUnavailable",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "PairTokenEconomicsInvalid",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "PairTokenNotApproved",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "PairTokenValidationFailed",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "ReentrancyGuardReentrantCall",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "SafeERC20FailedOperation",
+          "type": "error",
+          "inputs": [
+            {
+              "name": "token",
+              "type": "address",
+              "internalType": "address"
+            }
+          ]
+        },
+        {
+          "name": "SqrtPriceOutOfBounds",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "SupplyTooHigh",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "SupplyTooLow",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "TimelockExpired",
+          "type": "error",
+          "inputs": [
+            {
+              "name": "expiresAt",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ]
+        },
+        {
+          "name": "TimelockNotElapsed",
+          "type": "error",
+          "inputs": [
+            {
+              "name": "effectiveAt",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ]
+        },
+        {
+          "name": "TokenNotFound",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "UnsupportedPrice",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "WrongGraduationPhase",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "ZeroAddress",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "ZeroAmount",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "BuybackEnabledUpdated",
+          "type": "event",
+          "inputs": [
+            {
+              "name": "token",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            },
+            {
+              "name": "enabled",
+              "type": "bool",
+              "indexed": false,
+              "internalType": "bool"
+            },
+            {
+              "name": "controller",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            }
+          ],
+          "anonymous": false
+        },
+        {
+          "name": "CreatorFeeRecipientChangeCancelled",
+          "type": "event",
+          "inputs": [
+            {
+              "name": "token",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            },
+            {
+              "name": "proposedRecipient",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            }
+          ],
+          "anonymous": false
+        },
+        {
+          "name": "CreatorFeeRecipientChangeProposed",
+          "type": "event",
+          "inputs": [
+            {
+              "name": "token",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            },
+            {
+              "name": "currentRecipient",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            },
+            {
+              "name": "proposedRecipient",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            },
+            {
+              "name": "effectiveAt",
+              "type": "uint256",
+              "indexed": false,
+              "internalType": "uint256"
+            },
+            {
+              "name": "expiresAt",
+              "type": "uint256",
+              "indexed": false,
+              "internalType": "uint256"
+            }
+          ],
+          "anonymous": false
+        },
+        {
+          "name": "CreatorFeeRecipientUpdated",
+          "type": "event",
+          "inputs": [
+            {
+              "name": "token",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            },
+            {
+              "name": "previousRecipient",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            },
+            {
+              "name": "newRecipient",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            }
+          ],
+          "anonymous": false
+        },
+        {
+          "name": "GraduationExecutorSet",
+          "type": "event",
+          "inputs": [
+            {
+              "name": "executor",
+              "type": "address",
+              "indexed": false,
+              "internalType": "address"
+            }
+          ],
+          "anonymous": false
+        },
+        {
+          "name": "GraduationTokensPermanentlyLocked",
+          "type": "event",
+          "inputs": [
+            {
+              "name": "token",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            },
+            {
+              "name": "amount",
+              "type": "uint256",
+              "indexed": false,
+              "internalType": "uint256"
+            }
+          ],
+          "anonymous": false
+        },
+        {
+          "name": "LaunchConfigAdded",
+          "type": "event",
+          "inputs": [
+            {
+              "name": "id",
+              "type": "uint256",
+              "indexed": true,
+              "internalType": "uint256"
+            }
+          ],
+          "anonymous": false
+        },
+        {
+          "name": "LaunchConfigUpdated",
+          "type": "event",
+          "inputs": [
+            {
+              "name": "id",
+              "type": "uint256",
+              "indexed": true,
+              "internalType": "uint256"
+            }
+          ],
+          "anonymous": false
+        },
+        {
+          "name": "LaunchDeployerSet",
+          "type": "event",
+          "inputs": [
+            {
+              "name": "deployer",
+              "type": "address",
+              "indexed": false,
+              "internalType": "address"
+            }
+          ],
+          "anonymous": false
+        },
+        {
+          "name": "LaunchEnabledUpdated",
+          "type": "event",
+          "inputs": [
+            {
+              "name": "enabled",
+              "type": "bool",
+              "indexed": false,
+              "internalType": "bool"
+            }
+          ],
+          "anonymous": false
+        },
+        {
+          "name": "LaunchFeeUpdated",
+          "type": "event",
+          "inputs": [
+            {
+              "name": "launchFee",
+              "type": "uint256",
+              "indexed": false,
+              "internalType": "uint256"
+            }
+          ],
+          "anonymous": false
+        },
+        {
+          "name": "LaunchForceSwept",
+          "type": "event",
+          "inputs": [
+            {
+              "name": "token",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            }
+          ],
+          "anonymous": false
+        },
+        {
+          "name": "LaunchForwarderSet",
+          "type": "event",
+          "inputs": [
+            {
+              "name": "forwarder",
+              "type": "address",
+              "indexed": false,
+              "internalType": "address"
+            }
+          ],
+          "anonymous": false
+        },
+        {
+          "name": "LaunchGraduationRescued",
+          "type": "event",
+          "inputs": [
+            {
+              "name": "token",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            },
+            {
+              "name": "recipient",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            },
+            {
+              "name": "quoteAmount",
+              "type": "uint256",
+              "indexed": false,
+              "internalType": "uint256"
+            },
+            {
+              "name": "tokenAmount",
+              "type": "uint256",
+              "indexed": false,
+              "internalType": "uint256"
+            }
+          ],
+          "anonymous": false
+        },
+        {
+          "name": "LaunchSwept",
+          "type": "event",
+          "inputs": [
+            {
+              "name": "token",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            },
+            {
+              "name": "quoteOut",
+              "type": "uint256",
+              "indexed": false,
+              "internalType": "uint256"
+            },
+            {
+              "name": "tokenOut",
+              "type": "uint256",
+              "indexed": false,
+              "internalType": "uint256"
+            }
+          ],
+          "anonymous": false
+        },
+        {
+          "name": "MaxCreatorTaxUpdated",
+          "type": "event",
+          "inputs": [
+            {
+              "name": "bps",
+              "type": "uint256",
+              "indexed": false,
+              "internalType": "uint256"
+            }
+          ],
+          "anonymous": false
+        },
+        {
+          "name": "OwnershipTransferStarted",
+          "type": "event",
+          "inputs": [
+            {
+              "name": "previousOwner",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            },
+            {
+              "name": "newOwner",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            }
+          ],
+          "anonymous": false
+        },
+        {
+          "name": "OwnershipTransferred",
+          "type": "event",
+          "inputs": [
+            {
+              "name": "previousOwner",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            },
+            {
+              "name": "newOwner",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            }
+          ],
+          "anonymous": false
+        },
+        {
+          "name": "PairTokenApprovalUpdated",
+          "type": "event",
+          "inputs": [
+            {
+              "name": "pairToken",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            },
+            {
+              "name": "approved",
+              "type": "bool",
+              "indexed": false,
+              "internalType": "bool"
+            }
+          ],
+          "anonymous": false
+        },
+        {
+          "name": "PairTokenEconomicsUpdated",
+          "type": "event",
+          "inputs": [
+            {
+              "name": "pairToken",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            },
+            {
+              "name": "phantomQuote",
+              "type": "uint256",
+              "indexed": false,
+              "internalType": "uint256"
+            },
+            {
+              "name": "graduationThreshold",
+              "type": "uint256",
+              "indexed": false,
+              "internalType": "uint256"
+            },
+            {
+              "name": "decimals",
+              "type": "uint8",
+              "indexed": false,
+              "internalType": "uint8"
+            }
+          ],
+          "anonymous": false
+        },
+        {
+          "name": "PoolGraduated",
+          "type": "event",
+          "inputs": [
+            {
+              "name": "token",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            },
+            {
+              "name": "positionId",
+              "type": "uint256",
+              "indexed": false,
+              "internalType": "uint256"
+            },
+            {
+              "name": "tokenAmount",
+              "type": "uint256",
+              "indexed": false,
+              "internalType": "uint256"
+            },
+            {
+              "name": "pairTokenAmount",
+              "type": "uint256",
+              "indexed": false,
+              "internalType": "uint256"
+            }
+          ],
+          "anonymous": false
+        },
+        {
+          "name": "SnipeTaxSecondsUpdated",
+          "type": "event",
+          "inputs": [
+            {
+              "name": "secondsWindow",
+              "type": "uint256",
+              "indexed": false,
+              "internalType": "uint256"
+            }
+          ],
+          "anonymous": false
+        },
+        {
+          "name": "SnipeTaxStartBpsUpdated",
+          "type": "event",
+          "inputs": [
+            {
+              "name": "bps",
+              "type": "uint256",
+              "indexed": false,
+              "internalType": "uint256"
+            }
+          ],
+          "anonymous": false
+        },
+        {
+          "name": "TokenLaunched",
+          "type": "event",
+          "inputs": [
+            {
+              "name": "token",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            },
+            {
+              "name": "curve",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            },
+            {
+              "name": "deployer",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            },
+            {
+              "name": "pairToken",
+              "type": "address",
+              "indexed": false,
+              "internalType": "address"
+            },
+            {
+              "name": "launchConfigId",
+              "type": "uint256",
+              "indexed": false,
+              "internalType": "uint256"
+            },
+            {
+              "name": "graduationThreshold",
+              "type": "uint256",
+              "indexed": false,
+              "internalType": "uint256"
+            }
+          ],
+          "anonymous": false
+        },
+        {
+          "name": "WhitelistedLauncherUpdated",
+          "type": "event",
+          "inputs": [
+            {
+              "name": "launcher",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            },
+            {
+              "name": "enabled",
+              "type": "bool",
+              "indexed": false,
+              "internalType": "bool"
+            }
+          ],
+          "anonymous": false
+        },
+        {
+          "name": "CREATOR_FEE_RECIPIENT_EXECUTION_WINDOW",
+          "type": "function",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "CREATOR_FEE_RECIPIENT_TIMELOCK",
+          "type": "function",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "GRADUATION_RESCUE_DELAY",
+          "type": "function",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "acceptOwnership",
+          "type": "function",
+          "inputs": [],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "addLaunchConfig",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "config",
+              "type": "tuple",
+              "components": [
+                {
+                  "name": "supply",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "curveFeeBps",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "phantomQuote",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "graduationThreshold",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "poolFee",
+                  "type": "uint24",
+                  "internalType": "uint24"
+                },
+                {
+                  "name": "tickSpacing",
+                  "type": "int24",
+                  "internalType": "int24"
+                },
+                {
+                  "name": "enabled",
+                  "type": "bool",
+                  "internalType": "bool"
+                }
+              ],
+              "internalType": "struct PonsV2LaunchFactory.LaunchConfig"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "id",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "approvedPairTokens",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "pairToken",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "approved",
+              "type": "bool",
+              "internalType": "bool"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "buybackVault",
+          "type": "function",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "contract PonsV2BuybackVault"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "canLaunch",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "launcher",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "bool",
+              "internalType": "bool"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "cancelCreatorFeeRecipientChange",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "token",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "createGraduatedPool",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "token",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "positionId",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "executeCreatorFeeRecipientChange",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "token",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "feeEscrow",
+          "type": "function",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "contract IPonsV2FeeEscrow"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "forceSweptGraduation",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "token",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "getLaunchConfig",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "id",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "tuple",
+              "components": [
+                {
+                  "name": "supply",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "curveFeeBps",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "phantomQuote",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "graduationThreshold",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "poolFee",
+                  "type": "uint24",
+                  "internalType": "uint24"
+                },
+                {
+                  "name": "tickSpacing",
+                  "type": "int24",
+                  "internalType": "int24"
+                },
+                {
+                  "name": "enabled",
+                  "type": "bool",
+                  "internalType": "bool"
+                }
+              ],
+              "internalType": "struct PonsV2LaunchFactory.LaunchConfig"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "getLaunchFeePolicy",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "token",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "tuple",
+              "components": [
+                {
+                  "name": "protocolFeeRecipient",
+                  "type": "address",
+                  "internalType": "address"
+                },
+                {
+                  "name": "protocolFeeShareBps",
+                  "type": "uint16",
+                  "internalType": "uint16"
+                },
+                {
+                  "name": "buybackBurnBps",
+                  "type": "uint16",
+                  "internalType": "uint16"
+                },
+                {
+                  "name": "hookFeeBps",
+                  "type": "uint16",
+                  "internalType": "uint16"
+                },
+                {
+                  "name": "maxInternalPriceImpactBps",
+                  "type": "uint16",
+                  "internalType": "uint16"
+                }
+              ],
+              "internalType": "struct FeePolicySnapshot"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "getLaunchedToken",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "token",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "tuple",
+              "components": [
+                {
+                  "name": "token",
+                  "type": "address",
+                  "internalType": "address"
+                },
+                {
+                  "name": "curve",
+                  "type": "address",
+                  "internalType": "address"
+                },
+                {
+                  "name": "deployer",
+                  "type": "address",
+                  "internalType": "address"
+                },
+                {
+                  "name": "creatorFeeRecipient",
+                  "type": "address",
+                  "internalType": "address"
+                },
+                {
+                  "name": "pairToken",
+                  "type": "address",
+                  "internalType": "address"
+                },
+                {
+                  "name": "graduationThreshold",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "poolFee",
+                  "type": "uint24",
+                  "internalType": "uint24"
+                },
+                {
+                  "name": "tickSpacing",
+                  "type": "int24",
+                  "internalType": "int24"
+                },
+                {
+                  "name": "creatorTaxBps",
+                  "type": "uint16",
+                  "internalType": "uint16"
+                },
+                {
+                  "name": "buybackEnabled",
+                  "type": "bool",
+                  "internalType": "bool"
+                },
+                {
+                  "name": "phase",
+                  "type": "uint8",
+                  "internalType": "enum GraduationPhase"
+                },
+                {
+                  "name": "sweptQuote",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "sweptTokens",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "sweptAt",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "exists",
+                  "type": "bool",
+                  "internalType": "bool"
+                }
+              ],
+              "internalType": "struct IPonsV2LaunchFactory.LaunchedToken"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "graduate",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "token",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "graduationExecutor",
+          "type": "function",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "contract PonsV2GraduationExecutor"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "graduationGuard",
+          "type": "function",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "contract PonsV2GraduationGuard"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "launchConfigCount",
+          "type": "function",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "launchDeployer",
+          "type": "function",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "contract PonsV2LaunchDeployer"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "launchEnabled",
+          "type": "function",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "bool",
+              "internalType": "bool"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "launchFee",
+          "type": "function",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "launchForwarder",
+          "type": "function",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "launchToken",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "params",
+              "type": "tuple",
+              "components": [
+                {
+                  "name": "name",
+                  "type": "string",
+                  "internalType": "string"
+                },
+                {
+                  "name": "symbol",
+                  "type": "string",
+                  "internalType": "string"
+                },
+                {
+                  "name": "logo",
+                  "type": "string",
+                  "internalType": "string"
+                },
+                {
+                  "name": "description",
+                  "type": "string",
+                  "internalType": "string"
+                },
+                {
+                  "name": "socials",
+                  "type": "tuple",
+                  "components": [
+                    {
+                      "name": "twitter",
+                      "type": "string",
+                      "internalType": "string"
+                    },
+                    {
+                      "name": "telegram",
+                      "type": "string",
+                      "internalType": "string"
+                    },
+                    {
+                      "name": "discord",
+                      "type": "string",
+                      "internalType": "string"
+                    },
+                    {
+                      "name": "website",
+                      "type": "string",
+                      "internalType": "string"
+                    },
+                    {
+                      "name": "farcaster",
+                      "type": "string",
+                      "internalType": "string"
+                    }
+                  ],
+                  "internalType": "struct PonsV2LauncherToken.Socials"
+                },
+                {
+                  "name": "creatorFeeRecipient",
+                  "type": "address",
+                  "internalType": "address"
+                },
+                {
+                  "name": "creatorTaxBps",
+                  "type": "uint16",
+                  "internalType": "uint16"
+                },
+                {
+                  "name": "buybackEnabled",
+                  "type": "bool",
+                  "internalType": "bool"
+                },
+                {
+                  "name": "expectedEconomics",
+                  "type": "bytes32",
+                  "internalType": "bytes32"
+                },
+                {
+                  "name": "salt",
+                  "type": "bytes32",
+                  "internalType": "bytes32"
+                }
+              ],
+              "internalType": "struct PonsV2LaunchFactory.TokenParams"
+            },
+            {
+              "name": "launchConfigId",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "pairToken",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "snipeTaxExemptions",
+              "type": "address[]",
+              "internalType": "address[]"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "token",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "curve",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "stateMutability": "payable"
+        },
+        {
+          "name": "launchToken",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "params",
+              "type": "tuple",
+              "components": [
+                {
+                  "name": "name",
+                  "type": "string",
+                  "internalType": "string"
+                },
+                {
+                  "name": "symbol",
+                  "type": "string",
+                  "internalType": "string"
+                },
+                {
+                  "name": "logo",
+                  "type": "string",
+                  "internalType": "string"
+                },
+                {
+                  "name": "description",
+                  "type": "string",
+                  "internalType": "string"
+                },
+                {
+                  "name": "socials",
+                  "type": "tuple",
+                  "components": [
+                    {
+                      "name": "twitter",
+                      "type": "string",
+                      "internalType": "string"
+                    },
+                    {
+                      "name": "telegram",
+                      "type": "string",
+                      "internalType": "string"
+                    },
+                    {
+                      "name": "discord",
+                      "type": "string",
+                      "internalType": "string"
+                    },
+                    {
+                      "name": "website",
+                      "type": "string",
+                      "internalType": "string"
+                    },
+                    {
+                      "name": "farcaster",
+                      "type": "string",
+                      "internalType": "string"
+                    }
+                  ],
+                  "internalType": "struct PonsV2LauncherToken.Socials"
+                },
+                {
+                  "name": "creatorFeeRecipient",
+                  "type": "address",
+                  "internalType": "address"
+                },
+                {
+                  "name": "creatorTaxBps",
+                  "type": "uint16",
+                  "internalType": "uint16"
+                },
+                {
+                  "name": "buybackEnabled",
+                  "type": "bool",
+                  "internalType": "bool"
+                },
+                {
+                  "name": "expectedEconomics",
+                  "type": "bytes32",
+                  "internalType": "bytes32"
+                },
+                {
+                  "name": "salt",
+                  "type": "bytes32",
+                  "internalType": "bytes32"
+                }
+              ],
+              "internalType": "struct PonsV2LaunchFactory.TokenParams"
+            },
+            {
+              "name": "launchConfigId",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "pairToken",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "token",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "curve",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "stateMutability": "payable"
+        },
+        {
+          "name": "launchTokenFor",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "params",
+              "type": "tuple",
+              "components": [
+                {
+                  "name": "name",
+                  "type": "string",
+                  "internalType": "string"
+                },
+                {
+                  "name": "symbol",
+                  "type": "string",
+                  "internalType": "string"
+                },
+                {
+                  "name": "logo",
+                  "type": "string",
+                  "internalType": "string"
+                },
+                {
+                  "name": "description",
+                  "type": "string",
+                  "internalType": "string"
+                },
+                {
+                  "name": "socials",
+                  "type": "tuple",
+                  "components": [
+                    {
+                      "name": "twitter",
+                      "type": "string",
+                      "internalType": "string"
+                    },
+                    {
+                      "name": "telegram",
+                      "type": "string",
+                      "internalType": "string"
+                    },
+                    {
+                      "name": "discord",
+                      "type": "string",
+                      "internalType": "string"
+                    },
+                    {
+                      "name": "website",
+                      "type": "string",
+                      "internalType": "string"
+                    },
+                    {
+                      "name": "farcaster",
+                      "type": "string",
+                      "internalType": "string"
+                    }
+                  ],
+                  "internalType": "struct PonsV2LauncherToken.Socials"
+                },
+                {
+                  "name": "creatorFeeRecipient",
+                  "type": "address",
+                  "internalType": "address"
+                },
+                {
+                  "name": "creatorTaxBps",
+                  "type": "uint16",
+                  "internalType": "uint16"
+                },
+                {
+                  "name": "buybackEnabled",
+                  "type": "bool",
+                  "internalType": "bool"
+                },
+                {
+                  "name": "expectedEconomics",
+                  "type": "bytes32",
+                  "internalType": "bytes32"
+                },
+                {
+                  "name": "salt",
+                  "type": "bytes32",
+                  "internalType": "bytes32"
+                }
+              ],
+              "internalType": "struct PonsV2LaunchFactory.TokenParams"
+            },
+            {
+              "name": "launchConfigId",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "pairToken",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "originalDeployer",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "snipeTaxExemptions",
+              "type": "address[]",
+              "internalType": "address[]"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "token",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "curve",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "stateMutability": "payable"
+        },
+        {
+          "name": "locker",
+          "type": "function",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "contract PonsV2LaunchLocker"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "maxCreatorTaxBps",
+          "type": "function",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "memeHook",
+          "type": "function",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "contract PonsV2MemeHook"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "owner",
+          "type": "function",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "pairTokenEconomics",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "pairToken",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "phantomQuote",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "graduationThreshold",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "decimals",
+              "type": "uint8",
+              "internalType": "uint8"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "pendingCreatorFeeRecipient",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "token",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "newRecipient",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "effectiveAt",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "expiresAt",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "pendingOwner",
+          "type": "function",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "permit2",
+          "type": "function",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "contract IAllowanceTransfer"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "poolManager",
+          "type": "function",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "contract IPoolManager"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "positionManager",
+          "type": "function",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "contract IPositionManager"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "previewLaunchEconomics",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "launchConfigId",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "pairToken",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "renounceOwnership",
+          "type": "function",
+          "inputs": [],
+          "outputs": [],
+          "stateMutability": "pure"
+        },
+        {
+          "name": "rescueCurveFees",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "token",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "rescueSweptGraduation",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "token",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "recipient",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "setBuybackEnabled",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "token",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "enabled",
+              "type": "bool",
+              "internalType": "bool"
+            }
+          ],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "setCreatorFeeRecipient",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "token",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "newRecipient",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "setGraduationExecutor",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "executor",
+              "type": "address",
+              "internalType": "contract PonsV2GraduationExecutor"
+            }
+          ],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "setLaunchDeployer",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "deployer",
+              "type": "address",
+              "internalType": "contract PonsV2LaunchDeployer"
+            }
+          ],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "setLaunchEnabled",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "enabled",
+              "type": "bool",
+              "internalType": "bool"
+            }
+          ],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "setLaunchFee",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "newLaunchFee",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "setLaunchForwarder",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "forwarder",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "setMaxCreatorTaxBps",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "bps",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "setPairTokenApproved",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "pairToken",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "approved",
+              "type": "bool",
+              "internalType": "bool"
+            }
+          ],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "setPairTokenEconomics",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "pairToken",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "phantomQuote",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "graduationThreshold",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "expectedDecimals",
+              "type": "uint8",
+              "internalType": "uint8"
+            }
+          ],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "setSnipeTaxSeconds",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "secondsWindow",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "setSnipeTaxStartBps",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "bps",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "setWhitelistedLauncher",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "launcher",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "enabled",
+              "type": "bool",
+              "internalType": "bool"
+            }
+          ],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "snipeTaxSeconds",
+          "type": "function",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "snipeTaxStartBps",
+          "type": "function",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "transferCreatorFeeRecipient",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "token",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "newRecipient",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "transferOwnership",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "newOwner",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "updateLaunchConfig",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "id",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "config",
+              "type": "tuple",
+              "components": [
+                {
+                  "name": "supply",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "curveFeeBps",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "phantomQuote",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "graduationThreshold",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "poolFee",
+                  "type": "uint24",
+                  "internalType": "uint24"
+                },
+                {
+                  "name": "tickSpacing",
+                  "type": "int24",
+                  "internalType": "int24"
+                },
+                {
+                  "name": "enabled",
+                  "type": "bool",
+                  "internalType": "bool"
+                }
+              ],
+              "internalType": "struct PonsV2LaunchFactory.LaunchConfig"
+            }
+          ],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "whitelistedLaunchers",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "launcher",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "enabled",
+              "type": "bool",
+              "internalType": "bool"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "type": "receive",
+          "stateMutability": "payable"
+        }
+      ],
+      "source": "https://sourcify.dev/server/v2/contract/4663/0x7eD598BcEf8bd9Edd8C97A195C6d13f40801EC7e?fields=all",
+      "verification": "Sourcify exact_match, full deployed bytes checked against live RPC",
+      "verifiedAt": "2026-08-04T17:40:43Z",
+      "compiler": "0.8.35+commit.47b9dedd"
+    },
+    "router": {
+      "address": "0xe33E9E479dF8802cb0866d5d05258bEc4cF62948",
+      "codeHash": "0xed9065184519eaa24a22c2556403d5d8bbb230ff94dbc5c414cf5028e20e52e7",
+      "abi": [
+        {
+          "type": "constructor",
+          "inputs": [
+            {
+              "name": "factory_",
+              "type": "address",
+              "internalType": "contract PonsV2LaunchFactory"
+            },
+            {
+              "name": "owner_",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "NativeValueMismatch",
+          "type": "error",
+          "inputs": [
+            {
+              "name": "sent",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "expected",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ]
+        },
+        {
+          "name": "NotApprovedLauncher",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "OwnableInvalidOwner",
+          "type": "error",
+          "inputs": [
+            {
+              "name": "owner",
+              "type": "address",
+              "internalType": "address"
+            }
+          ]
+        },
+        {
+          "name": "OwnableUnauthorizedAccount",
+          "type": "error",
+          "inputs": [
+            {
+              "name": "account",
+              "type": "address",
+              "internalType": "address"
+            }
+          ]
+        },
+        {
+          "name": "ReentrancyGuardReentrantCall",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "RefundFailed",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "SafeERC20FailedOperation",
+          "type": "error",
+          "inputs": [
+            {
+              "name": "token",
+              "type": "address",
+              "internalType": "address"
+            }
+          ]
+        },
+        {
+          "name": "ZeroAddress",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "ZeroAmount",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "Launched",
+          "type": "event",
+          "inputs": [
+            {
+              "name": "token",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            },
+            {
+              "name": "curve",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            },
+            {
+              "name": "recipient",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            },
+            {
+              "name": "launcher",
+              "type": "address",
+              "indexed": false,
+              "internalType": "address"
+            },
+            {
+              "name": "quoteSpent",
+              "type": "uint256",
+              "indexed": false,
+              "internalType": "uint256"
+            },
+            {
+              "name": "tokensReceived",
+              "type": "uint256",
+              "indexed": false,
+              "internalType": "uint256"
+            }
+          ],
+          "anonymous": false
+        },
+        {
+          "name": "OwnershipTransferStarted",
+          "type": "event",
+          "inputs": [
+            {
+              "name": "previousOwner",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            },
+            {
+              "name": "newOwner",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            }
+          ],
+          "anonymous": false
+        },
+        {
+          "name": "OwnershipTransferred",
+          "type": "event",
+          "inputs": [
+            {
+              "name": "previousOwner",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            },
+            {
+              "name": "newOwner",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            }
+          ],
+          "anonymous": false
+        },
+        {
+          "name": "Rescued",
+          "type": "event",
+          "inputs": [
+            {
+              "name": "asset",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            },
+            {
+              "name": "recipient",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            },
+            {
+              "name": "amount",
+              "type": "uint256",
+              "indexed": false,
+              "internalType": "uint256"
+            }
+          ],
+          "anonymous": false
+        },
+        {
+          "name": "acceptOwnership",
+          "type": "function",
+          "inputs": [],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "factory",
+          "type": "function",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "contract PonsV2LaunchFactory"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "launchAndBuy",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "params",
+              "type": "tuple",
+              "components": [
+                {
+                  "name": "name",
+                  "type": "string",
+                  "internalType": "string"
+                },
+                {
+                  "name": "symbol",
+                  "type": "string",
+                  "internalType": "string"
+                },
+                {
+                  "name": "logo",
+                  "type": "string",
+                  "internalType": "string"
+                },
+                {
+                  "name": "description",
+                  "type": "string",
+                  "internalType": "string"
+                },
+                {
+                  "name": "socials",
+                  "type": "tuple",
+                  "components": [
+                    {
+                      "name": "twitter",
+                      "type": "string",
+                      "internalType": "string"
+                    },
+                    {
+                      "name": "telegram",
+                      "type": "string",
+                      "internalType": "string"
+                    },
+                    {
+                      "name": "discord",
+                      "type": "string",
+                      "internalType": "string"
+                    },
+                    {
+                      "name": "website",
+                      "type": "string",
+                      "internalType": "string"
+                    },
+                    {
+                      "name": "farcaster",
+                      "type": "string",
+                      "internalType": "string"
+                    }
+                  ],
+                  "internalType": "struct PonsV2LauncherToken.Socials"
+                },
+                {
+                  "name": "creatorFeeRecipient",
+                  "type": "address",
+                  "internalType": "address"
+                },
+                {
+                  "name": "creatorTaxBps",
+                  "type": "uint16",
+                  "internalType": "uint16"
+                },
+                {
+                  "name": "buybackEnabled",
+                  "type": "bool",
+                  "internalType": "bool"
+                },
+                {
+                  "name": "expectedEconomics",
+                  "type": "bytes32",
+                  "internalType": "bytes32"
+                },
+                {
+                  "name": "salt",
+                  "type": "bytes32",
+                  "internalType": "bytes32"
+                }
+              ],
+              "internalType": "struct PonsV2LaunchFactory.TokenParams"
+            },
+            {
+              "name": "launchConfigId",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "pairToken",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "quoteIn",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "minTokensOut",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "recipient",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "snipeTaxExemptions",
+              "type": "address[]",
+              "internalType": "address[]"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "token",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "curve",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "tokensOut",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "stateMutability": "payable"
+        },
+        {
+          "name": "owner",
+          "type": "function",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "pendingOwner",
+          "type": "function",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "renounceOwnership",
+          "type": "function",
+          "inputs": [],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "rescue",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "asset",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "recipient",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "transferOwnership",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "newOwner",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "type": "receive",
+          "stateMutability": "payable"
+        }
+      ],
+      "source": "https://sourcify.dev/server/v2/contract/4663/0xe33E9E479dF8802cb0866d5d05258bEc4cF62948?fields=all",
+      "verification": "Sourcify exact_match, full deployed bytes checked against live RPC",
+      "verifiedAt": "2026-08-04T17:41:33Z",
+      "compiler": "0.8.35+commit.47b9dedd"
+    },
+    "launchDeployer": {
+      "address": "0x3711ceA4feaDE896C913C68F01Eda97Cb06D1A42",
+      "codeHash": "0xeade22566c766377f6adfb99534f2772251efad9568642c0704a7051418e624c",
+      "abi": [
+        {
+          "type": "constructor",
+          "inputs": [
+            {
+              "name": "factory_",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "Create2EmptyBytecode",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "FailedDeployment",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "InsufficientBalance",
+          "type": "error",
+          "inputs": [
+            {
+              "name": "balance",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "needed",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ]
+        },
+        {
+          "name": "MetadataTooLong",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "NotFactory",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "deployLaunch",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "params",
+              "type": "tuple",
+              "components": [
+                {
+                  "name": "pairToken",
+                  "type": "address",
+                  "internalType": "address"
+                },
+                {
+                  "name": "creatorFeeRecipient",
+                  "type": "address",
+                  "internalType": "address"
+                },
+                {
+                  "name": "originalDeployer",
+                  "type": "address",
+                  "internalType": "address"
+                },
+                {
+                  "name": "feePolicy",
+                  "type": "address",
+                  "internalType": "contract IPonsV2FeePolicy"
+                },
+                {
+                  "name": "policy",
+                  "type": "tuple",
+                  "components": [
+                    {
+                      "name": "protocolFeeRecipient",
+                      "type": "address",
+                      "internalType": "address"
+                    },
+                    {
+                      "name": "protocolFeeShareBps",
+                      "type": "uint16",
+                      "internalType": "uint16"
+                    },
+                    {
+                      "name": "buybackBurnBps",
+                      "type": "uint16",
+                      "internalType": "uint16"
+                    },
+                    {
+                      "name": "hookFeeBps",
+                      "type": "uint16",
+                      "internalType": "uint16"
+                    },
+                    {
+                      "name": "maxInternalPriceImpactBps",
+                      "type": "uint16",
+                      "internalType": "uint16"
+                    }
+                  ],
+                  "internalType": "struct FeePolicySnapshot"
+                },
+                {
+                  "name": "feeEscrow",
+                  "type": "address",
+                  "internalType": "contract IPonsV2FeeEscrow"
+                },
+                {
+                  "name": "buybackVault",
+                  "type": "address",
+                  "internalType": "contract PonsV2BuybackVault"
+                },
+                {
+                  "name": "phantomQuote",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "curveFeeBps",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "creatorTaxBps",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "buybackEnabled",
+                  "type": "bool",
+                  "internalType": "bool"
+                },
+                {
+                  "name": "graduationThreshold",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "supply",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "salt",
+                  "type": "bytes32",
+                  "internalType": "bytes32"
+                },
+                {
+                  "name": "name",
+                  "type": "string",
+                  "internalType": "string"
+                },
+                {
+                  "name": "symbol",
+                  "type": "string",
+                  "internalType": "string"
+                },
+                {
+                  "name": "logo",
+                  "type": "string",
+                  "internalType": "string"
+                },
+                {
+                  "name": "description",
+                  "type": "string",
+                  "internalType": "string"
+                },
+                {
+                  "name": "socials",
+                  "type": "tuple",
+                  "components": [
+                    {
+                      "name": "twitter",
+                      "type": "string",
+                      "internalType": "string"
+                    },
+                    {
+                      "name": "telegram",
+                      "type": "string",
+                      "internalType": "string"
+                    },
+                    {
+                      "name": "discord",
+                      "type": "string",
+                      "internalType": "string"
+                    },
+                    {
+                      "name": "website",
+                      "type": "string",
+                      "internalType": "string"
+                    },
+                    {
+                      "name": "farcaster",
+                      "type": "string",
+                      "internalType": "string"
+                    }
+                  ],
+                  "internalType": "struct PonsV2LauncherToken.Socials"
+                }
+              ],
+              "internalType": "struct LaunchDeployment"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "token",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "curve",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "factory",
+          "type": "function",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "predictLaunchAddresses",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "params",
+              "type": "tuple",
+              "components": [
+                {
+                  "name": "pairToken",
+                  "type": "address",
+                  "internalType": "address"
+                },
+                {
+                  "name": "creatorFeeRecipient",
+                  "type": "address",
+                  "internalType": "address"
+                },
+                {
+                  "name": "originalDeployer",
+                  "type": "address",
+                  "internalType": "address"
+                },
+                {
+                  "name": "feePolicy",
+                  "type": "address",
+                  "internalType": "contract IPonsV2FeePolicy"
+                },
+                {
+                  "name": "policy",
+                  "type": "tuple",
+                  "components": [
+                    {
+                      "name": "protocolFeeRecipient",
+                      "type": "address",
+                      "internalType": "address"
+                    },
+                    {
+                      "name": "protocolFeeShareBps",
+                      "type": "uint16",
+                      "internalType": "uint16"
+                    },
+                    {
+                      "name": "buybackBurnBps",
+                      "type": "uint16",
+                      "internalType": "uint16"
+                    },
+                    {
+                      "name": "hookFeeBps",
+                      "type": "uint16",
+                      "internalType": "uint16"
+                    },
+                    {
+                      "name": "maxInternalPriceImpactBps",
+                      "type": "uint16",
+                      "internalType": "uint16"
+                    }
+                  ],
+                  "internalType": "struct FeePolicySnapshot"
+                },
+                {
+                  "name": "feeEscrow",
+                  "type": "address",
+                  "internalType": "contract IPonsV2FeeEscrow"
+                },
+                {
+                  "name": "buybackVault",
+                  "type": "address",
+                  "internalType": "contract PonsV2BuybackVault"
+                },
+                {
+                  "name": "phantomQuote",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "curveFeeBps",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "creatorTaxBps",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "buybackEnabled",
+                  "type": "bool",
+                  "internalType": "bool"
+                },
+                {
+                  "name": "graduationThreshold",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "supply",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "salt",
+                  "type": "bytes32",
+                  "internalType": "bytes32"
+                },
+                {
+                  "name": "name",
+                  "type": "string",
+                  "internalType": "string"
+                },
+                {
+                  "name": "symbol",
+                  "type": "string",
+                  "internalType": "string"
+                },
+                {
+                  "name": "logo",
+                  "type": "string",
+                  "internalType": "string"
+                },
+                {
+                  "name": "description",
+                  "type": "string",
+                  "internalType": "string"
+                },
+                {
+                  "name": "socials",
+                  "type": "tuple",
+                  "components": [
+                    {
+                      "name": "twitter",
+                      "type": "string",
+                      "internalType": "string"
+                    },
+                    {
+                      "name": "telegram",
+                      "type": "string",
+                      "internalType": "string"
+                    },
+                    {
+                      "name": "discord",
+                      "type": "string",
+                      "internalType": "string"
+                    },
+                    {
+                      "name": "website",
+                      "type": "string",
+                      "internalType": "string"
+                    },
+                    {
+                      "name": "farcaster",
+                      "type": "string",
+                      "internalType": "string"
+                    }
+                  ],
+                  "internalType": "struct PonsV2LauncherToken.Socials"
+                }
+              ],
+              "internalType": "struct LaunchDeployment"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "token",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "curve",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "stateMutability": "view"
+        }
+      ],
+      "source": "https://sourcify.dev/server/v2/contract/4663/0x3711ceA4feaDE896C913C68F01Eda97Cb06D1A42?fields=all",
+      "verification": "Sourcify exact_match, full deployed bytes checked against live RPC",
+      "verifiedAt": "2026-08-04T17:41:17Z",
+      "compiler": "0.8.35+commit.47b9dedd"
+    },
+    "memeHook": {
+      "address": "0xE5e702641Ea86F4ae6cC3cDaeD2B886f976Be044",
+      "codeHash": "0xc21b1e6c1b45403e81a581f22ed6d9c747997af1cfdac1b1dc9f4b1d346a10db",
+      "abi": [
+        {
+          "type": "constructor",
+          "inputs": [
+            {
+              "name": "poolManager_",
+              "type": "address",
+              "internalType": "contract IPoolManager"
+            },
+            {
+              "name": "feeEscrow_",
+              "type": "address",
+              "internalType": "contract IPonsV2FeeEscrow"
+            },
+            {
+              "name": "protocolFeeRecipient_",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "initialOwner_",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "AlreadyRegistered",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "AlreadySet",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "HookNotImplemented",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "InexactQuoteTransfer",
+          "type": "error",
+          "inputs": [
+            {
+              "name": "token",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "expected",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "received",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ]
+        },
+        {
+          "name": "InternalSwapRequiresOperator",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "InvalidBps",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "InvalidPoolKey",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "MinimumOutputRequired",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "NotFactory",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "NotFeeSweepOperator",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "NotPoolManager",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "NothingToRescue",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "OwnableInvalidOwner",
+          "type": "error",
+          "inputs": [
+            {
+              "name": "owner",
+              "type": "address",
+              "internalType": "address"
+            }
+          ]
+        },
+        {
+          "name": "OwnableUnauthorizedAccount",
+          "type": "error",
+          "inputs": [
+            {
+              "name": "account",
+              "type": "address",
+              "internalType": "address"
+            }
+          ]
+        },
+        {
+          "name": "OwnershipCannotBeRenounced",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "ReentrancyGuardReentrantCall",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "SafeCastOverflowedIntToUint",
+          "type": "error",
+          "inputs": [
+            {
+              "name": "value",
+              "type": "int256",
+              "internalType": "int256"
+            }
+          ]
+        },
+        {
+          "name": "SafeCastOverflowedUintToInt",
+          "type": "error",
+          "inputs": [
+            {
+              "name": "value",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ]
+        },
+        {
+          "name": "SafeERC20FailedOperation",
+          "type": "error",
+          "inputs": [
+            {
+              "name": "token",
+              "type": "address",
+              "internalType": "address"
+            }
+          ]
+        },
+        {
+          "name": "SlippageExceeded",
+          "type": "error",
+          "inputs": [
+            {
+              "name": "actual",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "minimum",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ]
+        },
+        {
+          "name": "UnknownPool",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "ZeroAddress",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "BuybackBurnBpsUpdated",
+          "type": "event",
+          "inputs": [
+            {
+              "name": "bps",
+              "type": "uint256",
+              "indexed": false,
+              "internalType": "uint256"
+            }
+          ],
+          "anonymous": false
+        },
+        {
+          "name": "BuybackEnabledUpdated",
+          "type": "event",
+          "inputs": [
+            {
+              "name": "poolId",
+              "type": "bytes32",
+              "indexed": true,
+              "internalType": "PoolId"
+            },
+            {
+              "name": "enabled",
+              "type": "bool",
+              "indexed": false,
+              "internalType": "bool"
+            }
+          ],
+          "anonymous": false
+        },
+        {
+          "name": "BuybackVaultSet",
+          "type": "event",
+          "inputs": [
+            {
+              "name": "vault",
+              "type": "address",
+              "indexed": false,
+              "internalType": "address"
+            }
+          ],
+          "anonymous": false
+        },
+        {
+          "name": "CreatorFeeRecipientUpdated",
+          "type": "event",
+          "inputs": [
+            {
+              "name": "poolId",
+              "type": "bytes32",
+              "indexed": true,
+              "internalType": "PoolId"
+            },
+            {
+              "name": "previousRecipient",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            },
+            {
+              "name": "newRecipient",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            }
+          ],
+          "anonymous": false
+        },
+        {
+          "name": "FactorySet",
+          "type": "event",
+          "inputs": [
+            {
+              "name": "factory",
+              "type": "address",
+              "indexed": false,
+              "internalType": "address"
+            }
+          ],
+          "anonymous": false
+        },
+        {
+          "name": "FeeSweepOperatorUpdated",
+          "type": "event",
+          "inputs": [
+            {
+              "name": "operator",
+              "type": "address",
+              "indexed": false,
+              "internalType": "address"
+            }
+          ],
+          "anonymous": false
+        },
+        {
+          "name": "HookFeeBpsUpdated",
+          "type": "event",
+          "inputs": [
+            {
+              "name": "bps",
+              "type": "uint256",
+              "indexed": false,
+              "internalType": "uint256"
+            }
+          ],
+          "anonymous": false
+        },
+        {
+          "name": "HookFeeCollected",
+          "type": "event",
+          "inputs": [
+            {
+              "name": "poolId",
+              "type": "bytes32",
+              "indexed": true,
+              "internalType": "PoolId"
+            },
+            {
+              "name": "currency",
+              "type": "address",
+              "indexed": false,
+              "internalType": "address"
+            },
+            {
+              "name": "feeAmount",
+              "type": "uint256",
+              "indexed": false,
+              "internalType": "uint256"
+            },
+            {
+              "name": "taxAmount",
+              "type": "uint256",
+              "indexed": false,
+              "internalType": "uint256"
+            }
+          ],
+          "anonymous": false
+        },
+        {
+          "name": "MaxInternalPriceImpactUpdated",
+          "type": "event",
+          "inputs": [
+            {
+              "name": "bps",
+              "type": "uint256",
+              "indexed": false,
+              "internalType": "uint256"
+            }
+          ],
+          "anonymous": false
+        },
+        {
+          "name": "OwnershipTransferStarted",
+          "type": "event",
+          "inputs": [
+            {
+              "name": "previousOwner",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            },
+            {
+              "name": "newOwner",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            }
+          ],
+          "anonymous": false
+        },
+        {
+          "name": "OwnershipTransferred",
+          "type": "event",
+          "inputs": [
+            {
+              "name": "previousOwner",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            },
+            {
+              "name": "newOwner",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            }
+          ],
+          "anonymous": false
+        },
+        {
+          "name": "PoolBuybackSkipped",
+          "type": "event",
+          "inputs": [
+            {
+              "name": "poolId",
+              "type": "bytes32",
+              "indexed": true,
+              "internalType": "PoolId"
+            },
+            {
+              "name": "foldedBackQuote",
+              "type": "uint256",
+              "indexed": false,
+              "internalType": "uint256"
+            }
+          ],
+          "anonymous": false
+        },
+        {
+          "name": "PoolConversionSkipped",
+          "type": "event",
+          "inputs": [
+            {
+              "name": "poolId",
+              "type": "bytes32",
+              "indexed": true,
+              "internalType": "PoolId"
+            },
+            {
+              "name": "retainedMemecoin",
+              "type": "uint256",
+              "indexed": false,
+              "internalType": "uint256"
+            }
+          ],
+          "anonymous": false
+        },
+        {
+          "name": "PoolFeesRescued",
+          "type": "event",
+          "inputs": [
+            {
+              "name": "poolId",
+              "type": "bytes32",
+              "indexed": true,
+              "internalType": "PoolId"
+            },
+            {
+              "name": "quoteToken",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            },
+            {
+              "name": "protocolAmount",
+              "type": "uint256",
+              "indexed": false,
+              "internalType": "uint256"
+            },
+            {
+              "name": "creatorAmount",
+              "type": "uint256",
+              "indexed": false,
+              "internalType": "uint256"
+            }
+          ],
+          "anonymous": false
+        },
+        {
+          "name": "PoolFeesSwept",
+          "type": "event",
+          "inputs": [
+            {
+              "name": "poolId",
+              "type": "bytes32",
+              "indexed": true,
+              "internalType": "PoolId"
+            },
+            {
+              "name": "protocolAmount",
+              "type": "uint256",
+              "indexed": false,
+              "internalType": "uint256"
+            },
+            {
+              "name": "buybackAmount",
+              "type": "uint256",
+              "indexed": false,
+              "internalType": "uint256"
+            },
+            {
+              "name": "creatorAmount",
+              "type": "uint256",
+              "indexed": false,
+              "internalType": "uint256"
+            },
+            {
+              "name": "tokensLocked",
+              "type": "uint256",
+              "indexed": false,
+              "internalType": "uint256"
+            }
+          ],
+          "anonymous": false
+        },
+        {
+          "name": "PoolRegistered",
+          "type": "event",
+          "inputs": [
+            {
+              "name": "poolId",
+              "type": "bytes32",
+              "indexed": true,
+              "internalType": "PoolId"
+            },
+            {
+              "name": "memecoin",
+              "type": "address",
+              "indexed": false,
+              "internalType": "address"
+            },
+            {
+              "name": "quoteToken",
+              "type": "address",
+              "indexed": false,
+              "internalType": "address"
+            },
+            {
+              "name": "creator",
+              "type": "address",
+              "indexed": false,
+              "internalType": "address"
+            }
+          ],
+          "anonymous": false
+        },
+        {
+          "name": "ProtocolFeeRecipientUpdated",
+          "type": "event",
+          "inputs": [
+            {
+              "name": "recipient",
+              "type": "address",
+              "indexed": false,
+              "internalType": "address"
+            }
+          ],
+          "anonymous": false
+        },
+        {
+          "name": "ProtocolFeeShareUpdated",
+          "type": "event",
+          "inputs": [
+            {
+              "name": "bps",
+              "type": "uint256",
+              "indexed": false,
+              "internalType": "uint256"
+            }
+          ],
+          "anonymous": false
+        },
+        {
+          "name": "acceptOwnership",
+          "type": "function",
+          "inputs": [],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "afterAddLiquidity",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "sender",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "key",
+              "type": "tuple",
+              "components": [
+                {
+                  "name": "currency0",
+                  "type": "address",
+                  "internalType": "Currency"
+                },
+                {
+                  "name": "currency1",
+                  "type": "address",
+                  "internalType": "Currency"
+                },
+                {
+                  "name": "fee",
+                  "type": "uint24",
+                  "internalType": "uint24"
+                },
+                {
+                  "name": "tickSpacing",
+                  "type": "int24",
+                  "internalType": "int24"
+                },
+                {
+                  "name": "hooks",
+                  "type": "address",
+                  "internalType": "contract IHooks"
+                }
+              ],
+              "internalType": "struct PoolKey"
+            },
+            {
+              "name": "params",
+              "type": "tuple",
+              "components": [
+                {
+                  "name": "tickLower",
+                  "type": "int24",
+                  "internalType": "int24"
+                },
+                {
+                  "name": "tickUpper",
+                  "type": "int24",
+                  "internalType": "int24"
+                },
+                {
+                  "name": "liquidityDelta",
+                  "type": "int256",
+                  "internalType": "int256"
+                },
+                {
+                  "name": "salt",
+                  "type": "bytes32",
+                  "internalType": "bytes32"
+                }
+              ],
+              "internalType": "struct ModifyLiquidityParams"
+            },
+            {
+              "name": "delta",
+              "type": "int256",
+              "internalType": "BalanceDelta"
+            },
+            {
+              "name": "feesAccrued",
+              "type": "int256",
+              "internalType": "BalanceDelta"
+            },
+            {
+              "name": "hookData",
+              "type": "bytes",
+              "internalType": "bytes"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "bytes4",
+              "internalType": "bytes4"
+            },
+            {
+              "name": "",
+              "type": "int256",
+              "internalType": "BalanceDelta"
+            }
+          ],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "afterDonate",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "sender",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "key",
+              "type": "tuple",
+              "components": [
+                {
+                  "name": "currency0",
+                  "type": "address",
+                  "internalType": "Currency"
+                },
+                {
+                  "name": "currency1",
+                  "type": "address",
+                  "internalType": "Currency"
+                },
+                {
+                  "name": "fee",
+                  "type": "uint24",
+                  "internalType": "uint24"
+                },
+                {
+                  "name": "tickSpacing",
+                  "type": "int24",
+                  "internalType": "int24"
+                },
+                {
+                  "name": "hooks",
+                  "type": "address",
+                  "internalType": "contract IHooks"
+                }
+              ],
+              "internalType": "struct PoolKey"
+            },
+            {
+              "name": "amount0",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "amount1",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "hookData",
+              "type": "bytes",
+              "internalType": "bytes"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "bytes4",
+              "internalType": "bytes4"
+            }
+          ],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "afterInitialize",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "sender",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "key",
+              "type": "tuple",
+              "components": [
+                {
+                  "name": "currency0",
+                  "type": "address",
+                  "internalType": "Currency"
+                },
+                {
+                  "name": "currency1",
+                  "type": "address",
+                  "internalType": "Currency"
+                },
+                {
+                  "name": "fee",
+                  "type": "uint24",
+                  "internalType": "uint24"
+                },
+                {
+                  "name": "tickSpacing",
+                  "type": "int24",
+                  "internalType": "int24"
+                },
+                {
+                  "name": "hooks",
+                  "type": "address",
+                  "internalType": "contract IHooks"
+                }
+              ],
+              "internalType": "struct PoolKey"
+            },
+            {
+              "name": "sqrtPriceX96",
+              "type": "uint160",
+              "internalType": "uint160"
+            },
+            {
+              "name": "tick",
+              "type": "int24",
+              "internalType": "int24"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "bytes4",
+              "internalType": "bytes4"
+            }
+          ],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "afterRemoveLiquidity",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "sender",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "key",
+              "type": "tuple",
+              "components": [
+                {
+                  "name": "currency0",
+                  "type": "address",
+                  "internalType": "Currency"
+                },
+                {
+                  "name": "currency1",
+                  "type": "address",
+                  "internalType": "Currency"
+                },
+                {
+                  "name": "fee",
+                  "type": "uint24",
+                  "internalType": "uint24"
+                },
+                {
+                  "name": "tickSpacing",
+                  "type": "int24",
+                  "internalType": "int24"
+                },
+                {
+                  "name": "hooks",
+                  "type": "address",
+                  "internalType": "contract IHooks"
+                }
+              ],
+              "internalType": "struct PoolKey"
+            },
+            {
+              "name": "params",
+              "type": "tuple",
+              "components": [
+                {
+                  "name": "tickLower",
+                  "type": "int24",
+                  "internalType": "int24"
+                },
+                {
+                  "name": "tickUpper",
+                  "type": "int24",
+                  "internalType": "int24"
+                },
+                {
+                  "name": "liquidityDelta",
+                  "type": "int256",
+                  "internalType": "int256"
+                },
+                {
+                  "name": "salt",
+                  "type": "bytes32",
+                  "internalType": "bytes32"
+                }
+              ],
+              "internalType": "struct ModifyLiquidityParams"
+            },
+            {
+              "name": "delta",
+              "type": "int256",
+              "internalType": "BalanceDelta"
+            },
+            {
+              "name": "feesAccrued",
+              "type": "int256",
+              "internalType": "BalanceDelta"
+            },
+            {
+              "name": "hookData",
+              "type": "bytes",
+              "internalType": "bytes"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "bytes4",
+              "internalType": "bytes4"
+            },
+            {
+              "name": "",
+              "type": "int256",
+              "internalType": "BalanceDelta"
+            }
+          ],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "afterSwap",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "sender",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "key",
+              "type": "tuple",
+              "components": [
+                {
+                  "name": "currency0",
+                  "type": "address",
+                  "internalType": "Currency"
+                },
+                {
+                  "name": "currency1",
+                  "type": "address",
+                  "internalType": "Currency"
+                },
+                {
+                  "name": "fee",
+                  "type": "uint24",
+                  "internalType": "uint24"
+                },
+                {
+                  "name": "tickSpacing",
+                  "type": "int24",
+                  "internalType": "int24"
+                },
+                {
+                  "name": "hooks",
+                  "type": "address",
+                  "internalType": "contract IHooks"
+                }
+              ],
+              "internalType": "struct PoolKey"
+            },
+            {
+              "name": "params",
+              "type": "tuple",
+              "components": [
+                {
+                  "name": "zeroForOne",
+                  "type": "bool",
+                  "internalType": "bool"
+                },
+                {
+                  "name": "amountSpecified",
+                  "type": "int256",
+                  "internalType": "int256"
+                },
+                {
+                  "name": "sqrtPriceLimitX96",
+                  "type": "uint160",
+                  "internalType": "uint160"
+                }
+              ],
+              "internalType": "struct SwapParams"
+            },
+            {
+              "name": "delta",
+              "type": "int256",
+              "internalType": "BalanceDelta"
+            },
+            {
+              "name": "hookData",
+              "type": "bytes",
+              "internalType": "bytes"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "bytes4",
+              "internalType": "bytes4"
+            },
+            {
+              "name": "",
+              "type": "int128",
+              "internalType": "int128"
+            }
+          ],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "beforeAddLiquidity",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "sender",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "key",
+              "type": "tuple",
+              "components": [
+                {
+                  "name": "currency0",
+                  "type": "address",
+                  "internalType": "Currency"
+                },
+                {
+                  "name": "currency1",
+                  "type": "address",
+                  "internalType": "Currency"
+                },
+                {
+                  "name": "fee",
+                  "type": "uint24",
+                  "internalType": "uint24"
+                },
+                {
+                  "name": "tickSpacing",
+                  "type": "int24",
+                  "internalType": "int24"
+                },
+                {
+                  "name": "hooks",
+                  "type": "address",
+                  "internalType": "contract IHooks"
+                }
+              ],
+              "internalType": "struct PoolKey"
+            },
+            {
+              "name": "params",
+              "type": "tuple",
+              "components": [
+                {
+                  "name": "tickLower",
+                  "type": "int24",
+                  "internalType": "int24"
+                },
+                {
+                  "name": "tickUpper",
+                  "type": "int24",
+                  "internalType": "int24"
+                },
+                {
+                  "name": "liquidityDelta",
+                  "type": "int256",
+                  "internalType": "int256"
+                },
+                {
+                  "name": "salt",
+                  "type": "bytes32",
+                  "internalType": "bytes32"
+                }
+              ],
+              "internalType": "struct ModifyLiquidityParams"
+            },
+            {
+              "name": "hookData",
+              "type": "bytes",
+              "internalType": "bytes"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "bytes4",
+              "internalType": "bytes4"
+            }
+          ],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "beforeDonate",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "sender",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "key",
+              "type": "tuple",
+              "components": [
+                {
+                  "name": "currency0",
+                  "type": "address",
+                  "internalType": "Currency"
+                },
+                {
+                  "name": "currency1",
+                  "type": "address",
+                  "internalType": "Currency"
+                },
+                {
+                  "name": "fee",
+                  "type": "uint24",
+                  "internalType": "uint24"
+                },
+                {
+                  "name": "tickSpacing",
+                  "type": "int24",
+                  "internalType": "int24"
+                },
+                {
+                  "name": "hooks",
+                  "type": "address",
+                  "internalType": "contract IHooks"
+                }
+              ],
+              "internalType": "struct PoolKey"
+            },
+            {
+              "name": "amount0",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "amount1",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "hookData",
+              "type": "bytes",
+              "internalType": "bytes"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "bytes4",
+              "internalType": "bytes4"
+            }
+          ],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "beforeInitialize",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "sender",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "key",
+              "type": "tuple",
+              "components": [
+                {
+                  "name": "currency0",
+                  "type": "address",
+                  "internalType": "Currency"
+                },
+                {
+                  "name": "currency1",
+                  "type": "address",
+                  "internalType": "Currency"
+                },
+                {
+                  "name": "fee",
+                  "type": "uint24",
+                  "internalType": "uint24"
+                },
+                {
+                  "name": "tickSpacing",
+                  "type": "int24",
+                  "internalType": "int24"
+                },
+                {
+                  "name": "hooks",
+                  "type": "address",
+                  "internalType": "contract IHooks"
+                }
+              ],
+              "internalType": "struct PoolKey"
+            },
+            {
+              "name": "sqrtPriceX96",
+              "type": "uint160",
+              "internalType": "uint160"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "bytes4",
+              "internalType": "bytes4"
+            }
+          ],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "beforeRemoveLiquidity",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "sender",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "key",
+              "type": "tuple",
+              "components": [
+                {
+                  "name": "currency0",
+                  "type": "address",
+                  "internalType": "Currency"
+                },
+                {
+                  "name": "currency1",
+                  "type": "address",
+                  "internalType": "Currency"
+                },
+                {
+                  "name": "fee",
+                  "type": "uint24",
+                  "internalType": "uint24"
+                },
+                {
+                  "name": "tickSpacing",
+                  "type": "int24",
+                  "internalType": "int24"
+                },
+                {
+                  "name": "hooks",
+                  "type": "address",
+                  "internalType": "contract IHooks"
+                }
+              ],
+              "internalType": "struct PoolKey"
+            },
+            {
+              "name": "params",
+              "type": "tuple",
+              "components": [
+                {
+                  "name": "tickLower",
+                  "type": "int24",
+                  "internalType": "int24"
+                },
+                {
+                  "name": "tickUpper",
+                  "type": "int24",
+                  "internalType": "int24"
+                },
+                {
+                  "name": "liquidityDelta",
+                  "type": "int256",
+                  "internalType": "int256"
+                },
+                {
+                  "name": "salt",
+                  "type": "bytes32",
+                  "internalType": "bytes32"
+                }
+              ],
+              "internalType": "struct ModifyLiquidityParams"
+            },
+            {
+              "name": "hookData",
+              "type": "bytes",
+              "internalType": "bytes"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "bytes4",
+              "internalType": "bytes4"
+            }
+          ],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "beforeSwap",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "sender",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "key",
+              "type": "tuple",
+              "components": [
+                {
+                  "name": "currency0",
+                  "type": "address",
+                  "internalType": "Currency"
+                },
+                {
+                  "name": "currency1",
+                  "type": "address",
+                  "internalType": "Currency"
+                },
+                {
+                  "name": "fee",
+                  "type": "uint24",
+                  "internalType": "uint24"
+                },
+                {
+                  "name": "tickSpacing",
+                  "type": "int24",
+                  "internalType": "int24"
+                },
+                {
+                  "name": "hooks",
+                  "type": "address",
+                  "internalType": "contract IHooks"
+                }
+              ],
+              "internalType": "struct PoolKey"
+            },
+            {
+              "name": "params",
+              "type": "tuple",
+              "components": [
+                {
+                  "name": "zeroForOne",
+                  "type": "bool",
+                  "internalType": "bool"
+                },
+                {
+                  "name": "amountSpecified",
+                  "type": "int256",
+                  "internalType": "int256"
+                },
+                {
+                  "name": "sqrtPriceLimitX96",
+                  "type": "uint160",
+                  "internalType": "uint160"
+                }
+              ],
+              "internalType": "struct SwapParams"
+            },
+            {
+              "name": "hookData",
+              "type": "bytes",
+              "internalType": "bytes"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "bytes4",
+              "internalType": "bytes4"
+            },
+            {
+              "name": "",
+              "type": "int256",
+              "internalType": "BeforeSwapDelta"
+            },
+            {
+              "name": "",
+              "type": "uint24",
+              "internalType": "uint24"
+            }
+          ],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "buybackBurnBps",
+          "type": "function",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "buybackVault",
+          "type": "function",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "contract PonsV2BuybackVault"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "currentFeePolicy",
+          "type": "function",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "tuple",
+              "components": [
+                {
+                  "name": "protocolFeeRecipient",
+                  "type": "address",
+                  "internalType": "address"
+                },
+                {
+                  "name": "protocolFeeShareBps",
+                  "type": "uint16",
+                  "internalType": "uint16"
+                },
+                {
+                  "name": "buybackBurnBps",
+                  "type": "uint16",
+                  "internalType": "uint16"
+                },
+                {
+                  "name": "hookFeeBps",
+                  "type": "uint16",
+                  "internalType": "uint16"
+                },
+                {
+                  "name": "maxInternalPriceImpactBps",
+                  "type": "uint16",
+                  "internalType": "uint16"
+                }
+              ],
+              "internalType": "struct FeePolicySnapshot"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "factory",
+          "type": "function",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "feeEscrow",
+          "type": "function",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "contract IPonsV2FeeEscrow"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "feeSweepOperator",
+          "type": "function",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "getHookPermissions",
+          "type": "function",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "tuple",
+              "components": [
+                {
+                  "name": "beforeInitialize",
+                  "type": "bool",
+                  "internalType": "bool"
+                },
+                {
+                  "name": "afterInitialize",
+                  "type": "bool",
+                  "internalType": "bool"
+                },
+                {
+                  "name": "beforeAddLiquidity",
+                  "type": "bool",
+                  "internalType": "bool"
+                },
+                {
+                  "name": "afterAddLiquidity",
+                  "type": "bool",
+                  "internalType": "bool"
+                },
+                {
+                  "name": "beforeRemoveLiquidity",
+                  "type": "bool",
+                  "internalType": "bool"
+                },
+                {
+                  "name": "afterRemoveLiquidity",
+                  "type": "bool",
+                  "internalType": "bool"
+                },
+                {
+                  "name": "beforeSwap",
+                  "type": "bool",
+                  "internalType": "bool"
+                },
+                {
+                  "name": "afterSwap",
+                  "type": "bool",
+                  "internalType": "bool"
+                },
+                {
+                  "name": "beforeDonate",
+                  "type": "bool",
+                  "internalType": "bool"
+                },
+                {
+                  "name": "afterDonate",
+                  "type": "bool",
+                  "internalType": "bool"
+                },
+                {
+                  "name": "beforeSwapReturnDelta",
+                  "type": "bool",
+                  "internalType": "bool"
+                },
+                {
+                  "name": "afterSwapReturnDelta",
+                  "type": "bool",
+                  "internalType": "bool"
+                },
+                {
+                  "name": "afterAddLiquidityReturnDelta",
+                  "type": "bool",
+                  "internalType": "bool"
+                },
+                {
+                  "name": "afterRemoveLiquidityReturnDelta",
+                  "type": "bool",
+                  "internalType": "bool"
+                }
+              ],
+              "internalType": "struct Hooks.Permissions"
+            }
+          ],
+          "stateMutability": "pure"
+        },
+        {
+          "name": "hookFeeBps",
+          "type": "function",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "launches",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "",
+              "type": "bytes32",
+              "internalType": "PoolId"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "registered",
+              "type": "bool",
+              "internalType": "bool"
+            },
+            {
+              "name": "memecoinIsCurrency0",
+              "type": "bool",
+              "internalType": "bool"
+            },
+            {
+              "name": "memecoin",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "quoteToken",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "creator",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "buybackCreatorRecipient",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "protocolFeeRecipient",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "creatorTaxBps",
+              "type": "uint16",
+              "internalType": "uint16"
+            },
+            {
+              "name": "protocolFeeShareBps",
+              "type": "uint16",
+              "internalType": "uint16"
+            },
+            {
+              "name": "buybackBurnBps",
+              "type": "uint16",
+              "internalType": "uint16"
+            },
+            {
+              "name": "hookFeeBps",
+              "type": "uint16",
+              "internalType": "uint16"
+            },
+            {
+              "name": "maxInternalPriceImpactBps",
+              "type": "uint16",
+              "internalType": "uint16"
+            },
+            {
+              "name": "buybackEnabled",
+              "type": "bool",
+              "internalType": "bool"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "maxInternalPriceImpactBps",
+          "type": "function",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "owner",
+          "type": "function",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "pendingBuyback",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "",
+              "type": "bytes32",
+              "internalType": "PoolId"
+            },
+            {
+              "name": "currency",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "amount",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "pendingCreatorTax",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "",
+              "type": "bytes32",
+              "internalType": "PoolId"
+            },
+            {
+              "name": "currency",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "amount",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "pendingFees",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "",
+              "type": "bytes32",
+              "internalType": "PoolId"
+            },
+            {
+              "name": "currency",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "amount",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "pendingOwner",
+          "type": "function",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "poolManager",
+          "type": "function",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "contract IPoolManager"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "protocolFeeRecipient",
+          "type": "function",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "protocolFeeShareBps",
+          "type": "function",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "registerPool",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "key",
+              "type": "tuple",
+              "components": [
+                {
+                  "name": "currency0",
+                  "type": "address",
+                  "internalType": "Currency"
+                },
+                {
+                  "name": "currency1",
+                  "type": "address",
+                  "internalType": "Currency"
+                },
+                {
+                  "name": "fee",
+                  "type": "uint24",
+                  "internalType": "uint24"
+                },
+                {
+                  "name": "tickSpacing",
+                  "type": "int24",
+                  "internalType": "int24"
+                },
+                {
+                  "name": "hooks",
+                  "type": "address",
+                  "internalType": "contract IHooks"
+                }
+              ],
+              "internalType": "struct PoolKey"
+            },
+            {
+              "name": "memecoin",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "creator",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "buybackCreatorRecipient",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "creatorTaxBps",
+              "type": "uint16",
+              "internalType": "uint16"
+            },
+            {
+              "name": "buybackEnabled",
+              "type": "bool",
+              "internalType": "bool"
+            },
+            {
+              "name": "policy",
+              "type": "tuple",
+              "components": [
+                {
+                  "name": "protocolFeeRecipient",
+                  "type": "address",
+                  "internalType": "address"
+                },
+                {
+                  "name": "protocolFeeShareBps",
+                  "type": "uint16",
+                  "internalType": "uint16"
+                },
+                {
+                  "name": "buybackBurnBps",
+                  "type": "uint16",
+                  "internalType": "uint16"
+                },
+                {
+                  "name": "hookFeeBps",
+                  "type": "uint16",
+                  "internalType": "uint16"
+                },
+                {
+                  "name": "maxInternalPriceImpactBps",
+                  "type": "uint16",
+                  "internalType": "uint16"
+                }
+              ],
+              "internalType": "struct FeePolicySnapshot"
+            }
+          ],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "renounceOwnership",
+          "type": "function",
+          "inputs": [],
+          "outputs": [],
+          "stateMutability": "pure"
+        },
+        {
+          "name": "rescuePoolFees",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "poolId",
+              "type": "bytes32",
+              "internalType": "PoolId"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "protocolAmount",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "creatorAmount",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "setBuybackBurnBps",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "bps",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "setBuybackEnabled",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "poolId",
+              "type": "bytes32",
+              "internalType": "PoolId"
+            },
+            {
+              "name": "enabled",
+              "type": "bool",
+              "internalType": "bool"
+            }
+          ],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "setBuybackVault",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "buybackVault_",
+              "type": "address",
+              "internalType": "contract PonsV2BuybackVault"
+            }
+          ],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "setCreatorFeeRecipient",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "poolId",
+              "type": "bytes32",
+              "internalType": "PoolId"
+            },
+            {
+              "name": "newRecipient",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "setFactory",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "factory_",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "setFeeSweepOperator",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "operator",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "setHookFeeBps",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "bps",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "setMaxInternalPriceImpactBps",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "bps",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "setProtocolFeeRecipient",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "recipient",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "setProtocolFeeShareBps",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "bps",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "sweepPoolFees",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "poolId",
+              "type": "bytes32",
+              "internalType": "PoolId"
+            },
+            {
+              "name": "minConversionQuoteOut",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "minBuybackTokensOut",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "transferOwnership",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "newOwner",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "unlockCallback",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "data",
+              "type": "bytes",
+              "internalType": "bytes"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "bytes",
+              "internalType": "bytes"
+            }
+          ],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "type": "receive",
+          "stateMutability": "payable"
+        }
+      ],
+      "source": "https://sourcify.dev/server/v2/contract/4663/0xE5e702641Ea86F4ae6cC3cDaeD2B886f976Be044?fields=all",
+      "verification": "Sourcify match, full deployed bytes checked against live RPC",
+      "verifiedAt": "2026-08-05T10:00:13Z",
+      "compiler": "0.8.35+commit.47b9dedd"
+    },
+    "graduationExecutor": {
+      "address": "0xC7819B64A1dAECD7eC19856d026cb14EfBd89046",
+      "codeHash": "0xf59f43072fdc50674bb88eabef0318906a803e4af2e9ff115239d53e50046e2a",
+      "abi": [
+        {
+          "type": "constructor",
+          "inputs": [
+            {
+              "name": "positionManager_",
+              "type": "address",
+              "internalType": "contract IPositionManager"
+            },
+            {
+              "name": "permit2_",
+              "type": "address",
+              "internalType": "contract IAllowanceTransfer"
+            },
+            {
+              "name": "locker_",
+              "type": "address",
+              "internalType": "contract PonsV2LaunchLocker"
+            },
+            {
+              "name": "factory_",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "FeeTransferFailed",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "MintAmountOverflow",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "NotFactory",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "SafeERC20FailedOperation",
+          "type": "error",
+          "inputs": [
+            {
+              "name": "token",
+              "type": "address",
+              "internalType": "address"
+            }
+          ]
+        },
+        {
+          "name": "SlippageExceeded",
+          "type": "error",
+          "inputs": [
+            {
+              "name": "actual",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "minimum",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ]
+        },
+        {
+          "name": "ZeroAddress",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "GraduationDustRetained",
+          "type": "event",
+          "inputs": [
+            {
+              "name": "launchToken",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            },
+            {
+              "name": "currency",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            },
+            {
+              "name": "amount",
+              "type": "uint256",
+              "indexed": false,
+              "internalType": "uint256"
+            }
+          ],
+          "anonymous": false
+        },
+        {
+          "name": "GraduationDustSwept",
+          "type": "event",
+          "inputs": [
+            {
+              "name": "launchToken",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            },
+            {
+              "name": "currency",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            },
+            {
+              "name": "amount",
+              "type": "uint256",
+              "indexed": false,
+              "internalType": "uint256"
+            }
+          ],
+          "anonymous": false
+        },
+        {
+          "name": "factory",
+          "type": "function",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "locker",
+          "type": "function",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "contract PonsV2LaunchLocker"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "mintFullRangePosition",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "launchToken",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "key",
+              "type": "tuple",
+              "components": [
+                {
+                  "name": "currency0",
+                  "type": "address",
+                  "internalType": "Currency"
+                },
+                {
+                  "name": "currency1",
+                  "type": "address",
+                  "internalType": "Currency"
+                },
+                {
+                  "name": "fee",
+                  "type": "uint24",
+                  "internalType": "uint24"
+                },
+                {
+                  "name": "tickSpacing",
+                  "type": "int24",
+                  "internalType": "int24"
+                },
+                {
+                  "name": "hooks",
+                  "type": "address",
+                  "internalType": "contract IHooks"
+                }
+              ],
+              "internalType": "struct PoolKey"
+            },
+            {
+              "name": "tickLower",
+              "type": "int24",
+              "internalType": "int24"
+            },
+            {
+              "name": "tickUpper",
+              "type": "int24",
+              "internalType": "int24"
+            },
+            {
+              "name": "sqrtPriceX96",
+              "type": "uint160",
+              "internalType": "uint160"
+            },
+            {
+              "name": "amount0Max",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "amount1Max",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "currency0",
+              "type": "address",
+              "internalType": "Currency"
+            },
+            {
+              "name": "currency1",
+              "type": "address",
+              "internalType": "Currency"
+            },
+            {
+              "name": "protocolFeeRecipient",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [],
+          "stateMutability": "payable"
+        },
+        {
+          "name": "permit2",
+          "type": "function",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "contract IAllowanceTransfer"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "positionManager",
+          "type": "function",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "contract IPositionManager"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "type": "receive",
+          "stateMutability": "payable"
+        }
+      ],
+      "source": "https://sourcify.dev/server/v2/contract/4663/0xC7819B64A1dAECD7eC19856d026cb14EfBd89046?fields=all",
+      "verification": "Sourcify match, full deployed bytes checked against live RPC",
+      "verifiedAt": "2026-08-25T18:20:16Z",
+      "compiler": "0.8.35+commit.47b9dedd"
+    },
+    "graduationGuard": {
+      "address": "0xf5695117b99B6f6401e67d4195BD653628176C6C",
+      "codeHash": "0x6847e5d5df83bb7a51c5780302a5da9cfbdae60b7f7fa850f83ade5be816ecea",
+      "abi": [
+        {
+          "inputs": [],
+          "name": "GraduationSeedNotViable",
+          "type": "error"
+        },
+        {
+          "inputs": [],
+          "name": "SqrtPriceOutOfBounds",
+          "type": "error"
+        },
+        {
+          "inputs": [],
+          "name": "UnsupportedPrice",
+          "type": "error"
+        },
+        {
+          "inputs": [],
+          "name": "ZeroAmount",
+          "type": "error"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "token",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "pairToken",
+              "type": "address"
+            },
+            {
+              "internalType": "int24",
+              "name": "tickSpacing",
+              "type": "int24"
+            },
+            {
+              "internalType": "uint256",
+              "name": "quoteAmount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "tokenAmount",
+              "type": "uint256"
+            }
+          ],
+          "name": "assertSeedable",
+          "outputs": [],
+          "stateMutability": "pure",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "int24",
+              "name": "tickSpacing",
+              "type": "int24"
+            },
+            {
+              "internalType": "uint256",
+              "name": "quoteAmount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "tokenAmount",
+              "type": "uint256"
+            }
+          ],
+          "name": "assertSeedableEitherOrdering",
+          "outputs": [],
+          "stateMutability": "pure",
+          "type": "function"
+        }
+      ],
+      "source": "https://sourcify.dev/server/v2/contract/4663/0x7eD598BcEf8bd9Edd8C97A195C6d13f40801EC7e?fields=all",
+      "verification": "independent compilation from verified factory source input",
+      "verifiedAt": "2026-09-09T06:09:10.377Z",
+      "compiler": "0.8.35+commit.47b9dedd.Emscripten.clang"
+    },
+    "locker": {
+      "address": "0x267444D099b10fB5Ed7c3Cc7B7c767AdcA574952",
+      "codeHash": "0x58455f80b3773871d601a025e56ec27c71ab3bbb8e2ca6b17828954450742025",
+      "abi": [
+        {
+          "type": "constructor",
+          "inputs": [
+            {
+              "name": "initialOwner",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "positionManager_",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "AlreadyInitialized",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "NotFactory",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "NotPositionManager",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "OwnableInvalidOwner",
+          "type": "error",
+          "inputs": [
+            {
+              "name": "owner",
+              "type": "address",
+              "internalType": "address"
+            }
+          ]
+        },
+        {
+          "name": "OwnableUnauthorizedAccount",
+          "type": "error",
+          "inputs": [
+            {
+              "name": "account",
+              "type": "address",
+              "internalType": "address"
+            }
+          ]
+        },
+        {
+          "name": "OwnershipCannotBeRenounced",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "PositionAlreadyLocked",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "PositionNotHeld",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "SafeERC20FailedOperation",
+          "type": "error",
+          "inputs": [
+            {
+              "name": "token",
+              "type": "address",
+              "internalType": "address"
+            }
+          ]
+        },
+        {
+          "name": "ZeroAddress",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "FactorySet",
+          "type": "event",
+          "inputs": [
+            {
+              "name": "factory",
+              "type": "address",
+              "indexed": false,
+              "internalType": "address"
+            }
+          ],
+          "anonymous": false
+        },
+        {
+          "name": "OwnershipTransferStarted",
+          "type": "event",
+          "inputs": [
+            {
+              "name": "previousOwner",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            },
+            {
+              "name": "newOwner",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            }
+          ],
+          "anonymous": false
+        },
+        {
+          "name": "OwnershipTransferred",
+          "type": "event",
+          "inputs": [
+            {
+              "name": "previousOwner",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            },
+            {
+              "name": "newOwner",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            }
+          ],
+          "anonymous": false
+        },
+        {
+          "name": "PositionLocked",
+          "type": "event",
+          "inputs": [
+            {
+              "name": "token",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            },
+            {
+              "name": "tokenId",
+              "type": "uint256",
+              "indexed": true,
+              "internalType": "uint256"
+            }
+          ],
+          "anonymous": false
+        },
+        {
+          "name": "TokenSupplyLocked",
+          "type": "event",
+          "inputs": [
+            {
+              "name": "token",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            },
+            {
+              "name": "amount",
+              "type": "uint256",
+              "indexed": false,
+              "internalType": "uint256"
+            }
+          ],
+          "anonymous": false
+        },
+        {
+          "name": "acceptOwnership",
+          "type": "function",
+          "inputs": [],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "factory",
+          "type": "function",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "isLocked",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "token",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "bool",
+              "internalType": "bool"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "lockPosition",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "token",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "tokenId",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "lockTokenSupply",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "token",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "amount",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "lockedPositions",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "token",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "tokenId",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "lockedTokenSupply",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "token",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "amount",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "onERC721Received",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "",
+              "type": "bytes",
+              "internalType": "bytes"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "bytes4",
+              "internalType": "bytes4"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "owner",
+          "type": "function",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "pendingOwner",
+          "type": "function",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "positionManager",
+          "type": "function",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "renounceOwnership",
+          "type": "function",
+          "inputs": [],
+          "outputs": [],
+          "stateMutability": "pure"
+        },
+        {
+          "name": "setFactory",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "factory_",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "transferOwnership",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "newOwner",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        }
+      ],
+      "source": "https://sourcify.dev/server/v2/contract/4663/0x267444D099b10fB5Ed7c3Cc7B7c767AdcA574952?fields=all",
+      "verification": "Sourcify match, full deployed bytes checked against live RPC",
+      "verifiedAt": "2026-08-25T18:20:24Z",
+      "compiler": "0.8.26+commit.8a97fa7a"
+    },
+    "feeEscrow": {
+      "address": "0xd3AFEB2a57f70eF218Aa82451c51B2fb0416Ac9e",
+      "codeHash": "0xf25f75cfbc1637ba068dc34f69098fa4e8a80f8ee8fe7bf7820594e0b3fed2f1",
+      "abi": [
+        {
+          "name": "InsufficientBalance",
+          "type": "error",
+          "inputs": [
+            {
+              "name": "requested",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "available",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ]
+        },
+        {
+          "name": "NoBalance",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "ReentrancyGuardReentrantCall",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "SafeERC20FailedOperation",
+          "type": "error",
+          "inputs": [
+            {
+              "name": "token",
+              "type": "address",
+              "internalType": "address"
+            }
+          ]
+        },
+        {
+          "name": "TransferFailed",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "ZeroAddress",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "Claimed",
+          "type": "event",
+          "inputs": [
+            {
+              "name": "recipient",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            },
+            {
+              "name": "amount",
+              "type": "uint256",
+              "indexed": false,
+              "internalType": "uint256"
+            }
+          ],
+          "anonymous": false
+        },
+        {
+          "name": "ClaimedToken",
+          "type": "event",
+          "inputs": [
+            {
+              "name": "recipient",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            },
+            {
+              "name": "token",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            },
+            {
+              "name": "amount",
+              "type": "uint256",
+              "indexed": false,
+              "internalType": "uint256"
+            }
+          ],
+          "anonymous": false
+        },
+        {
+          "name": "Credited",
+          "type": "event",
+          "inputs": [
+            {
+              "name": "recipient",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            },
+            {
+              "name": "depositor",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            },
+            {
+              "name": "amount",
+              "type": "uint256",
+              "indexed": false,
+              "internalType": "uint256"
+            }
+          ],
+          "anonymous": false
+        },
+        {
+          "name": "CreditedToken",
+          "type": "event",
+          "inputs": [
+            {
+              "name": "recipient",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            },
+            {
+              "name": "token",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            },
+            {
+              "name": "depositor",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            },
+            {
+              "name": "amount",
+              "type": "uint256",
+              "indexed": false,
+              "internalType": "uint256"
+            }
+          ],
+          "anonymous": false
+        },
+        {
+          "name": "balanceOf",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "recipient",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "balanceOfToken",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "recipient",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "token",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "claim",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "amount",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "claim",
+          "type": "function",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "amount",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "claimToken",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "token",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "amount",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "claimToken",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "token",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "amount",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "credit",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "recipient",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [],
+          "stateMutability": "payable"
+        },
+        {
+          "name": "creditToken",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "recipient",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "token",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "amount",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        }
+      ],
+      "source": "https://sourcify.dev/server/v2/contract/4663/0xd3AFEB2a57f70eF218Aa82451c51B2fb0416Ac9e?fields=all",
+      "verification": "Sourcify match, full deployed bytes checked against live RPC",
+      "verifiedAt": "2026-08-14T22:01:59Z",
+      "compiler": "0.8.35+commit.47b9dedd"
+    },
+    "buybackVault": {
+      "address": "0x42df2a798f82289E177311362e8f5ccC45c1219c",
+      "codeHash": "0x5de8480874faffefa539648f1a7d6c1e69b39da3fa34de22fc95eb7586aece03",
+      "abi": [
+        {
+          "type": "constructor",
+          "inputs": [
+            {
+              "name": "initialOwner",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "feePolicy_",
+              "type": "address",
+              "internalType": "contract IPonsV2FeePolicy"
+            },
+            {
+              "name": "feeEscrow_",
+              "type": "address",
+              "internalType": "contract IPonsV2FeeEscrow"
+            }
+          ],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "AlreadyInitialized",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "InvalidVestingTerms",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "NotAuthorizedLocker",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "NotFactory",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "NotVestBeneficiary",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "OwnableInvalidOwner",
+          "type": "error",
+          "inputs": [
+            {
+              "name": "owner",
+              "type": "address",
+              "internalType": "address"
+            }
+          ]
+        },
+        {
+          "name": "OwnableUnauthorizedAccount",
+          "type": "error",
+          "inputs": [
+            {
+              "name": "account",
+              "type": "address",
+              "internalType": "address"
+            }
+          ]
+        },
+        {
+          "name": "OwnershipCannotBeRenounced",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "ReentrancyGuardReentrantCall",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "SafeERC20FailedOperation",
+          "type": "error",
+          "inputs": [
+            {
+              "name": "token",
+              "type": "address",
+              "internalType": "address"
+            }
+          ]
+        },
+        {
+          "name": "VestingTermsMismatch",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "ZeroAddress",
+          "type": "error",
+          "inputs": []
+        },
+        {
+          "name": "CreatorRecipientUpdated",
+          "type": "event",
+          "inputs": [
+            {
+              "name": "token",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            },
+            {
+              "name": "previousRecipient",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            },
+            {
+              "name": "newRecipient",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            }
+          ],
+          "anonymous": false
+        },
+        {
+          "name": "FactorySet",
+          "type": "event",
+          "inputs": [
+            {
+              "name": "factory",
+              "type": "address",
+              "indexed": false,
+              "internalType": "address"
+            }
+          ],
+          "anonymous": false
+        },
+        {
+          "name": "Locked",
+          "type": "event",
+          "inputs": [
+            {
+              "name": "token",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            },
+            {
+              "name": "depositor",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            },
+            {
+              "name": "amount",
+              "type": "uint256",
+              "indexed": false,
+              "internalType": "uint256"
+            },
+            {
+              "name": "newVestingStart",
+              "type": "uint256",
+              "indexed": false,
+              "internalType": "uint256"
+            }
+          ],
+          "anonymous": false
+        },
+        {
+          "name": "OwnershipTransferStarted",
+          "type": "event",
+          "inputs": [
+            {
+              "name": "previousOwner",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            },
+            {
+              "name": "newOwner",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            }
+          ],
+          "anonymous": false
+        },
+        {
+          "name": "OwnershipTransferred",
+          "type": "event",
+          "inputs": [
+            {
+              "name": "previousOwner",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            },
+            {
+              "name": "newOwner",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            }
+          ],
+          "anonymous": false
+        },
+        {
+          "name": "Released",
+          "type": "event",
+          "inputs": [
+            {
+              "name": "token",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            },
+            {
+              "name": "creatorAmount",
+              "type": "uint256",
+              "indexed": false,
+              "internalType": "uint256"
+            },
+            {
+              "name": "protocolAmount",
+              "type": "uint256",
+              "indexed": false,
+              "internalType": "uint256"
+            }
+          ],
+          "anonymous": false
+        },
+        {
+          "name": "VestingTermsSnapshotted",
+          "type": "event",
+          "inputs": [
+            {
+              "name": "token",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            },
+            {
+              "name": "creatorRecipient",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            },
+            {
+              "name": "protocolRecipient",
+              "type": "address",
+              "indexed": true,
+              "internalType": "address"
+            },
+            {
+              "name": "protocolFeeShareBps",
+              "type": "uint256",
+              "indexed": false,
+              "internalType": "uint256"
+            }
+          ],
+          "anonymous": false
+        },
+        {
+          "name": "VESTING_DURATION",
+          "type": "function",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "acceptOwnership",
+          "type": "function",
+          "inputs": [],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "factory",
+          "type": "function",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "feeEscrow",
+          "type": "function",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "contract IPonsV2FeeEscrow"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "feePolicy",
+          "type": "function",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "contract IPonsV2FeePolicy"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "lock",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "token",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "amount",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "creatorRecipient",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "protocolRecipient",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "protocolFeeShareBps",
+              "type": "uint16",
+              "internalType": "uint16"
+            }
+          ],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "owner",
+          "type": "function",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "pendingOwner",
+          "type": "function",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "releasable",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "token",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "release",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "token",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "released",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "renounceOwnership",
+          "type": "function",
+          "inputs": [],
+          "outputs": [],
+          "stateMutability": "pure"
+        },
+        {
+          "name": "setFactory",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "factory_",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "totalLocked",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "token",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "totalReleased",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "token",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "transferOwnership",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "newOwner",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "updateCreatorRecipient",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "token",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "newRecipient",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [],
+          "stateMutability": "nonpayable"
+        },
+        {
+          "name": "vestedAmount",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "token",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "vestingStart",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "token",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "stateMutability": "view"
+        },
+        {
+          "name": "vestingTerms",
+          "type": "function",
+          "inputs": [
+            {
+              "name": "token",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "creatorRecipient",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "protocolRecipient",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "protocolFeeShareBps",
+              "type": "uint16",
+              "internalType": "uint16"
+            }
+          ],
+          "stateMutability": "view"
+        }
+      ],
+      "source": "https://sourcify.dev/server/v2/contract/4663/0x42df2a798f82289E177311362e8f5ccC45c1219c?fields=all",
+      "verification": "Sourcify match, full deployed bytes checked against live RPC",
+      "verifiedAt": "2026-08-20T02:28:57Z",
+      "compiler": "0.8.35+commit.47b9dedd"
+    }
+  }
+}

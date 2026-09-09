@@ -4,7 +4,7 @@
     {
       "path": "CONSTITUTION.md",
       "url": "./library/CONSTITUTION.md.html",
-      "sha256": "83b7c27ec953f0e676e9a9c34fcfaef976df6154f47dc9d7eaa407589779e1a0"
+      "sha256": "4f5f795d79dce95385408ce492214639495ea517d303ac710340fe1e9dcf101d"
     },
     {
       "path": "RESEARCH/GIWA_dex_fee_jurisdictions_2026_20260903_144748/artifacts/claim_ledger.jsonl",
@@ -189,7 +189,7 @@
     {
       "path": "dashboard/index.html",
       "url": "./library/dashboard/index.html.html",
-      "sha256": "0675cad668dac02e0dbe040d416b24dbf0d27021e4b1182d423c1c8930c6b523"
+      "sha256": "48f18eac01311f5a3d8ed440961cae106e48f76363383fd37ef5dec0af798acc"
     },
     {
       "path": "dashboard/overview.html",
@@ -234,7 +234,7 @@
     {
       "path": "docs/INTERNAL_LAUNCH_WORKBENCH.md",
       "url": "./library/docs/INTERNAL_LAUNCH_WORKBENCH.md.html",
-      "sha256": "44b657836c3c20e4a999054eb034e97a441ff44f4660df0548b62fe1c12b2e57"
+      "sha256": "7b37b481cce677b09b3c341b624402d1f994c7559a9f0db905b7ba0848ac6760"
     },
     {
       "path": "docs/LAUNCHPAD_V1_CONTRACT_DESIGN.md",

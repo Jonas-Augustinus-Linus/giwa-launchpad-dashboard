@@ -1,10 +1,10 @@
-import {validateBuild} from './model.mjs';
+import {validateBuild} from './model.mjs?v=7a5d7ea03bd2048f30da301553c7111801224d2d88a020053696e35d93938595';
 
 export function compileInBrowser(config) {
   config=validateBuild(config);
   if(typeof Worker!=='function'||!globalThis.crypto?.subtle)throw new Error('HTTPS와 Web Worker를 지원하는 브라우저에서 열어주세요.');
   return new Promise((resolve,reject)=>{
-    const worker=new Worker(new URL('./compiler-worker.js',import.meta.url));
+    const worker=new Worker(new URL('./compiler-worker.js?v=7a5d7ea03bd2048f30da301553c7111801224d2d88a020053696e35d93938595',import.meta.url));
     const id=crypto.randomUUID();
     const finish=(error,result)=>{clearTimeout(timeout);worker.terminate();if(error)reject(error);else resolve(result);};
     const timeout=setTimeout(()=>finish(new Error('컴파일 시간이 초과됐습니다. 연결을 확인하고 다시 시도하세요.')),90000);

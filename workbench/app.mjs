@@ -1,11 +1,13 @@
-import {compileInBrowser} from './runtime.mjs';
-import {observeNetwork} from './network.mjs';
-import {NETWORKS,MATERIALS,newProject,validateProject,buildConfig,validateBuild,budgetTotal,nextActions} from './model.mjs';
+import {initLaunchUI} from './launch-ui.mjs?v=7a5d7ea03bd2048f30da301553c7111801224d2d88a020053696e35d93938595';
+import {compileInBrowser} from './runtime.mjs?v=7a5d7ea03bd2048f30da301553c7111801224d2d88a020053696e35d93938595';
+import {observeNetwork} from './network.mjs?v=7a5d7ea03bd2048f30da301553c7111801224d2d88a020053696e35d93938595';
+import {NETWORKS,MATERIALS,newProject,validateProject,buildConfig,validateBuild,budgetTotal,nextActions} from './model.mjs?v=7a5d7ea03bd2048f30da301553c7111801224d2d88a020053696e35d93938595';
 
 const $ = id => document.getElementById(id);
 const STORAGE = location.protocol === 'https:' ? `giwa-rh-workbench-v1:${new URL('.',location.href).pathname}` : 'giwa-rh-workbench-v1';
 let projects = [], current, artifact = null, building = false;
 let storageHealthy = true;
+let launchUI;
 const node = (tag, content, cls) => {const e=document.createElement(tag);if(content!==undefined)e.textContent=content;if(cls)e.className=cls;return e;};
 function notice(message,error=false) {const e=$('notice');e.textContent=message;e.classList.toggle('error',error);e.hidden=false;}
 function safe(action) {return async event=>{try{await action(event);}catch(error){notice(error.message,true);}};}
@@ -28,7 +30,7 @@ function update(next) {
   next.updatedAt=new Date().toISOString();next=validateProject(next);
   projects=projects.map(p=>p.id===current.id?next:p);current=next;
   if (!artifactCurrent()) artifact=null;
-  persist();selectProjects();renderSummary();renderArtifact();
+  persist();selectProjects();renderSummary();renderArtifact();launchUI?.refresh();
 }
 function bindForm(id,apply) {
   const form=$(id);form.addEventListener('submit',event=>event.preventDefault());
@@ -52,7 +54,7 @@ function flushForms() {
 }
 function renderSummary() {
   $('active-name').textContent=current.name||'새 프로젝트';
-  $('active-route').textContent=`${NETWORKS[current.chain].name} / ${current.route==='pons'?'기존 플랫폼 연결':'자체 컨트랙트 빌드'}`;
+  $('active-route').textContent=`${NETWORKS[current.chain].name} / ${current.route==='pons'?'Pons V2 직접 론칭':'ERC-20 직접 배포'}`;
   $('ready-count').textContent=`${Object.values(current.materials).filter(x=>x.status==='ready').length} / ${MATERIALS.length}`;
   $('build-state').textContent=artifactCurrent()?'컴파일 완료':'미빌드';
   $('budget-total').textContent=`${budgetTotal(current.budget)} ETH`;
@@ -82,11 +84,11 @@ function renderArtifact() {
   $('artifact-status').textContent=available?'실제 컴파일 완료':'대기 중';
   $('artifact-facts').replaceChildren();
   if(!available){$('artifact-summary').textContent='컴파일 후 소스·ABI·바이트코드와 재현용 compiler input을 받을 수 있습니다.';return;}
-  $('artifact-summary').textContent='LaunchToken 컴파일 완료. 커브 주소·배포 트랜잭션은 아직 없습니다.';
+  $('artifact-summary').textContent='LaunchToken 컴파일 완료. 직접 배포 시 연결 지갑이 전량을 받습니다.';
   $('artifact-facts').replaceWith(Object.assign(facts([
     ['컴파일러',artifact.compiler],['생성 바이트코드',`${(artifact.bytecode.length-2)/2} bytes`],
     ['빌드 SHA-256',artifact.buildId],['컴파일 시각',new Date(artifact.compiledAt).toLocaleString('ko-KR')],
-    ['수취 커브 주소','미지정 · 전체 론칭 전 필요'],
+    ['수취 지갑','지갑 연결 후 실행 검토에서 확정'],
   ]),{id:'artifact-facts'}));
 }
 function renderRoute() {
@@ -97,14 +99,14 @@ function renderRoute() {
   $('network-links').replaceChildren(external('네트워크 공식 문서 ↗',n.docs),external('익스플로러 ↗',n.explorer));
   $('execution-actions').replaceChildren();
   if(current.route==='pons') {
-    $('execution-label').textContent='PONS / EXTERNAL LAUNCH';$('execution-title').textContent='준비한 내용을 Pons에서 확인하기';
-    $('execution-detail').textContent='이름·심볼·소개·링크를 복사해 공식 생성 화면에 입력합니다. Pons는 자체 토큰·풀을 생성하며 이 페이지의 바이트코드를 가져가는 경로가 아닙니다. 파라미터·수수료를 그곳에서 다시 확인하고 본인 지갑으로 실행합니다.';
+    $('execution-label').textContent='PONS / WALLET LAUNCH';$('execution-title').textContent='Pons V2로 이 페이지에서 론칭하기';
+    $('execution-detail').textContent='이름·심볼·소개·링크를 복사해 공식 생성 화면에 입력합니다. Pons는 자체 토큰·커브를 생성합니다. 아래 지갑 실행에서 직접 생성하거나 공식 화면을 이용할 수 있습니다. 파라미터·수수료를 그곳에서 다시 확인하고 본인 지갑으로 실행합니다.';
     const copy=node('button','입력 내용 복사','secondary');copy.addEventListener('click',safe(async()=>{flushForms();await navigator.clipboard.writeText(handoff());notice('입력 내용을 복사했습니다. Pons 화면에서 다시 검토하세요.');}));
     const link=external('Pons 생성 화면 열기 ↗','https://www.ponsfamily.com/launchpad/create');link.className='primary';
     $('execution-actions').append(copy,link,external('Pons 문서 ↗','https://docs.ponsfamily.com/'));
   } else {
     $('execution-label').textContent='NATIVE / CONTRACT BUILD';$('execution-title').textContent=current.chain==='giwa'?'GIWA Sepolia 리허설 패키지':'자체 런치패드 구현 패키지';
-    $('execution-detail').textContent='토큰 소스와 재현용 빌드를 준비합니다. 다음은 팩토리·커브·영구 잠금 구현, 실제 EVM 리허설, 검증한 배포 대상과 지갑의 연결입니다. GIWA Sepolia의 테스트 결과는 시장 반응으로 집계하지 않습니다.';
+    $('execution-detail').textContent='컴파일한 토큰을 연결 지갑으로 직접 배포합니다. 10억 개 전량을 지갑이 받으며, 거래 풀·LP는 별도로 필요합니다. GIWA Sepolia의 테스트 결과는 시장 반응으로 집계하지 않습니다.';
     const a=node('a','빌드 산출물로 이동 ↑','secondary');a.href='#build';$('execution-actions').append(a);
   }
 }
@@ -123,7 +125,7 @@ function renderProject() {
   $('network-result').textContent='아직 조회하지 않았습니다.';
   const time=new Date(Date.now()-new Date().getTimezoneOffset()*60000).toISOString().slice(0,16);
   $('observation-form').elements.observedAt.value=time;
-  selectProjects();renderSummary();renderMaterials();renderArtifact();renderRoute();renderObservations();
+  selectProjects();renderSummary();renderMaterials();renderArtifact();renderRoute();renderObservations();launchUI?.invalidate();launchUI?.refresh();
 }
 function handoff() {
   return [`이름: ${current.name}`,`심볼: ${current.symbol}`,`소개: ${current.description}`,`이미지: ${current.image}`,`사이트: ${current.website}`,`소셜: ${current.social}`,`체인: ${NETWORKS[current.chain].name}`,`직접 입력 예산: ${budgetTotal(current.budget)} ETH`,`플랫폼 설정과 수수료는 생성 화면에서 재확인. 이 파일은 거래 요청이나 서명 승인이 아닙니다.`].join('\n');
@@ -185,3 +187,14 @@ $('observation-form').addEventListener('submit',safe(event=>{
   update(next);renderObservations();event.target.elements.note.value='';notice('관찰 기록을 저장했습니다.');
 }));
 renderProject();persist();
+
+launchUI=initLaunchUI({getProject:()=>structuredClone(current),flush:()=>{if(!storageHealthy)throw new Error('프로젝트 저장 원본을 먼저 복구하세요.');flushForms();},getArtifact:()=>artifactCurrent()?artifact:null,notice});
+launchUI.refresh();
+for(const [id,route]of [['template-pons','pons'],['template-native','native']])$(id).addEventListener('click',safe(()=>{
+  flushForms();const next=structuredClone(current);next.route=route;if(route==='pons')next.chain='rh';else next.budget.devBuy='0';update(next);renderProject();notice(route==='pons'?'Pons V2 템플릿을 불러왔습니다. 이름·심볼·소개와 초기 매수 예산을 정하세요.':'고정 공급 ERC-20 템플릿을 불러왔습니다. 이름·심볼을 입력하고 컴파일하세요.');
+}));
+$('clone-project').addEventListener('click',safe(()=>{
+  flushForms();if(projects.length>=20)throw new Error('프로젝트는 최대 20개입니다. 기존 초안을 내보내고 정리하세요.');
+  const next=newProject();for(const k of ['description','image','website','social','chain','route','budget','budgetSource','hypothesis','stopRule'])next[k]=structuredClone(current[k]);
+  current=next;projects.push(current);artifact=null;renderProject();persist();notice('현재 설정을 복사했습니다. 새 이름·심볼을 입력하세요. 이전 실행 기록과 준비 완료 상태는 복사하지 않습니다.');
+}));

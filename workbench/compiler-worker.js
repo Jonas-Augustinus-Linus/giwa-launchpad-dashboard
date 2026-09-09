@@ -3,10 +3,10 @@ let ready;
 self.onmessage=async({data})=>{
   try {
     if(!ready)ready=(async()=>{
-      const [core,response]=await Promise.all([import('./artifact-core.mjs'),fetch('./compiler-input.json')]);
+      const [core,response]=await Promise.all([import('./artifact-core.mjs?v=7a5d7ea03bd2048f30da301553c7111801224d2d88a020053696e35d93938595'),fetch('./compiler-input.json?v=7a5d7ea03bd2048f30da301553c7111801224d2d88a020053696e35d93938595')]);
       if(!response.ok)throw new Error('컴파일 소스를 불러오지 못했습니다.');
       const input=await response.json();
-      importScripts('./vendor/soljson-0.8.30.js');
+      importScripts('./vendor/soljson-0.8.30.js?v=7a5d7ea03bd2048f30da301553c7111801224d2d88a020053696e35d93938595');
       if(!self.Module?.cwrap)throw new Error('컴파일러를 초기화하지 못했습니다.');
       return {core,input,compile:self.Module.cwrap('solidity_compile','string',['string','number','number']),version:self.Module.cwrap('solidity_version','string',[])(),reset:self.Module.cwrap('solidity_reset',null,[])};
     })();

@@ -1,34 +1,87 @@
 {
   "schemaVersion": 1,
   "compiler": "0.8.30",
+  "bundleVersion": "7a5d7ea03bd2048f30da301553c7111801224d2d88a020053696e35d93938595",
   "files": {
     "workbench/app.mjs": {
-      "sha256": "fee602777e426941c91a1ee9a7e11cf83bf0b2716d2be830e9e571f3dab1c5d0",
-      "bytes": 17484
+      "sha256": "635123c082aed432094445359fc5571cf082a418963c46bdf99ba138eb1beb68",
+      "bytes": 19278
     },
     "workbench/model.mjs": {
-      "sha256": "fefe716194672bbb38260dc463adc19d287430241b40b1bfd74d2498c36ed308",
-      "bytes": 7942
+      "sha256": "6bcdf6571225e2955a02a213448527ba588663a1dfc6a529474862f4cf03b147",
+      "bytes": 7970
     },
     "workbench/network.mjs": {
-      "sha256": "98b28b74904d14686c8bf0ad869deb03238016ddc55cd2bfa4d29257d0be01cd",
-      "bytes": 1326
+      "sha256": "56d490b30b8f6936bcbb7b8b17965b5a88d2ca9d8252062069b8d156bc27a072",
+      "bytes": 1393
     },
     "workbench/runtime.mjs": {
-      "sha256": "7cc4373fd4b8a092e67d7ccc7de5a674e16297f05ec8090abee4d91dac7bc076",
-      "bytes": 1011
+      "sha256": "0d929a929a4081482047939ed006ab05a579b426ea9fd0e02aa1220d8c01b14d",
+      "bytes": 1145
     },
     "workbench/artifact-core.mjs": {
-      "sha256": "cf8211aa3c703c244117d3c53a03d25bdb0125d15159bda420b6b3e1c5f3dc43",
-      "bytes": 1428
+      "sha256": "5c8d5f1cedec257754501d03f697d307f3e8c66d9b7d5f9586495e880934b1eb",
+      "bytes": 1495
     },
     "workbench/compiler-worker.js": {
-      "sha256": "fa1a2cd21db677f3707f7db7856a0931e879f0699466214976dbd95aedc193a3",
-      "bytes": 1500
+      "sha256": "8666acb69dada1fd3d5d0f9e2a970d66ae527f89e1ac6a40582fc00fa4c48fc5",
+      "bytes": 1701
     },
     "workbench/style.css": {
-      "sha256": "7f0835795bfd44575ce863b2c0d8aad96937a514a2a2c641b66fb197f430b643",
-      "bytes": 8837
+      "sha256": "43e51103cba65d6900dcc586d38778dc2da877bfeefa54d4e7c052dcbe613f06",
+      "bytes": 9455
+    },
+    "workbench/wallet.mjs": {
+      "sha256": "368827dc813bd5731ce2a9cec88be1ba5643c8023fe03e4e7757c4163a22b131",
+      "bytes": 3866
+    },
+    "workbench/launch-engine.mjs": {
+      "sha256": "4f576bc8d944d061d7425a0115eed595e99e82f4ff7024650d7adf4046e4eaf0",
+      "bytes": 19257
+    },
+    "workbench/launch-journal.mjs": {
+      "sha256": "06cebb8532c471e5ca4ea2e26af09ad716519ca624ea78e7b280ced807aa3b31",
+      "bytes": 3139
+    },
+    "workbench/launch-ui.mjs": {
+      "sha256": "09d541c1a97a3ab4ecc5b1ca2ae58c8b357893aeebe74c03e0775b69122356f3",
+      "bytes": 15929
+    },
+    "workbench/eth.mjs": {
+      "sha256": "b2caf2b9efbd023cf752750ff5daa2d91611640a5ee2154e3661025d73c56840",
+      "bytes": 85858
+    },
+    "workbench/pons-v2.json": {
+      "sha256": "9236e1568415cc09b7e24584e0b5aa9a50a8ea70fea848732c31367d2d6343e1",
+      "bytes": 186814
+    },
+    "workbench/pons-v2-sources.json": {
+      "sha256": "9a7289836d1b6eb529d2161356a5c814d3bddb3d411354789e0b687d51a9935b",
+      "bytes": 1371141
+    },
+    "workbench/licenses/ethers-MIT.txt": {
+      "sha256": "44eea86637405118248327fbe9d9fa95d04c7a57221c7e8c155f736db9f1b612",
+      "bytes": 1075
+    },
+    "workbench/licenses/ens-normalize-MIT.txt": {
+      "sha256": "3b458813ab3316b16bf004c4201d4a0583cf615514422dabf4d7c025988d613d",
+      "bytes": 1077
+    },
+    "workbench/licenses/noble-curves-MIT.txt": {
+      "sha256": "3239e134eb6e6d64538ca76498c7fcb08a395249dd9d4af9927bf6d0169ee429",
+      "bytes": 1110
+    },
+    "workbench/licenses/noble-hashes-MIT.txt": {
+      "sha256": "3239e134eb6e6d64538ca76498c7fcb08a395249dd9d4af9927bf6d0169ee429",
+      "bytes": 1110
+    },
+    "workbench/licenses/aes-js-MIT.txt": {
+      "sha256": "8839133ab4230fec40eaa71340a0ab40ddb017165c5158b66cd2a21b03b427e8",
+      "bytes": 1080
+    },
+    "workbench/licenses/tslib-BSD.txt": {
+      "sha256": "5989359645911c04a140c49d89496b13feca980bbf36d2250a12d3b9d06250d6",
+      "bytes": 645
     },
     "workbench/vendor/soljson-0.8.30.js": {
       "sha256": "3bb491a777f76dff9b2fe73ce29ca20e21a971b59a2f2cf8f73415424f00be06",
@@ -51,12 +104,12 @@
       "bytes": 1066
     },
     "workbench/NOTICE.txt": {
-      "sha256": "b9c4b26afc1618fed8d3ba141e417d20e20c5dfc89c3d21e47f94dcca40bd3de",
-      "bytes": 531
+      "sha256": "507ef8cbe67b1b0013ab1a1a23239c48ad264ab15bdea70fc60edab1b3caeaa3",
+      "bytes": 748
     },
     "index.html": {
-      "sha256": "0675cad668dac02e0dbe040d416b24dbf0d27021e4b1182d423c1c8930c6b523",
-      "bytes": 10991
+      "sha256": "48f18eac01311f5a3d8ed440961cae106e48f76363383fd37ef5dec0af798acc",
+      "bytes": 15794
     }
   }
 }

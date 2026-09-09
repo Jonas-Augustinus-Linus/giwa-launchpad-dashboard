@@ -1,4 +1,4 @@
-import {NETWORKS} from './model.mjs';
+import {NETWORKS} from './model.mjs?v=7a5d7ea03bd2048f30da301553c7111801224d2d88a020053696e35d93938595';
 
 export async function observeNetwork(key, fetcher = fetch) {
   if (!Object.hasOwn(NETWORKS,key)) throw new Error('지원하지 않는 네트워크입니다.');

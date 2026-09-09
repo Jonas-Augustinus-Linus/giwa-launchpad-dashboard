@@ -5,7 +5,7 @@ export const NETWORKS = Object.freeze({
 export const MATERIALS = [
   {id:'identity', group:'콘텐츠', title:'이름 · 심볼 · 소개', detail:'같은 이름을 복제할 수 있습니다. 공개 주소가 정체성을 확정합니다.', section:'project'},
   {id:'artwork', group:'콘텐츠', title:'로고 · 이미지 원본', detail:'공개 이미지 URL과 원본을 준비하고 사용 권한을 확인합니다.', section:'project'},
-  {id:'distribution', group:'컨트랙트', title:'공급 배분 · 수취 계약', detail:'고정 공급 10억 개, 팀 0%. 자체 경로는 검증한 커브 계약이 전량을 받습니다.', section:'build'},
+  {id:'distribution', group:'컨트랙트', title:'공급 배분 · 수취 계약', detail:'Pons는 전량을 커브로, 직접 ERC-20 배포는 10억 개 전량을 연결 지갑으로 보냅니다.', section:'build'},
   {id:'contract', group:'컨트랙트', title:'소스 · ABI · 테스트 결과', detail:'토큰 컴파일과 전체 팩토리·커브·졸업 검증을 구분합니다.', section:'build'},
   {id:'budget', group:'실행 준비', title:'가스 · 생성비 · 유동성 예산', detail:'직접 입력한 예산입니다. 가스 견적이나 플랫폼 확정 수수료가 아닙니다.', section:'launch'},
   {id:'venue', group:'실행 준비', title:'플랫폼 주소 · 수수료 · LP 규칙', detail:'실행 직전에 공식 생성 화면과 검증 소스로 다시 확인합니다.', section:'launch'},
@@ -89,7 +89,7 @@ export function nextActions(p, compiled) {
   const actions = [];
   if (!p.name.trim() || !p.symbol.trim() || !p.description.trim()) actions.push({label:'이름·심볼·소개 입력',section:'project'});
   if (!p.image) actions.push({label:'이미지 원본 URL 준비',section:'project'});
-  if (!compiled) actions.push({label:'토큰 소스 컴파일',section:'build'});
+  if (p.route==='native' && !compiled) actions.push({label:'토큰 소스 컴파일',section:'build'});
   if (!p.budgetSource || budgetTotal(p.budget) === '0') actions.push({label:'예산과 산정 근거 입력',section:'launch'});
   if (!p.hypothesis || !p.stopRule) actions.push({label:'반응 가설과 중단 기준 입력',section:'response'});
   return actions;

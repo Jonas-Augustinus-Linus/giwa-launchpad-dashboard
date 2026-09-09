@@ -1,4 +1,4 @@
-import {validateBuild,NETWORKS} from './model.mjs';
+import {validateBuild,NETWORKS} from './model.mjs?v=7a5d7ea03bd2048f30da301553c7111801224d2d88a020053696e35d93938595';
 
 export function compilerResult(input,output,version) {
   if(!version.startsWith('0.8.30+commit.73712a01.'))throw new Error('Compiler version mismatch');
